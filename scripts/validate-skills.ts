@@ -317,14 +317,19 @@ function validateSkill(folderName: string): string[] {
   }
 
   const hasScripts = existsSync(join(skillPath, "scripts"));
-  if (hasScripts && !existsSync(join(skillPath, "package.json"))) {
+  const hasPackageJson = existsSync(join(skillPath, "package.json"));
+
+  if (hasScripts && !hasPackageJson) {
     errors.push(
       "Missing package.json (required when scripts/ directory exists)",
     );
   }
 
   errors.push(...validatePackageJson(folderName, skillPath));
-  errors.push(...validateTsconfig(skillPath));
+
+  if (hasPackageJson) {
+    errors.push(...validateTsconfig(skillPath));
+  }
   errors.push(...validateNoAbsoluteSkillPaths(folderName, skillPath));
   errors.push(...validateScriptCliUsage(skillPath));
   errors.push(...validateGeneratedSkillMd(skillPath));
