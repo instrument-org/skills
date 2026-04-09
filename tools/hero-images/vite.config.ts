@@ -5,7 +5,7 @@ import { defineConfig, loadEnv } from "vite";
 import path from "path";
 
 export default defineConfig(({ mode }) => {
-  if (process.env.QUESTS_INSIDE_STUDIO !== "true") {
+  if (process.env.IS_INSIDE_STUDIO !== "true") {
     // When app is run outside Quests, this ensure .env* files are loaded
     // Removes need for VITE_ prefix in .env files for the server as well
     const env = loadEnv(mode, process.cwd(), "");
