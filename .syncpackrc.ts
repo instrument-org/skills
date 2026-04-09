@@ -10,7 +10,7 @@ export default {
     },
     {
       dependencies: ["@types/node"],
-      pinVersion: "22.19.2",
+      pinVersion: "24.12.2",
     },
     {
       dependencies: ["lucide-react"],
