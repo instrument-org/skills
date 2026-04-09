@@ -28,7 +28,6 @@
     "fix:syncpack": "syncpack fix",
     "fix:unused-words": "cspell-check-unused-words --fix",
     "test": "turbo run test",
-    "create-app": "jiti scripts/create-app.ts",
     "generate:skills-md": "jiti scripts/generate-skill-md.ts",
     "syncpack": "syncpack"
   },
@@ -42,7 +41,6 @@
     "@types/node": "24.12.2",
     "cspell": "^9.2.2",
     "cspell-check-unused-words": "^1.5.4",
-    "ignore": "^7.0.5",
     "jiti": "^2.6.1",
     "jscodeshift": "^17.3.0",
     "knip": "^5.86.0",
