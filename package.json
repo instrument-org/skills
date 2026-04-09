@@ -1,7 +1,7 @@
 {
-  "name": "@quests/directory",
+  "name": "@instrument-org/skills",
   "version": "0.0.0",
-  "description": "Quests Directory",
+  "description": "Instrument Directory",
   "repository": {
     "type": "git",
     "url": "https://github.com/finalpointco/directory"

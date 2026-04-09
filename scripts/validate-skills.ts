@@ -58,7 +58,7 @@ function validatePackageJson(folderName: string, skillPath: string): string[] {
     return errors;
   }
 
-  const expectedName = `@quests/skill-${folderName}`;
+  const expectedName = `@instrument-org/skill-${folderName}`;
   if (pkg.name !== expectedName) {
     errors.push(
       `package.json "name" is "${pkg.name}", expected "${expectedName}"`,
