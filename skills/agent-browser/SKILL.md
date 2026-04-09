@@ -425,13 +425,13 @@ agent-browser eval 'document.title'
 agent-browser eval 'document.querySelectorAll("img").length'
 
 # Complex JS: use --stdin with heredoc (RECOMMENDED)
-agent-browser eval --stdin <<'EVALEOF'
+agent-browser eval --stdin <<'EOF'
 JSON.stringify(
   Array.from(document.querySelectorAll("img"))
     .filter(i => !i.alt)
     .map(i => ({ src: i.src.split("/").pop(), width: i.width }))
 )
-EVALEOF
+'EOF'
 
 # Alternative: base64 encoding (avoids all shell escaping issues)
 agent-browser eval -b "$(echo -n 'Array.from(document.querySelectorAll("a")).map(a => a.href)' | base64)"
@@ -440,7 +440,7 @@ agent-browser eval -b "$(echo -n 'Array.from(document.querySelectorAll("a")).map
 **Rules of thumb:**
 
 - Single-line, no nested quotes -> regular `eval 'expression'` with single quotes is fine
-- Nested quotes, arrow functions, template literals, or multiline -> use `eval --stdin <<'EVALEOF'`
+- Nested quotes, arrow functions, template literals, or multiline -> use `eval --stdin <<'EOF'`
 - Programmatic/generated scripts -> use `eval -b` with base64
 
 ## Configuration File
