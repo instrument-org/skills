@@ -29,7 +29,8 @@
     "fix:unused-words": "cspell-check-unused-words --fix",
     "test": "turbo run test",
     "generate:skills-md": "jiti scripts/generate-skill-md.ts",
-    "syncpack": "syncpack"
+    "syncpack": "syncpack",
+    "update:actions": "actions-up"
   },
   "devDependencies": {
     "@cspell/dict-bash": "^4.2.1",
@@ -39,6 +40,7 @@
     "@cspell/dict-npm": "^5.2.19",
     "@cspell/dict-typescript": "^3.2.3",
     "@types/node": "24.12.2",
+    "actions-up": "^1.13.0",
     "cspell": "^9.2.2",
     "cspell-check-unused-words": "^1.5.4",
     "jiti": "^2.6.1",
