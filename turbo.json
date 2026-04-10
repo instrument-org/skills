@@ -21,6 +21,20 @@
       ],
       "outputs": []
     },
+    "//#check:actions": {
+      "inputs": [
+        ".github/workflows/*.yml",
+        ".github/actions/**/*.yml",
+        "scripts/check-actions.ts"
+      ]
+    },
+    "//#check:packages:install": {
+      "inputs": ["pnpm-lock.yaml", "**/package.json"]
+    },
+    "//#check:packages:dedupe": {
+      "dependsOn": ["//#check:packages:install"],
+      "inputs": ["pnpm-lock.yaml"]
+    },
     "//#check:syncpack": {
       "inputs": ["**/package.json", ".syncpackrc.ts"],
       "outputs": []
