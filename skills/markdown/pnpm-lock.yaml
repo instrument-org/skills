@@ -49,18 +49,21 @@ packages:
     engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@mdpdf/mdpdf-linux-x64-gnu@0.1.4':
     resolution: {integrity: sha512-NWpMYDBr1z59H9GlQdBizI8H8ODygui7j9NHpn2qiMrcnMvPBtmkH84YaXSHSYmUQ41UafRA/bnY5h5tkQb+Bw==}
     engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@mdpdf/mdpdf-linux-x64-musl@0.1.4':
     resolution: {integrity: sha512-dwwVfZpNONyYUFkFjrgRq5igEVqCMetkYR+cCmH0fD6b0mq2gsa7/mrSUPZGX5sz/dJ5hePmJb2hRBIL9Fu3yQ==}
     engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@mdpdf/mdpdf-win32-x64-msvc@0.1.4':
     resolution: {integrity: sha512-NQBTbhbe+i1HjC4F4WXDiYiItBm0j3LFVpz3uaZgz88umF656j0n4YgOeJKRRx6S4k+l3nzvu19GFoR3ocHLdg==}

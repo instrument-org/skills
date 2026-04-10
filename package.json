@@ -13,11 +13,12 @@
   "type": "module",
   "files": [],
   "scripts": {
-    "check-and-test": "pnpm check:actions && pnpm check:packages:install && turbo run check:types test check:syncpack check:knip check:gitignore check:spelling check:unused-words check:skills check:format --ui tui --continue=dependencies-successful --output-logs errors-only",
+    "check-and-test": "pnpm check:actions && pnpm check:packages:install && pnpm check:packages:dedupe && turbo run check:types test check:syncpack check:knip check:gitignore check:spelling check:unused-words check:skills check:format --ui tui --continue=dependencies-successful --output-logs errors-only",
     "check:actions": "node scripts/check-actions.ts",
     "check:format": "prettier --check .",
     "check:gitignore": "node scripts/check-gitignore.ts",
     "check:knip": "knip",
+    "check:packages:dedupe": "pnpm dedupe --check",
     "check:packages:install": "pnpm install --frozen-lockfile",
     "check:skills": "node scripts/validate-skills.ts",
     "check:skills-md": "node scripts/generate-skill-md.ts --check",
