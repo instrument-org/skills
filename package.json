@@ -16,10 +16,10 @@
     "check-and-test": "pnpm check:actions && turbo run check:types test check:syncpack check:knip check:gitignore check:spelling check:unused-words check:skills check:format --ui tui --continue=dependencies-successful --output-logs errors-only",
     "check:actions": "node scripts/check-actions.ts",
     "check:format": "prettier --check .",
-    "check:gitignore": "jiti scripts/check-gitignore.ts",
+    "check:gitignore": "node scripts/check-gitignore.ts",
     "check:knip": "knip",
-    "check:skills": "jiti scripts/validate-skills.ts",
-    "check:skills-md": "jiti scripts/generate-skill-md.ts --check",
+    "check:skills": "node scripts/validate-skills.ts",
+    "check:skills-md": "node scripts/generate-skill-md.ts --check",
     "check:spelling": "cspell \"**/*\" --no-progress",
     "check:syncpack": "syncpack lint",
     "check:types": "turbo run check:types",
@@ -29,7 +29,7 @@
     "fix:syncpack": "syncpack fix",
     "fix:unused-words": "cspell-check-unused-words --fix",
     "test": "turbo run test",
-    "generate:skills-md": "jiti scripts/generate-skill-md.ts",
+    "generate:skills-md": "node scripts/generate-skill-md.ts",
     "syncpack": "syncpack",
     "update:actions": "actions-up"
   },
@@ -44,7 +44,6 @@
     "actions-up": "^1.13.0",
     "cspell": "^9.2.2",
     "cspell-check-unused-words": "^1.5.4",
-    "jiti": "^2.6.1",
     "jscodeshift": "^17.3.0",
     "knip": "^5.86.0",
     "prettier": "^3.8.1",
@@ -54,7 +53,7 @@
     "typescript": "^5",
     "vitest": "^3.2.4"
   },
-  "packageManager": "pnpm@10.26.2",
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=24.14.0"
   },

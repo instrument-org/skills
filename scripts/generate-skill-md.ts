@@ -140,11 +140,14 @@ async function buildHelpFromRuntime({
   relativeScriptPath: string;
   skillPath: string;
 }) {
-  const jitiBin = join(process.cwd(), "node_modules/.bin/jiti");
-  const result = await execFileAsync(jitiBin, [relativeScriptPath, "--help"], {
-    cwd: skillPath,
-    encoding: "utf-8",
-  }).catch((err: { stderr: string; stdout: string; code: number }) => err);
+  const result = await execFileAsync(
+    process.execPath,
+    [relativeScriptPath, "--help"],
+    {
+      cwd: skillPath,
+      encoding: "utf-8",
+    },
+  ).catch((err: { stderr: string; stdout: string; code: number }) => err);
 
   const stdout = (result.stdout ?? "").trim();
   const stderr = (result.stderr ?? "").trim();

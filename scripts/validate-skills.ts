@@ -216,15 +216,8 @@ function validateGeneratedSkillMd(skillPath: string): string[] {
   }
 
   const result = spawnSync(
-    "pnpm",
-    [
-      "exec",
-      "jiti",
-      "scripts/generate-skill-md.ts",
-      "--check",
-      "--skill",
-      skillName,
-    ],
+    process.execPath,
+    ["scripts/generate-skill-md.ts", "--check", "--skill", skillName],
     {
       cwd: process.cwd(),
       encoding: "utf-8",
