@@ -12,6 +12,8 @@ The CLI uses Chrome/Chromium via CDP directly. `agent-browser` is pre-installed 
 
 ## Core Workflow
 
+> **IMPORTANT — URL Discovery:** Never fabricate specific or deep URLs (paths, category IDs, query strings) from memory — these change and your training data is likely stale. Well-known root domains (`amazon.com`, `github.com`, etc.) are fine as a starting point. For anything more specific, discover the URL first: use a search tool, follow links from a root page, or use a URL the user or a document has provided.
+
 Every browser automation follows this pattern:
 
 1. **Navigate**: `agent-browser open <url>`
