@@ -33,22 +33,30 @@ agent-browser wait --load networkidle
 agent-browser snapshot -i  # Check result
 ```
 
-## Command Chaining
+## Batch Execution
 
-Commands can be chained with `&&` in a single shell invocation. The browser persists between commands via a background daemon, so chaining is safe and more efficient than separate calls.
+Execute multiple commands in a single invocation — avoids per-command process startup overhead. Each quoted argument is a full command executed in order.
 
 ```bash
-# Chain open + wait + snapshot in one call
-agent-browser open https://example.com && agent-browser wait --load networkidle && agent-browser snapshot -i
+agent-browser batch "open https://example.com" "snapshot -i" "screenshot"
+agent-browser batch --bail "open https://example.com" "click @e1" "screenshot"
 
-# Chain multiple interactions
-agent-browser fill @e1 "user@example.com" && agent-browser fill @e2 "password123" && agent-browser click @e3
-
-# Navigate and capture
-agent-browser open https://example.com && agent-browser wait --load networkidle && agent-browser screenshot page.png
+echo '[
+  ["open", "https://example.com"],
+  ["snapshot", "-i"],
+  ["click", "@e1"],
+  ["screenshot", "result.png"]
+]' | agent-browser batch --json
 ```
 
-**When to chain:** Use `&&` when you don't need to read the output of an intermediate command before proceeding (e.g., open + wait + screenshot). Run commands separately when you need to parse the output first (e.g., snapshot to discover refs, then interact using those refs).
+You can also chain with `&&` when you need shell-level control (e.g., capture output between steps):
+
+```bash
+# Get a URL from snapshot output, then use it in the next command
+URL=$(agent-browser get attr @e3 href) && agent-browser --download-path ./output open "$URL"
+```
+
+**When to use batch vs single commands:** Use `batch` (or `&&`) when you don't need to read intermediate output. Run a single command (e.g., `snapshot -i`) alone when you need its output to decide the next step, then batch the remaining actions.
 
 ## Handling Authentication
 
@@ -78,6 +86,7 @@ agent-browser close                   # Close browser
 
 # Snapshot
 agent-browser snapshot -i             # Interactive elements with refs (recommended)
+agent-browser snapshot -i --urls      # Include href URLs for links
 agent-browser snapshot -s "#selector" # Scope to CSS selector
 
 # Interaction (use @refs from snapshot)
@@ -127,13 +136,8 @@ agent-browser wait --text "Welcome"    # Wait for text to appear (substring matc
 agent-browser wait --fn "!document.body.innerText.includes('Loading...')"  # Wait for text to disappear
 agent-browser wait "#spinner" --state hidden  # Wait for element to disappear
 
-# Downloads: use `download`, not `click`, for elements that directly trigger a file transfer.
-# IMPORTANT: `click` on a download link will be silently cancelled -- the file will never arrive.
-# IMPORTANT: Only use `download` on the element that initiates the actual file transfer (e.g. a
-#            "↓" button or direct file link). If clicking an element navigates to another page
-#            instead of starting a download, you are on the wrong element -- navigate there first,
-#            re-snapshot, and find the real download trigger.
-#
+# Downloads: use `download`, not `click` (click on download links is silently cancelled).
+# Only use `download` on the element that triggers the file transfer directly.
 # --download-path sets where files land for the entire session. Set it BEFORE any downloads.
 #
 # Option A: Set download path upfront (recommended)
@@ -208,22 +212,20 @@ agent-browser diff url <url1> <url2>                 # Compare two pages
 agent-browser diff url <url1> <url2> --selector "#main"  # Scope to element
 ```
 
-## Batch Execution
+## Efficiency Strategies
 
-Execute multiple commands in a single invocation by piping a JSON array to `batch`:
+**Use `--urls` to avoid re-navigation.** When you need to visit links from a page, use `snapshot -i --urls` to get all href URLs upfront. Then `open` each URL directly instead of clicking refs and navigating back.
+
+**Snapshot once, act many times.** Never re-snapshot the same page. Extract all needed info (refs, URLs, text) from a single snapshot, then batch the remaining actions.
+
+**Multi-page workflow:**
 
 ```bash
-echo '[
-  ["open", "https://example.com"],
-  ["snapshot", "-i"],
-  ["click", "@e1"],
-  ["screenshot", "result.png"]
-]' | agent-browser batch --json
-
-agent-browser batch --bail < commands.json
+agent-browser batch "open https://example.com" "snapshot -i --urls"
+# Read output to extract URLs, then visit each directly:
+agent-browser batch "open https://example.com/page1" "screenshot"
+agent-browser batch "open https://example.com/page2" "screenshot"
 ```
-
-Use `batch` when you have a known sequence of commands that don't depend on intermediate output.
 
 ## Common Patterns
 
