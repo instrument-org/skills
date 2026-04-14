@@ -3,18 +3,22 @@ description: General rules for the project.
 alwaysApply: true
 ---
 
-# registry repo
-
 # Repository Context
 
-This is a **skill and template registry**. It is not an application — it provides reusable components consumed by a separate AI workspace repository.
+This is a **skill and template registry**, not an application. It provides reusable components consumed by a separate AI workspace repository.
 
-- **`templates/`** — Project starter templates. The workspace uses `basic` as its default initialization folder; other templates (shadcn, nextjs, etc.) are alternatives.
-- **`skills/`** — Agent skills that get installed into the workspace's `skills/` directory on demand. Scripts inside a skill are executed from the workspace project root (not from this registry).
+- **`templates/`**: Project starter templates. The workspace uses `basic` as its default initialization folder; other templates (shadcn, nextjs, etc.) are alternatives.
+- **`skills/`**: Agent skills installed into the workspace's `skills/` directory on demand. Scripts inside a skill are executed from the workspace project root, not from this registry.
 
-Skills are tested in this repository (each skill has its own `tests/` directory), but keep the consumer context in mind: the agent running the scripts is working inside the workspace project, not inside this registry.
+Skills are tested in this repository (each skill has its own `tests/` directory), but keep the consumer context in mind: the agent running the scripts is working inside the workspace project, not here.
 
-If a skill has a `SKILL.template.md`, then `SKILL.md` is auto-generated from it — edit the template, not `SKILL.md`. Script docs are injected at the `{{GENERATED_SCRIPT_DOCS}}` placeholder via `scripts/generate-skill-md.ts`.
+## SKILL.md Generation
+
+If a skill has a `SKILL.template.md`, then `SKILL.md` is auto-generated from it. Edit the template, not `SKILL.md`. Script docs are injected at the `{{GENERATED_SCRIPT_DOCS}}` placeholder via `scripts/generate-skill-md.ts`.
+
+## Consumer App Context
+
+The consumer is an **Electron desktop app for knowledge workers** in the "agentic AI workspace" category. Users give the agent access to project folders and ask it to create files, edit documents, run research, organize outputs, build small apps, etc. The agent operates autonomously on local files rather than just answering questions. It has tools for file I/O, shell, web search, browser automation, and image generation. Skills extend the agent with domain-specific capabilities (e.g. transformers.js inference, browser scraping). When writing or evaluating skills, optimize for this agentic file-centric desktop context, not for CI pipelines, server environments, or traditional CLI tools.
 
 ## Code Style
 
