@@ -1,15 +1,7 @@
-description: "Cache binary downloads (canvas native module, HuggingFace ONNX models) to skip re-downloading on repeated runs"
+description: "Cache binary downloads (HuggingFace ONNX models) to skip re-downloading on repeated runs"
 name: "Setup binary caches"
 runs:
   steps:
-    - name: Cache canvas native module
-      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-      with:
-        key: canvas-bin-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
-        path: |
-          ~/.npm/_prebuilds
-          skills/charts/node_modules/.pnpm/canvas@*/node_modules/canvas/build
-
     - name: Cache HuggingFace ONNX models
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
