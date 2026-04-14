@@ -14,7 +14,15 @@ runs:
           pnpm-lock.yaml
           pnpm-workspace.yaml
         node-version: "24"
+    - if: runner.os == 'Linux'
+      name: install-canvas-deps
+      run: sudo apt-get install -y libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+      shell: bash
     - run: pnpm install --frozen-lockfile
+      shell: bash
+    - if: runner.os == 'Linux'
+      name: rebuild-canvas
+      run: pnpm --filter @instrument-org/skill-charts rebuild canvas
       shell: bash
     - uses: rharkor/caching-for-turbo@00a0515f175df9fd2e15c4560144ad5fdbebb0c7 # v2.3.13
   using: composite
