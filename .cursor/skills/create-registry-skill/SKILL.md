@@ -15,6 +15,8 @@ skills/skill-name/
 ├── SKILL.md              # Generated — never edit directly
 ├── package.json
 ├── pnpm-lock.yaml
+├── tsconfig.json
+├── vitest.config.ts      # Required — without this, tests are skipped silently
 └── scripts/
     └── my-script.ts
 ```
@@ -25,7 +27,7 @@ skills/skill-name/
 tsx scripts/generate-skill-md.ts --skill skill-name
 ```
 
-The generator replaces `{{GENERATED_SCRIPT_DOCS}}` with documentation extracted from each script's JSDoc and CAC `--help` output. Always edit `SKILL.template.md`, never `SKILL.md`.
+Run this from the **workspace root** (not from inside the skill). The generator replaces `{{GENERATED_SCRIPT_DOCS}}` with documentation extracted from each script's JSDoc and CAC `--help` output. Always edit `SKILL.template.md`, never `SKILL.md`.
 
 ---
 
@@ -129,6 +131,37 @@ const relOutput = relative(process.cwd(), resolve(outputPath)) || ".";
 console.log(`Saved to ${relOutput}`);
 ```
 
+### Resolving package-internal files (WASM, assets)
+
+Use `createRequire` to resolve paths to files inside `node_modules` (e.g. `.wasm` binaries):
+
+```typescript
+import { createRequire } from "node:module";
+
+const _require = createRequire(import.meta.url);
+const wasmPath = _require.resolve("some-package/file.wasm");
+```
+
+---
+
+## Tests
+
+Each skill needs a `tests/scripts.test.ts` and a `vitest.config.ts`. **Without `vitest.config.ts` the tests are silently skipped** by the root vitest workspace config (which globs `./skills/*/vitest.config.ts`).
+
+### `vitest.config.ts` (copy exactly)
+
+```typescript
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    clearMocks: true,
+  },
+});
+```
+
+For test conventions and patterns, refer to an existing skill's `tests/scripts.test.ts` (e.g. `skills/charts` or `skills/sharp-images`).
+
 ---
 
 ## Summary Checklist
@@ -137,7 +170,14 @@ console.log(`Saved to ${relOutput}`);
 
 - [ ] Description focuses on user intent, includes trigger scenarios, is under 1024 chars
 - [ ] `SKILL.template.md` contains `{{GENERATED_SCRIPT_DOCS}}`
-- [ ] `SKILL.md` is generated — run `tsx scripts/generate-skill-md.ts --skill skill-name`
+- [ ] `SKILL.md` is generated from workspace root — `pnpm tsx scripts/generate-skill-md.ts --skill skill-name`
+
+### Files
+
+- [ ] `tsconfig.json` (copy from another skill)
+- [ ] `vitest.config.ts` (required — without it tests are silently skipped)
+- [ ] `tests/scripts.test.ts`
+- [ ] Dependencies in `package.json` + run `pnpm install` (requires `required_permissions: ["all"]` in sandbox)
 
 ### Scripts
 
@@ -146,4 +186,10 @@ console.log(`Saved to ${relOutput}`);
 - [ ] Use **CAC** for CLI parsing, not `parseArgs`
 - [ ] Export a named async function; guard CLI with `import.meta.url`
 - [ ] Log output paths relative to `process.cwd()`
-- [ ] Dependencies in `package.json` + `pnpm-lock.yaml`
+- [ ] Use `createRequire` to resolve package-internal files (e.g. WASM), not `import.meta.resolve`
+
+### Tests
+
+- [ ] `beforeAll` generates any fixtures the read-path tests depend on
+- [ ] All outputs written to `os.tmpdir()`
+- [ ] Tests pass: `cd skills/<name> && pnpm test`
