@@ -18,6 +18,7 @@
   "dictionaries": ["typescript", "node", "npm", "html", "css", "bash"],
   "words": [
     "Acro",
+    "barcodes",
     "binarize",
     "bitdepth",
     "briaai",
@@ -105,13 +106,16 @@
     "unflatten",
     "unparse",
     "unpdf",
+    "UPCA",
+    "UPCE",
     "vaul",
     "vinxi",
     "Vinxi",
     "Vuedotjs",
     "wireframes",
     "Xenova",
-    "zstd"
+    "zstd",
+    "zxing"
   ],
   "import": [
     "@cspell/dict-typescript/cspell-ext.json",
