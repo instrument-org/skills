@@ -8,7 +8,7 @@ import {
   SiOpenai,
 } from "react-icons/si";
 import { FaCode, FaDatabase } from "react-icons/fa";
-import { QuestsLogoIcon } from "./quest-logo";
+import { InstrumentLogoIcon } from "./instrument-logo";
 
 const dependencies = [
   {
@@ -74,10 +74,10 @@ export function GettingStarted() {
         {/* Header */}
         <div className="mb-16">
           <div className="inline-flex items-center justify-center mb-4">
-            <QuestsLogoIcon className="size-24" />
+            <InstrumentLogoIcon className="size-24" />
           </div>
           <h1 className="text-6xl font-bold text-gray-900 dark:text-white mb-4">
-            Quests Starter Template
+            Instrument Starter Template
           </h1>
         </div>
 

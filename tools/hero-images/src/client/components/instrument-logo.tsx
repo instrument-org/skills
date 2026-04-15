@@ -1,15 +1,15 @@
 import * as React from "react";
 
-export interface QuestsLogoIconProps extends React.SVGProps<SVGSVGElement> {
+export interface InstrumentLogoIconProps extends React.SVGProps<SVGSVGElement> {
   absoluteStrokeWidth?: boolean;
   color?: string;
   size?: number | string;
   strokeWidth?: number | string;
 }
 
-export const QuestsLogoIcon = React.forwardRef<
+export const InstrumentLogoIcon = React.forwardRef<
   SVGSVGElement,
-  QuestsLogoIconProps
+  InstrumentLogoIconProps
 >(({ className, size = 202, ...props }, ref) => {
   return (
     <svg
@@ -1116,4 +1116,4 @@ export const QuestsLogoIcon = React.forwardRef<
   );
 });
 
-QuestsLogoIcon.displayName = "QuestsLogoIcon";
+InstrumentLogoIcon.displayName = "InstrumentLogoIcon";

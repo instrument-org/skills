@@ -9,7 +9,7 @@ import {
   SiOpenai,
 } from "react-icons/si";
 import { FaCode, FaDatabase, FaCog } from "react-icons/fa";
-import { QuestsLogoIcon } from "./quest-logo";
+import { InstrumentLogoIcon } from "./instrument-logo";
 
 const dependencies = [
   {
@@ -127,10 +127,10 @@ export function GettingStarted() {
         {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center mb-4">
-            <QuestsLogoIcon className="size-16" />
+            <InstrumentLogoIcon className="size-16" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Quests Starter Template
+            Instrument Starter Template
           </h1>
         </div>
 
@@ -154,7 +154,7 @@ export function GettingStarted() {
                       rel="noopener noreferrer"
                       className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium underline"
                     >
-                      Quests app
+                      Instrument app
                     </a>
                   </div>
                 </div>
@@ -222,7 +222,7 @@ export function GettingStarted() {
           <p className="text-gray-500 dark:text-gray-400">
             Source code on{" "}
             <a
-              href="https://github.com/quests-org/registry/tree/main/templates/basic"
+              href="https://github.com/instrument-org/registry/tree/main/templates/basic"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium underline"

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "quests-template-angular": {
+    "instrument-template-angular": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -51,10 +51,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "quests-template-angular:build:production"
+              "buildTarget": "instrument-template-angular:build:production"
             },
             "development": {
-              "buildTarget": "quests-template-angular:build:development"
+              "buildTarget": "instrument-template-angular:build:development"
             }
           },
           "defaultConfiguration": "development"

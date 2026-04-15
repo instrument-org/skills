@@ -1,4 +1,4 @@
-const TAILWIND_SCRIPT_SRC = `/_quests/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js`;
+const TAILWIND_SCRIPT_SRC = `/_instrument/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js`;
 
 const DEFAULT_BODY = `\
   <main class="max-w-5xl mx-auto px-6 py-12">

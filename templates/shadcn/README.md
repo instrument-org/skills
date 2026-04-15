@@ -1,6 +1,6 @@
-# Quests shadcn/ui Template
+# Instrument shadcn/ui Template
 
-A template for building Quests apps with shadcn/ui that is already configured for easily adding shadcn components.
+A template for building Instrument apps with shadcn/ui that is already configured for easily adding shadcn components.
 
 ## Dependencies
 

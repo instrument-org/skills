@@ -5,7 +5,7 @@ function App() {
   const { data } = useQuery(
     queryClient.hello.sayHello.queryOptions({
       input: {
-        name: "Quests",
+        name: "Instrument",
       },
     }),
   );

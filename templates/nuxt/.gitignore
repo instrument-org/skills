@@ -1,4 +1,4 @@
-### Quests .gitignore ###
+### Instrument .gitignore ###
 
 # Logs
 logs
@@ -29,8 +29,8 @@ dist-ssr
 *.local
 .storage/
 
-# Quests
-.quests/
+# Instrument
+.instrument/
 
 # SQLite
 *.db-journal
@@ -45,7 +45,7 @@ etilqs_*
 # TypeScript cache
 *.tsbuildinfo
 
-### End of Quests .gitignore ###
+### End of Instrument .gitignore ###
 
 # Nuxt dev/build outputs
 .output

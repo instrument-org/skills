@@ -28,7 +28,7 @@ describe("buildHtml", () => {
     expect(html).toContain('<style type="text/tailwindcss">');
     expect(html).toContain('@import "tailwindcss"');
     expect(html).toContain(
-      "/_quests/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
+      "/_instrument/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
     );
     expect(html).toContain("<main");
     expect(html).toContain("</html>");
@@ -63,7 +63,7 @@ describe("createWireframe", () => {
     expect(content).toContain("<title>Wireframe</title>");
     expect(content).toContain('@import "tailwindcss"');
     expect(content).toContain(
-      "/_quests/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
+      "/_instrument/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
     );
     expect(content.length).toBeLessThan(5_000);
   });
@@ -84,7 +84,7 @@ describe("createWireframe", () => {
 
     expect(shallowSrc).toBe(deepSrc);
     expect(shallowSrc).toBe(
-      "/_quests/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
+      "/_instrument/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
     );
   });
 

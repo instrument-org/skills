@@ -4,8 +4,8 @@
 # Storage
 *.local
 
-# Quests
-.quests/
+# Instrument
+.instrument/
 
 # TypeScript cache
 *.tsbuildinfo

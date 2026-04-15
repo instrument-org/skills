@@ -27,8 +27,8 @@ dist-ssr
 *.local
 .storage/
 
-# Quests
-.quests/
+# Instrument
+.instrument/
 
 # SQLite
 *.db-journal
