@@ -18,7 +18,7 @@ If a skill has a `SKILL.template.md`, then `SKILL.md` is auto-generated from it.
 
 ## Consumer App Context
 
-The consumer is an **Electron desktop app for knowledge workers** in the "agentic AI workspace" category. Users give the agent access to project folders and ask it to create files, edit documents, run research, organize outputs, build small apps, etc. The agent operates autonomously on local files rather than just answering questions. It has tools for file I/O, shell, web search, browser automation, and image generation. Skills extend the agent with domain-specific capabilities (e.g. transformers.js inference, browser scraping). When writing or evaluating skills, optimize for this agentic file-centric desktop context, not for CI pipelines, server environments, or traditional CLI tools.
+The consumer is a **cross-platform Electron desktop app for knowledge workers** in the "agentic AI workspace" category, with first-class support for **Windows, Linux, and macOS**. Users give the agent access to project folders and ask it to create files, edit documents, run research, organize outputs, build small apps, etc. The agent operates autonomously on local files rather than just answering questions. It has tools for file I/O, shell, web search, browser automation, and image generation. Skills extend the agent with domain-specific capabilities (e.g. transformers.js inference, browser scraping). When writing or evaluating skills, optimize for this agentic file-centric desktop context across all three platforms — avoid macOS-only or Linux-only assumptions unless the skill explicitly documents platform requirements. Do not optimize for CI pipelines, server environments, or traditional CLI tools.
 
 ## Code Style
 
