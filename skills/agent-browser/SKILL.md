@@ -33,63 +33,24 @@ agent-browser wait --load networkidle
 agent-browser snapshot -i  # Check result
 ```
 
-## Batch Execution
+## Command Chaining
 
-Execute multiple commands in a single invocation — avoids per-command process startup overhead. Each quoted argument is a full command executed in order.
-
-```bash
-agent-browser batch "open https://example.com" "snapshot -i" "screenshot"
-agent-browser batch --bail "open https://example.com" "click @e1" "screenshot"
-
-echo '[
-  ["open", "https://example.com"],
-  ["snapshot", "-i"],
-  ["click", "@e1"],
-  ["screenshot", "result.png"]
-]' | agent-browser batch --json
-```
-
-You can also chain with `&&` when you need shell-level control (e.g., capture output between steps):
+The browser persists across `agent-browser` invocations via a background daemon, so chaining commands with `&&` in a single shell call works naturally and is more efficient than separate calls. Use shell features (`&&`, `$(...)`, variables) freely.
 
 ```bash
-# Get a URL from snapshot output, then use it in the next command
-URL=$(agent-browser get attr @e3 href) && agent-browser --download-path ./output open "$URL"
+agent-browser open https://example.com && agent-browser wait --load networkidle && agent-browser snapshot -i
+agent-browser fill @e1 "user@example.com" && agent-browser fill @e2 "pass" && agent-browser click @e3
+agent-browser open https://example.com && agent-browser screenshot page.png
+
+# Capture output mid-chain and feed it to the next command
+URL=$(agent-browser get attr @e3 href) && agent-browser open "$URL"
 ```
 
-**When to use batch vs single commands:** Use `batch` (or `&&`) when you don't need to read intermediate output. Run a single command (e.g., `snapshot -i`) alone when you need its output to decide the next step, then batch the remaining actions.
-
-**Global flags do not work inside batch sub-commands.** Sub-command strings are re-parsed for positional args only — global flags like `--annotate`, `--screenshot-format`, `--screenshot-quality`, `--screenshot-dir`, `--download-path`, and `--allow-file-access` are silently misinterpreted as positional arguments (often as a CSS selector), causing confusing failures like `Element not found`. Hoist the flag to the outer `agent-browser` invocation, or run that step outside the batch:
-
-```bash
-# Wrong — --annotate is taken as a CSS selector, fails with "Element not found":
-agent-browser batch "open https://example.com" "screenshot --annotate"
-
-# Right (hoisted; applies to every screenshot in the batch):
-agent-browser --annotate batch "open https://example.com" "screenshot"
-
-# Right (run separately):
-agent-browser batch "open https://example.com"
-agent-browser screenshot --annotate
-```
+Use `&&` when you don't need to read intermediate output. Run commands separately when you need to parse output first (e.g., `snapshot -i` to discover refs, then act on them).
 
 ## Handling Authentication
 
-**Option 1: Auth vault (credentials stored encrypted, login by name)**
-
-```bash
-echo "$PASSWORD" | agent-browser auth save myapp --url https://app.example.com/login --username user --password-stdin
-agent-browser auth login myapp
-```
-
-**Option 2: State file (manual save/load)**
-
-```bash
-agent-browser state save ./auth.json
-agent-browser state load ./auth.json
-agent-browser open https://app.example.com/dashboard
-```
-
-See [references/authentication.md](references/authentication.md) for OAuth, 2FA, and token refresh patterns.
+The harness manages browser sessions, so cookies/localStorage persist across `agent-browser` invocations within a project. Just navigate to the login page, fill credentials, submit, and proceed — subsequent commands are already authenticated. See [references/authentication.md](references/authentication.md) for OAuth, 2FA, and token refresh patterns.
 
 ## Essential Commands
 
@@ -150,18 +111,9 @@ agent-browser wait --text "Welcome"    # Wait for text to appear (substring matc
 agent-browser wait --fn "!document.body.innerText.includes('Loading...')"  # Wait for text to disappear
 agent-browser wait "#spinner" --state hidden  # Wait for element to disappear
 
-# Downloads: use `download`, not `click` (click on download links is silently cancelled).
-# Only use `download` on the element that triggers the file transfer directly.
-# --download-path sets where files land for the entire session. Set it BEFORE any downloads.
-#
-# Option A: Set download path upfront (recommended)
-agent-browser --download-path ./output open <url>     # All downloads land in ./output
-agent-browser download @e1 ./output/file.pdf          # Download and wait for file
-#
-# Option B: Open a direct file URL (most reliable when you know the URL)
-agent-browser --download-path ./output open https://example.com/file.docx
-#
-agent-browser wait --download ./output/file.zip       # Wait for any download to complete
+# Downloads (see "Downloading Files" below for full guidance and caveats)
+agent-browser download @e1 <path>     # Click an element to trigger a download, save to <path>
+agent-browser wait --download <path>  # Wait for an in-progress download to finish
 
 # Tabs
 agent-browser tab new                          # Open new tab
@@ -230,33 +182,62 @@ agent-browser diff url <url1> <url2> --selector "#main"  # Scope to element
 
 **Use `--urls` to avoid re-navigation.** When you need to visit links from a page, use `snapshot -i --urls` to get all href URLs upfront. Then `open` each URL directly instead of clicking refs and navigating back.
 
-**Snapshot once, act many times.** Never re-snapshot the same page. Extract all needed info (refs, URLs, text) from a single snapshot, then batch the remaining actions.
+**Snapshot once, act many times.** Never re-snapshot the same page. Extract all needed info (refs, URLs, text) from a single snapshot, then chain the remaining actions with `&&`.
 
 **Multi-page workflow:**
 
 ```bash
-agent-browser batch "open https://example.com" "snapshot -i --urls"
+agent-browser open https://example.com && agent-browser snapshot -i --urls
 # Read output to extract URLs, then visit each directly:
-agent-browser batch "open https://example.com/page1" "screenshot"
-agent-browser batch "open https://example.com/page2" "screenshot"
+agent-browser open https://example.com/page1 && agent-browser screenshot
+agent-browser open https://example.com/page2 && agent-browser screenshot
 ```
 
 ## Common Patterns
 
 ### Downloading Files
 
+`download` and `wait --download` only work for content Chrome treats as a download (responses with `Content-Disposition: attachment`, or MIME types it won't render inline). Use `download` on the element that triggers the file transfer directly — clicking a download link with `click` is silently cancelled by Chrome.
+
+Pass any destination path; the file is saved to a harness-managed downloads directory and the command's output reports the actual path. Read that output to learn where the file ended up.
+
 ```bash
 # Option A: Click a download link/button on the page
-agent-browser --download-path ./output open https://example.com/downloads
+agent-browser open https://example.com/downloads
 agent-browser snapshot -i
-agent-browser download @e5 ./output/file.docx
+agent-browser download @e5 file.docx          # Output: "Download saved to <actual-path>"
 
-# Option B: Open the file URL directly
-agent-browser --download-path ./output open https://example.com/file.docx
+# Option B: Open the file URL directly (only for content Chrome treats as a download)
+agent-browser open https://example.com/file.docx
+agent-browser wait --download file.docx
 
 # Option C: Extract the href first, then open it
 agent-browser get attr @e5 href
-agent-browser --download-path ./output open <that-url>
+agent-browser open <that-url>
+agent-browser wait --download file.docx
+```
+
+**Inline-rendered content (SVG, HTML, PNG, JPG, most PDFs)** renders in the tab instead of firing a download event, so `download`/`wait --download` will time out. Pick by what you have:
+
+1. **Real asset URL, public:** `curl -fsSL -o ./tmp/logo.svg https://example.com/logo.svg`
+2. **Real asset URL, behind login:** `fetch()` it from the page's own origin via `eval` so cookies apply (must be **same-origin** — `www.example.com` and `example.com` differ).
+3. **No URL** (inline `<svg>`, canvas, generated content): grab the DOM (`outerHTML`, etc.) via `eval`.
+
+For 2 and 3, pipe the eval output through `jq -r .` to unwrap its JSON-quoted string straight onto disk:
+
+```bash
+agent-browser eval 'document.querySelector("header svg").outerHTML' | jq -r . > ./tmp/logo.svg
+
+agent-browser eval --stdin <<'EOF' | jq -r . | base64 -d > ./tmp/image.png
+(async () => {
+  const r = await fetch("/private/image.png", { credentials: "include" });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  const bytes = new Uint8Array(await r.arrayBuffer());
+  let s = "";
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s);
+})()
+EOF
 ```
 
 ### Form Submission
@@ -272,30 +253,14 @@ agent-browser click @e5
 agent-browser wait --load networkidle
 ```
 
-### Authentication with Auth Vault
-
-```bash
-echo "pass" | agent-browser auth save github --url https://github.com/login --username user --password-stdin
-agent-browser auth login github
-
-agent-browser auth list
-agent-browser auth show github
-agent-browser auth delete github
-```
-
-### Authentication with State Persistence
+### Login
 
 ```bash
 agent-browser open https://app.example.com/login
 agent-browser snapshot -i
-agent-browser fill @e1 "$USERNAME"
-agent-browser fill @e2 "$PASSWORD"
-agent-browser click @e3
+agent-browser fill @e1 "$USERNAME" && agent-browser fill @e2 "$PASSWORD" && agent-browser click @e3
 agent-browser wait --url "**/dashboard"
-agent-browser state save auth.json
-
-agent-browser state load auth.json
-agent-browser open https://app.example.com/dashboard
+# Subsequent commands are authenticated; the harness persists session state.
 ```
 
 ### Working with Iframes
@@ -437,51 +402,25 @@ agent-browser find nth "tr" 2 click
 
 Use `eval` to run JavaScript in the browser context. **Shell quoting can corrupt complex expressions** -- use `--stdin` or `-b` to avoid issues.
 
+> **`eval` returns the script's value, not its stdout.** `console.log(...)` will print `null` because nothing is returned. Always make the **last expression** the value you want — typically wrap your code in `(() => { ...; return x; })()` or `(async () => { ...; return x; })()`. Use `JSON.stringify(...)` to get readable output for objects/arrays.
+
 ```bash
 # Simple expressions work with regular quoting
 agent-browser eval 'document.title'
 agent-browser eval 'document.querySelectorAll("img").length'
 
-# Complex JS: use --stdin with heredoc (RECOMMENDED)
+# Complex JS: use --stdin with heredoc (RECOMMENDED for nested quotes, arrow fns, multiline)
 agent-browser eval --stdin <<'EOF'
 JSON.stringify(
   Array.from(document.querySelectorAll("img"))
     .filter(i => !i.alt)
     .map(i => ({ src: i.src.split("/").pop(), width: i.width }))
 )
-'EOF'
-
-# Alternative: base64 encoding (avoids all shell escaping issues)
-agent-browser eval -b "$(echo -n 'Array.from(document.querySelectorAll("a")).map(a => a.href)' | base64)"
+EOF
 ```
 
-**Rules of thumb:**
-
-- Single-line, no nested quotes -> regular `eval 'expression'` with single quotes is fine
-- Nested quotes, arrow functions, template literals, or multiline -> use `eval --stdin <<'EOF'`
-- Programmatic/generated scripts -> use `eval -b` with base64
-
-## Configuration File
-
-Create `agent-browser.json` in the project root for persistent settings:
-
-```json
-{
-  "headed": true,
-  "proxy": "http://localhost:8080",
-  "profile": "./browser-data"
-}
-```
-
-Priority (lowest to highest): `~/.agent-browser/config.json` < `./agent-browser.json` < env vars < CLI flags.
+For programmatic/generated scripts where heredocs are awkward, `eval -b <base64>` is also available.
 
 ## Deep-Dive Documentation
 
-| Reference                                                      | When to Use                                        |
-| -------------------------------------------------------------- | -------------------------------------------------- |
-| [references/commands.md](references/commands.md)               | Full command reference with all options            |
-| [references/snapshot-refs.md](references/snapshot-refs.md)     | Ref lifecycle, invalidation rules, troubleshooting |
-| [references/authentication.md](references/authentication.md)   | Login flows, OAuth, 2FA handling, state reuse      |
-| [references/video-recording.md](references/video-recording.md) | Recording workflows for debugging                  |
-| [references/profiling.md](references/profiling.md)             | Chrome DevTools profiling for performance          |
-| [references/proxy-support.md](references/proxy-support.md)     | Proxy configuration                                |
+See `references/` for: full command reference (`commands.md`), ref lifecycle (`snapshot-refs.md`), authentication patterns (`authentication.md`), video recording, profiling, and proxy support.
