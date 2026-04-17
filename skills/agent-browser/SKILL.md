@@ -58,6 +58,20 @@ URL=$(agent-browser get attr @e3 href) && agent-browser --download-path ./output
 
 **When to use batch vs single commands:** Use `batch` (or `&&`) when you don't need to read intermediate output. Run a single command (e.g., `snapshot -i`) alone when you need its output to decide the next step, then batch the remaining actions.
 
+**Global flags do not work inside batch sub-commands.** Sub-command strings are re-parsed for positional args only — global flags like `--annotate`, `--screenshot-format`, `--screenshot-quality`, `--screenshot-dir`, `--download-path`, and `--allow-file-access` are silently misinterpreted as positional arguments (often as a CSS selector), causing confusing failures like `Element not found`. Hoist the flag to the outer `agent-browser` invocation, or run that step outside the batch:
+
+```bash
+# Wrong — --annotate is taken as a CSS selector, fails with "Element not found":
+agent-browser batch "open https://example.com" "screenshot --annotate"
+
+# Right (hoisted; applies to every screenshot in the batch):
+agent-browser --annotate batch "open https://example.com" "screenshot"
+
+# Right (run separately):
+agent-browser batch "open https://example.com"
+agent-browser screenshot --annotate
+```
+
 ## Handling Authentication
 
 **Option 1: Auth vault (credentials stored encrypted, login by name)**
