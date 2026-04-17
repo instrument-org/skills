@@ -6,9 +6,9 @@ allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)
 
 # Browser Automation with agent-browser
 
-The CLI uses Chrome/Chromium via CDP directly. `agent-browser` is pre-installed in this environment.
+`agent-browser` is pre-installed and ready to use. The browser session is managed for you and persists across invocations within a project — just run commands.
 
-> **Note:** Do NOT pass `--cdp`, `--session`, or `--auto-connect` flags — these are injected automatically and will not work if passed manually.
+> Pass any path you like to `download` and `screenshot`; the command's output reports the actual saved location, which may differ.
 
 ## Core Workflow
 
@@ -57,7 +57,6 @@ The harness manages browser sessions, so cookies/localStorage persist across `ag
 ```bash
 # Navigation
 agent-browser open <url>              # Navigate (aliases: goto, navigate)
-agent-browser close                   # Close browser
 
 # Snapshot
 agent-browser snapshot -i             # Interactive elements with refs (recommended)
@@ -423,4 +422,4 @@ For programmatic/generated scripts where heredocs are awkward, `eval -b <base64>
 
 ## Deep-Dive Documentation
 
-See `references/` for: full command reference (`commands.md`), ref lifecycle (`snapshot-refs.md`), authentication patterns (`authentication.md`), video recording, profiling, and proxy support.
+See `references/` for additional detail: ref lifecycle (`snapshot-refs.md`) and authentication patterns (`authentication.md`).
