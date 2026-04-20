@@ -10,6 +10,7 @@
     "@types/node": "24.12.2"
   },
   "scripts": {
+    "check:skill": "node ../../scripts/check-skill.ts",
     "check:types": "tsc --noEmit",
     "test": "vitest run"
   }

@@ -1,6 +1,10 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
   "ui": "tui",
+  "globalDependencies": [
+    "scripts/check-skill.ts",
+    "scripts/generate-skill-md.ts"
+  ],
   "tasks": {
     "check:types": {
       "inputs": [
@@ -8,6 +12,16 @@
         "tests/**/*.ts",
         "tsconfig.json",
         "package.json"
+      ],
+      "outputs": []
+    },
+    "check:skill": {
+      "inputs": [
+        "SKILL.md",
+        "SKILL.template.md",
+        "package.json",
+        "tsconfig.json",
+        "scripts/**"
       ],
       "outputs": []
     },
@@ -49,11 +63,10 @@
     },
     "//#check:skills": {
       "inputs": [
-        "skills/**/SKILL.md",
-        "skills/**/package.json",
-        "skills/**/tsconfig.json",
-        "skills/**/scripts/**",
-        "scripts/validate-skills.ts"
+        "skills/*/SKILL.md",
+        "skills/*/SKILL.template.md",
+        "skills/*/package.json",
+        "scripts/check-skills-aggregate.ts"
       ],
       "outputs": []
     },

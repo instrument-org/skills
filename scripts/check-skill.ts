@@ -1,11 +1,16 @@
 #!/usr/bin/env tsx
 
-import { existsSync, readFileSync, readdirSync } from "fs";
-import { spawnSync } from "node:child_process";
-import { basename, join } from "path";
-import { estimateTokenCount } from "tokenx";
+// Validates a single skill. Designed to be invoked from a skill's package.json
+// via `node ../../scripts/check-skill.ts` so turbo can cache the task per-skill
+// based on that skill's inputs.
+//
+// Cross-skill checks (e.g. duplicate names) live in check-skills-aggregate.ts.
 
-const SKILLS_DIR = join(process.cwd(), "skills");
+import { existsSync, readFileSync, readdirSync } from "fs";
+import { spawn } from "node:child_process";
+import { basename, dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { estimateTokenCount } from "tokenx";
 
 const NAME_MAX_LENGTH = 64;
 const DESCRIPTION_MAX_LENGTH = 1024;
@@ -14,18 +19,13 @@ const SKILL_MD_MAX_LINES = 500;
 const SKILL_MD_MAX_TOKENS = 5000;
 const KEBAB_CASE_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-interface Frontmatter {
+export interface Frontmatter {
   name?: string;
   description?: string;
   compatibility?: string;
 }
 
-interface ValidationError {
-  skill: string;
-  errors: string[];
-}
-
-function parseFrontmatter(content: string): Frontmatter | null {
+export function parseFrontmatter(content: string): Frontmatter | null {
   if (!content.startsWith("---")) return null;
   const end = content.indexOf("\n---", 3);
   if (end === -1) return null;
@@ -36,7 +36,10 @@ function parseFrontmatter(content: string): Frontmatter | null {
     const match = line.match(/^(\w[\w-]*):\s*(.*)/);
     if (!match) continue;
     const [, key, value] = match;
-    if (key === "name" || key === "description" || key === "compatibility") {
+    if (
+      value !== undefined &&
+      (key === "name" || key === "description" || key === "compatibility")
+    ) {
       result[key] = value.replace(/^["']|["']$/g, "").trim();
     }
   }
@@ -139,24 +142,13 @@ function validateTsconfig(skillPath: string): string[] {
   return errors;
 }
 
-const SKILL_PATH_RE_CACHE = new Map<string, RegExp>();
-
-function getSkillPathRe(folderName: string): RegExp {
-  let re = SKILL_PATH_RE_CACHE.get(folderName);
-  if (!re) {
-    const escaped = folderName.replace(/[-]/g, "\\-");
-    re = new RegExp(`skills/${escaped}/`);
-    SKILL_PATH_RE_CACHE.set(folderName, re);
-  }
-  return re;
-}
-
 function validateNoAbsoluteSkillPaths(
   folderName: string,
   skillPath: string,
 ): string[] {
   const errors: string[] = [];
-  const re = getSkillPathRe(folderName);
+  const escaped = folderName.replace(/[-]/g, "\\-");
+  const re = new RegExp(`skills/${escaped}/`);
 
   const dirsToCheck = ["scripts"];
   const filesToCheck: string[] = [join(skillPath, "SKILL.md")];
@@ -207,39 +199,80 @@ function validateScriptCliUsage(skillPath: string): string[] {
   return errors;
 }
 
-function validateGeneratedSkillMd(skillPath: string): string[] {
-  const templatePath = join(skillPath, "SKILL.template.md");
-  const skillName = basename(skillPath);
+// Spawns generate-skill-md.ts for the given skill (or all skills if undefined).
+// `repoRoot` is the directory that contains both `scripts/` and `skills/`.
+// Errors are bucketed back to the originating skill so callers can attribute
+// them correctly.
+function runGeneratedSkillMdCheck({
+  repoRoot,
+  skillName,
+}: {
+  repoRoot: string;
+  skillName?: string;
+}): Promise<Map<string, string>> {
+  return new Promise((resolve) => {
+    const errorsBySkill = new Map<string, string>();
+    const args = ["scripts/generate-skill-md.ts", "--check"];
+    if (skillName) {
+      args.push("--skill", skillName);
+    }
+    const child = spawn(process.execPath, args, { cwd: repoRoot });
 
-  if (!existsSync(templatePath) || !skillName) {
-    return [];
-  }
+    let stdout = "";
+    let stderr = "";
+    child.stdout?.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr?.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
 
-  const result = spawnSync(
-    process.execPath,
-    ["scripts/generate-skill-md.ts", "--check", "--skill", skillName],
-    {
-      cwd: process.cwd(),
-      encoding: "utf-8",
-    },
-  );
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve(errorsBySkill);
+        return;
+      }
 
-  if (result.status === 0) {
-    return [];
-  }
+      const errorOutput = [stdout.trim(), stderr.trim()]
+        .filter(Boolean)
+        .join("\n");
 
-  const errorOutput = [result.stdout.trim(), result.stderr.trim()]
-    .filter(Boolean)
-    .join("\n");
+      // generate-skill-md.ts errors are formatted as `${skillName}: <message>`.
+      for (const line of errorOutput.split("\n")) {
+        const match = line.match(/^([^:\s]+):\s*(.*)$/);
+        if (!match) continue;
+        const skill = match[1]!;
+        const message = match[2]!;
+        errorsBySkill.set(
+          skill,
+          `Generated SKILL.md check failed: ${skill}: ${message}`,
+        );
+      }
 
-  return [
-    `Generated SKILL.md check failed${errorOutput ? `: ${errorOutput}` : ""}`,
-  ];
+      if (errorsBySkill.size === 0 && errorOutput) {
+        errorsBySkill.set(
+          "*",
+          `Generated SKILL.md check failed: ${errorOutput}`,
+        );
+      }
+
+      resolve(errorsBySkill);
+    });
+  });
 }
 
-function validateSkill(folderName: string): string[] {
+// Runs all single-skill validations EXCEPT cross-skill checks (e.g. duplicate
+// names). Cross-skill checks live in check-skills-aggregate.ts.
+// `repoRoot` contains `scripts/` and `skills/`.
+export async function checkSkill({
+  folderName,
+  repoRoot,
+}: {
+  folderName: string;
+  repoRoot: string;
+}): Promise<string[]> {
   const errors: string[] = [];
-  const skillPath = join(SKILLS_DIR, folderName);
+  const skillPath = join(repoRoot, "skills", folderName);
   const skillMdPath = join(skillPath, "SKILL.md");
 
   let content: string;
@@ -325,66 +358,56 @@ function validateSkill(folderName: string): string[] {
   }
   errors.push(...validateNoAbsoluteSkillPaths(folderName, skillPath));
   errors.push(...validateScriptCliUsage(skillPath));
-  errors.push(...validateGeneratedSkillMd(skillPath));
+
+  const templatePath = join(skillPath, "SKILL.template.md");
+  if (existsSync(templatePath)) {
+    const generated = await runGeneratedSkillMdCheck({
+      repoRoot,
+      skillName: folderName,
+    });
+    const err = generated.get(folderName) ?? generated.get("*");
+    if (err) {
+      errors.push(err);
+    }
+  }
 
   return errors;
 }
 
-function main() {
-  const skillFolders = readdirSync(SKILLS_DIR, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => d.name)
-    .sort();
-
-  const results: ValidationError[] = [];
-  const namesSeen = new Map<string, string>();
-
-  for (const folder of skillFolders) {
-    const errors = validateSkill(folder);
-
-    const skillMdPath = join(SKILLS_DIR, folder, "SKILL.md");
-    try {
-      const content = readFileSync(skillMdPath, "utf-8");
-      const fm = parseFrontmatter(content);
-      if (fm?.name) {
-        const existing = namesSeen.get(fm.name);
-        if (existing) {
-          errors.push(
-            `Duplicate skill name "${fm.name}" (also used by "${existing}")`,
-          );
-        } else {
-          namesSeen.set(fm.name, folder);
-        }
-      }
-    } catch {
-      // already reported as missing SKILL.md
-    }
-
-    results.push({ skill: folder, errors });
+function parseSkillName(): string {
+  const argv = process.argv.slice(2);
+  const flagIdx = argv.indexOf("--skill");
+  if (flagIdx >= 0 && flagIdx + 1 < argv.length) {
+    return argv[flagIdx + 1]!;
   }
-
-  let hasFailures = false;
-
-  for (const { skill, errors } of results) {
-    if (errors.length === 0) {
-      console.log(`✅ ${skill}`);
-    } else {
-      hasFailures = true;
-      console.log(`❌ ${skill}`);
-      for (const error of errors) {
-        console.log(`   • ${error}`);
-      }
-    }
-  }
-
-  const passed = results.filter((r) => r.errors.length === 0).length;
-  const total = results.length;
-
-  console.log(`\n${passed}/${total} skills passed validation`);
-
-  if (hasFailures) {
-    process.exit(1);
-  }
+  return basename(process.cwd());
 }
 
-main();
+async function main() {
+  const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+  const folderName = parseSkillName();
+
+  const errors = await checkSkill({ folderName, repoRoot });
+
+  if (errors.length === 0) {
+    console.log(`✅ ${folderName}`);
+    return;
+  }
+
+  console.log(`❌ ${folderName}`);
+  for (const error of errors) {
+    console.log(`   • ${error}`);
+  }
+  process.exit(1);
+}
+
+// Only run as CLI when executed directly (not when imported by the aggregate
+// script for the agent-browser fallback).
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error) => {
+    console.error(
+      error instanceof Error ? (error.stack ?? error.message) : error,
+    );
+    process.exit(1);
+  });
+}

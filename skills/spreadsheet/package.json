@@ -13,6 +13,7 @@
     "@types/papaparse": "^5.5.2"
   },
   "scripts": {
+    "check:skill": "node ../../scripts/check-skill.ts",
     "check:types": "tsc --noEmit",
     "test": "vitest run"
   }
