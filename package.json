@@ -24,7 +24,7 @@
     "check:skills-md": "node scripts/generate-skill-md.ts --check",
     "check:spelling": "cspell \"**/*\" --no-progress",
     "check:syncpack": "syncpack lint",
-    "check:types": "turbo run check:types",
+    "check:types": "tsc --noEmit",
     "check:unused-words": "cspell-check-unused-words",
     "fix:format": "prettier --write .",
     "fix:spelling": "cspell \"**/*\" --no-progress --fix",

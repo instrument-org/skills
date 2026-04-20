@@ -81,6 +81,10 @@
     "//#check:format": {
       "inputs": ["$TURBO_DEFAULT$", ".prettierignore"],
       "outputs": []
+    },
+    "//#check:types": {
+      "inputs": ["scripts/**/*.ts", "*.ts", "tsconfig.json", "package.json"],
+      "outputs": []
     }
   }
 }

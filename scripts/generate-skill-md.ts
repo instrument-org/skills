@@ -43,6 +43,7 @@ function getFileJsDoc(scriptPath: string): FileJsDoc {
     if (!jsDocNodes || jsDocNodes.length === 0) continue;
 
     const jsDoc = jsDocNodes[0];
+    if (!jsDoc) continue;
     const description =
       typeof jsDoc.comment === "string"
         ? jsDoc.comment.trim() || undefined
