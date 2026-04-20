@@ -12,13 +12,6 @@ const config: KnipConfig = {
         "src/client/components/demo/*.tsx",
       ],
     },
-    "tools/hero-images": {
-      entry: [
-        "src/server/index.ts",
-        "src/client/main.tsx",
-        "src/client/components/*",
-      ],
-    },
   },
   ignoreDependencies: [
     "jscodeshift",
