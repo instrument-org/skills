@@ -12,39 +12,6 @@ const config: KnipConfig = {
         "src/client/components/demo/*.tsx",
       ],
     },
-    "templates/shadcn": {
-      entry: [
-        "src/server/index.ts",
-        "src/client/main.tsx",
-        "src/client/components/ui/*",
-        "src/client/components/theme-provider.tsx",
-        "src/client/lib/utils.ts",
-      ],
-    },
-    "templates/solid": {
-      entry: [
-        "app.config.ts",
-        "src/app.tsx",
-        "src/entry-client.tsx",
-        "src/entry-server.tsx",
-        "src/routes/**/*.tsx",
-      ],
-    },
-    "templates/angular": {
-      entry: ["src/app/app.css", "src/styles.css"],
-    },
-    "templates/htmx": {
-      entry: ["public/htmx.min.js", "public/styles.css", "public/index.html"],
-    },
-    "templates/svelte-kit": {
-      entry: ["src/lib/index.ts", "src/app.css"],
-    },
-    "templates/nextjs": {
-      entry: ["src/app/**/*.tsx"],
-    },
-    "templates/astro": {
-      entry: ["src/**/*.astro"],
-    },
     "tools/hero-images": {
       entry: [
         "src/server/index.ts",
