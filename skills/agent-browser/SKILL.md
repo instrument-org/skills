@@ -114,12 +114,6 @@ agent-browser wait "#spinner" --state hidden  # Wait for element to disappear
 agent-browser download @e1 <path>     # Click an element to trigger a download, save to <path>
 agent-browser wait --download <path>  # Wait for an in-progress download to finish
 
-# Tabs
-agent-browser tab new                          # Open new tab
-agent-browser tab list                         # List open tabs
-agent-browser tab 2                            # Switch to tab by index
-agent-browser tab close                        # Close current tab
-
 # Cookies & Storage
 agent-browser cookies get                      # List all cookies
 agent-browser cookies set name value --url https://example.com
