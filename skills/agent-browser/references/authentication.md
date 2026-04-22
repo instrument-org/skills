@@ -58,14 +58,14 @@ agent-browser click @e4  # Sign in
 agent-browser wait --url "**/app.example.com**"
 ```
 
-For consent screens that require human review, switch to headed mode (see 2FA below).
+For consent screens that require human review, see 2FA below.
 
 ## Two-Factor Authentication
 
-For 2FA, captcha, or any flow that requires a human, run headed and let the user complete it in the visible window:
+For 2FA, captcha, or any flow that requires a human, let the user complete it in the visible browser window:
 
 ```bash
-AGENT_BROWSER_HEADED=1 agent-browser open https://app.example.com/login
+agent-browser open https://app.example.com/login
 agent-browser snapshot -i
 agent-browser fill @e1 "$APP_USERNAME"
 agent-browser fill @e2 "$APP_PASSWORD"

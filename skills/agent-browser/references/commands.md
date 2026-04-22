@@ -251,7 +251,6 @@ agent-browser state load auth.json    # Restore saved state
 ```bash
 agent-browser --session <name> ...    # Isolated browser session
 agent-browser --json ...              # JSON output for parsing
-agent-browser --headed ...            # Show browser window (not headless)
 agent-browser --full ...              # Full page screenshot (-f)
 agent-browser --cdp <port> ...        # Connect via Chrome DevTools Protocol
 agent-browser -p <provider> ...       # Cloud browser provider (--provider)
@@ -269,15 +268,13 @@ agent-browser <command> --help        # Show detailed help for a command
 ## Debugging
 
 ```bash
-agent-browser --headed open example.com   # Show browser window
 agent-browser --cdp 9222 snapshot         # Connect via CDP port
 agent-browser connect 9222                # Alternative: connect command
 agent-browser console                     # View console messages
 agent-browser console --clear             # Clear console
 agent-browser errors                      # View page errors
 agent-browser errors --clear              # Clear errors
-agent-browser highlight @e1               # Highlight element
-agent-browser inspect                     # Open Chrome DevTools for this session
+agent-browser highlight @e1               # Outline a ref on the page (visual confirmation)
 agent-browser trace start                 # Start recording trace
 agent-browser trace stop trace.zip        # Stop and save trace
 agent-browser profiler start              # Start Chrome DevTools profiling
