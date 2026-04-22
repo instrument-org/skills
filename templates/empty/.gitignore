@@ -6,6 +6,7 @@
 
 # Instrument
 .instrument/
+.state/
 
 # TypeScript cache
 *.tsbuildinfo
