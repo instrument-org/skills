@@ -134,6 +134,8 @@ agent-browser network har start                # Start HAR recording
 agent-browser network har stop ./capture.har   # Stop and save HAR file
 
 # Debug / Recording
+agent-browser console                          # View browser console messages (--clear to reset)
+agent-browser errors                           # View page JS errors (--clear to reset)
 agent-browser trace start                      # Start Chrome DevTools trace
 agent-browser trace stop ./trace.json          # Stop and save trace
 
@@ -146,6 +148,7 @@ agent-browser mouse wheel 300                  # Scroll wheel (dy [dx])
 # Capture
 agent-browser screenshot              # Screenshot to temp dir
 agent-browser screenshot --full       # Full page screenshot
+agent-browser screenshot @e1          # Screenshot just one element (by ref or CSS selector)
 agent-browser screenshot --annotate   # Annotated screenshot with numbered element labels
 agent-browser screenshot --screenshot-format jpeg --screenshot-quality 80
 agent-browser pdf output.pdf          # Save as PDF
@@ -295,15 +298,12 @@ agent-browser get text @e1 --json
 ### Visual Browser (Debugging)
 
 ```bash
-agent-browser --headed open https://example.com
-agent-browser highlight @e1
-agent-browser inspect
-agent-browser record start demo.webm # Record session
-agent-browser profiler start         # Start Chrome DevTools profiling
-agent-browser profiler stop trace.json
+agent-browser highlight @e1            # Outline a ref on the page (visual confirmation)
+agent-browser record start demo.webm   # Start recording the session as a .webm video
+agent-browser record stop
+agent-browser profiler start           # Start CDP performance tracing
+agent-browser profiler stop trace.json # Stop and save the profile
 ```
-
-Use `AGENT_BROWSER_HEADED=1` to enable headed mode via environment variable.
 
 ### Viewport
 
