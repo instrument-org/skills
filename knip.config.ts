@@ -6,11 +6,7 @@ const config: KnipConfig = {
       entry: ["scripts/**/*.ts"],
     },
     "templates/basic": {
-      entry: [
-        "src/server/index.ts",
-        "src/client/main.tsx",
-        "src/client/components/demo/*.tsx",
-      ],
+      entry: ["scripts/*.ts"],
     },
   },
   ignoreDependencies: [
