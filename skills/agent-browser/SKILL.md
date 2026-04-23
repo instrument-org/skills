@@ -12,13 +12,19 @@ allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)
 
 ## Core Workflow
 
+> **IMPORTANT — Ref `click` / `hover`:** `snapshot -i` is the **full** page. The snapshot text does **not** tell you what is on screen, so treat ref targets as **possibly off-viewport**. `click @eN` can **exit 0 and still no-op** below the fold.
+>
+> **Default:** always `agent-browser scrollintoview @eN && agent-browser click @eN` (same for `hover`). **Link tours:** `snapshot -i --urls` then `open "<href>"` when you do not need a literal click. `is visible` exists if you branch; do not rely on guessing from snapshot layout alone.
+>
+> Drop this callout after **vercel-labs/agent-browser#1073** ships (see **vercel-labs/agent-browser#1044**).
+
 > **IMPORTANT — URL Discovery:** Never fabricate specific or deep URLs (paths, category IDs, query strings) from memory — these change and your training data is likely stale. Well-known root domains (`amazon.com`, `github.com`, etc.) are fine as a starting point. For anything more specific, discover the URL first: use a search tool, follow links from a root page, or use a URL the user or a document has provided.
 
 Every browser automation follows this pattern:
 
 1. **Navigate**: `agent-browser open <url>`
-2. **Snapshot**: `agent-browser snapshot -i` (get element refs like `@e1`, `@e2`)
-3. **Interact**: Use refs to click, fill, select
+2. **Snapshot**: `agent-browser snapshot -i` (add `--urls` when the task is mostly following links)
+3. **Interact**: use refs; for **`click` / `hover`**, always chain **`scrollintoview` first** (you usually cannot tell from the snapshot whether a ref is on screen). `fill`, `select`, etc. unchanged.
 4. **Re-snapshot**: After navigation or DOM changes, get fresh refs
 
 ```bash
@@ -28,7 +34,7 @@ agent-browser snapshot -i
 
 agent-browser fill @e1 "user@example.com"
 agent-browser fill @e2 "password123"
-agent-browser click @e3
+agent-browser scrollintoview @e3 && agent-browser click @e3
 agent-browser wait --load networkidle
 agent-browser snapshot -i  # Check result
 ```
@@ -39,7 +45,7 @@ The browser persists across `agent-browser` invocations via a background daemon,
 
 ```bash
 agent-browser open https://example.com && agent-browser wait --load networkidle && agent-browser snapshot -i
-agent-browser fill @e1 "user@example.com" && agent-browser fill @e2 "pass" && agent-browser click @e3
+agent-browser fill @e1 "user@example.com" && agent-browser fill @e2 "pass" && agent-browser scrollintoview @e3 && agent-browser click @e3
 agent-browser open https://example.com && agent-browser screenshot page.png
 
 # Capture output mid-chain and feed it to the next command
@@ -50,7 +56,7 @@ Use `&&` when you don't need to read intermediate output. Run commands separatel
 
 ## Handling Authentication
 
-The harness manages browser sessions, so cookies/localStorage persist across `agent-browser` invocations within a project. Just navigate to the login page, fill credentials, submit, and proceed — subsequent commands are already authenticated. See [references/authentication.md](references/authentication.md) for OAuth, 2FA, and token refresh patterns.
+The harness manages browser sessions, so cookies/localStorage persist across `agent-browser` invocations within a project. Just navigate to the login page, fill credentials, submit, and proceed — subsequent commands are already authenticated. See references/authentication.md for details.
 
 ## Essential Commands
 
@@ -64,7 +70,7 @@ agent-browser snapshot -i --urls      # Include href URLs for links
 agent-browser snapshot -s "#selector" # Scope to CSS selector
 
 # Interaction (use @refs from snapshot)
-agent-browser click @e1               # Click element
+agent-browser click @e1               # Off-screen ref = silent no-op; use scrollintoview @e1 && …
 agent-browser click @e1 --new-tab     # Click and open in new tab
 agent-browser dblclick @e1            # Double-click element
 agent-browser hover @e1               # Hover element (reveals tooltips/menus)
@@ -176,7 +182,7 @@ agent-browser diff url <url1> <url2> --selector "#main"  # Scope to element
 
 ## Efficiency Strategies
 
-**Use `--urls` to avoid re-navigation.** When you need to visit links from a page, use `snapshot -i --urls` to get all href URLs upfront. Then `open` each URL directly instead of clicking refs and navigating back.
+**Use `--urls` to avoid re-navigation.** When you need to visit links from a page, use `snapshot -i --urls` to get all href URLs upfront. Then `open` each URL directly instead of clicking refs and navigating back. That path also avoids below-the-fold ref clicks that would need `scrollintoview` first.
 
 **Snapshot once, act many times.** Never re-snapshot the same page. Extract all needed info (refs, URLs, text) from a single snapshot, then chain the remaining actions with `&&`.
 
