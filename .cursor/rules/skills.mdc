@@ -1,0 +1,18 @@
+---
+description: General rules for the Instrument skills/templates registry.
+alwaysApply: true
+---
+
+# Instrument Skills
+
+Skill and template registry consumed by the Instrument desktop app (cross-platform Electron, Windows/Linux/macOS). Not an application itself.
+
+- `skills/`: Agent skills installed into a workspace on demand. Scripts run from the workspace project root, not here. Each skill has its own `tests/` directory.
+
+## Notes
+
+- If a skill has a `SKILL.template.md`, `SKILL.md` is auto-generated. Edit the template, not `SKILL.md`.
+
+## Consumer App Context
+
+The primary user of these skills is a **cross-platform Electron desktop app for knowledge workers** in the "agentic AI workspace" category, with first-class support for **Windows, Linux, and macOS**. Users give the agent access to project folders and ask it to create files, edit documents, run research, organize outputs, build small apps, etc. The agent operates autonomously on local files rather than just answering questions. It has tools for file I/O, shell, web search, browser automation, and image generation. Skills extend the agent with domain-specific capabilities (e.g. transformers.js inference, browser scraping). When writing or evaluating skills, optimize for this agentic file-centric desktop context across all three platforms — avoid macOS-only or Linux-only assumptions unless the skill explicitly documents platform requirements. Do not optimize for CI pipelines, server environments, or traditional CLI tools.

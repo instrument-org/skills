@@ -1,6 +1,7 @@
 ---
-alwaysApply: true
-globs: *.test.*
+description: Test conventions for skills.
+globs: **/*.test.*
+alwaysApply: false
 ---
 
 - Use `it.each` for testing repetitive cases.

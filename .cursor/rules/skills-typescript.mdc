@@ -1,6 +1,7 @@
 ---
-globs: *.ts,*.tsx
-alwaysApply: true
+description: TypeScript coding standards for skills.
+globs: **/*.ts,**/*.tsx
+alwaysApply: false
 ---
 
 - Avoid casting types unless necessary. If you do cast, you must add a comment explaining why.
