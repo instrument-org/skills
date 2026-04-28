@@ -12,6 +12,7 @@ Skill and template registry consumed by the Instrument desktop app (cross-platfo
 ## Notes
 
 - If a skill has a `SKILL.template.md`, `SKILL.md` is auto-generated. Edit the template, not `SKILL.md`.
+- Prefer wrapping long lines when it makes code, prompts, or docs easier to scan.
 
 ## Consumer App Context
 
