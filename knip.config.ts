@@ -1,6 +1,7 @@
 import type { KnipConfig } from "knip";
 
 const config: KnipConfig = {
+  ignore: [".cursor/**/*"],
   workspaces: {
     "skills/*": {
       entry: ["scripts/**/*.ts"],
