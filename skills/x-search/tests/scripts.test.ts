@@ -8,7 +8,7 @@ const MOCK_ENV = {
 
 const MOCK_RESPONSE = {
   choices: [{ message: { content: "Here are posts about @handle..." } }],
-  model: "x-ai/grok-4.1-fast",
+  model: "x-ai/grok-4.3",
 };
 
 function mockFetchOk(body = MOCK_RESPONSE) {
@@ -50,7 +50,7 @@ describe("xSearch", () => {
     expect(result.content).toMatchInlineSnapshot(
       `"Here are posts about @handle..."`,
     );
-    expect(result.model).toMatchInlineSnapshot(`"x-ai/grok-4.1-fast"`);
+    expect(result.model).toMatchInlineSnapshot(`"x-ai/grok-4.3"`);
   });
 
   it("sends the correct request body", async () => {
@@ -62,7 +62,7 @@ describe("xSearch", () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe(`${MOCK_ENV.OPENROUTER_BASE_URL}/chat/completions`);
     const body = JSON.parse(init?.body as string);
-    expect(body.model).toBe("x-ai/grok-4.1-fast");
+    expect(body.model).toBe("x-ai/grok-4.3");
     expect(body.plugins).toEqual([{ id: "web" }]);
     expect(body.messages[0].content).toBe("Find posts about AI");
     expect(body.x_search_filter).toBeUndefined();
@@ -141,7 +141,7 @@ describe("xSearch", () => {
   });
 
   it("throws when response has no content", async () => {
-    mockFetchOk({ choices: [], model: "x-ai/grok-4.1-fast" });
+    mockFetchOk({ choices: [], model: "x-ai/grok-4.3" });
     await expect(xSearch({ prompt: "test" })).rejects.toThrow(
       "No content in response",
     );

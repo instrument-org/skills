@@ -49,7 +49,7 @@ function getEnv() {
 
 export async function xSearch({
   filter,
-  model = "x-ai/grok-4.1-fast",
+  model = "x-ai/grok-4.3",
   prompt,
 }: XSearchOptions): Promise<XSearchResult> {
   const { apiKey, baseUrl } = getEnv();
