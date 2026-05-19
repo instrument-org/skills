@@ -1,3 +1,5 @@
+minimumReleaseAge: 10080
+
 allowBuilds:
   ffmpeg-static: true
   onnxruntime-node: true
