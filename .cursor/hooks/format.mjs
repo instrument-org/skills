@@ -7,9 +7,9 @@ const PRETTIER_EXT =
 const ESLINT_EXT = /\.(?:ts|tsx|mjs|cjs|js|jsx)$/i;
 
 const INSTRUMENT_ROOT_NAMES = new Set([
-  "@instrument/internal",
   "@instrument-org/monorepo",
   "@instrument-org/skills",
+  "@instrument/internal",
 ]);
 
 function fileExists(filePath) {
@@ -21,6 +21,28 @@ function fileExists(filePath) {
     return false;
   }
   return true;
+}
+
+function findEslintConfigDirectory(repoRoot, filePath) {
+  // Walk up from the file's directory to find the nearest eslint.config.*,
+  // stopping at the repo root. ESLint must run from this directory so that
+  // package-level settings apply.
+  let directory = path.dirname(path.resolve(filePath));
+  const root = path.resolve(repoRoot);
+  while (directory.startsWith(root) && directory !== root) {
+    for (const name of [
+      "eslint.config.ts",
+      "eslint.config.mts",
+      "eslint.config.js",
+      "eslint.config.mjs",
+    ]) {
+      if (fileExists(path.join(directory, name))) {
+        return directory;
+      }
+    }
+    directory = path.dirname(directory);
+  }
+  return root;
 }
 
 function formatDirtyFiles(repoRoot) {
@@ -64,6 +86,66 @@ function formatEditedFile({ filePath, repoRoot }) {
   }
 }
 
+function formatEditedFiles({ cwd, filePaths, repoRoot }) {
+  const relativePaths = filePaths
+    .map((filePath) =>
+      getSafeRelativePath({
+        filePath: path.resolve(cwd, filePath),
+        repoRoot,
+      }),
+    )
+    .filter(
+      (relativePath) =>
+        relativePath && fileExists(path.join(repoRoot, relativePath)),
+    );
+
+  if (relativePaths.length === 0 || !isInstrumentRepoRoot(repoRoot)) {
+    return;
+  }
+
+  const prettierFiles = relativePaths.filter((relativePath) =>
+    PRETTIER_EXT.test(relativePath),
+  );
+  const eslintFiles = relativePaths.filter((relativePath) =>
+    ESLINT_EXT.test(relativePath),
+  );
+
+  runBatched(repoRoot, prettierFiles, runPrettier);
+  runBatched(repoRoot, eslintFiles, runEslint);
+  runBatched(repoRoot, prettierFiles, runPrettier);
+}
+
+function getCodexEditedPaths(data) {
+  const command =
+    typeof data.tool_input?.command === "string" ? data.tool_input.command : "";
+  const paths = new Set();
+
+  for (const line of command.split("\n")) {
+    const match = /^\*\*\* (?:Add|Update) File: (.+)$/.exec(line);
+    if (match) {
+      paths.add(match[1].trim());
+    }
+  }
+
+  return [...paths];
+}
+
+function getRepoRoot(cwd) {
+  const root = readGitPaths(cwd, ["rev-parse", "--show-toplevel"]).trim();
+  return root || cwd;
+}
+
+function getSafeRelativePath({ filePath, repoRoot }) {
+  const relativePath = path.relative(repoRoot, filePath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    return;
+  }
+  if (shouldSkipRelative(relativePath)) {
+    return;
+  }
+  return relativePath;
+}
+
 function getStopRoots({ data, repoRoot }) {
   const workspaceRoots = Array.isArray(data.workspace_roots)
     ? data.workspace_roots
@@ -81,17 +163,6 @@ function getStopRoots({ data, repoRoot }) {
     return [];
   }
   return instrumentRoots;
-}
-
-function getSafeRelativePath({ filePath, repoRoot }) {
-  const relativePath = path.relative(repoRoot, filePath);
-  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
-    return;
-  }
-  if (shouldSkipRelative(relativePath)) {
-    return;
-  }
-  return relativePath;
 }
 
 function isInstrumentRepoRoot(repoRoot) {
@@ -149,9 +220,9 @@ function listDirtyPaths(repoRoot) {
   return [...dirty];
 }
 
-function readGitPaths(repoRoot, args) {
+function readGitPaths(repoRoot, arguments_) {
   try {
-    return execFileSync("git", args, {
+    return execFileSync("git", arguments_, {
       cwd: repoRoot,
       encoding: "utf8",
       maxBuffer: 50 * 1024 * 1024,
@@ -179,28 +250,6 @@ function runBatched(repoRoot, files, run) {
   }
 }
 
-function findEslintConfigDirectory(repoRoot, filePath) {
-  // Walk up from the file's directory to find the nearest eslint.config.*,
-  // stopping at the repo root. ESLint must run from this directory so that
-  // package-level settings (e.g. better-tailwindcss entryPoint) apply.
-  let directory = path.dirname(path.resolve(filePath));
-  const root = path.resolve(repoRoot);
-  while (directory.startsWith(root) && directory !== root) {
-    for (const name of [
-      "eslint.config.ts",
-      "eslint.config.mts",
-      "eslint.config.js",
-      "eslint.config.mjs",
-    ]) {
-      if (fileExists(path.join(directory, name))) {
-        return directory;
-      }
-    }
-    directory = path.dirname(directory);
-  }
-  return root;
-}
-
 function runEslint(repoRoot, files) {
   if (files.length === 0) {
     return;
@@ -210,8 +259,6 @@ function runEslint(repoRoot, files) {
     return;
   }
 
-  // Group files by their nearest eslint.config directory so each group runs
-  // with the correct cwd (and thus the correct package-level config).
   const groups = new Map();
   for (const relativePath of files) {
     const configDirectory = findEslintConfigDirectory(
@@ -273,6 +320,9 @@ try {
 }
 
 try {
+  const cwd = process.cwd();
+  const repoRoot = getRepoRoot(cwd);
+
   if (
     data.hook_event_name === "afterFileEdit" &&
     typeof data.file_path === "string" &&
@@ -280,14 +330,29 @@ try {
   ) {
     formatEditedFile({
       filePath: path.resolve(data.file_path),
-      repoRoot: process.cwd(),
+      repoRoot,
     });
   }
 
   if (data.hook_event_name === "stop" && data.status === "completed") {
-    for (const root of getStopRoots({ data, repoRoot: process.cwd() })) {
+    for (const root of getStopRoots({ data, repoRoot })) {
       formatDirtyFiles(root);
     }
+  }
+
+  if (
+    data.hook_event_name === "PostToolUse" &&
+    data.tool_name === "apply_patch"
+  ) {
+    formatEditedFiles({
+      cwd,
+      filePaths: getCodexEditedPaths(data),
+      repoRoot,
+    });
+  }
+
+  if (data.hook_event_name === "Stop") {
+    formatDirtyFiles(repoRoot);
   }
 } catch (error) {
   console.error("[format-hook]", error?.message ?? error);
