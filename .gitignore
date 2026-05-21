@@ -147,5 +147,8 @@ dist
 # Code Workspace
 *.code-workspace
 
+# Cursor (per-user plugin prefs)
+.cursor/settings.json
+
 # Local folders
 *.local/
