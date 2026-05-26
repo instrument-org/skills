@@ -47,6 +47,14 @@ The primary user is a **cross-platform Electron desktop app for knowledge worker
 
 Repo-local skills live in `.cursor/skills/` (commit-message, create-registry-skill).
 
+## Package management
+
+- `pnpm` CLI (`install`, `add`, `remove`, `why`, etc.): outside sandbox (full
+  permissions). pnpm resolves packages from the global store and links them into
+  `node_modules`; sandbox isolation blocks that store path, so the workspace no
+  longer matches a normal local install.
+- `pnpm test`: sandbox OK.
+
 ## Tests
 
 - Use `it.each` for testing repetitive cases.
