@@ -47,14 +47,23 @@ The primary user is a **cross-platform Electron desktop app for knowledge worker
 
 Repo-local skills live in `.cursor/skills/` (commit-message, create-registry-skill).
 
+## Monorepo checks (Turbo)
+
+Run checks through Turbo from the repo root so tasks use caching. Do not
+`cd skills/*` to run repo-wide checks in a loop.
+
+- `pnpm check-and-test` — full CI
+- `turbo run check:types` — all packages
+- `turbo run check:types --filter=@instrument-org/skill-markdown` — one skill
+- Single test file only: `cd skills/<name> && pnpm test <path/to/file.test.ts>`
+
 ## Package management
 
 - Run `pnpm add`, `pnpm remove`, `pnpm install`, and other dependency-changing
   commands outside the sandbox. They touch the global pnpm store and can fail
   with store/symlink permission errors inside the sandbox.
 - Normal pnpm scripts that do not add, remove, or install packages, such as
-  `pnpm test`, `pnpm check:lint`, and `pnpm check-and-test`, can run inside
-  the sandbox.
+  `pnpm test` and `pnpm check-and-test`, can run inside the sandbox.
 
 ## Tests
 
