@@ -47,6 +47,15 @@ The primary user is a **cross-platform Electron desktop app for knowledge worker
 
 Repo-local skills live in `.cursor/skills/` (commit-message, create-registry-skill).
 
+## Package management
+
+- Run `pnpm add`, `pnpm remove`, `pnpm install`, and other dependency-changing
+  commands outside the sandbox. They touch the global pnpm store and can fail
+  with store/symlink permission errors inside the sandbox.
+- Normal pnpm scripts that do not add, remove, or install packages, such as
+  `pnpm test`, `pnpm check:lint`, and `pnpm check-and-test`, can run inside
+  the sandbox.
+
 ## Tests
 
 - Use `it.each` for testing repetitive cases.

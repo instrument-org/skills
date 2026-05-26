@@ -177,7 +177,7 @@ For test conventions and patterns, refer to an existing skill's `tests/scripts.t
 - [ ] `tsconfig.json` (copy from another skill)
 - [ ] `vitest.config.ts` (required — without it tests are silently skipped)
 - [ ] `tests/scripts.test.ts`
-- [ ] Dependencies in `package.json` + run `pnpm install` (requires `required_permissions: ["all"]` in sandbox)
+- [ ] Dependencies in `package.json` + run `pnpm install`
 
 ### Scripts
 
