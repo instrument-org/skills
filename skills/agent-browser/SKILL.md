@@ -1,7 +1,6 @@
 ---
 name: agent-browser
 description: Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", or any task requiring programmatic web interaction.
-allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)
 ---
 
 # Browser Automation with agent-browser
@@ -20,7 +19,9 @@ allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)
 
 > **IMPORTANT — URL Discovery:** Never fabricate specific or deep URLs (paths, category IDs, query strings) from memory — these change and your training data is likely stale. Well-known root domains (`amazon.com`, `github.com`, etc.) are fine as a starting point. For anything more specific, discover the URL first: use a search tool, follow links from a root page, or use a URL the user or a document has provided.
 
-Every browser automation follows this pattern:
+> **Reading vs interacting:** `snapshot -i` returns **interactive** elements (links, buttons, inputs) — not body copy. Paragraphs, FAQ answers, and article text are usually absent. To read what a page says, use `get text body` after `wait --load networkidle`. Use `snapshot -i` only when you need refs to click or fill.
+
+Every workflow follows this pattern:
 
 1. **Navigate**: `agent-browser open <url>`
 2. **Snapshot**: `agent-browser snapshot -i` (add `--urls` when the task is mostly following links)
@@ -38,6 +39,26 @@ agent-browser scrollintoview @e3 && agent-browser click @e3
 agent-browser wait --load networkidle
 agent-browser snapshot -i  # Check result
 ```
+
+## Reading page content
+
+When the goal is to **understand** a page (research, copy for a script, docs, product positioning), not to click through it:
+
+```bash
+agent-browser open https://example.com
+agent-browser wait --load networkidle
+agent-browser get text body > page.txt   # all visible text; read the file if output is large
+```
+
+| Goal                           | Command                                                        |
+| ------------------------------ | -------------------------------------------------------------- |
+| Read visible copy              | `get text body` (redirect to a file on long pages)             |
+| Read one region                | `get text main`, `get text article`, or `get text "#selector"` |
+| Find controls to click or fill | `snapshot -i` (optionally `--urls`)                            |
+
+`snapshot -i` always filters to interactive elements — running it again will not reveal more text.
+
+**Accordions / collapsed sections:** `get text body` only returns currently visible text. Expand sections first (`scrollintoview @eN && click @eN`), then re-run.
 
 ## Command Chaining
 
@@ -64,10 +85,13 @@ The harness manages browser sessions, so cookies/localStorage persist across `ag
 # Navigation
 agent-browser open <url>              # Navigate (aliases: goto, navigate)
 
-# Snapshot
-agent-browser snapshot -i             # Interactive elements with refs (recommended)
+# Snapshot (for interaction refs; not for full page copy — see "Reading page content")
+agent-browser snapshot -i             # Interactive elements with refs (recommended for clicks/fills)
 agent-browser snapshot -i --urls      # Include href URLs for links
+agent-browser snapshot -c             # Compact tree (fewer empty nodes)
+agent-browser snapshot -d 6           # Limit accessibility tree depth
 agent-browser snapshot -s "#selector" # Scope to CSS selector
+agent-browser snapshot                # Full tree (verbose; use when you need headings + structure)
 
 # Interaction (use @refs from snapshot)
 agent-browser click @e1               # Off-screen ref = silent no-op; use scrollintoview @e1 && …
@@ -91,7 +115,9 @@ agent-browser scrollintoview @e1      # Scroll element into view
 agent-browser upload @e1 ./file.pdf             # Upload single file
 agent-browser upload @e1 ./a.png ./b.png        # Upload multiple files
 
-# Get information
+# Get information (preferred for reading page copy)
+agent-browser get text body           # All visible text on the page (pipe to a file if large)
+agent-browser get text main           # Scoped to <main> when present
 agent-browser get text @e1            # Get element text
 agent-browser get html @e1            # Get element outer HTML
 agent-browser get value @e1           # Get input/select value
@@ -184,7 +210,7 @@ agent-browser diff url <url1> <url2> --selector "#main"  # Scope to element
 
 **Use `--urls` to avoid re-navigation.** When you need to visit links from a page, use `snapshot -i --urls` to get all href URLs upfront. Then `open` each URL directly instead of clicking refs and navigating back. That path also avoids below-the-fold ref clicks that would need `scrollintoview` first.
 
-**Snapshot once, act many times.** Never re-snapshot the same page. Extract all needed info (refs, URLs, text) from a single snapshot, then chain the remaining actions with `&&`.
+**Snapshot once, act many times.** For **interaction**, do not re-snapshot the same unchanged page; grab refs and URLs once, then chain actions with `&&`. For **reading**, use `get text body` (or a scoped selector) once; do not expect `snapshot -i` to include paragraph text.
 
 **Multi-page workflow:**
 
@@ -293,12 +319,10 @@ agent-browser frame main          # Return to main frame
 
 ```bash
 agent-browser open https://example.com/products
-agent-browser snapshot -i
-agent-browser get text @e5
-agent-browser get text body > page.txt
-
-agent-browser snapshot -i --json
-agent-browser get text @e1 --json
+agent-browser wait --load networkidle
+agent-browser get text body > page.txt   # full page copy
+agent-browser snapshot -i                # refs for specific fields
+agent-browser get text @e5               # targeted cell or element
 ```
 
 ### Visual Browser (Debugging)
