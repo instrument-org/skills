@@ -5,28 +5,32 @@ description: Browser automation CLI for AI agents. Use when the user needs to in
 
 # Browser Automation with agent-browser
 
-`agent-browser` is pre-installed and ready to use. The browser session is managed for you and persists across invocations within a project — just run commands.
+`agent-browser` is pre-installed; session persists across invocations — just run commands.
 
-> Pass any path you like to `download` and `screenshot`; the command's output reports the actual saved location, which may differ.
+> `download` and `screenshot` paths: command output reports the actual saved location, which may differ.
+
+## Important Reminders
+
+**`click`/`hover` refs may be off-screen** — snapshot text does not reflect what is visible.
+`click @eN` exits 0 and silently no-ops when the element is below the fold.
+Always `scrollintoview @eN && click @eN`. For links, prefer `snapshot -i --urls` then `open "<href>"`.
+Use `is visible @eN` to branch on visibility.
+_(Remove once vercel-labs/agent-browser#1073 ships.)_
+
+**Never fabricate deep URLs** — paths, IDs, and query strings go stale.
+Discover via search, follow links from a root page, or use URLs the user provides.
+
+**`snapshot -i` returns interactive elements only** — not body copy.
+To read page text, use `get text body` after `wait --load networkidle`.
 
 ## Core Workflow
 
-> **IMPORTANT — Ref `click` / `hover`:** `snapshot -i` is the **full** page. The snapshot text does **not** tell you what is on screen, so treat ref targets as **possibly off-viewport**. `click @eN` can **exit 0 and still no-op** below the fold.
->
-> **Default:** always `agent-browser scrollintoview @eN && agent-browser click @eN` (same for `hover`). **Link tours:** `snapshot -i --urls` then `open "<href>"` when you do not need a literal click. `is visible` exists if you branch; do not rely on guessing from snapshot layout alone.
->
-> Drop this callout after **vercel-labs/agent-browser#1073** ships (see **vercel-labs/agent-browser#1044**).
+Every workflow:
 
-> **IMPORTANT — URL Discovery:** Never fabricate specific or deep URLs (paths, category IDs, query strings) from memory — these change and your training data is likely stale. Well-known root domains (`amazon.com`, `github.com`, etc.) are fine as a starting point. For anything more specific, discover the URL first: use a search tool, follow links from a root page, or use a URL the user or a document has provided.
-
-> **Reading vs interacting:** `snapshot -i` returns **interactive** elements (links, buttons, inputs) — not body copy. Paragraphs, FAQ answers, and article text are usually absent. To read what a page says, use `get text body` after `wait --load networkidle`. Use `snapshot -i` only when you need refs to click or fill.
-
-Every workflow follows this pattern:
-
-1. **Navigate**: `agent-browser open <url>`
-2. **Snapshot**: `agent-browser snapshot -i` (add `--urls` when the task is mostly following links)
-3. **Interact**: use refs; for **`click` / `hover`**, always chain **`scrollintoview` first** (you usually cannot tell from the snapshot whether a ref is on screen). `fill`, `select`, etc. unchanged.
-4. **Re-snapshot**: After navigation or DOM changes, get fresh refs
+1. `agent-browser open <url>`
+2. `agent-browser snapshot -i` (add `--urls` when following links)
+3. Act on refs — `click`/`hover` always need `scrollintoview` first; `fill`/`select` do not
+4. Re-snapshot after any navigation or DOM change
 
 ```bash
 agent-browser open https://example.com/form
@@ -42,12 +46,12 @@ agent-browser snapshot -i  # Check result
 
 ## Reading page content
 
-When the goal is to **understand** a page (research, copy for a script, docs, product positioning), not to click through it:
+To read a page rather than interact with it:
 
 ```bash
 agent-browser open https://example.com
 agent-browser wait --load networkidle
-agent-browser get text body > page.txt   # all visible text; read the file if output is large
+agent-browser get text body > page.txt
 ```
 
 | Goal                           | Command                                                        |
@@ -56,13 +60,13 @@ agent-browser get text body > page.txt   # all visible text; read the file if ou
 | Read one region                | `get text main`, `get text article`, or `get text "#selector"` |
 | Find controls to click or fill | `snapshot -i` (optionally `--urls`)                            |
 
-`snapshot -i` always filters to interactive elements — running it again will not reveal more text.
+`snapshot -i` always filters to interactive elements; re-running it won't reveal more text.
 
-**Accordions / collapsed sections:** `get text body` only returns currently visible text. Expand sections first (`scrollintoview @eN && click @eN`), then re-run.
+**Accordions/collapsed sections:** `get text body` returns only visible text. Expand first (`scrollintoview @eN && click @eN`), then re-run.
 
 ## Command Chaining
 
-The browser persists across `agent-browser` invocations via a background daemon, so chaining commands with `&&` in a single shell call works naturally and is more efficient than separate calls. Use shell features (`&&`, `$(...)`, variables) freely.
+Commands share a background session — chain with `&&` for efficiency. Shell features (`$(...)`, variables) work freely.
 
 ```bash
 agent-browser open https://example.com && agent-browser wait --load networkidle && agent-browser snapshot -i
@@ -73,11 +77,11 @@ agent-browser open https://example.com && agent-browser screenshot page.png
 URL=$(agent-browser get attr @e3 href) && agent-browser open "$URL"
 ```
 
-Use `&&` when you don't need to read intermediate output. Run commands separately when you need to parse output first (e.g., `snapshot -i` to discover refs, then act on them).
+Run separately when you need to read intermediate output (e.g. `snapshot -i` to get refs first).
 
 ## Handling Authentication
 
-The harness manages browser sessions, so cookies/localStorage persist across `agent-browser` invocations within a project. Just navigate to the login page, fill credentials, submit, and proceed — subsequent commands are already authenticated. See references/authentication.md for details.
+Session cookies/localStorage persist automatically. Navigate to login, fill credentials, submit — subsequent commands are authenticated. See references/authentication.md for OAuth/2FA patterns.
 
 ## Essential Commands
 
@@ -85,13 +89,11 @@ The harness manages browser sessions, so cookies/localStorage persist across `ag
 # Navigation
 agent-browser open <url>              # Navigate (aliases: goto, navigate)
 
-# Snapshot (for interaction refs; not for full page copy — see "Reading page content")
-agent-browser snapshot -i             # Interactive elements with refs (recommended for clicks/fills)
+# Snapshot — for interaction refs; for page copy use get text body (see "Reading page content")
+agent-browser snapshot -i             # Interactive elements with refs (recommended); add -c to compact, -d N to limit depth
 agent-browser snapshot -i --urls      # Include href URLs for links
-agent-browser snapshot -c             # Compact tree (fewer empty nodes)
-agent-browser snapshot -d 6           # Limit accessibility tree depth
 agent-browser snapshot -s "#selector" # Scope to CSS selector
-agent-browser snapshot                # Full tree (verbose; use when you need headings + structure)
+agent-browser snapshot                # Full tree (includes headings + static text)
 
 # Interaction (use @refs from snapshot)
 agent-browser click @e1               # Off-screen ref = silent no-op; use scrollintoview @e1 && …
@@ -105,28 +107,23 @@ agent-browser select @e1 "option"     # Select dropdown option
 agent-browser check @e1               # Check checkbox
 agent-browser uncheck @e1             # Uncheck checkbox
 agent-browser press Enter             # Press key
-agent-browser keyboard type "text"    # Type at current focus (no selector)
-agent-browser keyboard inserttext "text"  # Insert without key events
+agent-browser keyboard type "text"    # Type at current focus (no selector); use inserttext to bypass key events
 agent-browser scroll down 500         # Scroll page
-agent-browser scroll down 500 --selector "div.content"  # Scroll within a specific container
 agent-browser scrollintoview @e1      # Scroll element into view
 
 # Upload files
 agent-browser upload @e1 ./file.pdf             # Upload single file
 agent-browser upload @e1 ./a.png ./b.png        # Upload multiple files
 
-# Get information (preferred for reading page copy)
-agent-browser get text body           # All visible text on the page (pipe to a file if large)
-agent-browser get text main           # Scoped to <main> when present
-agent-browser get text @e1            # Get element text
-agent-browser get html @e1            # Get element outer HTML
-agent-browser get value @e1           # Get input/select value
-agent-browser get attr @e1 href       # Get attribute value
+# Get information
+agent-browser get text body           # All visible text (pipe to a file if large)
+agent-browser get text @e1            # Element text
+agent-browser get html @e1            # Element outer HTML
+agent-browser get value @e1           # Input/select value
+agent-browser get attr @e1 href       # Attribute value
 agent-browser get count "li.item"     # Count matching elements
-agent-browser get box @e1             # Bounding box (x, y, width, height)
-agent-browser get styles @e1          # Computed CSS styles
-agent-browser get url                 # Get current URL
-agent-browser get title               # Get page title
+agent-browser get url                 # Current URL
+agent-browser get title               # Page title
 
 # Check element state
 agent-browser is visible @e1          # Exit 0 if visible, 1 if not
@@ -208,9 +205,9 @@ agent-browser diff url <url1> <url2> --selector "#main"  # Scope to element
 
 ## Efficiency Strategies
 
-**Use `--urls` to avoid re-navigation.** When you need to visit links from a page, use `snapshot -i --urls` to get all href URLs upfront. Then `open` each URL directly instead of clicking refs and navigating back. That path also avoids below-the-fold ref clicks that would need `scrollintoview` first.
+**`--urls` avoids re-navigation:** `snapshot -i --urls` gets all hrefs upfront; `open` each directly rather than clicking below-the-fold refs.
 
-**Snapshot once, act many times.** For **interaction**, do not re-snapshot the same unchanged page; grab refs and URLs once, then chain actions with `&&`. For **reading**, use `get text body` (or a scoped selector) once; do not expect `snapshot -i` to include paragraph text.
+**Snapshot once:** grab refs/URLs once, chain remaining actions with `&&`. For reading, `get text body` once — `snapshot -i` won't include paragraph text.
 
 **Multi-page workflow:**
 
@@ -225,9 +222,7 @@ agent-browser open https://example.com/page2 && agent-browser screenshot
 
 ### Downloading Files
 
-`download` and `wait --download` only work for content Chrome treats as a download (responses with `Content-Disposition: attachment`, or MIME types it won't render inline). Use `download` on the element that triggers the file transfer directly — clicking a download link with `click` is silently cancelled by Chrome.
-
-Pass any destination path; the file is saved to a harness-managed downloads directory and the command's output reports the actual path. Read that output to learn where the file ended up.
+`download` only works for content Chrome treats as a download (`Content-Disposition: attachment` or non-renderable MIME types). Use it on the element that triggers the transfer — `click` on download links is silently cancelled. Command output reports the actual saved path.
 
 ```bash
 # Option A: Click a download link/button on the page
@@ -245,13 +240,13 @@ agent-browser open <that-url>
 agent-browser wait --download file.docx
 ```
 
-**Inline-rendered content (SVG, HTML, PNG, JPG, most PDFs)** renders in the tab instead of firing a download event, so `download`/`wait --download` will time out. Pick by what you have:
+**Inline-rendered content (SVG, HTML, PNG, JPG, PDFs)** won't fire a download event — `download`/`wait --download` will time out. Instead:
 
-1. **Real asset URL, public:** `curl -fsSL -o ./tmp/logo.svg https://example.com/logo.svg`
-2. **Real asset URL, behind login:** `fetch()` it from the page's own origin via `eval` so cookies apply (must be **same-origin** — `www.example.com` and `example.com` differ).
-3. **No URL** (inline `<svg>`, canvas, generated content): grab the DOM (`outerHTML`, etc.) via `eval`.
+1. **Public URL:** `curl -fsSL -o ./tmp/logo.svg https://example.com/logo.svg`
+2. **Behind login (same-origin only):** `fetch()` via `eval` so cookies apply
+3. **No URL** (inline `<svg>`, canvas): grab via `eval` (`outerHTML`, etc.)
 
-For 2 and 3, pipe the eval output through `jq -r .` to unwrap its JSON-quoted string straight onto disk:
+For 2 and 3, pipe through `jq -r .` to unwrap the JSON-quoted string:
 
 ```bash
 agent-browser eval 'document.querySelector("header svg").outerHTML' | jq -r . > ./tmp/logo.svg
@@ -293,7 +288,7 @@ agent-browser wait --url "**/dashboard"
 
 ### Working with Iframes
 
-Iframe content is automatically inlined in snapshots. Refs inside iframes carry frame context, so you can interact with them directly.
+Iframe content is inlined in snapshots; refs work directly without frame switching.
 
 ```bash
 agent-browser open https://example.com/checkout
@@ -342,7 +337,7 @@ agent-browser set viewport 1920 1080          # Set viewport size (default: 1280
 agent-browser set viewport 1920 1080 2        # 2x retina (same CSS size, higher res screenshots)
 ```
 
-The `scale` parameter (3rd argument) sets `window.devicePixelRatio` without changing CSS layout.
+`scale` (3rd arg) sets `devicePixelRatio` without changing CSS layout.
 
 ### Local Files (PDFs, HTML)
 
@@ -353,19 +348,9 @@ agent-browser screenshot output.png
 
 ## Timeouts and Slow Pages
 
-The default timeout is 25 seconds (`AGENT_BROWSER_DEFAULT_TIMEOUT` env var, in ms). For slow pages use explicit waits:
+Default timeout: 25s. For slow pages use explicit waits — prefer element/text/URL waits over `wait N`.
 
-```bash
-agent-browser wait --load networkidle
-agent-browser wait "#content"
-agent-browser wait --url "**/dashboard"
-agent-browser wait --fn "document.readyState === 'complete'"
-agent-browser wait 5000
-```
-
-### Lazy-Loaded Images
-
-`wait --load networkidle` does not trigger lazy loading — only scrolling into the viewport does.
+**Lazy-loaded images:** `wait --load networkidle` does not trigger lazy loading. `img.src` will return placeholder URLs until the image is scrolled into view. Always `scrollintoview @eN` before evaluating image src or expecting real URLs from search/listing pages.
 
 ```bash
 agent-browser scrollintoview @e1
@@ -374,41 +359,25 @@ agent-browser eval 'document.querySelector("img.product-image").src'
 
 ## JavaScript Dialogs
 
-When a page opens a JavaScript dialog (`alert()`, `confirm()`, or `prompt()`), it blocks all other browser commands (snapshot, screenshot, click, etc.) until the dialog is dismissed. If commands start timing out unexpectedly, check for a pending dialog:
+`alert`/`beforeunload` are auto-accepted. `confirm`/`prompt` block all commands until dismissed — if commands time out unexpectedly, check for a pending dialog. Responses include a `warning` field when a dialog is open.
 
 ```bash
 agent-browser dialog status
-agent-browser dialog accept
-agent-browser dialog accept "my input"
-agent-browser dialog dismiss
+agent-browser dialog accept           # or: dialog accept "my input" / dialog dismiss
 ```
-
-When a dialog is pending, all command responses include a `warning` field indicating the dialog type and message.
 
 ## Ref Lifecycle
 
-Refs (`@e1`, `@e2`, etc.) are invalidated when the page changes. Always re-snapshot after:
-
-- Clicking links or buttons that navigate
-- Form submissions
-- Dynamic content loading (dropdowns, modals)
-
-```bash
-agent-browser click @e5
-agent-browser snapshot -i   # MUST re-snapshot
-agent-browser click @e1
-```
+Refs are invalidated on any page change (navigation, form submit, dynamic re-render). Always re-snapshot before the next interaction.
 
 ## Annotated Screenshots (Vision Mode)
 
-Use `--annotate` to get a screenshot with numbered labels. Each label `[N]` maps to ref `@eN`. This caches refs so you can interact without a separate snapshot.
+`--annotate` overlays numbered labels; `[N]` maps to `@eN` and caches refs. Use for unlabeled icon buttons, canvas elements, or spatial reasoning.
 
 ```bash
 agent-browser screenshot --annotate
 agent-browser click @e2
 ```
-
-Use when the page has unlabeled icon buttons, canvas/chart elements, or you need spatial reasoning.
 
 ## Semantic Locators (Alternative to Refs)
 
@@ -423,16 +392,14 @@ agent-browser find nth "tr" 2 click
 
 ## JavaScript Evaluation (eval)
 
-Use `eval` to run JavaScript in the browser context. **Shell quoting can corrupt complex expressions** -- use `--stdin` or `-b` to avoid issues.
+Runs JS in the browser context. Shell quoting corrupts complex expressions — use `--stdin` (heredoc) or `-b <base64>`.
 
-> **`eval` returns the script's value, not its stdout.** `console.log(...)` will print `null` because nothing is returned. Always make the **last expression** the value you want — typically wrap your code in `(() => { ...; return x; })()` or `(async () => { ...; return x; })()`. Use `JSON.stringify(...)` to get readable output for objects/arrays.
+`eval` returns the script's **value**, not stdout — `console.log` prints `null`. Last expression is the return value; use `JSON.stringify(...)` for objects.
 
 ```bash
-# Simple expressions work with regular quoting
 agent-browser eval 'document.title'
-agent-browser eval 'document.querySelectorAll("img").length'
 
-# Complex JS: use --stdin with heredoc (RECOMMENDED for nested quotes, arrow fns, multiline)
+# Nested quotes, arrow fns, multiline — use heredoc:
 agent-browser eval --stdin <<'EOF'
 JSON.stringify(
   Array.from(document.querySelectorAll("img"))
@@ -442,8 +409,8 @@ JSON.stringify(
 EOF
 ```
 
-For programmatic/generated scripts where heredocs are awkward, `eval -b <base64>` is also available.
+`eval -b <base64>` also available for generated scripts.
 
-## Deep-Dive Documentation
+## Deep-Dive Docs
 
-See `references/` for additional detail: ref lifecycle (`snapshot-refs.md`) and authentication patterns (`authentication.md`).
+See `references/`: `snapshot-refs.md`, `authentication.md`.
