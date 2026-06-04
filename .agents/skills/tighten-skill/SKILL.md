@@ -1,8 +1,6 @@
 ---
 name: tighten-skill
 description: Audit and trim a skill's token usage. Use when a skill feels verbose, is over its token budget, or you want to tighten prose without losing meaning.
-paths:
-  - "skills/**"
 ---
 
 # Trim Skill Tokens

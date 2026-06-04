@@ -1,8 +1,6 @@
 ---
 name: skills-commit-message
 description: Generate a git commit message matching the Instrument Skills registry's conventional commit style. Use when the user asks for a commit message, wants to commit changes, or asks how to describe their changes. Knows the repo's scopes (skill names like agent-browser, pdf, docx, barcodes, etc.), types (feat, fix, dx, refactor, chore, ci, docs), and real examples from the commit history.
-paths:
-  - "skills/**"
 ---
 
 # Commit Message
