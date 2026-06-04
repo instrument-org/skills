@@ -43,7 +43,8 @@ Primary consumer: cross-platform Electron desktop app for knowledge workers. Use
 
 ## Cursor skills
 
-Repo-local skills live in `.cursor/skills/` (commit-message, create-registry-skill).
+Repo-local skills live in `.agents/skills/` (e.g. skills-commit-message,
+create-registry-skill, tighten-skill).
 
 ## Monorepo checks (Turbo)
 
