@@ -323,8 +323,17 @@ try {
   const cwd = process.cwd();
   const repoRoot = getRepoRoot(cwd);
 
+  // Cursor runtime delivers camelCase names; Claude Code delivers PascalCase.
+  // Normalize to PascalCase so the branches below work for both runtimes.
+  const eventName = (() => {
+    const n = data.hook_event_name;
+    if (n === "postToolUse") return "PostToolUse";
+    if (n === "stop") return "Stop";
+    return n;
+  })();
+
   if (
-    data.hook_event_name === "afterFileEdit" &&
+    eventName === "afterFileEdit" &&
     typeof data.file_path === "string" &&
     data.file_path.length > 0
   ) {
@@ -334,16 +343,13 @@ try {
     });
   }
 
-  if (data.hook_event_name === "stop" && data.status === "completed") {
+  if (eventName === "Stop") {
     for (const root of getStopRoots({ data, repoRoot })) {
       formatDirtyFiles(root);
     }
   }
 
-  if (
-    data.hook_event_name === "PostToolUse" &&
-    data.tool_name === "apply_patch"
-  ) {
+  if (eventName === "PostToolUse" && data.tool_name === "apply_patch") {
     formatEditedFiles({
       cwd,
       filePaths: getCodexEditedPaths(data),
@@ -352,7 +358,7 @@ try {
   }
 
   if (
-    data.hook_event_name === "PostToolUse" &&
+    eventName === "PostToolUse" &&
     (data.tool_name === "Edit" || data.tool_name === "Write") &&
     typeof data.tool_input?.file_path === "string" &&
     data.tool_input.file_path.length > 0
@@ -361,10 +367,6 @@ try {
       filePath: path.resolve(data.tool_input.file_path),
       repoRoot,
     });
-  }
-
-  if (data.hook_event_name === "Stop") {
-    formatDirtyFiles(repoRoot);
   }
 } catch (error) {
   console.error("[format-hook]", error?.message ?? error);
