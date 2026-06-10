@@ -28,6 +28,9 @@ importers:
       '@cspell/dict-typescript':
         specifier: ^3.2.3
         version: 3.2.3
+      '@instrument-org/agent-hooks':
+        specifier: github:instrument-org/agent-hooks
+        version: git+https://git@github.com:instrument-org/agent-hooks.git#31647d0319786653baf6ed52c4f91e3813202972
       '@types/node':
         specifier: 24.12.2
         version: 24.12.2
@@ -674,6 +677,11 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@instrument-org/agent-hooks@git+https://git@github.com:instrument-org/agent-hooks.git#31647d0319786653baf6ed52c4f91e3813202972':
+    resolution: {commit: 31647d0319786653baf6ed52c4f91e3813202972, repo: git@github.com:instrument-org/agent-hooks.git, type: git}
+    version: 1.0.0
+    engines: {node: '>=22'}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -2538,6 +2546,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.7':
     optional: true
+
+  '@instrument-org/agent-hooks@git+https://git@github.com:instrument-org/agent-hooks.git#31647d0319786653baf6ed52c4f91e3813202972': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
