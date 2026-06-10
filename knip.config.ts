@@ -7,7 +7,10 @@ const config: KnipConfig = {
       entry: ["scripts/**/*.ts"],
     },
   },
-  ignoreDependencies: ["jscodeshift"],
+  ignoreDependencies: [
+    "@instrument-org/agent-hooks", // Used in .codex/hooks.json and .claude/settings.json hook commands
+    "jscodeshift",
+  ],
   compilers: {
     css: (text: string) =>
       [...text.matchAll(/(?<=@)(import|plugin)[^;]+/g)]
