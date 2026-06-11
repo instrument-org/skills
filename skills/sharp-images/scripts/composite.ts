@@ -1,5 +1,6 @@
 /**
- * Overlay one image on top of another with configurable position and blend mode
+ * Overlay one image on top of another with configurable position and blend mode.
+ * Requires an existing file as the base image.
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { parse, resolve } from "node:path";

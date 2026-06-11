@@ -9,6 +9,42 @@ Resize, crop, rotate, convert, composite, adjust, optimize, and inspect images u
 
 For the complete Sharp API reference, see [references/REFERENCE.md](references/REFERENCE.md).
 
+## Common workflows
+
+### Resize and pad an image to a square canvas with exact margins
+
+Use this when an image must fit inside a fixed-size square with controlled
+white space on all sides.
+
+**Margin formula:** `content_size = canvas_size x (1 - 2 x margin)`
+
+Example: 1080 px canvas, 15% margin -> 1080 x 0.70 = **756 px**
+
+**One-step -- image fills the full canvas (letterboxed if not square):**
+
+```bash
+cd skills/sharp-images && tsx scripts/resize.ts ../../user-provided/product.png \
+  --width 1080 --height 1080 --fit contain --background white \
+  --output ../../output/product-square.png
+```
+
+**Two-step -- explicit margin control (no external tools required):**
+
+```bash
+# 1. Scale to the content area (no background yet)
+cd skills/sharp-images && tsx scripts/resize.ts ../../user-provided/product.png \
+  --width 756 --height 756 --fit contain \
+  --output ../../tmp/product-inner.png
+
+# 2. Pad to full canvas size with background
+cd skills/sharp-images && tsx scripts/resize.ts ../../tmp/product-inner.png \
+  --width 1080 --height 1080 --fit contain --background white \
+  --output ../../output/product-square.png
+```
+
+> Both steps use `resize` only -- no external tools needed. Adjust the numbers
+> using the margin formula above for any canvas size and margin percentage.
+
 ## Scripts
 
 ### `adjust.ts` Adjust image color, brightness, blur, sharpen, and other visual properties
@@ -65,7 +101,9 @@ Options:
 > [!NOTE]
 > One of --json (inline JSON array) or --json-file (path to JSON file) is required. Each annotation object: `{ left, top, width, height, label?, color? }`. Colors cycle automatically when omitted.
 
-### `composite.ts` Overlay one image on top of another with configurable position and blend mode
+### `composite.ts` Overlay one image on top of another with configurable position and blend mode.
+
+Requires an existing file as the base image.
 
 Exports:
 
@@ -132,6 +170,7 @@ Options:
 
 > [!NOTE]
 > Without --left/--top uses smart auto-crop (entropy or attention strategy). With --left/--top does a precise pixel-coordinate extract
+> Autocrop strategies find the most visually salient region and crop aggressively toward it -- subjects that fill the frame will be cut off. Use `resize` with `--fit contain` to preserve the full image instead.
 
 ### `get-metadata.ts` Read format, dimensions, color space, and file size of an image
 
@@ -196,6 +235,8 @@ Options:
 
 > [!NOTE]
 > If neither --width nor --height is provided, the script prints image metadata instead of resizing.
+> `--fit contain` scales the image to fit within the target dimensions and pads the remainder with background color. `--fit cover` fills the target dimensions by cropping.
+> `--background` only fills the padding area added by `contain` -- it does not remove the source image's existing background. For background removal a separate tool is needed.
 
 ### `rotate.ts` Rotate or flip an image
 

@@ -1,6 +1,8 @@
 /**
  * Resize an image to specified dimensions with configurable fit mode
  * @note If neither --width nor --height is provided, the script prints image metadata instead of resizing.
+ * @note `--fit contain` scales the image to fit within the target dimensions and pads the remainder with background color. `--fit cover` fills the target dimensions by cropping.
+ * @note `--background` only fills the padding area added by `contain` -- it does not remove the source image's existing background. For background removal a separate tool is needed.
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { parse, resolve } from "node:path";

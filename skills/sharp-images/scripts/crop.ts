@@ -1,6 +1,7 @@
 /**
  * Crop an image to exact dimensions, with optional auto-crop strategy
  * @note Without --left/--top uses smart auto-crop (entropy or attention strategy). With --left/--top does a precise pixel-coordinate extract
+ * @note Autocrop strategies find the most visually salient region and crop aggressively toward it -- subjects that fill the frame will be cut off. Use `resize` with `--fit contain` to preserve the full image instead.
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { parse, resolve } from "node:path";
