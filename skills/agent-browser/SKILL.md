@@ -357,6 +357,8 @@ agent-browser scrollintoview @e1
 agent-browser eval 'document.querySelector("img.product-image").src'
 ```
 
+**Scraping multiple image URLs:** Bulk `querySelectorAll("img").map(i => i.src)` returns placeholders for off-viewport images. Snapshot for refs, `scrollintoview` each before evaluating its src; or scroll the containing section, `wait 1`, then bulk-eval all srcs.
+
 ## JavaScript Dialogs
 
 `alert`/`beforeunload` are auto-accepted. `confirm`/`prompt` block all commands until dismissed — if commands time out unexpectedly, check for a pending dialog. Responses include a `warning` field when a dialog is open.
