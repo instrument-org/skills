@@ -53,7 +53,7 @@
       "inputs": ["**/package.json", ".syncpackrc.ts"],
       "outputs": []
     },
-    "//#check:knip": {
+    "//#check:unused": {
       "inputs": ["$TURBO_DEFAULT$", "knip.config.ts"],
       "outputs": []
     },

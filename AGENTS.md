@@ -50,7 +50,8 @@ create-registry-skill, tighten-skill).
 
 Run checks through Turbo from repo root for caching. Do not `cd skills/*` for repo-wide check loops.
 
-- `pnpm check-and-test` — full CI
+- `pnpm check-and-test` — full local check (includes spelling, format, etc.)
+- `pnpm check-and-test:ci` — what CI runs (omits pedantic checks that don't affect correctness)
 - `turbo run check:types` — all packages
 - `turbo run check:types --filter=@instrument-org/skill-markdown` — one skill
 - Single test file only: `cd skills/<name> && pnpm test <path/to/file.test.ts>`
