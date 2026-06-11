@@ -357,7 +357,9 @@ agent-browser scrollintoview @e1
 agent-browser eval 'document.querySelector("img.product-image").src'
 ```
 
-**Scraping multiple image URLs:** Bulk `querySelectorAll("img").map(i => i.src)` returns placeholders for off-viewport images. Snapshot for refs, `scrollintoview` each before evaluating its src; or scroll the containing section, `wait 1`, then bulk-eval all srcs.
+**Scraping image URLs:** Bulk `querySelectorAll("img").map(i => i.src)` on a listing/search page returns placeholders for off-viewport images. Either `scrollintoview` each ref (or scroll section, `wait 1`) before reading src, or better for detail images: follow each item link (`snapshot -i --urls`), open detail page, read hero image (`img#landingImage`, `data-old-hires`, or `srcset`).
+
+**Use the URL the page serves.** Don't edit a scraped URL to guess a better variant — changing size tokens (`_SX679_`→`_SL1500_`), swapping a thumbnail path for a full-res guess, or stripping query params (often signed) tends to 404 or return the wrong/expired asset. For higher resolution read `data-old-hires`/`srcset` instead.
 
 ## JavaScript Dialogs
 
@@ -394,9 +396,9 @@ agent-browser find nth "tr" 2 click
 
 ## JavaScript Evaluation (eval)
 
-Runs JS in the browser context. Shell quoting corrupts complex expressions — use `--stdin` (heredoc) or `-b <base64>`.
+Runs JS in browser context. Shell quoting corrupts complex expressions — use `--stdin` (heredoc) or `-b <base64>`.
 
-`eval` returns the script's **value**, not stdout — `console.log` prints `null`. Last expression is the return value; use `JSON.stringify(...)` for objects.
+`eval` returns script **value**, not stdout — `console.log` prints `null`. Last expression returns. Use `JSON.stringify(...)` for objects/arrays, but return strings/numbers directly — `JSON.stringify` double-quotes strings.
 
 ```bash
 agent-browser eval 'document.title'
