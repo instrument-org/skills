@@ -11,11 +11,9 @@ description: Browser automation CLI for AI agents. Use when the user needs to in
 
 ## Important Reminders
 
-**`click`/`hover` refs may be off-screen** — snapshot text does not reflect what is visible.
-`click @eN` exits 0 and silently no-ops when the element is below the fold.
-Always `scrollintoview @eN && click @eN`. For links, prefer `snapshot -i --urls` then `open "<href>"`.
-Use `is visible @eN` to branch on visibility.
-_(Remove once vercel-labs/agent-browser#1073 ships.)_
+**Refs may be outside the current viewport** — `click` scrolls refs into view automatically, but screenshots only show the current viewport.
+For links below the fold, prefer `snapshot -i --urls` then `open "<href>"` when you do not need click behavior.
+Use `is visible @eN` or `scrollintoview @eN` before screenshots, hover-only UI, or visual inspection.
 
 **Never fabricate deep URLs** — paths, IDs, and query strings go stale.
 Discover via search, follow links from a root page, or use URLs the user provides.
@@ -29,7 +27,7 @@ Every workflow:
 
 1. `agent-browser open <url>`
 2. `agent-browser snapshot -i` (add `--urls` when following links)
-3. Act on refs — `click`/`hover` always need `scrollintoview` first; `fill`/`select` do not
+3. Act on refs — use `scrollintoview` first only when visibility matters
 4. Re-snapshot after any navigation or DOM change
 
 ```bash
@@ -39,7 +37,7 @@ agent-browser snapshot -i
 
 agent-browser fill @e1 "user@example.com"
 agent-browser fill @e2 "password123"
-agent-browser scrollintoview @e3 && agent-browser click @e3
+agent-browser click @e3
 agent-browser wait --load networkidle
 agent-browser snapshot -i  # Check result
 ```
@@ -70,7 +68,7 @@ Commands share a background session — chain with `&&` for efficiency. Shell fe
 
 ```bash
 agent-browser open https://example.com && agent-browser wait --load networkidle && agent-browser snapshot -i
-agent-browser fill @e1 "user@example.com" && agent-browser fill @e2 "pass" && agent-browser scrollintoview @e3 && agent-browser click @e3
+agent-browser fill @e1 "user@example.com" && agent-browser fill @e2 "pass" && agent-browser click @e3
 agent-browser open https://example.com && agent-browser screenshot page.png
 
 # Capture output mid-chain and feed it to the next command
@@ -96,7 +94,7 @@ agent-browser snapshot -s "#selector" # Scope to CSS selector
 agent-browser snapshot                # Full tree (includes headings + static text)
 
 # Interaction (use @refs from snapshot)
-agent-browser click @e1               # Off-screen ref = silent no-op; use scrollintoview @e1 && …
+agent-browser click @e1               # Click a ref; off-viewport refs are scrolled into view first
 agent-browser click @e1 --new-tab     # Click and open in new tab
 agent-browser dblclick @e1            # Double-click element
 agent-browser hover @e1               # Hover element (reveals tooltips/menus)
@@ -138,6 +136,7 @@ agent-browser wait 2000               # Wait milliseconds
 agent-browser wait --text "Welcome"    # Wait for text to appear (substring match)
 agent-browser wait --fn "!document.body.innerText.includes('Loading...')"  # Wait for text to disappear
 agent-browser wait "#spinner" --state hidden  # Wait for element to disappear
+agent-browser wait @e1 --timeout 5000 # Override wait timeout in milliseconds
 
 # Downloads (see "Downloading Files" below for full guidance and caveats)
 agent-browser download @e1 <path>     # Click an element to trigger a download, save to <path>
@@ -328,6 +327,21 @@ agent-browser record start demo.webm   # Start recording the session as a .webm 
 agent-browser record stop
 agent-browser profiler start           # Start CDP performance tracing
 agent-browser profiler stop trace.json # Stop and save the profile
+```
+
+### React / Performance
+
+Use only for app diagnostics, not ordinary browsing.
+
+```bash
+agent-browser vitals [url] [--json]              # Web Vitals
+agent-browser pushstate <url>                    # SPA nav without reload
+agent-browser --enable react-devtools open <url> # Required before react *
+agent-browser react tree                         # Component tree
+agent-browser react inspect <fiberId>            # Props/hooks/state
+agent-browser react renders start|stop [--json]  # Render profile
+agent-browser react suspense [--json]            # Suspense boundaries
+agent-browser --init-script ./hook.js open <url> # Script before page JS
 ```
 
 ### Viewport
