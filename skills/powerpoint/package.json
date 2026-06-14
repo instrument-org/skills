@@ -9,7 +9,7 @@
     "pptxgenjs": "^4.0.1"
   },
   "devDependencies": {
-    "@types/node": "24.12.2"
+    "@types/node": "24.13.1"
   },
   "scripts": {
     "check:skill": "node ../../scripts/check-skill.ts",
