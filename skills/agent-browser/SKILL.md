@@ -9,6 +9,8 @@ description: Browser automation CLI for AI agents. Use when the user needs to in
 
 > `download` and `screenshot` paths: command output reports the actual saved location, which may differ.
 
+> Every command auto-saves a page image under `.state/agent-browser/`. `ls -lt` it and read the newest to revisit a prior visual state instead of re-capturing.
+
 ## Important Reminders
 
 **Refs may be outside the current viewport** — `click` scrolls refs into view automatically, but screenshots only show the current viewport.
