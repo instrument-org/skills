@@ -1,8 +1,8 @@
 /**
- * Read rows from an Excel or CSV spreadsheet as JSON
+ * Read rows from an Apple Numbers, Excel, or CSV spreadsheet as JSON
  */
 import { readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { cac } from "cac";
 import * as XLSX from "xlsx";
@@ -10,6 +10,20 @@ import * as XLSX from "xlsx";
 interface SheetData {
   name: string;
   rows: Record<string, unknown>[];
+}
+
+function normalizeNumber(value: unknown) {
+  if (typeof value !== "number") return value;
+
+  const nearestInteger = Math.round(value);
+  const tolerance = Number.EPSILON * Math.max(1, Math.abs(value));
+  return Math.abs(value - nearestInteger) <= tolerance ? nearestInteger : value;
+}
+
+function normalizeRow(row: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [key, normalizeNumber(value)]),
+  );
 }
 
 export async function readSpreadsheet({
@@ -31,7 +45,9 @@ export async function readSpreadsheet({
         `Sheet "${name}" not found. Available sheets: ${workbook.SheetNames.join(", ")}`,
       );
     }
-    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet);
+    const rows = XLSX.utils
+      .sheet_to_json<Record<string, unknown>>(worksheet)
+      .map(normalizeRow);
     return { name, rows };
   });
 
@@ -64,7 +80,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (options.output) {
     const outputPath = resolve(options.output);
     await writeFile(outputPath, json, "utf-8");
-    console.log(`Written to ${outputPath}`);
+    console.log(`Written to ${relative(process.cwd(), outputPath) || "."}`);
   } else {
     console.log(json);
   }

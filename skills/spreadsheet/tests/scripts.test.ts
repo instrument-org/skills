@@ -28,6 +28,18 @@ async function createTempXlsx(
   return outputPath;
 }
 
+async function createTempNumbers(
+  data: Record<string, unknown>[],
+  sheetName = "Sheet1",
+) {
+  const outputPath = path.join(
+    os.tmpdir(),
+    `test-${Date.now()}-${Math.random().toString(36).slice(2)}.numbers`,
+  );
+  await createSpreadsheet({ data, outputPath, sheetName });
+  return outputPath;
+}
+
 async function writeTempFile({
   content,
   ext = ".csv",
@@ -96,6 +108,14 @@ describe("readSpreadsheet", () => {
       city: "New York",
     });
   });
+
+  it("reads an Apple Numbers file", async () => {
+    const numbersPath = await createTempNumbers(sampleData, "People");
+    const result = await readSpreadsheet({ inputPath: numbersPath });
+
+    expect(result.sheetNames).toEqual(["People"]);
+    expect(result.sheets[0].rows).toEqual(sampleData);
+  });
 });
 
 describe("createSpreadsheet", () => {
@@ -145,6 +165,37 @@ describe("createSpreadsheet", () => {
     const rows = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
     expect(rows).toHaveLength(0);
   });
+
+  it("creates an Apple Numbers file", async () => {
+    const outputPath = path.join(
+      os.tmpdir(),
+      "test-create-spreadsheet.numbers",
+    );
+    const result = await createSpreadsheet({
+      data: sampleData,
+      outputPath,
+      sheetName: "People",
+    });
+
+    expect(result.rowCount).toBe(3);
+
+    const workbook = XLSX.read(await fs.readFile(outputPath));
+    expect(workbook.SheetNames).toEqual(["People"]);
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(
+      workbook.Sheets["People"],
+    );
+    expect(rows).toHaveLength(3);
+    expect(rows[1].age).toBeCloseTo(25);
+  });
+
+  it("rejects unsupported output formats", async () => {
+    await expect(
+      createSpreadsheet({
+        data: sampleData,
+        outputPath: path.join(os.tmpdir(), "test-create-spreadsheet.ods"),
+      }),
+    ).rejects.toThrow("Unsupported output format");
+  });
 });
 
 describe("convertCsv", () => {
@@ -190,6 +241,37 @@ describe("convertCsv", () => {
     const buffer = await fs.readFile(outputPath);
     const workbook = XLSX.read(buffer);
     expect(workbook.SheetNames).toContain("Data");
+  });
+
+  it("converts CSV to Apple Numbers", async () => {
+    const csvPath = await writeTempFile({
+      content: "name,age\nAlice,30\nBob,25\n",
+    });
+    const outputPath = path.join(os.tmpdir(), "test-csv-to-numbers.numbers");
+
+    const result = await convertCsv({ inputPath: csvPath, outputPath });
+
+    expect(result.direction).toBe("csv-to-numbers");
+
+    const workbook = XLSX.read(await fs.readFile(outputPath));
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(
+      workbook.Sheets["Sheet1"],
+    );
+    expect(rows).toHaveLength(2);
+    expect(rows[1].age).toBeCloseTo(25);
+  });
+
+  it("converts Apple Numbers to CSV", async () => {
+    const numbersPath = await createTempNumbers(sampleData);
+    const outputPath = path.join(os.tmpdir(), "test-numbers-to-csv.csv");
+
+    const result = await convertCsv({
+      inputPath: numbersPath,
+      outputPath,
+    });
+
+    expect(result.direction).toBe("numbers-to-csv");
+    expect(await fs.readFile(outputPath, "utf-8")).toContain("Alice");
   });
 
   it("converts XLSX to CSV for a specific sheet", async () => {

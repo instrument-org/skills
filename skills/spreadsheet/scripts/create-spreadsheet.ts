@@ -1,11 +1,37 @@
 /**
- * Create an Excel spreadsheet from a JSON array of row objects
+ * Create an Excel or Apple Numbers spreadsheet from a JSON array of row objects
  */
 import { readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { extname, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { cac } from "cac";
 import * as XLSX from "xlsx";
+import XLSX_ZAHL_PAYLOAD from "xlsx/dist/xlsx.zahl";
+
+function getWriteOptions(outputPath: string): XLSX.WritingOptions {
+  const outputExt = extname(outputPath).toLowerCase();
+
+  if (outputExt === ".numbers") {
+    return {
+      bookType: "numbers",
+      compression: true,
+      numbers: XLSX_ZAHL_PAYLOAD,
+      type: "buffer",
+    };
+  }
+
+  if (outputExt === ".xls") {
+    return { bookType: "biff8", type: "buffer" };
+  }
+
+  if (outputExt === ".xlsx") {
+    return { bookType: "xlsx", type: "buffer" };
+  }
+
+  throw new Error(
+    `Unsupported output format: ${outputExt || "(none)"}. Supported: .numbers, .xlsx, .xls`,
+  );
+}
 
 export async function createSpreadsheet({
   data,
@@ -20,10 +46,7 @@ export async function createSpreadsheet({
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
 
-  const buffer = XLSX.write(workbook, {
-    type: "buffer",
-    bookType: "xlsx",
-  }) as Buffer;
+  const buffer = XLSX.write(workbook, getWriteOptions(outputPath));
   await writeFile(outputPath, buffer);
 
   return { outputPath, sheetName, rowCount: data.length };
@@ -67,6 +90,6 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   });
 
   console.log(
-    `Created ${result.outputPath} with ${result.rowCount} rows in sheet "${result.sheetName}"`,
+    `Created ${relative(process.cwd(), result.outputPath) || "."} with ${result.rowCount} rows in sheet "${result.sheetName}"`,
   );
 }

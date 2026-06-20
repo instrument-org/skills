@@ -11,7 +11,32 @@ Skill/template registry for the Instrument desktop app. Not an app.
 
 ## Consumer app context
 
-Primary consumer: cross-platform Electron desktop app for knowledge workers. Users give agents project folders; agents work on local files with file I/O, shell, web search, browser automation, and image generation. Optimize for file-centric desktop use on Windows/Linux/macOS. Avoid platform-specific assumptions unless documented. Do not optimize for CI, servers, or CLI-first workflows.
+Primary consumer: Instrument, a cross-platform Electron desktop app for
+knowledge workers. Users open a local project folder and delegate work to an
+agent. The agent operates on that folder using file I/O, shell commands, web
+search, browser automation, and image generation.
+
+Skills from this registry are installed into the user's workspace on demand.
+Their scripts execute from the user's project root, not from this registry.
+Optimize for file-centric desktop workflows on Windows, Linux, and macOS.
+Avoid platform-specific assumptions unless documented. Do not optimize for CI,
+servers, or CLI-first workflows.
+
+## Skill runtime
+
+- The product provides a Node.js runtime for skill scripts. Implement scripts
+  in TypeScript and use npm dependencies.
+- Python is not included in the product runtime. Do not create Python scripts,
+  select Python libraries, require `pip`, or assume `python`/`python3` is
+  installed.
+- Do not require users to install language runtimes or system packages to use a
+  skill.
+- Prefer cross-platform JavaScript libraries. Native npm dependencies are
+  acceptable only when they provide supported binaries for Windows, Linux, and
+  macOS.
+- A tool available on a contributor's machine is not necessarily available to
+  an installed skill. Treat the product runtime and the skill's declared npm
+  dependencies as the execution environment.
 
 ## TypeScript
 
