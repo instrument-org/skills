@@ -268,19 +268,29 @@ Check the properties relevant to the request:
 - Expected codecs and container compatibility.
 - Nonzero output size and no FFmpeg errors.
 
+FFprobe confirms structure, not appearance. When correctness is visual, such as
+generated graphics, shapes, overlays, or text position, extract a representative
+frame and inspect it before reporting success:
+
+```bash
+ffmpeg -n -ss 00:00:01 -i "$OUTPUT" -frames:v 1 -q:v 2 frame-check.png
+```
+
 If FFmpeg fails, read the diagnostic and change the command based on the actual
 error. Do not rerun the same command unchanged.
 
 ## Common failures
 
-| Symptom                                  | Likely fix                                              |
-| ---------------------------------------- | ------------------------------------------------------- |
-| Width or height is not divisible by 2    | Scale to even dimensions with `-2` or `trunc(.../2)*2`  |
-| Codec is unsupported by container        | Re-encode that stream or choose a compatible container  |
-| Output has no audio                      | Probe inputs and add explicit optional audio mapping    |
-| Browser cannot play output               | Use H.264, AAC, `yuv420p`, and `+faststart`             |
-| Output is unexpectedly large             | Increase CRF, reduce dimensions, or use a slower preset |
-| Audio and video drift after speed change | Apply matching video and audio timing filters           |
-| Concat fails                             | Normalize codecs, dimensions, time bases, and streams   |
-| `moov atom not found`                    | Input is incomplete or corrupt                          |
-| Text overlay parsing fails               | Use `drawtext=textfile=...`                             |
+| Symptom                                   | Likely fix                                              |
+| ----------------------------------------- | ------------------------------------------------------- |
+| Width or height is not divisible by 2     | Scale to even dimensions with `-2` or `trunc(.../2)*2`  |
+| Codec is unsupported by container         | Re-encode that stream or choose a compatible container  |
+| Output has no audio                       | Probe inputs and add explicit optional audio mapping    |
+| Browser cannot play output                | Use H.264, AAC, `yuv420p`, and `+faststart`             |
+| Output is unexpectedly large              | Increase CRF, reduce dimensions, or use a slower preset |
+| Audio and video drift after speed change  | Apply matching video and audio timing filters           |
+| Concat fails                              | Normalize codecs, dimensions, time bases, and streams   |
+| `moov atom not found`                     | Input is incomplete or corrupt                          |
+| Text overlay parsing fails                | Use `drawtext=textfile=...`                             |
+| Rotated or transformed content is clipped | Keep content away from the frame edge; set `fillcolor`  |
+| lavfi command hangs until killed          | Bound the source with `d=` or the output with `-t`      |

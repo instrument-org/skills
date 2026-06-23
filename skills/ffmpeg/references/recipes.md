@@ -3,6 +3,46 @@
 Use these recipes after probing inputs. Add `-threads` limits when long or
 concurrent encodes could cause CPU contention.
 
+## Generate synthetic clips
+
+When there is no input file, build frames with a lavfi source such as `color`,
+`testsrc`, or `smptebars`. Bound the source with `d=` (or `-t` on the output): a
+lavfi source with no duration runs until the command is killed. Keep generators
+in `-i` and processing filters in `-vf`.
+
+```bash
+# Solid color
+ffmpeg -n -f lavfi -i "color=c=red:s=640x480:r=30:d=5" \
+  -c:v libx264 -crf 23 -pix_fmt yuv420p -movflags +faststart "$OUTPUT"
+
+# Test pattern
+ffmpeg -n -f lavfi -i "testsrc=s=640x480:r=30:d=5" \
+  -c:v libx264 -crf 23 -pix_fmt yuv420p "$OUTPUT"
+```
+
+Draw a shape with `drawbox`/`drawtext` on a canvas rather than letting it fill
+the frame, so transforms applied afterward do not clip it.
+
+## Rotate
+
+```bash
+# 90 degrees clockwise
+ffmpeg -n -i "$INPUT" -vf "transpose=1" \
+  -c:v libx264 -crf 23 -preset medium -c:a copy "$OUTPUT"
+
+# 90 degrees counterclockwise
+ffmpeg -n -i "$INPUT" -vf "transpose=2" \
+  -c:v libx264 -crf 23 -preset medium -c:a copy "$OUTPUT"
+
+# 180 degrees
+ffmpeg -n -i "$INPUT" -vf "hflip,vflip" \
+  -c:v libx264 -crf 23 -preset medium -c:a copy "$OUTPUT"
+```
+
+`rotate` and other geometric filters spin content at a fixed output size, so
+anything reaching the frame edge is clipped and the uncovered area takes
+`fillcolor` (black under `yuv420p`, which has no alpha).
+
 ## Add silent audio
 
 Useful when concatenating silent clips with clips that contain audio:
@@ -144,22 +184,6 @@ ffmpeg -n -i "$INPUT" \
 ```
 
 Probe for audio first. For silent video, omit the audio filter and mapping.
-
-## Rotate
-
-```bash
-# 90 degrees clockwise
-ffmpeg -n -i "$INPUT" -vf "transpose=1" \
-  -c:v libx264 -crf 23 -preset medium -c:a copy "$OUTPUT"
-
-# 90 degrees counterclockwise
-ffmpeg -n -i "$INPUT" -vf "transpose=2" \
-  -c:v libx264 -crf 23 -preset medium -c:a copy "$OUTPUT"
-
-# 180 degrees
-ffmpeg -n -i "$INPUT" -vf "hflip,vflip" \
-  -c:v libx264 -crf 23 -preset medium -c:a copy "$OUTPUT"
-```
 
 ## Change frame rate
 
