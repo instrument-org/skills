@@ -11,7 +11,7 @@ description: Generate a git commit message matching the Instrument Skills regist
 
 - **Types:** `feat`, `fix`, `refactor`, `chore`, `dx`, `docs`, `ci`
 - **Scope:** the skill name (`agent-browser`, `pdf`, `docx`, `barcodes`,
-  `x-search`, `skills`, `basic`, etc.) or omit for repo-wide changes
+  `skills`, `basic`, etc.) or omit for repo-wide changes
 - **Description:** lowercase, no period, imperative mood, under 72 chars
 - **Body:** optional bullet list explaining the _why_ or _what_ in more detail
 
@@ -36,7 +36,7 @@ ci: consolidate turbo cache into prepare action and add concurrency to CI
 ```
 
 Scopes: individual skill names (`agent-browser`, `pdf`, `docx`, `barcodes`,
-`x-search`, `ffmpeg`, `markdown`, `basic`, `templates`), or `skills` for
+`ffmpeg`, `markdown`, `basic`, `templates`), or `skills` for
 cross-cutting changes across multiple skills; omit scope only for repo-wide
 changes.
 
