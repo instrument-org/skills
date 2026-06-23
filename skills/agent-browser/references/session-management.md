@@ -79,7 +79,7 @@ agent-browser open https://app.example.com/dashboard
 #!/bin/bash
 # Save login state once, reuse many times
 
-STATE_FILE="/tmp/auth-state.json"
+STATE_FILE="auth-state.json"
 
 # Check if we have saved state
 if [[ -f "$STATE_FILE" ]]; then
@@ -130,8 +130,8 @@ agent-browser --session variant-a open "https://app.com?variant=a"
 agent-browser --session variant-b open "https://app.com?variant=b"
 
 # Compare
-agent-browser --session variant-a screenshot /tmp/variant-a.png
-agent-browser --session variant-b screenshot /tmp/variant-b.png
+agent-browser --session variant-a screenshot variant-a.png
+agent-browser --session variant-b screenshot variant-b.png
 ```
 
 ## Default Session
@@ -183,7 +183,7 @@ agent-browser --session scrape close
 echo "*.auth-state.json" >> .gitignore
 
 # Delete after use
-rm /tmp/auth-state.json
+rm auth-state.json
 ```
 
 ### 4. Timeout Long Sessions

@@ -243,16 +243,16 @@ agent-browser wait --download file.docx
 
 **Inline-rendered content (SVG, HTML, PNG, JPG, PDFs)** won't fire a download event — `download`/`wait --download` will time out. Instead:
 
-1. **Public URL:** `curl -fsSL -o ./tmp/logo.svg https://example.com/logo.svg`
+1. **Public URL:** `curl -fsSL -o logo.svg https://example.com/logo.svg`
 2. **Behind login (same-origin only):** `fetch()` via `eval` so cookies apply
 3. **No URL** (inline `<svg>`, canvas): grab via `eval` (`outerHTML`, etc.)
 
 For 2 and 3, pipe through `jq -r .` to unwrap the JSON-quoted string:
 
 ```bash
-agent-browser eval 'document.querySelector("header svg").outerHTML' | jq -r . > ./tmp/logo.svg
+agent-browser eval 'document.querySelector("header svg").outerHTML' | jq -r . > logo.svg
 
-agent-browser eval --stdin <<'EOF' | jq -r . | base64 -d > ./tmp/image.png
+agent-browser eval --stdin <<'EOF' | jq -r . | base64 -d > image.png
 (async () => {
   const r = await fetch("/private/image.png", { credentials: "include" });
   if (!r.ok) throw new Error("HTTP " + r.status);

@@ -23,23 +23,23 @@ Example: 1080 px canvas, 15% margin -> 1080 x 0.70 = **756 px**
 **One-step -- image fills the full canvas (letterboxed if not square):**
 
 ```bash
-cd skills/sharp-images && tsx scripts/resize.ts ../../user-provided/product.png \
+tsx scripts/resize.ts input.png \
   --width 1080 --height 1080 --fit contain --background white \
-  --output ../../output/product-square.png
+  --output output.png
 ```
 
 **Two-step -- explicit margin control (no external tools required):**
 
 ```bash
 # 1. Scale to the content area (no background yet)
-cd skills/sharp-images && tsx scripts/resize.ts ../../user-provided/product.png \
+tsx scripts/resize.ts input.png \
   --width 756 --height 756 --fit contain \
-  --output ../../tmp/product-inner.png
+  --output inner.png
 
 # 2. Pad to full canvas size with background
-cd skills/sharp-images && tsx scripts/resize.ts ../../tmp/product-inner.png \
+tsx scripts/resize.ts inner.png \
   --width 1080 --height 1080 --fit contain --background white \
-  --output ../../output/product-square.png
+  --output output.png
 ```
 
 > Both steps use `resize` only -- no external tools needed. Adjust the numbers
