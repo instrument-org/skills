@@ -81,6 +81,8 @@ Run checks through Turbo from repo root for caching. Do not `cd skills/*` for re
 - `turbo run check:types --filter=@instrument-org/skill-markdown` — one skill
 - Single test file only: `cd skills/<name> && pnpm test <path/to/file.test.ts>`
 
+Format hook: each Edit/Write runs Prettier only; finishing (Stop) runs Prettier + `eslint --fix` + Prettier over changed files. Don't hand-format or fix order-only/auto-fixable lint; expect files to change after you write them. Non-auto-fixable lint/type errors are not handled by the hook, run the checks above.
+
 ## Package management
 
 - `pnpm` CLI (`install`, `add`, `remove`, `why`, etc.): outside sandbox (full
