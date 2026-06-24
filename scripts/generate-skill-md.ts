@@ -134,21 +134,35 @@ function getExportedFunctionSignatures(scriptPath: string) {
   return signatures;
 }
 
+async function getPythonDocstring(
+  scriptPath: string,
+): Promise<string | undefined> {
+  const pyCode =
+    'import ast,sys;t=ast.parse(open(sys.argv[1]).read());doc=ast.get_docstring(t);print(doc.splitlines()[0] if doc else "")';
+  const result = await execFileAsync("python3", ["-c", pyCode, scriptPath], {
+    encoding: "utf-8",
+  }).catch(() => ({ stdout: "" }));
+  const text = ((result as { stdout: string }).stdout ?? "").trim();
+  return text || undefined;
+}
+
 async function buildHelpFromRuntime({
   relativeScriptPath,
   skillPath,
+  isPython = false,
 }: {
   relativeScriptPath: string;
   skillPath: string;
+  isPython?: boolean;
 }) {
-  const result = await execFileAsync(
-    process.execPath,
-    [relativeScriptPath, "--help"],
-    {
-      cwd: skillPath,
-      encoding: "utf-8",
-    },
-  ).catch((err: { stderr: string; stdout: string; code: number }) => err);
+  const [cmd, ...cmdArgs] = isPython
+    ? ["python3", relativeScriptPath, "--help"]
+    : [process.execPath, relativeScriptPath, "--help"];
+
+  const result = await execFileAsync(cmd, cmdArgs, {
+    cwd: skillPath,
+    encoding: "utf-8",
+  }).catch((err: { stderr: string; stdout: string; code: number }) => err);
 
   const stdout = (result.stdout ?? "").trim();
   const stderr = (result.stderr ?? "").trim();
@@ -156,11 +170,16 @@ async function buildHelpFromRuntime({
 
   if (
     output.length > 0 &&
-    (output.includes("Usage:") || output.includes("Options:"))
+    (output.includes("Usage:") ||
+      output.includes("usage:") ||
+      output.includes("Options:") ||
+      output.includes("options:") ||
+      output.includes("positional arguments:"))
   ) {
     return output;
   }
-  return ["Usage:", `  tsx ${relativeScriptPath} --help`].join("\n");
+  const execName = isPython ? "python3" : "tsx";
+  return ["Usage:", `  ${execName} ${relativeScriptPath} --help`].join("\n");
 }
 
 function formatScriptDocBlock({
@@ -171,7 +190,7 @@ function formatScriptDocBlock({
   scriptName,
 }: {
   description?: string;
-  exportedSignatures: string[];
+  exportedSignatures?: string[];
   helpOutput: string;
   notes: string[];
   scriptName: string;
@@ -180,17 +199,18 @@ function formatScriptDocBlock({
     ? `### \`${scriptName}\` ${description}`
     : `### \`${scriptName}\``;
 
-  const exportsLine =
-    exportedSignatures.length > 0 ? "Exports:" : "Exports: (none)";
-  const exportLines =
-    exportedSignatures.length > 0
-      ? exportedSignatures.map((signature) => `- \`${signature}\``)
-      : [];
-
   const noteBlock =
     notes.length > 0
       ? "\n\n> [!NOTE]\n" + notes.map((n) => `> ${n}`).join("\n")
       : "";
+
+  if (exportedSignatures === undefined) {
+    return [heading, "", "```text", helpOutput, "```"].join("\n") + noteBlock;
+  }
+
+  const exportsLine =
+    exportedSignatures.length > 0 ? "Exports:" : "Exports: (none)";
+  const exportLines = exportedSignatures.map((sig) => `- \`${sig}\``);
 
   return (
     [
@@ -214,7 +234,11 @@ async function generateScriptDocsSection(skillPath: string) {
 
   const entries = await readdir(scriptsDir, { withFileTypes: true });
   const scriptFiles = entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".ts"))
+    .filter(
+      (entry) =>
+        entry.isFile() &&
+        (entry.name.endsWith(".ts") || entry.name.endsWith(".py")),
+    )
     .map((entry) => entry.name)
     .sort();
 
@@ -222,6 +246,24 @@ async function generateScriptDocsSection(skillPath: string) {
     scriptFiles.map(async (scriptName) => {
       const scriptPath = join(scriptsDir, scriptName);
       const relativeScriptPath = join("scripts", scriptName);
+
+      if (scriptName.endsWith(".py")) {
+        const [description, helpOutput] = await Promise.all([
+          getPythonDocstring(scriptPath),
+          buildHelpFromRuntime({
+            relativeScriptPath,
+            skillPath,
+            isPython: true,
+          }),
+        ]);
+        return formatScriptDocBlock({
+          description,
+          helpOutput,
+          notes: [],
+          scriptName,
+        });
+      }
+
       const [exportedSignatures, helpOutput] = await Promise.all([
         Promise.resolve(getExportedFunctionSignatures(scriptPath)),
         buildHelpFromRuntime({ relativeScriptPath, skillPath }),

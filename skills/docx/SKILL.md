@@ -1,87 +1,118 @@
 ---
 name: docx
-description: "Work with Word documents (.docx). Use whenever the user wants to extract text from a .docx file, create a new Word document with headings/paragraphs/tables, fill placeholders in a .docx template, or detect template placeholders. Activate whenever the user mentions a .docx file, Word document, or asks to read, create, generate, fill, or template one."
+description: "Work with Word documents (.docx). Use whenever the user wants to extract text from a .docx file, create a new Word document with headings, paragraphs, lists, or tables, fill placeholders in a .docx template, or edit an existing document (append content, find-and-replace, add tables). Activate whenever the user mentions a .docx file, Word document, or asks to read, create, generate, fill, edit, or template one."
 ---
 
 # DOCX
 
-Use the scripts in `scripts/` to work with Word documents.
+Use the Python scripts in `scripts/` to work with Word documents.
+
+## Dependencies
+
+Install before first use:
+
+```
+pip install python-docx docxtpl
+```
 
 ## Scripts
 
-Each script can also be used programmatically via its exported function.
-
-### `create-document.ts` Create a Word document from a structured sections and blocks JSON input
-
-Exports:
-
-- `createDocument({ outputPath, sections, }: { outputPath: string; sections: SectionInput[]; }): Promise<{ outputPath: string; }>`
+### `create.py` Create a Word document (.docx) from Markdown or structured JSON.
 
 ```text
-create-document
+usage: create.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
+                 [--title TITLE] [--author AUTHOR]
 
-Usage:
-  $ create-document --output <path> --sections <json>
+Create a Word document
 
-Options:
-  --output <path>    Output DOCX file path
-  --sections <json>  Sections JSON input
-  -h, --help         Display this message
+optional arguments:
+  -h, --help         show this help message and exit
+  --output OUTPUT    Output .docx path
+  --content CONTENT  Markdown text content
+  --input INPUT      Input Markdown or JSON file
+  --title TITLE      Document title (metadata)
+  --author AUTHOR    Document author (metadata)
 ```
 
-> [!NOTE]
-> Sections contain a `children` array of block objects. Block types: `heading` (level 1–6), `paragraph`, `table` (rows as string arrays). Headings and paragraphs support optional `bold` and `italic` fields.
-
-### `detect-placeholders.ts` List all placeholder token names in a Word document template
-
-Exports:
-
-- `detectPlaceholders({ inputPath }: { inputPath: string; }): Promise<{ placeholders: string[]; }>`
+### `edit.py` Edit an existing Word document: add content, modify paragraphs, or do find-and-replace.
 
 ```text
-detect-placeholders
+usage: edit.py [-h] [--output OUTPUT] [--append APPEND] [--style STYLE]
+               [--heading LEVEL] [--find FIND] [--replace REPLACE]
+               [--add-table JSON]
+               input
 
-Usage:
-  $ detect-placeholders <path>
+Edit a Word document
 
-Options:
-  -h, --help  Display this message
+positional arguments:
+  input              Input .docx file
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --output OUTPUT    Output path (default: overwrite input)
+  --append APPEND    Text to append as a new paragraph
+  --style STYLE      Paragraph style for --append
+  --heading LEVEL    Append as heading at this level (1-6)
+  --find FIND        Text to find
+  --replace REPLACE  Replacement text for --find
+  --add-table JSON   Append a table from a JSON array of row arrays
 ```
 
-### `extract-text.ts` Extract all text content from a Word document
-
-Exports:
-
-- `extractDocxText({ inputPath }: { inputPath: string; }): Promise<{ text: string; messages: (Warning | Error)[]; }>`
+### `extract-text.py` Extract text from a Word document (.docx).
 
 ```text
-extract-text
+usage: extract-text.py [-h] [--json] [--include-tables] input
 
-Usage:
-  $ extract-text <path> [--output <path>]
+Extract text from a .docx file
 
-Options:
-  --output <path>  Write extracted text to a file
-  -h, --help       Display this message
+positional arguments:
+  input             Input .docx file
+
+optional arguments:
+  -h, --help        show this help message and exit
+  --json            Output structured JSON with paragraphs and styles
+  --include-tables  Include table cell text (default: included)
 ```
 
-### `patch-document.ts` Replace placeholder tokens in a Word document template with values
-
-Exports:
-
-- `patchDocxDocument({ inputPath, outputPath, patches, }: { inputPath: string; outputPath: string; patches: Record<string, string>; }): Promise<{ outputPath: string; }>`
+### `fill-template.py` Fill a .docx Jinja2 template using docxtpl -- supports {{ var }}, {% for %}, {% if %}.
 
 ```text
-patch-document
+usage: fill-template.py [-h] [--values VALUES] [--values-file VALUES_FILE]
+                        [--list-placeholders]
+                        input [output]
 
-Usage:
-  $ patch-document <input> --output <path> --patches-file <json>
+Fill a .docx Jinja2 template with docxtpl
 
-Options:
-  --output <path>        Output DOCX file path
-  --patches-file <path>  JSON file of patch key/value pairs
-  -h, --help             Display this message
+positional arguments:
+  input                 Input .docx template (Jinja2: {{ var }} substitution,
+                        for/if blocks supported)
+  output                Output .docx file (omit with --list-placeholders)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --values VALUES       JSON object mapping variable names to values
+  --values-file VALUES_FILE
+                        Path to a JSON file with variable values
+  --list-placeholders   Print all {{ variable }} names found in the template
+                        and exit
 ```
 
-> [!NOTE]
-> The patches JSON maps placeholder names without their `{{` `}}` delimiters to replacement strings, e.g. `{ "name": "John", "date": "2026-01-01" }`. Run detect-placeholders first to discover what keys a template expects.
+## Template syntax
+
+`fill-template.py` uses `docxtpl` (Jinja2 for Word). Write expressions directly in your
+`.docx` template:
+
+- `{{ variable }}` -- simple substitution
+- `{% for item in items %}...{% endfor %}` -- repeat rows or paragraphs
+- `{% if condition %}...{% endif %}` -- conditional content
+
+Pass values as a JSON object with `--values` or point to a file with `--values-file`.
+Lists and nested dicts work as Jinja2 context objects.
+
+## Notes
+
+- `python-docx` can read and write `.docx` files but cannot convert to/from `.doc`
+  (old binary format) or PDF. For PDF conversion, use LibreOffice:
+  `soffice --headless --convert-to pdf document.docx`
+- Table styles require the style to exist in the document's style gallery. `"Table Grid"`
+  is safe to use universally.

@@ -2,19 +2,8 @@
   "name": "@instrument-org/skill-spreadsheet",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "dependencies": {
-    "cac": "^6.7.14",
-    "papaparse": "^5.5.3",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
-  },
-  "devDependencies": {
-    "@types/node": "24.13.1",
-    "@types/papaparse": "^5.5.2"
-  },
   "scripts": {
     "check:skill": "node ../../scripts/check-skill.ts",
-    "check:types": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "uv run --no-project --with pytest --with openpyxl --with pandas pytest tests/ -v -m 'not slow'"
   }
 }

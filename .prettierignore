@@ -6,3 +6,4 @@ out/
 pnpm-lock.yaml
 templates/htmx/public/htmx.min.js
 _tmp_*
+.pytest_cache/

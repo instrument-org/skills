@@ -1,315 +1,285 @@
 ---
 name: pdf
-description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, finding hyperlinks, pulling embedded images, reading document metadata such as author, title, and creation date, rendering pages as images, creating new PDFs, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, adding headers/footers, watermarking, or updating metadata. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
+description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text or Markdown, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or encrypting. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
 ---
 
 # PDF
 
-Use the scripts in `scripts/` to work with PDF files.
+Use the Python scripts in `scripts/` to work with PDF files.
+
+## Dependencies
+
+Install before first use:
+
+```
+pip install pymupdf pdfplumber reportlab pypdf
+```
+
+`render-pages.py` uses PyMuPDF for native rendering -- no Poppler or external tools needed.
 
 ## Scripts
 
-Each script can also be used programmatically via its exported function.
-
-### `add-page-numbers.ts` Add page numbers (and optional header/footer text) to a PDF
-
-Exports:
-
-- `addPageNumbers({ inputPath, outputPath, startAt, position, fontSize, format, header, footer, }: { inputPath: string; outputPath: string; startAt?: number; position?: "bottom-center" | "bottom-left" | "bottom-right" | "top-center" | "top-left" | "top-right"; fontSize?: number; format?: string; header?: string; footer?: string; }): Promise<{ pageCount: number; outputPath: string; }>`
+### `add-page-numbers.py` Add page numbers (and optional header/footer text) to a PDF.
 
 ```text
-add-page-numbers
+usage: add-page-numbers.py [-h] [--start START]
+                           [--position {bottom-center,bottom-left,bottom-right,top-center,top-left,top-right}]
+                           [--format FMT] [--font-size FONT_SIZE]
+                           [--header HEADER] [--footer FOOTER]
+                           input output
 
-Usage:
-  $ add-page-numbers input.pdf --output output.pdf
+Add page numbers to a PDF
 
-Options:
-  --output <path>   Output PDF file path
-  --start-at <n>    Starting page number value (default: 1)
-  --position <pos>  Label position on each page (default: bottom-center)
-  --font-size <n>   Font size for header/footer and page labels (default: 10)
-  --format <text>   Page label format, e.g. {page} / {total}
-  --header <text>   Optional header text
-  --footer <text>   Optional footer text
-  -h, --help        Display this message
+positional arguments:
+  input                 Input PDF file
+  output                Output PDF file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --start START         Starting page number
+  --position {bottom-center,bottom-left,bottom-right,top-center,top-left,top-right}
+  --format FMT          Label format, e.g. '{page} / {total}'
+  --font-size FONT_SIZE
+  --header HEADER
+  --footer FOOTER
 ```
 
-### `create-pdf.ts` Create a simple text-based PDF document
-
-Exports:
-
-- `createPdf({ content, outputPath, }: { content: string; outputPath: string; }): Promise<{ pageCount: number; outputPath: string; }>`
+### `create-pdf.py` Create a PDF from text or Markdown using reportlab.
 
 ```text
-create-pdf
+usage: create-pdf.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
+                     [--title TITLE] [--author AUTHOR]
 
-Usage:
-  $ create-pdf --content "Hello world" --output output.pdf
+Create a PDF from text or Markdown
 
-Options:
-  --content <text>  Text content for the PDF
-  --output <path>   Output PDF file path
-  -h, --help        Display this message
+optional arguments:
+  -h, --help         show this help message and exit
+  --output OUTPUT    Output PDF path
+  --content CONTENT  Text content
+  --input INPUT      Input text or Markdown file
+  --title TITLE
+  --author AUTHOR
 ```
 
-### `extract-images.ts` Extract embedded images from a PDF and save them as PNG files
-
-Exports:
-
-- `extractPdfImages({ inputPath, page, }: { inputPath: string; page?: number; }): Promise<ExtractedImageObject[]>`
+### `extract-images.py` Extract embedded images from a PDF and save them as files.
 
 ```text
-extract-images
+usage: extract-images.py [-h] [--output OUTPUT] [--page PAGE] input
 
-Usage:
-  $ extract-images document.pdf --output ./images
+Extract embedded images from a PDF
 
-Options:
-  --page <number>  Only extract images from this page
-  --output <dir>   Output directory for extracted images
-  -h, --help       Display this message
+positional arguments:
+  input            Input PDF file
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --output OUTPUT  Output directory (default: .)
+  --page PAGE      Only extract from this page (1-indexed)
 ```
 
-### `extract-links.ts` Extract all hyperlinks from a PDF
-
-Exports:
-
-- `extractPdfLinks({ inputPath }: { inputPath: string; }): Promise<{ totalPages: number; links: string[]; }>`
+### `extract-links.py` Extract hyperlinks from a PDF.
 
 ```text
-extract-links
+usage: extract-links.py [-h] [--json] input
 
-Usage:
-  $ extract-links <filePath>
+Extract hyperlinks from a PDF
 
-Options:
-  -h, --help  Display this message
+positional arguments:
+  input       Input PDF file
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --json
 ```
 
-### `extract-text.ts` Extract all text content from a PDF
-
-Exports:
-
-- `extractPdfText({ inputPath, mergePages, }: { inputPath: string; mergePages?: boolean; }): Promise<{ totalPages: number; text: string; } | { totalPages: number; text: string[]; }>`
+### `extract-tables.py` Extract tables from a PDF using pdfplumber.
 
 ```text
-extract-text
+usage: extract-tables.py [-h] [--page PAGE] [--csv] [--json] input
 
-Usage:
-  $ extract-text document.pdf
+Extract tables from a PDF
 
-Options:
-  --output <path>  Write extracted text to a file
-  --no-merge       Return text as separate per-page blocks (default: true)
-  -h, --help       Display this message
+positional arguments:
+  input        Input PDF file
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --page PAGE  Only extract from this page (1-indexed)
+  --csv        Output tables as CSV
+  --json       Output tables as JSON
 ```
 
-> [!NOTE]
-> By default all pages are merged into a single string. Pass --no-merge to get text per page as separate blocks.
-
-### `fill-form.ts` Fill PDF form fields by name and optionally flatten the form
-
-Exports:
-
-- `fillForm({ inputPath, outputPath, fields, flatten, }: { inputPath: string; outputPath: string; fields: Record<string, FillFormValue>; flatten?: boolean; }): Promise<{ filled: string[]; skipped: string[]; outputPath: string; warnings: string[]; }>`
-- `parseFillFormFieldsJson(raw: string): Record<string, FillFormValue>`
+### `extract-text.py` Extract text from a PDF file.
 
 ```text
-fill-form
+usage: extract-text.py [-h] [--pages PAGES] [--json] input
 
-Usage:
-  $ fill-form form.pdf --json '{"name":"John","agree":true}' --output filled.pdf
+Extract text from a PDF
 
-Options:
-  --json <inlineJson>  Inline JSON object of field values
-  --json-file <path>   Path to JSON file of field values
-  --flatten            Flatten filled fields into static PDF content
-  --list               List available form fields
-  --output <path>      Output PDF file path
-  -h, --help           Display this message
+positional arguments:
+  input          Input PDF file
+
+optional arguments:
+  -h, --help     show this help message and exit
+  --pages PAGES  Page range, e.g. 1-3 or 1,3,5
+  --json         Output structured JSON with per-page text and page count
 ```
 
-> [!NOTE]
-> One of --json (inline JSON object) or --json-file (path to JSON file) is required. Each key is a field name; values are strings, booleans (for checkboxes), or string arrays (for multi-select list boxes).
-> Use --list to discover available field names before filling. Field names are matched with trimmed whitespace.
-> Use --flatten to bake filled values into the page so the form is no longer editable.
-
-### `get-meta.ts` Read metadata and document info from a PDF
-
-Exports:
-
-- `getPdfMeta({ inputPath, parseDates, }: { inputPath: string; parseDates?: boolean; }): Promise<{ info: Record<string, any>; metadata: Metadata; }>`
+### `fill-form.py` Fill PDF form fields.
 
 ```text
-get-meta
+usage: fill-form.py [-h] [--fields FIELDS] [--list-fields] input [output]
 
-Usage:
-  $ get-meta document.pdf
+Fill PDF form fields
 
-Options:
-  --parse-dates  Parse PDF date fields into date-like values
-  -h, --help     Display this message
+positional arguments:
+  input            Input PDF file
+  output           Output PDF file
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --fields FIELDS  JSON object of field name -> value, e.g. '{"Name":
+                   "Alice"}'
+  --list-fields    List available form fields and exit
 ```
 
-### `image-to-pdf.ts` Convert one or more images into a PDF document, one image per page
-
-Exports:
-
-- `imageToPdf({ imagePaths, outputPath, size, }: { imagePaths: string[]; outputPath: string; size?: "letter" | "a4" | "legal"; }): Promise<{ pageCount: number; outputPath: string; }>`
+### `get-meta.py` Read PDF metadata.
 
 ```text
-image-to-pdf
+usage: get-meta.py [-h] input
 
-Usage:
-  $ image-to-pdf photo1.jpg photo2.jpg --output output.pdf
+Read PDF metadata
 
-Options:
-  --output <path>  Output PDF file path
-  --size <size>    Page size: letter, a4, or legal (default: letter)
-  -h, --help       Display this message
+positional arguments:
+  input       Input PDF file
+
+optional arguments:
+  -h, --help  show this help message and exit
 ```
 
-### `insert-image.ts` Insert an image onto a PDF page at specified coordinates
-
-Exports:
-
-- `insertImage({ inputPath, outputPath, imagePath, page, x, y, width, height, opacity, }: { inputPath: string; outputPath: string; imagePath: string; page?: number; x: number; y: number; width?: number; height?: number; opacity?: number; }): Promise<{ pageCount: number; outputPath: string; }>`
+### `merge.py` Merge multiple PDF files into one.
 
 ```text
-insert-image
+usage: merge.py [-h] --output OUTPUT inputs [inputs ...]
 
-Usage:
-  $ insert-image document.pdf --image logo.png --x 50 --y 50 --output output.pdf
+Merge PDF files
 
-Options:
-  --image <path>   Path to image file to insert
-  --x <n>          X position in PDF points
-  --y <n>          Y position in PDF points
-  --output <path>  Output PDF file path
-  --page <n>       1-based page number to edit
-  --width <n>      Draw width in PDF points
-  --height <n>     Draw height in PDF points
-  --opacity <n>    Image opacity between 0 and 1
-  -h, --help       Display this message
+positional arguments:
+  inputs           Input PDF files (in order)
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --output OUTPUT  Output PDF file
 ```
 
-### `merge-pdfs.ts` Merge multiple PDF files into a single document
-
-Exports:
-
-- `mergePdfs({ inputPaths, outputPath, }: { inputPaths: string[]; outputPath: string; }): Promise<{ pageCount: number; outputPath: string; }>`
+### `render-pages.py` Render PDF pages to PNG images using PyMuPDF (no external tools required).
 
 ```text
-merge-pdfs
+usage: render-pages.py [-h] [--output OUTPUT] [--dpi DPI] [--pages PAGES]
+                       input
 
-Usage:
-  $ merge-pdfs a.pdf b.pdf c.pdf --output merged.pdf
+Render PDF pages to PNG images
 
-Options:
-  --output <path>  Output merged PDF file path
-  -h, --help       Display this message
+positional arguments:
+  input            Input PDF file
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --output OUTPUT  Output directory (default: .)
+  --dpi DPI        Resolution (default: 150)
+  --pages PAGES    Page range, e.g. 1-3 or 2
 ```
 
-### `render-pages.ts` Render PDF pages as PNG images
-
-Exports:
-
-- `renderPdfPages({ inputPath, page, scale, }: { inputPath: string; page?: number; scale?: number; }): Promise<{ numPages: number; results: { page: number; buffer: ArrayBuffer; }[]; }>`
+### `rotate.py` Rotate pages in a PDF.
 
 ```text
-render-pages
+usage: rotate.py [-h] --angle {90,180,270} [--pages PAGES] input output
 
-Usage:
-  $ render-pages document.pdf --output ./pages
+Rotate PDF pages
 
-Options:
-  --page <number>   Render only this page number
-  --scale <number>  Render scale multiplier
-  --output <dir>    Output directory for rendered PNG pages
-  -h, --help        Display this message
+positional arguments:
+  input                 Input PDF file
+  output                Output PDF file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --angle {90,180,270}  Rotation angle (clockwise)
+  --pages PAGES         Comma-separated 1-indexed page numbers (default: all)
 ```
 
-> [!NOTE]
-> Output files are named `page-1.png`, `page-2.png`, etc. For PDFs with 10+ pages the number is zero-padded to match the total page count width (e.g. `page-001.png` for a 100-page PDF). Use --scale 2 for higher resolution output.
-
-### `rotate-pages.ts` Rotate pages in a PDF by 90, 180, or 270 degrees
-
-Exports:
-
-- `rotatePages({ inputPath, outputPath, rotation, pages, }: { inputPath: string; outputPath: string; rotation: 90 | 180 | 270; pages?: number[]; }): Promise<{ rotatedCount: number; pageCount: number; outputPath: string; }>`
+### `set-meta.py` Update PDF metadata.
 
 ```text
-rotate-pages
+usage: set-meta.py [-h] [--title TITLE] [--author AUTHOR] [--subject SUBJECT]
+                   [--creator CREATOR]
+                   input output
 
-Usage:
-  $ rotate-pages document.pdf --output rotated.pdf --rotation 90
+Update PDF metadata
 
-Options:
-  --output <path>     Output PDF file path
-  --rotation <value>  Rotation angle: 90, 180, or 270 (default: 90)
-  --pages <value>     Comma-separated 1-based page numbers
-  -h, --help          Display this message
+positional arguments:
+  input              Input PDF file
+  output             Output PDF file
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --title TITLE
+  --author AUTHOR
+  --subject SUBJECT
+  --creator CREATOR
 ```
 
-### `set-meta.ts` Set metadata fields (title, author, subject, keywords) on a PDF
-
-Exports:
-
-- `setMeta({ inputPath, outputPath, title, author, subject, keywords, producer, creator, }: { inputPath: string; outputPath: string; title?: string; author?: string; subject?: string; keywords?: string[]; producer?: string; creator?: string; }): Promise<{ outputPath: string; }>`
+### `split.py` Split a PDF into pages or named ranges.
 
 ```text
-set-meta
+usage: split.py [-h] [--output OUTPUT] [--ranges RANGES] input
 
-Usage:
-  $ set-meta document.pdf --title "My Doc" --output output.pdf
+Split a PDF
 
-Options:
-  --output <path>     Output PDF file path
-  --title <value>     Document title
-  --author <value>    Document author
-  --subject <value>   Document subject
-  --keywords <value>  Comma-separated document keywords
-  --producer <value>  PDF producer metadata value
-  --creator <value>   PDF creator metadata value
-  -h, --help          Display this message
+positional arguments:
+  input            Input PDF file
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --output OUTPUT  Output directory
+  --ranges RANGES  Page ranges, e.g. '1-3,4-6' or 'intro:1-2,body:3-10'
 ```
 
-### `split-pdf.ts` Extract a single page or page range from a PDF into a new file
-
-Exports:
-
-- `splitPdf({ inputPath, outputPath, pages, }: { inputPath: string; outputPath: string; pages: number | { start: number; end: number; }; }): Promise<{ pageCount: number; outputPath: string; }>`
+### `watermark.py` Add a text or image watermark to every page of a PDF.
 
 ```text
-split-pdf
+usage: watermark.py [-h] [--text TEXT] [--image IMAGE] [--opacity OPACITY]
+                    [--angle ANGLE]
+                    input output
 
-Usage:
-  $ split-pdf document.pdf --page 3 --output page3.pdf
+Add a watermark to a PDF
 
-Options:
-  --output <path>  Output PDF file path
-  --page <n>       Single 1-based page number to extract
-  --start <n>      Start page (inclusive) for range extraction
-  --end <n>        End page (inclusive) for range extraction
-  -h, --help       Display this message
+positional arguments:
+  input              Input PDF file
+  output             Output PDF file
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --text TEXT        Watermark text
+  --image IMAGE      Watermark image file
+  --opacity OPACITY
+  --angle ANGLE
 ```
 
-### `watermark-pdf.ts` Stamp diagonal watermark text on every page of a PDF
+## Visual verification workflow
 
-Exports:
+After creating or modifying a PDF, always render and inspect before delivering:
 
-- `watermarkPdf({ inputPath, outputPath, text, opacity, fontSize, }: { inputPath: string; outputPath: string; text: string; opacity?: number; fontSize?: number; }): Promise<{ pageCount: number; outputPath: string; }>`
-
-```text
-watermark-pdf
-
-Usage:
-  $ watermark-pdf document.pdf --text "DRAFT" --output watermarked.pdf
-
-Options:
-  --text <text>    Watermark text
-  --output <path>  Output PDF file path
-  --opacity <n>    Watermark opacity between 0 and 1
-  --font-size <n>  Watermark font size in points
-  -h, --help       Display this message
 ```
+python scripts/render-pages.py output.pdf --output ./preview --dpi 150
+```
+
+Review the PNG files to catch clipped text, layout issues, or broken formatting.
+
+## Notes
+
+- Text extraction accuracy depends on whether the PDF has embedded text layers. Scanned PDFs
+  require OCR (not included in this skill -- use `pytesseract` + `pdf2image` for OCR).
+- `pymupdf` (fitz) handles text and image extraction and page rendering natively and quickly.
+  `pdfplumber` provides the best table detection. `pypdf` is used for structural operations
+  (merge/split/rotate/metadata/forms).
+- `fill-form.py` works with AcroForm fields. XFA forms (Adobe LiveCycle) are not supported.
