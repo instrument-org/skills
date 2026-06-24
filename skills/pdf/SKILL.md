@@ -34,7 +34,7 @@ positional arguments:
   input                 Input PDF file
   output                Output PDF file
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --start START         Starting page number
   --position {bottom-center,bottom-left,bottom-right,top-center,top-left,top-right}
@@ -52,7 +52,7 @@ usage: create-pdf.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
 
 Create a PDF from text or Markdown
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   --output OUTPUT    Output PDF path
   --content CONTENT  Text content
@@ -71,7 +71,7 @@ Extract embedded images from a PDF
 positional arguments:
   input            Input PDF file
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --output OUTPUT  Output directory (default: .)
   --page PAGE      Only extract from this page (1-indexed)
@@ -87,7 +87,7 @@ Extract hyperlinks from a PDF
 positional arguments:
   input       Input PDF file
 
-optional arguments:
+options:
   -h, --help  show this help message and exit
   --json
 ```
@@ -102,7 +102,7 @@ Extract tables from a PDF
 positional arguments:
   input        Input PDF file
 
-optional arguments:
+options:
   -h, --help   show this help message and exit
   --page PAGE  Only extract from this page (1-indexed)
   --csv        Output tables as CSV
@@ -119,7 +119,7 @@ Extract text from a PDF
 positional arguments:
   input          Input PDF file
 
-optional arguments:
+options:
   -h, --help     show this help message and exit
   --pages PAGES  Page range, e.g. 1-3 or 1,3,5
   --json         Output structured JSON with per-page text and page count
@@ -136,7 +136,7 @@ positional arguments:
   input            Input PDF file
   output           Output PDF file
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --fields FIELDS  JSON object of field name -> value, e.g. '{"Name":
                    "Alice"}'
@@ -153,7 +153,7 @@ Read PDF metadata
 positional arguments:
   input       Input PDF file
 
-optional arguments:
+options:
   -h, --help  show this help message and exit
 ```
 
@@ -167,7 +167,7 @@ Merge PDF files
 positional arguments:
   inputs           Input PDF files (in order)
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --output OUTPUT  Output PDF file
 ```
@@ -183,7 +183,7 @@ Render PDF pages to PNG images
 positional arguments:
   input            Input PDF file
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --output OUTPUT  Output directory (default: .)
   --dpi DPI        Resolution (default: 150)
@@ -201,7 +201,7 @@ positional arguments:
   input                 Input PDF file
   output                Output PDF file
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --angle {90,180,270}  Rotation angle (clockwise)
   --pages PAGES         Comma-separated 1-indexed page numbers (default: all)
@@ -220,7 +220,7 @@ positional arguments:
   input              Input PDF file
   output             Output PDF file
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   --title TITLE
   --author AUTHOR
@@ -238,7 +238,7 @@ Split a PDF
 positional arguments:
   input            Input PDF file
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --output OUTPUT  Output directory
   --ranges RANGES  Page ranges, e.g. '1-3,4-6' or 'intro:1-2,body:3-10'
@@ -257,7 +257,7 @@ positional arguments:
   input              Input PDF file
   output             Output PDF file
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   --text TEXT        Watermark text
   --image IMAGE      Watermark image file

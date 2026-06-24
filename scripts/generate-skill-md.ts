@@ -156,7 +156,15 @@ async function buildHelpFromRuntime({
   isPython?: boolean;
 }) {
   const [cmd, ...cmdArgs] = isPython
-    ? ["python3", relativeScriptPath, "--help"]
+    ? [
+        "uv",
+        "run",
+        "--python",
+        "3.12",
+        "--no-project",
+        relativeScriptPath,
+        "--help",
+      ]
     : [process.execPath, relativeScriptPath, "--help"];
 
   const result = await execFileAsync(cmd, cmdArgs, {
@@ -178,7 +186,7 @@ async function buildHelpFromRuntime({
   ) {
     return output;
   }
-  const execName = isPython ? "python3" : "tsx";
+  const execName = isPython ? "uv run --python 3.12 --no-project" : "tsx";
   return ["Usage:", `  ${execName} ${relativeScriptPath} --help`].join("\n");
 }
 
