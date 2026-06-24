@@ -27,7 +27,7 @@ Convert spreadsheet formats
 positional arguments:
   input            Input file
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --output OUTPUT  Output file
   --sheet SHEET    Source sheet name (for multi-sheet XLSX input)
@@ -41,7 +41,7 @@ usage: create.py [-h] --output OUTPUT [--json JSON_DATA] [--input INPUT]
 
 Create an Excel spreadsheet
 
-optional arguments:
+options:
   -h, --help        show this help message and exit
   --output OUTPUT   Output .xlsx path
   --json JSON_DATA  JSON array of rows
@@ -63,7 +63,7 @@ Edit an Excel spreadsheet
 positional arguments:
   input                 Input .xlsx file
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --output OUTPUT       Output path (default: overwrite input)
   --sheet SHEET         Target sheet name (default: first sheet)
@@ -77,15 +77,45 @@ optional arguments:
 ### `query.py` Query, filter, and analyze spreadsheet data with pandas.
 
 ```text
-Usage:
-  python3 scripts/query.py --help
+usage: query.py [-h] [--sheet SHEET] [--filter FILTER_EXPR] [--select SELECT]
+                [--sort SORT] [--desc] [--limit LIMIT] [--describe]
+                [--output OUTPUT] [--json]
+                input
+
+Query spreadsheet data
+
+positional arguments:
+  input                 Input file (.xlsx, .csv, .tsv)
+
+options:
+  -h, --help            show this help message and exit
+  --sheet SHEET         Sheet name or index (Excel only)
+  --filter FILTER_EXPR  Filter expression, e.g. 'Age > 30 and Status ==
+                        "active"'
+  --select SELECT       Comma-separated column names to include
+  --sort SORT           Column name to sort by
+  --desc                Sort descending
+  --limit LIMIT         Max rows to return
+  --describe            Print summary statistics
+  --output OUTPUT       Save result to .xlsx or .csv
+  --json
 ```
 
 ### `read.py` Read and display spreadsheet data (XLSX, XLS, CSV, TSV, Numbers).
 
 ```text
-Usage:
-  python3 scripts/read.py --help
+usage: read.py [-h] [--sheet SHEET] [--json] [--limit LIMIT] input
+
+Read spreadsheet data
+
+positional arguments:
+  input          Input file (.xlsx, .csv, .tsv)
+
+options:
+  -h, --help     show this help message and exit
+  --sheet SHEET  Sheet name (Excel only)
+  --json
+  --limit LIMIT  Max rows to display (default: 50)
 ```
 
 ## Notes

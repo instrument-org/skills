@@ -25,7 +25,7 @@ usage: create.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
 
 Create a Word document
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   --output OUTPUT    Output .docx path
   --content CONTENT  Markdown text content
@@ -47,7 +47,7 @@ Edit a Word document
 positional arguments:
   input              Input .docx file
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   --output OUTPUT    Output path (default: overwrite input)
   --append APPEND    Text to append as a new paragraph
@@ -68,7 +68,7 @@ Extract text from a .docx file
 positional arguments:
   input             Input .docx file
 
-optional arguments:
+options:
   -h, --help        show this help message and exit
   --json            Output structured JSON with paragraphs and styles
   --include-tables  Include table cell text (default: included)
@@ -88,7 +88,7 @@ positional arguments:
                         for/if blocks supported)
   output                Output .docx file (omit with --list-placeholders)
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --values VALUES       JSON object mapping variable names to values
   --values-file VALUES_FILE

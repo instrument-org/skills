@@ -34,7 +34,7 @@ usage: create.py [-h] --output OUTPUT [--input INPUT] [--content CONTENT]
 
 Create a PowerPoint presentation
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   --output OUTPUT    Output .pptx path
   --input INPUT      JSON file with slide definitions
@@ -52,7 +52,7 @@ Extract text from a .pptx file
 positional arguments:
   input       Input .pptx file
 
-optional arguments:
+options:
   -h, --help  show this help message and exit
   --json      Output structured JSON with per-slide text
 ```
@@ -67,7 +67,7 @@ Inventory text shapes in a .pptx
 positional arguments:
   input            Input .pptx file
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --output OUTPUT  Save JSON to file (default: stdout)
 ```
@@ -87,7 +87,7 @@ positional arguments:
                         (find/replace mode)
   output                Output .pptx file (inventory mode)
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --find FIND           Text to find (simple mode)
   --replace REPLACE_WITH
@@ -105,7 +105,7 @@ positional arguments:
   input          Input .pptx file
   output_prefix  Output filename prefix (default: thumbnails)
 
-optional arguments:
+options:
   -h, --help     show this help message and exit
   --cols COLS
   --dpi DPI

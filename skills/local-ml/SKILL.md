@@ -51,7 +51,7 @@ Classify an image
 positional arguments:
   input            Input image file
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --labels LABELS  Comma-separated labels for zero-shot classification
   --model MODEL    HuggingFace model ID override
@@ -66,7 +66,7 @@ usage: classify-text.py [-h] --text TEXT [--labels LABELS] [--multi-label]
 
 Classify text
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
   --text TEXT      Text to classify
   --labels LABELS  Comma-separated labels for zero-shot classification
@@ -85,7 +85,7 @@ Describe an image
 positional arguments:
   input          Input image file
 
-optional arguments:
+options:
   -h, --help     show this help message and exit
   --model MODEL
 ```
@@ -100,7 +100,7 @@ Detect objects in an image
 positional arguments:
   input                 Input image file
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --model MODEL
   --threshold THRESHOLD
@@ -114,7 +114,7 @@ usage: embed-text.py [-h] [--text TEXT] [--input INPUT] [--model MODEL]
 
 Embed text as a vector
 
-optional arguments:
+options:
   -h, --help     show this help message and exit
   --text TEXT    Text to embed
   --input INPUT  File with one text per line
@@ -129,7 +129,7 @@ usage: extract-entities.py [-h] [--text TEXT] [--input INPUT] [--model MODEL]
 
 Extract named entities from text
 
-optional arguments:
+options:
   -h, --help     show this help message and exit
   --text TEXT    Text to process
   --input INPUT  Input text file
@@ -149,7 +149,7 @@ Remove image background
 positional arguments:
   input                 Input image (PNG, JPG, WEBP)
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --output OUTPUT       Output PNG path (default: <input>-nobg.png)
   --model {u2net,u2net_human_seg,isnet-general-use}
@@ -168,7 +168,7 @@ Transcribe audio to text
 positional arguments:
   input                 Audio file
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --model {tiny,base,small,medium,large}
                         Whisper model size (default: base)
