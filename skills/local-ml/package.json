@@ -1,0 +1,9 @@
+{
+  "name": "@instrument-org/skill-local-ml",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "check:skill": "node ../../scripts/check-skill.ts",
+    "test": "uv run --no-project --with pytest --with Pillow pytest tests/ -v -m 'not slow'"
+  }
+}

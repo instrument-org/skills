@@ -47,7 +47,17 @@ export function parseFrontmatter(content: string): Frontmatter | null {
   return result;
 }
 
-function validatePackageJson(folderName: string, skillPath: string): string[] {
+function hasTsScripts(skillPath: string): boolean {
+  const scriptsDir = join(skillPath, "scripts");
+  if (!existsSync(scriptsDir)) return false;
+  return readdirSync(scriptsDir).some((f) => f.endsWith(".ts"));
+}
+
+function validatePackageJson(
+  folderName: string,
+  skillPath: string,
+  tsSkill: boolean,
+): string[] {
   const errors: string[] = [];
   const pkgPath = join(skillPath, "package.json");
 
@@ -76,17 +86,19 @@ function validatePackageJson(folderName: string, skillPath: string): string[] {
     errors.push(`package.json "private" must be true`);
   }
 
-  if (pkg.type !== "module") {
-    errors.push(`package.json "type" is "${pkg.type}", expected "module"`);
-  }
+  if (tsSkill) {
+    if (pkg.type !== "module") {
+      errors.push(`package.json "type" is "${pkg.type}", expected "module"`);
+    }
 
-  const scripts = pkg.scripts as Record<string, string> | undefined;
-  if (!scripts?.["check:types"]) {
-    errors.push(`package.json missing "check:types" script`);
-  } else if (scripts["check:types"] !== "tsc --noEmit") {
-    errors.push(
-      `package.json "check:types" script is "${scripts["check:types"]}", expected "tsc --noEmit"`,
-    );
+    const scripts = pkg.scripts as Record<string, string> | undefined;
+    if (!scripts?.["check:types"]) {
+      errors.push(`package.json missing "check:types" script`);
+    } else if (scripts["check:types"] !== "tsc --noEmit") {
+      errors.push(
+        `package.json "check:types" script is "${scripts["check:types"]}", expected "tsc --noEmit"`,
+      );
+    }
   }
 
   return errors;
@@ -344,6 +356,7 @@ export async function checkSkill({
 
   const hasScripts = existsSync(join(skillPath, "scripts"));
   const hasPackageJson = existsSync(join(skillPath, "package.json"));
+  const tsSkill = hasTsScripts(skillPath);
 
   if (hasScripts && !hasPackageJson) {
     errors.push(
@@ -351,9 +364,9 @@ export async function checkSkill({
     );
   }
 
-  errors.push(...validatePackageJson(folderName, skillPath));
+  errors.push(...validatePackageJson(folderName, skillPath, tsSkill));
 
-  if (hasPackageJson) {
+  if (hasPackageJson && tsSkill) {
     errors.push(...validateTsconfig(skillPath));
   }
   errors.push(...validateNoAbsoluteSkillPaths(folderName, skillPath));

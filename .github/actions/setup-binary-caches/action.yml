@@ -1,10 +1,15 @@
-description: "Cache binary downloads (HuggingFace ONNX models) to skip re-downloading on repeated runs"
+description: "Cache binary downloads (Python ML models) to skip re-downloading on repeated runs"
 name: "Setup binary caches"
 runs:
   steps:
-    - name: Cache HuggingFace ONNX models
+    - name: Cache HuggingFace models
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         key: huggingface-models-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('skills/transformers-js/package.json') }}
-        path: ~/.cache/transformers-js
+        path: ~/.cache/huggingface
+    - name: Cache Whisper models
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        key: whisper-models-${{ runner.os }}-${{ runner.arch }}
+        path: ~/.cache/whisper
   using: "composite"

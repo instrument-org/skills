@@ -28,6 +28,7 @@
     "test": {
       "inputs": [
         "**/*.{test,spec}.{js,jsx,ts,tsx,cjs,cjsx,cts,ctsx,mjs,mjx,mts,mtsx}",
+        "tests/**/*.py",
         "scripts/**",
         "vitest.config.ts",
         "tsconfig.json",

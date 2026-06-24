@@ -24,19 +24,22 @@ servers, or CLI-first workflows.
 
 ## Skill runtime
 
-- The product provides a Node.js runtime for skill scripts. Implement scripts
-  in TypeScript and use npm dependencies.
-- Python is not included in the product runtime. Do not create Python scripts,
-  select Python libraries, require `pip`, or assume `python`/`python3` is
-  installed.
-- Do not require users to install language runtimes or system packages to use a
-  skill.
-- Prefer cross-platform JavaScript libraries. Native npm dependencies are
-  acceptable only when they provide supported binaries for Windows, Linux, and
-  macOS.
+- The product provides a Node.js runtime and a Python runtime for skill
+  scripts. Implement scripts in TypeScript (npm deps) or Python (pip deps).
+- Python is available via bundled uv with managed CPython. A per-task
+  virtualenv lives at `work/.venv`; agents call `python`, `pip`, and `uv`
+  as shell commands. Write `.py` scripts and install deps with
+  `pip install <pkg>`. List required packages at the top of SKILL.md under
+  a **Dependencies** heading so agents know to install them before first use.
+- Native npm dependencies are acceptable only when they provide supported
+  binaries for Windows, Linux, and macOS.
 - A tool available on a contributor's machine is not necessarily available to
-  an installed skill. Treat the product runtime and the skill's declared npm
+  an installed skill. Treat the product runtime and the skill's declared
   dependencies as the execution environment.
+- Prefer Python for document manipulation (PDF, DOCX, XLSX, PPTX), data
+  processing, and ML inference — the ecosystem is more stable and feature-rich
+  than the Node equivalents. Prefer TypeScript for skills that are inherently
+  browser/web or that wrap Node-native APIs.
 
 ## TypeScript
 

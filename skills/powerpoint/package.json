@@ -2,18 +2,8 @@
   "name": "@instrument-org/skill-powerpoint",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "dependencies": {
-    "cac": "^6.7.14",
-    "officeparser": "^6.0.4",
-    "pptxgenjs": "^4.0.1"
-  },
-  "devDependencies": {
-    "@types/node": "24.13.1"
-  },
   "scripts": {
     "check:skill": "node ../../scripts/check-skill.ts",
-    "check:types": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "uv run --no-project --with pytest --with python-pptx --with Pillow --with pymupdf pytest tests/ -v -m 'not slow'"
   }
 }
