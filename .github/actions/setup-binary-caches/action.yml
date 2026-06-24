@@ -3,12 +3,12 @@ name: "Setup binary caches"
 runs:
   steps:
     - name: Cache HuggingFace models
-      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       with:
         key: huggingface-models-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('skills/transformers-js/package.json') }}
         path: ~/.cache/huggingface
     - name: Cache Whisper models
-      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       with:
         key: whisper-models-${{ runner.os }}-${{ runner.arch }}
         path: ~/.cache/whisper
