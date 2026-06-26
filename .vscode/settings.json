@@ -1,7 +1,3 @@
 {
-  "eslint.workingDirectories": [{ "mode": "auto" }],
-  "eslint.options": {
-    "cache": true,
-    "cacheLocation": ".eslintcache"
-  }
+  "eslint.workingDirectories": [{ "mode": "auto" }]
 }
