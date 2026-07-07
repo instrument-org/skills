@@ -8,6 +8,7 @@ Complete reference for all agent-browser commands. For quick start and common pa
 agent-browser open <url>      # Navigate to URL (aliases: goto, navigate)
                               # Supports: https://, http://, file://, about:, data://
                               # Auto-prepends https:// if no protocol given
+agent-browser read [url]      # Read active page text, or fetch URL as readable text
 agent-browser back            # Go back
 agent-browser forward         # Go forward
 agent-browser reload          # Reload page
@@ -49,10 +50,15 @@ agent-browser drag @e1 @e2        # Drag and drop
 agent-browser upload @e1 file.pdf # Upload files
 ```
 
-## Get Information
+## Read and Get Information
 
 ```bash
+agent-browser read                    # Active page as agent-friendly text
+agent-browser read https://example.com/article
+agent-browser read https://example.com/article --filter overview
+agent-browser read https://docs.example.com --llms index --filter auth
 agent-browser get text @e1        # Get element text
+agent-browser get text body       # Visible page text fallback
 agent-browser get html @e1        # Get innerHTML
 agent-browser get value @e1       # Get input value
 agent-browser get attr @e1 href   # Get attribute
