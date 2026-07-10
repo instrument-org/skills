@@ -21,7 +21,7 @@ Use `is visible @eN` or `scrollintoview @eN` before screenshots, hover-only UI, 
 Discover via search, follow links from a root page, or use URLs the user provides.
 
 **`snapshot -i` returns interactive elements only** — not body copy.
-To read page text, use `get text body` after `wait --load networkidle`.
+To read page text, use `read`; fall back to `get text body` for visible copy.
 
 ## Core Workflow
 
@@ -51,18 +51,20 @@ To read a page rather than interact with it:
 ```bash
 agent-browser open https://example.com
 agent-browser wait --load networkidle
-agent-browser get text body > page.txt
+agent-browser read > page.md
 ```
 
 | Goal                           | Command                                                        |
 | ------------------------------ | -------------------------------------------------------------- |
-| Read visible copy              | `get text body` (redirect to a file on long pages)             |
+| Read active page content       | `read` (redirect to a file on long pages)                      |
+| Read a URL without navigation  | `read https://example.com/article`                             |
+| Read visible copy fallback     | `get text body`                                                |
 | Read one region                | `get text main`, `get text article`, or `get text "#selector"` |
 | Find controls to click or fill | `snapshot -i` (optionally `--urls`)                            |
 
 `snapshot -i` always filters to interactive elements; re-running it won't reveal more text.
 
-**Accordions/collapsed sections:** `get text body` returns only visible text. Expand first (`scrollintoview @eN && click @eN`), then re-run.
+**Accordions/collapsed sections:** page readers only include exposed content. Expand first (`scrollintoview @eN && click @eN`), then re-run.
 
 ## Command Chaining
 
@@ -89,7 +91,7 @@ Session cookies/localStorage persist automatically. Navigate to login, fill cred
 # Navigation
 agent-browser open <url>              # Navigate (aliases: goto, navigate)
 
-# Snapshot — for interaction refs; for page copy use get text body (see "Reading page content")
+# Snapshot — for interaction refs; for page copy use read (see "Reading page content")
 agent-browser snapshot -i             # Interactive elements with refs (recommended); add -c to compact, -d N to limit depth
 agent-browser snapshot -i --urls      # Include href URLs for links
 agent-browser snapshot -s "#selector" # Scope to CSS selector
@@ -116,6 +118,8 @@ agent-browser upload @e1 ./file.pdf             # Upload single file
 agent-browser upload @e1 ./a.png ./b.png        # Upload multiple files
 
 # Get information
+agent-browser read                    # Active page as agent-friendly text
+agent-browser read <url>              # Fetch URL as Markdown/readable text
 agent-browser get text body           # All visible text (pipe to a file if large)
 agent-browser get text @e1            # Element text
 agent-browser get html @e1            # Element outer HTML
@@ -316,7 +320,7 @@ agent-browser frame main          # Return to main frame
 ```bash
 agent-browser open https://example.com/products
 agent-browser wait --load networkidle
-agent-browser get text body > page.txt   # full page copy
+agent-browser read > page.md             # active page content
 agent-browser snapshot -i                # refs for specific fields
 agent-browser get text @e5               # targeted cell or element
 ```
