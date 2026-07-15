@@ -16,7 +16,10 @@ loaded. Install only the optional feature packages required for the requested
 workflow:
 
 ```
-pip install transformers torch sentence-transformers "rembg[cpu]" "numba>=0.60" openai-whisper
+pip install "rembg[cpu]" "numba>=0.60"          # background removal
+pip install faster-whisper                         # speech-to-text
+pip install openai-whisper                         # Windows on ARM only
+pip install transformers torch sentence-transformers  # vision, text, embeddings
 ```
 
 Install only what you need — `torch` is large (~2 GB). Each script lists its
@@ -45,6 +48,9 @@ Models are downloaded on first use and cached locally. Typical sizes:
 ## Notes
 
 - All models run on CPU. Inference can be slow for large models on long inputs.
-- `speech-to-text.py` requires an `ffmpeg` executable for audio format conversion.
-- To use a GPU if available, set `CUDA_VISIBLE_DEVICES=0` in the environment;
-  the scripts use whatever device PyTorch finds.
+- Background removal defaults to the established `u2net` model. Try
+  `--model birefnet-general-lite` when speed and download size matter, or
+  `birefnet-general` when output quality is more important.
+- Speech-to-text uses CPU INT8 inference by default for reliable cross-platform
+  performance on modest hardware. Windows on ARM falls back to OpenAI Whisper
+  and requires an `ffmpeg` executable.

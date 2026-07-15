@@ -22,7 +22,7 @@ def main():
 
     if args.labels:
         labels = [l.strip() for l in args.labels.split(",")]
-        model = args.model or "facebook/bart-large-mnli"
+        model = args.model or "MoritzLaurer/deberta-v3-base-zeroshot-v2.0"
         pipe = pipeline("zero-shot-classification", model=model)
         result = pipe(args.text, candidate_labels=labels, multi_label=args.multi_label)
         output = [{"label": l, "score": s}
