@@ -61,7 +61,6 @@
       "inputs": ["pnpm-lock.yaml", "**/package.json"]
     },
     "//#check:packages:dedupe": {
-      "dependsOn": ["//#check:packages:install"],
       "inputs": ["pnpm-lock.yaml"]
     },
     "//#check:syncpack": {
