@@ -25,6 +25,39 @@ def make_text_watermark(text: str, opacity: float, angle: float, page_w: float, 
     return buf
 
 
+def make_image_watermark(
+    image_path: str,
+    opacity: float,
+    page_w: float,
+    page_h: float,
+) -> io.BytesIO:
+    from reportlab.lib.utils import ImageReader
+    from reportlab.pdfgen import canvas as rl_canvas
+
+    image = ImageReader(image_path)
+    image_w, image_h = image.getSize()
+    scale = min(page_w * 0.6 / image_w, page_h * 0.6 / image_h)
+    width = image_w * scale
+    height = image_h * scale
+
+    buf = io.BytesIO()
+    canvas = rl_canvas.Canvas(buf, pagesize=(page_w, page_h))
+    canvas.saveState()
+    canvas.setFillAlpha(opacity)
+    canvas.drawImage(
+        image,
+        (page_w - width) / 2,
+        (page_h - height) / 2,
+        width=width,
+        height=height,
+        mask="auto",
+    )
+    canvas.restoreState()
+    canvas.save()
+    buf.seek(0)
+    return buf
+
+
 def main():
     parser = argparse.ArgumentParser(description="Add a watermark to a PDF")
     parser.add_argument("input", help="Input PDF file")
@@ -40,8 +73,9 @@ def main():
 
     try:
         from pypdf import PdfReader, PdfWriter
+        from reportlab.pdfgen import canvas as rl_canvas  # noqa: F401
     except ImportError:
-        sys.exit("pypdf not installed. Run: pip install pypdf")
+        sys.exit("Required packages missing. Run: pip install pypdf reportlab")
 
     reader = PdfReader(args.input)
     writer = PdfWriter()
@@ -51,14 +85,14 @@ def main():
         h = float(page.mediabox.height)
 
         if args.text:
-            try:
-                from reportlab.pdfgen import canvas as rl_canvas  # noqa: F401
-            except ImportError:
-                sys.exit("reportlab not installed. Run: pip install reportlab")
             wm_buf = make_text_watermark(args.text, args.opacity, args.angle, w, h)
-            from pypdf import PdfReader as PR
-            wm_page = PR(wm_buf).pages[0]
-            page.merge_page(wm_page)
+        else:
+            wm_buf = make_image_watermark(args.image, args.opacity, w, h)
+
+        from pypdf import PdfReader as PR
+
+        wm_page = PR(wm_buf).pages[0]
+        page.merge_page(wm_page)
         writer.add_page(page)
 
     with open(args.output, "wb") as f:

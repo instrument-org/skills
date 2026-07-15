@@ -1,6 +1,6 @@
 ---
 name: pdf
-description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text or Markdown, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or encrypting. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
+description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text, Markdown, or images, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or inserting images. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
 ---
 
 # PDF
@@ -12,7 +12,7 @@ Use the Python scripts in `scripts/` to work with PDF files.
 Install before first use:
 
 ```
-pip install pymupdf pdfplumber reportlab pypdf
+pip install Pillow pymupdf pdfplumber reportlab pypdf
 ```
 
 `render-pages.py` uses PyMuPDF for native rendering -- no Poppler or external tools needed.
