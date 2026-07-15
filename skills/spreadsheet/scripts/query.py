@@ -5,7 +5,6 @@ Examples:
   python scripts/query.py data.xlsx --filter "Age > 30"
   python scripts/query.py data.csv --select "Name,Age" --sort Age --limit 10
   python scripts/query.py report.xlsx --describe
-  python scripts/query.py data.xlsx --query "SELECT Name, SUM(Sales) GROUP BY Name"
 """
 
 import argparse

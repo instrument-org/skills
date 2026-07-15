@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read and display spreadsheet data (XLSX, XLS, CSV, TSV, Numbers)."""
+"""Read and display spreadsheet data (XLSX, XLSM, CSV, TSV)."""
 
 import argparse
 import csv
@@ -30,7 +30,7 @@ def read_excel(path: str, sheet: str | None = None) -> dict[str, list[list]]:
 
 def main():
     parser = argparse.ArgumentParser(description="Read spreadsheet data")
-    parser.add_argument("input", help="Input file (.xlsx, .csv, .tsv)")
+    parser.add_argument("input", help="Input file (.xlsx, .xlsm, .csv, .tsv)")
     parser.add_argument("--sheet", help="Sheet name (Excel only)")
     parser.add_argument("--json", action="store_true", dest="as_json")
     parser.add_argument("--limit", type=int, default=50, help="Max rows to display (default: 50)")
@@ -44,7 +44,7 @@ def main():
     elif ext in (".tsv",):
         rows = read_csv(args.input, delimiter="\t")
         data = {"Sheet1": rows}
-    elif ext in (".xlsx", ".xls", ".xlsm"):
+    elif ext in (".xlsx", ".xlsm"):
         data = read_excel(args.input, args.sheet)
     else:
         sys.exit(f"Unsupported format: {ext}")
