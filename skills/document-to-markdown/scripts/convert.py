@@ -66,10 +66,7 @@ def main():
     try:
         from markitdown import MarkItDown
     except ImportError:
-        sys.exit(
-            "MarkItDown is not installed. Run: "
-            "pip install 'markitdown[pdf,docx,pptx,xlsx,xls,outlook]'",
-        )
+        sys.exit("MarkItDown is not installed. Reload this skill to retry setup.")
 
     try:
         result = MarkItDown(enable_plugins=False).convert_local(str(input_path))
