@@ -10,11 +10,8 @@ tables, links, and other useful structure for an agent to read and reuse.
 
 ## Dependencies
 
-Install before first use:
-
-```bash
-pip install 'markitdown[pdf,docx,pptx,xlsx,xls,outlook]'
-```
+The app installs this skill's locked Python dependencies when it is loaded.
+Run its scripts with `python`; do not repeat installation.
 
 ## When to use this skill
 

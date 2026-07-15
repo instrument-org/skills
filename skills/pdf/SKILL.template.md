@@ -9,11 +9,8 @@ Use the Python scripts in `scripts/` to work with PDF files.
 
 ## Dependencies
 
-Install before first use:
-
-```
-pip install Pillow pymupdf pdfplumber reportlab pypdf
-```
+The app installs this skill's locked Python dependencies when it is loaded.
+Run its scripts with `python`; do not repeat installation.
 
 `render-pages.py` uses PyMuPDF for native rendering -- no Poppler or external tools needed.
 

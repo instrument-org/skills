@@ -9,11 +9,8 @@ Use the Python scripts in `scripts/` to work with Word documents.
 
 ## Dependencies
 
-Install before first use:
-
-```
-pip install python-docx docxtpl
-```
+The app installs this skill's locked Python dependencies when it is loaded.
+Run its scripts with `python`; do not repeat installation.
 
 ## Scripts
 

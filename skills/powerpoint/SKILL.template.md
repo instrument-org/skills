@@ -9,11 +9,8 @@ Use the Python scripts in `scripts/` to create, read, and edit PowerPoint presen
 
 ## Dependencies
 
-Install before first use:
-
-```
-pip install python-pptx Pillow pymupdf
-```
+The app installs this skill's locked Python dependencies when it is loaded.
+Run its scripts with `python`; do not repeat installation.
 
 ## Scripts
 
