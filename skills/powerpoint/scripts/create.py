@@ -4,7 +4,7 @@
 JSON format — array of slide objects:
   [
     {
-      "layout": "title",       // "title", "content", "blank", "two-col" (default: "content")
+      "layout": "title",       // "title", "content", or "blank" (default: "content")
       "title": "Slide Title",
       "content": "Body text or bullet points separated by newlines",
       "notes": "Speaker notes (optional)"
@@ -36,9 +36,13 @@ def add_slide(prs, slide_def: dict):
     content_text = slide_def.get("content", "")
     notes_text = slide_def.get("notes", "")
 
-    # Choose slide layout
     layout_map = {"title": 0, "content": 1, "blank": 6}
-    layout_idx = layout_map.get(layout_name, 1)
+    if layout_name not in layout_map:
+        sys.exit(
+            f"Unsupported layout: {layout_name}. "
+            f"Use one of: {', '.join(layout_map)}"
+        )
+    layout_idx = layout_map[layout_name]
     layout_idx = min(layout_idx, len(prs.slide_layouts) - 1)
     slide = prs.slides.add_slide(prs.slide_layouts[layout_idx])
 

@@ -28,23 +28,17 @@ def replace_via_inventory(prs, replacements: dict):
         if slide_key not in replacements:
             continue
         shape_replacements = replacements[slide_key]
-        for shape in slide.shapes:
+        for shape_idx, shape in enumerate(slide.shapes):
             if not shape.has_text_frame:
                 continue
-            shape_key = shape.name.replace(" ", "_").lower() if shape.name else None
-            shape_idx_key = None
-            for k in shape_replacements:
-                if k == shape_key or k == f"shape-{list(slide.shapes).index(shape)}":
-                    shape_idx_key = k
-                    break
-            if not shape_idx_key:
+            data = shape_replacements.get(f"shape-{shape_idx}")
+            if data is None:
                 continue
-            data = shape_replacements[shape_idx_key]
             new_paras = data.get("paragraphs", [])
             tf = shape.text_frame
-            # Clear existing paragraphs and set new content
+            tf.clear()
             for i, para_data in enumerate(new_paras):
-                if i < len(tf.paragraphs):
+                if i == 0:
                     para = tf.paragraphs[i]
                 else:
                     para = tf.add_paragraph()
@@ -53,11 +47,60 @@ def replace_via_inventory(prs, replacements: dict):
                     for run in para.runs[1:]:
                         run.text = ""
                 else:
-                    from pptx.oxml.ns import qn
-                    from lxml import etree
                     run = para.add_run()
                     run.text = para_data.get("text", "")
                 para.level = para_data.get("level", 0)
+
+
+def replace_text(paragraph, find: str, replacement: str):
+    """Replace text in a paragraph, including matches spanning formatting runs."""
+    count = 0
+    search_from = 0
+
+    while True:
+        runs = list(paragraph.runs)
+        text = "".join(run.text for run in runs)
+        start = text.find(find, search_from)
+        if start == -1:
+            return count
+
+        end = start + len(find)
+        offset = 0
+        start_index = None
+        end_index = None
+        start_offset = 0
+        end_offset = 0
+
+        for index, run in enumerate(runs):
+            run_end = offset + len(run.text)
+            if start_index is None and start < run_end:
+                start_index = index
+                start_offset = start - offset
+            if end <= run_end:
+                end_index = index
+                end_offset = end - offset
+                break
+            offset = run_end
+
+        if start_index is None or end_index is None:
+            return count
+
+        start_run = runs[start_index]
+        end_run = runs[end_index]
+        if start_run == end_run:
+            start_run.text = (
+                start_run.text[:start_offset]
+                + replacement
+                + start_run.text[end_offset:]
+            )
+        else:
+            start_run.text = start_run.text[:start_offset] + replacement
+            for run in runs[start_index + 1:end_index]:
+                run.text = ""
+            end_run.text = end_run.text[end_offset:]
+
+        count += 1
+        search_from = start + len(replacement)
 
 
 def replace_find_replace(prs, find: str, replace: str):
@@ -68,10 +111,7 @@ def replace_find_replace(prs, find: str, replace: str):
             if not shape.has_text_frame:
                 continue
             for para in shape.text_frame.paragraphs:
-                for run in para.runs:
-                    if find in run.text:
-                        run.text = run.text.replace(find, replace)
-                        count += 1
+                count += replace_text(para, find, replace)
     return count
 
 
@@ -84,6 +124,10 @@ def main():
     parser.add_argument("--find", help="Text to find (simple mode)")
     parser.add_argument("--replace", dest="replace_with", help="Replacement text (simple mode)")
     args = parser.parse_args()
+    if (args.find is None) != (args.replace_with is None):
+        parser.error("--find and --replace must be supplied together")
+    if args.find == "":
+        parser.error("--find must not be empty")
 
     try:
         from pptx import Presentation
@@ -92,7 +136,7 @@ def main():
 
     prs = Presentation(args.input)
 
-    if args.find is not None and args.replace_with is not None:
+    if args.find is not None:
         count = replace_find_replace(prs, args.find, args.replace_with)
         output_path = args.replacements_or_output
         prs.save(output_path)

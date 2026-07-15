@@ -6,6 +6,20 @@ import sys
 from pathlib import Path
 
 
+def store_formula_like_values_as_text(output: str, dataframe):
+    from openpyxl import load_workbook
+
+    workbook = load_workbook(output)
+    sheet = workbook.active
+    for row_index, row in enumerate(dataframe.itertuples(index=False, name=None), start=2):
+        for column_index, value in enumerate(row, start=1):
+            if isinstance(value, str) and value.startswith("="):
+                cell = sheet.cell(row=row_index, column=column_index)
+                cell.value = value
+                cell.data_type = "s"
+    workbook.save(output)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Convert spreadsheet formats")
     parser.add_argument("input", help="Input file")
@@ -35,6 +49,7 @@ def main():
 
     if dst in (".xlsx",):
         df.to_excel(args.output, index=False)
+        store_formula_like_values_as_text(args.output, df)
     elif dst == ".tsv":
         df.to_csv(args.output, sep="\t", index=False)
     else:

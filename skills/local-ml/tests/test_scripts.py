@@ -9,6 +9,7 @@ To run the full suite including model downloads:
 """
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -18,10 +19,11 @@ import pytest
 SCRIPTS = Path(__file__).parent.parent / "scripts"
 
 
-def run(script: str, *args: str) -> subprocess.CompletedProcess:
+def run(script: str, *args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(
         [sys.executable, str(SCRIPTS / script), *args],
         capture_output=True,
+        env=env,
         text=True,
     )
 
@@ -103,3 +105,15 @@ class TestExtractEntities:
         assert result.returncode == 0
         # Output should contain ORG or PER entities
         assert "Apple" in result.stdout or result.returncode == 0
+
+
+class TestSpeechToText:
+    def test_requires_ffmpeg_before_loading_model(self):
+        result = run(
+            "speech-to-text.py",
+            "audio.mp3",
+            env={**os.environ, "PATH": ""},
+        )
+
+        assert result.returncode != 0
+        assert "ffmpeg is required" in result.stderr

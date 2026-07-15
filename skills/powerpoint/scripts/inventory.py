@@ -47,8 +47,6 @@ def main():
             if not paragraphs:
                 continue
             shape_key = f"shape-{shape_idx}"
-            if shape.name:
-                shape_key = shape.name.replace(" ", "_").lower()
             shapes[shape_key] = {
                 "name": shape.name,
                 "left": shape.left / 914400 if shape.left else 0,
