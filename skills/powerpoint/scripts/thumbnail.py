@@ -11,6 +11,7 @@ Install:
 """
 
 import argparse
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -115,12 +116,10 @@ def main():
     parser.add_argument("--dpi", type=int, default=DPI)
     args = parser.parse_args()
 
-    result = subprocess.run(["which", "soffice"], capture_output=True)
-    if result.returncode != 0:
+    if not shutil.which("soffice"):
         sys.exit(
-            "LibreOffice (soffice) not found. Install:\n"
-            "  macOS:  brew install libreoffice\n"
-            "  Ubuntu: apt install libreoffice"
+            "LibreOffice (soffice) is not available in this environment. "
+            "Use inventory.py and extract-text.py for structural verification."
         )
 
     pptx_path = Path(args.input)
