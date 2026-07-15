@@ -34,7 +34,6 @@ Lists and nested dicts work as Jinja2 context objects.
 ## Notes
 
 - `python-docx` can read and write `.docx` files but cannot convert to/from `.doc`
-  (old binary format) or PDF. For PDF conversion, use LibreOffice:
-  `soffice --headless --convert-to pdf document.docx`
+  (old binary format) or PDF.
 - Table styles require the style to exist in the document's style gallery. `"Table Grid"`
   is safe to use universally.

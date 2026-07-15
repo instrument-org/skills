@@ -75,7 +75,7 @@ class TestCreate:
     def test_creates_from_markdown(self, tmp_path):
         pytest.importorskip("docx")
         out = tmp_path / "output.docx"
-        md = "# Title\n\nParagraph text.\n\n- Bullet one\n- Bullet two"
+        md = "# Title\n\nParagraph with **bold** and *italic* text.\n\n- Bullet one\n- Bullet two"
         result = run("create.py", "--content", md, "--output", str(out))
         assert result.returncode == 0
         assert out.exists()
@@ -83,6 +83,9 @@ class TestCreate:
         doc = Document(str(out))
         texts = [p.text for p in doc.paragraphs]
         assert "Title" in texts
+        paragraph = next(p for p in doc.paragraphs if "Paragraph with" in p.text)
+        assert any(run.bold for run in paragraph.runs if run.text == "bold")
+        assert any(run.italic for run in paragraph.runs if run.text == "italic")
 
     def test_creates_from_file(self, tmp_path):
         pytest.importorskip("docx")

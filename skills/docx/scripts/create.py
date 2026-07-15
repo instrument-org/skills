@@ -18,10 +18,19 @@ import re
 import sys
 
 
-def parse_inline(text: str, run):
-    """Apply bold/italic inline formatting to a run (simplified: use plain text)."""
-    # Strip inline markers for plain text; python-docx runs handle formatting separately
-    return re.sub(r"\*{1,2}(.+?)\*{1,2}", r"\1", text)
+def add_inline(paragraph, text: str):
+    """Add Markdown bold and italic spans without flattening the paragraph."""
+    for token in re.split(r"(\*\*.+?\*\*|\*.+?\*)", text):
+        if not token:
+            continue
+        if token.startswith("**") and token.endswith("**"):
+            run = paragraph.add_run(token[2:-2])
+            run.bold = True
+        elif token.startswith("*") and token.endswith("*"):
+            run = paragraph.add_run(token[1:-1])
+            run.italic = True
+        else:
+            paragraph.add_run(token)
 
 
 def add_markdown(doc, text: str):
@@ -34,7 +43,8 @@ def add_markdown(doc, text: str):
         m = re.match(r"^(#{1,6})\s+(.*)", line)
         if m:
             level = len(m.group(1))
-            doc.add_heading(m.group(2).strip(), level=level)
+            paragraph = doc.add_heading(level=level)
+            add_inline(paragraph, m.group(2).strip())
             i += 1
             continue
         # HR
@@ -45,15 +55,15 @@ def add_markdown(doc, text: str):
         # Bullet
         if re.match(r"^[-*]\s+", line):
             clean = re.sub(r"^[-*]\s+", "", line)
-            clean = parse_inline(clean, None)
-            doc.add_paragraph(clean, style="List Bullet")
+            paragraph = doc.add_paragraph(style="List Bullet")
+            add_inline(paragraph, clean)
             i += 1
             continue
         # Numbered list
         if re.match(r"^\d+\.\s+", line):
             clean = re.sub(r"^\d+\.\s+", "", line)
-            clean = parse_inline(clean, None)
-            doc.add_paragraph(clean, style="List Number")
+            paragraph = doc.add_paragraph(style="List Number")
+            add_inline(paragraph, clean)
             i += 1
             continue
         # Empty line
@@ -61,8 +71,8 @@ def add_markdown(doc, text: str):
             i += 1
             continue
         # Normal paragraph
-        clean = parse_inline(line.strip(), None)
-        doc.add_paragraph(clean)
+        paragraph = doc.add_paragraph()
+        add_inline(paragraph, line.strip())
         i += 1
 
 
@@ -91,7 +101,6 @@ def main():
 
     try:
         from docx import Document
-        from docx.opc.constants import RELATIONSHIP_TYPE as RT
     except ImportError:
         sys.exit("python-docx not installed. Run: pip install python-docx")
 
