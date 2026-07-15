@@ -29,7 +29,7 @@ interface FileJsDoc {
   notes: string[];
 }
 
-function getPythonCommand(skillPath: string): string[] {
+function getPythonCommand(skillPath: string): [string, ...string[]] {
   const venvPython = join(
     skillPath,
     ".venv",
