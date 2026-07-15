@@ -13,8 +13,8 @@
   "type": "module",
   "files": [],
   "scripts": {
-    "check-and-test": "turbo run check:actions check:packages:install check:packages:dedupe check:python check:types test check:syncpack check:unused check:gitignore check:spelling check:unused-words check:skill check:skills check:format --ui tui --continue=dependencies-successful --output-logs errors-only",
-    "check-and-test:ci": "turbo run check:actions check:packages:install check:python check:types test check:syncpack check:unused check:gitignore check:skill check:skills --ui tui --continue=dependencies-successful --output-logs errors-only",
+    "check-and-test": "pnpm check:packages:install && turbo run check:actions check:packages:dedupe check:python check:types test check:syncpack check:unused check:gitignore check:spelling check:unused-words check:skill check:skills check:format --ui tui --continue=dependencies-successful --output-logs errors-only",
+    "check-and-test:ci": "pnpm check:packages:install && turbo run check:actions check:python check:types test check:syncpack check:unused check:gitignore check:skill check:skills --ui tui --continue=dependencies-successful --output-logs errors-only",
     "check:actions": "node scripts/check-actions.ts",
     "check:format": "prettier --check .",
     "check:gitignore": "node scripts/check-gitignore.ts",
