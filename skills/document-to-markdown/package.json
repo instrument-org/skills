@@ -1,0 +1,10 @@
+{
+  "name": "@instrument-org/skill-document-to-markdown",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "check:python": "uv run --locked --project . --extra test python -m compileall -q scripts tests",
+    "check:skill": "node ../../scripts/check-skill.ts",
+    "test": "uv run --locked --project . --extra test pytest tests/ -v -m 'not slow'"
+  }
+}

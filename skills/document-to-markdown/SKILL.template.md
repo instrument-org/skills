@@ -1,0 +1,38 @@
+---
+name: document-to-markdown
+description: "Convert local office documents and data files to clean Markdown for analysis, search, summarization, or reuse in notes. Use when the user wants the semantic content of a PDF, Word document, PowerPoint, Excel workbook, or common data file in Markdown. Use this for ingestion, not for layout-preserving or final human-facing document conversion."
+---
+
+# Document to Markdown
+
+Convert local knowledge-work files into Markdown that preserves headings,
+tables, links, and other useful structure for an agent to read and reuse.
+
+## Dependencies
+
+Install before first use:
+
+```bash
+pip install 'markitdown[pdf,docx,pptx,xlsx,xls,outlook]'
+```
+
+## When to use this skill
+
+- Convert a document into agent-readable Markdown before analysis or summarization.
+- Extract a presentation, workbook, PDF, email export, or data file into a reusable note.
+- Prepare a local document for LLM analysis without discarding its semantic structure.
+
+Use the PDF, DOCX, spreadsheet, or PowerPoint skills when the task requires
+format-specific editing or creation. Use the Markdown skill for deliberate HTML
+conversion. This skill is for local document ingestion, not preserving visual
+layout exactly.
+
+## Security
+
+The script accepts only local PDF, Office, email, text, and data files. Do not
+pass untrusted URLs, enable plugins, or use cloud conversion services through
+this skill.
+
+## Scripts
+
+{{GENERATED_SCRIPT_DOCS}}
