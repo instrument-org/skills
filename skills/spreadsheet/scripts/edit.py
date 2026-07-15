@@ -16,6 +16,12 @@ import re
 import sys
 
 
+def set_literal_value(cell, value):
+    cell.value = value
+    if isinstance(value, str) and value.startswith("="):
+        cell.data_type = "s"
+
+
 def cell_ref(ref: str):
     """Parse 'A1' -> (row=1, col=1) or 'Sheet1!A1' -> (sheet, row, col)."""
     if "!" in ref:
@@ -66,7 +72,7 @@ def main():
                 value = float(value)
             except ValueError:
                 pass
-        target.cell(row=row, column=col, value=value)
+        set_literal_value(target.cell(row=row, column=col), value)
 
     if args.set_formula:
         ref, formula = args.set_formula.split("=", 1)
@@ -79,7 +85,9 @@ def main():
 
     if args.add_row:
         values = json.loads(args.add_row)
-        ws.append(values)
+        row = ws.max_row + 1
+        for column, value in enumerate(values, start=1):
+            set_literal_value(ws.cell(row=row, column=column), value)
 
     if args.delete_row:
         ws.delete_rows(args.delete_row)

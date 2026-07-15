@@ -83,7 +83,6 @@
     "numba",
     "onnxruntime",
     "openpyxl",
-    "oxml",
     "packbits",
     "pagesizes",
     "palettegen",

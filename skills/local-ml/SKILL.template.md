@@ -44,7 +44,6 @@ Models are downloaded on first use and cached in `~/.cache/huggingface/` and
 ## Notes
 
 - All models run on CPU. Inference can be slow for large models on long inputs.
-- `speech-to-text.py` accepts most audio formats directly (ffmpeg is used internally
-  by Whisper for format conversion).
+- `speech-to-text.py` requires an `ffmpeg` executable for audio format conversion.
 - To use a GPU if available, set `CUDA_VISIBLE_DEVICES=0` in the environment;
   the scripts use whatever device PyTorch finds.

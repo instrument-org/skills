@@ -17,6 +17,12 @@ import sys
 from pathlib import Path
 
 
+def set_literal_value(cell, value):
+    cell.value = value
+    if isinstance(value, str) and value.startswith("="):
+        cell.data_type = "s"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Create an Excel spreadsheet")
     parser.add_argument("--output", required=True, help="Output .xlsx path")
@@ -60,7 +66,8 @@ def main():
 
     for r_idx, row in enumerate(rows, start=1):
         for c_idx, value in enumerate(row, start=1):
-            cell = ws.cell(row=r_idx, column=c_idx, value=value)
+            cell = ws.cell(row=r_idx, column=c_idx)
+            set_literal_value(cell, value)
             if r_idx == 1:
                 cell.fill = header_fill
                 cell.font = header_font

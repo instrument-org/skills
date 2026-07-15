@@ -7,6 +7,7 @@ First run downloads the model (~140 MB for 'base').
 
 import argparse
 import json
+import shutil
 import sys
 
 
@@ -20,6 +21,12 @@ def main():
     parser.add_argument("--json", action="store_true", dest="as_json",
                         help="Output full JSON with timestamps")
     args = parser.parse_args()
+
+    if not shutil.which("ffmpeg"):
+        sys.exit(
+            "ffmpeg is required by openai-whisper but is not available. "
+            "Provide ffmpeg before using speech-to-text."
+        )
 
     try:
         import whisper

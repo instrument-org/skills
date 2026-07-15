@@ -138,3 +138,36 @@ class TestEdit:
         doc = Document(str(out))
         text = "\n".join(p.text for p in doc.paragraphs)
         assert "1st" in text
+
+    def test_find_replace_across_runs(self, tmp_path):
+        from docx import Document
+
+        source = tmp_path / "split-runs.docx"
+        out = tmp_path / "replaced.docx"
+        doc = Document()
+        paragraph = doc.add_paragraph()
+        paragraph.add_run("Draft ").bold = True
+        paragraph.add_run("Version").italic = True
+        doc.save(source)
+
+        result = run(
+            "edit.py",
+            str(source),
+            "--find",
+            "Draft Version",
+            "--replace",
+            "Final Version",
+            "--output",
+            str(out),
+        )
+
+        assert result.returncode == 0
+        replaced = Document(out).paragraphs[0]
+        assert replaced.text == "Final Version"
+        assert replaced.runs[0].bold
+
+    def test_find_replace_requires_a_complete_pair(self, tmp_path):
+        result = run("edit.py", str(tmp_path / "missing.docx"), "--find", "Draft")
+
+        assert result.returncode == 2
+        assert "must be supplied together" in result.stderr
