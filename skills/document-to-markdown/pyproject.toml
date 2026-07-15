@@ -1,0 +1,8 @@
+[project]
+name = "skill-document-to-markdown"
+version = "0.0.0"
+requires-python = ">=3.11"
+dependencies = ["markitdown[docx,outlook,pdf,pptx,xls,xlsx]"]
+
+[project.optional-dependencies]
+test = ["openpyxl", "pytest", "python-docx", "python-pptx", "reportlab"]
