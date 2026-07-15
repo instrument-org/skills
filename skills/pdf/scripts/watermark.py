@@ -102,6 +102,8 @@ def main():
     }
     if metadata:
         writer.add_metadata(metadata)
+    if reader.xmp_metadata is not None:
+        writer.xmp_metadata = reader.xmp_metadata
 
     with open(args.output, "wb") as f:
         writer.write(f)

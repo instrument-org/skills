@@ -148,24 +148,25 @@ class TestWatermark:
         pytest.importorskip("PIL")
         pytest.importorskip("pypdf")
         from PIL import Image
-        from pypdf import PdfReader
+        from pypdf import PdfReader, PdfWriter
 
         image = tmp_path / "watermark.png"
         Image.new("RGBA", (32, 16), "red").save(image)
         source = tmp_path / "source.pdf"
         out = tmp_path / "watermarked.pdf"
-
-        create_result = run(
-            "create-pdf.py",
-            "--content",
-            "Source content",
-            "--output",
-            str(source),
-            "--title",
-            "Watermark source",
-            "--author",
-            "Instrument",
-        )
+        xmp_metadata = b"""<?xpacket begin=\"\xef\xbb\xbf\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>
+<x:xmpmeta xmlns:x=\"adobe:ns:meta/\">
+  <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">
+    <rdf:Description xmlns:dc=\"http://purl.org/dc/elements/1.1/\" dc:title=\"Watermark source\" />
+  </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end=\"w\"?>"""
+        writer = PdfWriter()
+        writer.add_blank_page(width=144, height=144)
+        writer.add_metadata({"/Title": "Watermark source", "/Author": "Instrument"})
+        writer.xmp_metadata = xmp_metadata
+        with source.open("wb") as file:
+            writer.write(file)
 
         result = run(
             "watermark.py",
@@ -175,13 +176,14 @@ class TestWatermark:
             str(image),
         )
 
-        assert create_result.returncode == 0
         assert result.returncode == 0
         watermarked = PdfReader(str(out))
         resources = watermarked.pages[0]["/Resources"]
         assert "/XObject" in resources
         assert watermarked.metadata.title == "Watermark source"
         assert watermarked.metadata.author == "Instrument"
+        assert watermarked.xmp_metadata is not None
+        assert watermarked.xmp_metadata.stream.get_data() == xmp_metadata
 
 
 class TestImages:
