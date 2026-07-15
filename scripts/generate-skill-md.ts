@@ -3,7 +3,7 @@
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { promisify } from "node:util";
 import * as prettier from "prettier";
 import ts from "typescript";
@@ -27,6 +27,19 @@ function parseArgs() {
 interface FileJsDoc {
   description: string | undefined;
   notes: string[];
+}
+
+function getPythonCommand(skillPath: string): string[] {
+  const venvPython = join(
+    skillPath,
+    ".venv",
+    process.platform === "win32" ? "Scripts/python.exe" : "bin/python",
+  );
+  if (existsSync(venvPython)) {
+    return [venvPython];
+  }
+
+  return ["uv", "run", "--python", "3.12", "--no-project", "python"];
 }
 
 function getFileJsDoc(scriptPath: string): FileJsDoc {
@@ -139,18 +152,12 @@ async function getPythonDocstring(
 ): Promise<string | undefined> {
   const pyCode =
     'import ast,sys;t=ast.parse(open(sys.argv[1]).read());doc=ast.get_docstring(t);print(doc.splitlines()[0] if doc else "")';
+  const [command, ...commandArgs] = getPythonCommand(
+    dirname(dirname(scriptPath)),
+  );
   const result = await execFileAsync(
-    "uv",
-    [
-      "run",
-      "--python",
-      "3.12",
-      "--no-project",
-      "python",
-      "-c",
-      pyCode,
-      scriptPath,
-    ],
+    command,
+    [...commandArgs, "-c", pyCode, scriptPath],
     { encoding: "utf-8" },
   ).catch(() => ({ stdout: "" }));
   const text = ((result as { stdout: string }).stdout ?? "").trim();
@@ -167,15 +174,7 @@ async function buildHelpFromRuntime({
   isPython?: boolean;
 }) {
   const [cmd, ...cmdArgs] = isPython
-    ? [
-        "uv",
-        "run",
-        "--python",
-        "3.12",
-        "--no-project",
-        relativeScriptPath,
-        "--help",
-      ]
+    ? [...getPythonCommand(skillPath), relativeScriptPath, "--help"]
     : [process.execPath, relativeScriptPath, "--help"];
 
   const result = await execFileAsync(cmd, cmdArgs, {
@@ -197,7 +196,7 @@ async function buildHelpFromRuntime({
   ) {
     return output;
   }
-  const execName = isPython ? "uv run --python 3.12 --no-project" : "tsx";
+  const execName = isPython ? "python" : "tsx";
   return ["Usage:", `  ${execName} ${relativeScriptPath} --help`].join("\n");
 }
 
