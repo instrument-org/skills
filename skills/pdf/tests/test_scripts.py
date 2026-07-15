@@ -118,13 +118,104 @@ class TestSetMeta:
 
 
 class TestCreatePdf:
-    def test_creates_pdf_from_content(self, tmp_path):
+    def test_creates_pdf_with_metadata_from_content(self, tmp_path):
         pytest.importorskip("reportlab")
+        pytest.importorskip("pypdf")
         out = tmp_path / "created.pdf"
-        result = run("create-pdf.py", "--content", "# Hello\n\nTest paragraph.", "--output", str(out))
+        result = run(
+            "create-pdf.py",
+            "--content",
+            "# Hello\n\nTest paragraph.",
+            "--output",
+            str(out),
+            "--title",
+            "Quarterly report",
+            "--author",
+            "Instrument",
+        )
         assert result.returncode == 0
         assert out.exists()
         assert out.stat().st_size > 100
+        from pypdf import PdfReader
+
+        metadata = PdfReader(str(out)).metadata
+        assert metadata.title == "Quarterly report"
+        assert metadata.author == "Instrument"
+
+
+class TestWatermark:
+    def test_adds_an_image_watermark(self, sample_pdf, tmp_path):
+        pytest.importorskip("PIL")
+        pytest.importorskip("pypdf")
+        from PIL import Image
+        from pypdf import PdfReader
+
+        image = tmp_path / "watermark.png"
+        Image.new("RGBA", (32, 16), "red").save(image)
+        out = tmp_path / "watermarked.pdf"
+
+        result = run(
+            "watermark.py",
+            str(sample_pdf),
+            str(out),
+            "--image",
+            str(image),
+        )
+
+        assert result.returncode == 0
+        resources = PdfReader(str(out)).pages[0]["/Resources"]
+        assert "/XObject" in resources
+
+
+class TestImages:
+    def test_creates_pdf_from_images(self, tmp_path):
+        pytest.importorskip("PIL")
+        pytest.importorskip("pypdf")
+        from PIL import Image
+        from pypdf import PdfReader
+
+        first = tmp_path / "first.png"
+        second = tmp_path / "second.png"
+        Image.new("RGB", (32, 16), "red").save(first)
+        Image.new("RGB", (16, 32), "blue").save(second)
+        out = tmp_path / "images.pdf"
+
+        result = run(
+            "image-to-pdf.py",
+            str(first),
+            str(second),
+            "--output",
+            str(out),
+        )
+
+        assert result.returncode == 0
+        assert len(PdfReader(str(out)).pages) == 2
+
+    def test_inserts_image_into_pdf(self, sample_pdf, tmp_path):
+        pytest.importorskip("PIL")
+        pytest.importorskip("pypdf")
+        from PIL import Image
+        from pypdf import PdfReader
+
+        image = tmp_path / "stamp.png"
+        Image.new("RGB", (32, 16), "green").save(image)
+        out = tmp_path / "with-image.pdf"
+
+        result = run(
+            "insert-image.py",
+            str(sample_pdf),
+            str(out),
+            "--image",
+            str(image),
+            "--width",
+            "72",
+            "--height",
+            "36",
+        )
+
+        assert result.returncode == 0
+        resources = PdfReader(str(out)).pages[0]["/Resources"]
+        assert "/XObject" in resources
 
 
 class TestExtractLinks:

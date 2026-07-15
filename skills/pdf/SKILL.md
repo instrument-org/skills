@@ -1,6 +1,6 @@
 ---
 name: pdf
-description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text or Markdown, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or encrypting. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
+description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text, Markdown, or images, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or inserting images. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
 ---
 
 # PDF
@@ -12,7 +12,7 @@ Use the Python scripts in `scripts/` to work with PDF files.
 Install before first use:
 
 ```
-pip install pymupdf pdfplumber reportlab pypdf
+pip install Pillow pymupdf pdfplumber reportlab pypdf
 ```
 
 `render-pages.py` uses PyMuPDF for native rendering -- no Poppler or external tools needed.
@@ -155,6 +155,45 @@ positional arguments:
 
 options:
   -h, --help  show this help message and exit
+```
+
+### `image-to-pdf.py` Create a PDF from one or more image files.
+
+```text
+usage: image-to-pdf.py [-h] --output OUTPUT [--dpi DPI] inputs [inputs ...]
+
+Create a PDF from images
+
+positional arguments:
+  inputs           Input image paths
+
+options:
+  -h, --help       show this help message and exit
+  --output OUTPUT  Output PDF path
+  --dpi DPI        Resolution metadata for the output PDF (default: 150)
+```
+
+### `insert-image.py` Insert an image into a page of an existing PDF.
+
+```text
+usage: insert-image.py [-h] --image IMAGE [--page PAGE] [--x X] [--y Y]
+                       --width WIDTH [--height HEIGHT]
+                       input output
+
+Insert an image into a PDF page
+
+positional arguments:
+  input            Input PDF file
+  output           Output PDF file
+
+options:
+  -h, --help       show this help message and exit
+  --image IMAGE    Image file to insert
+  --page PAGE      Target page (1-indexed)
+  --x X            Left position in points
+  --y Y            Top position in points
+  --width WIDTH    Image width in points
+  --height HEIGHT  Image height in points
 ```
 
 ### `merge.py` Merge multiple PDF files into one.

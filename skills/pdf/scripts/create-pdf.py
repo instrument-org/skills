@@ -57,13 +57,18 @@ def main():
     else:
         sys.exit("Provide --content or --input")
 
+    def set_metadata(canvas, _doc):
+        if args.title:
+            canvas.setTitle(args.title)
+        if args.author:
+            canvas.setAuthor(args.author)
+
     doc = SimpleDocTemplate(args.output, pagesize=letter)
-    meta = {}
-    if args.title:
-        meta["title"] = args.title
-    if args.author:
-        meta["author"] = args.author
-    doc.build(md_to_story(text), **{k: v for k, v in meta.items()})
+    doc.build(
+        md_to_story(text),
+        onFirstPage=set_metadata,
+        onLaterPages=set_metadata,
+    )
     print(f"Created: {args.output}")
 
 
