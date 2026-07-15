@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Edit cells, formulas, and formatting in an existing Excel spreadsheet.
+"""Edit cells, formulas, and rows in an existing Excel spreadsheet.
 
-Operations: set-cell, set-formula, set-format, add-row, delete-row, rename-sheet.
+Operations: set-cell, set-formula, add-row, delete-row.
 
 Examples:
   python scripts/edit.py workbook.xlsx --set-cell "A1=Hello"

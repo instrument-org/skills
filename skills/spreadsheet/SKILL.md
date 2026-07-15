@@ -1,6 +1,6 @@
 ---
 name: spreadsheet
-description: "Work with tabular data files: Excel (.xlsx, .xls), CSV, and TSV. Use whenever the user wants to read, write, create, edit, filter, query, convert, or analyze spreadsheet or tabular data. Activate whenever the user mentions a .xlsx, .csv, or .tsv file, or asks to work with rows, columns, formulas, or tabular data. Also use for data cleaning, filtering rows, computing aggregates, and format conversion."
+description: "Work with tabular data files: Excel (.xlsx, .xlsm), Apple Numbers (.numbers), CSV, and TSV. Use whenever the user wants to read, write, create, edit, filter, query, convert, or analyze spreadsheet or tabular data. Activate whenever the user mentions a .xlsx, .numbers, .csv, or .tsv file, or asks to work with rows, columns, formulas, or tabular data. Also use for data cleaning, filtering rows, computing aggregates, and format conversion."
 ---
 
 # Spreadsheet
@@ -51,7 +51,7 @@ options:
   --freeze-header   Freeze the first (header) row
 ```
 
-### `edit.py` Edit cells, formulas, and formatting in an existing Excel spreadsheet.
+### `edit.py` Edit cells, formulas, and rows in an existing Excel spreadsheet.
 
 ```text
 usage: edit.py [-h] [--output OUTPUT] [--sheet SHEET] [--set-cell REF=VALUE]
@@ -73,6 +73,27 @@ options:
   --add-row JSON        Append a row (JSON array), e.g. '["Alice",30]'
   --delete-row N        Delete row N (1-indexed)
 ```
+
+### `numbers-bridge.ts` Convert Apple Numbers and legacy XLS files through SheetJS.
+
+Exports:
+
+- `convertNumbers({ inputPath, outputPath, sheetName, }: { inputPath: string; outputPath: string; sheetName?: string; }): Promise<{ inputPath: string; outputPath: string; sheetName: string | undefined; }>`
+
+```text
+numbers-bridge
+
+Usage:
+  $ numbers-bridge <input.numbers|input.xls> --output <path> [--sheet <name>]
+
+Options:
+  --output <path>  Output .csv, .json, .numbers, or .xlsx path
+  --sheet <name>   Sheet to export for CSV or JSON output
+  -h, --help       Display this message
+```
+
+> [!NOTE]
+> Use this compatibility bridge only for `.numbers` or `.xls` files. The Python scripts handle XLSX, XLSM, CSV, and TSV.
 
 ### `query.py` Query, filter, and analyze spreadsheet data with pandas.
 
@@ -101,7 +122,7 @@ options:
   --json
 ```
 
-### `read.py` Read and display spreadsheet data (XLSX, XLS, CSV, TSV, Numbers).
+### `read.py` Read and display spreadsheet data (XLSX, XLSM, CSV, TSV).
 
 ```text
 usage: read.py [-h] [--sheet SHEET] [--json] [--limit LIMIT] input
@@ -109,7 +130,7 @@ usage: read.py [-h] [--sheet SHEET] [--json] [--limit LIMIT] input
 Read spreadsheet data
 
 positional arguments:
-  input          Input file (.xlsx, .csv, .tsv)
+  input          Input file (.xlsx, .xlsm, .csv, .tsv)
 
 options:
   -h, --help     show this help message and exit
@@ -125,4 +146,5 @@ options:
 - `read.py` reads formula results (`data_only=True`) — the stored cached value,
   not the formula text.
 - For very large files (100k+ rows), `query.py` with pandas is more efficient than `read.py`.
-- Numbers files are not supported. Convert them to XLSX first using Numbers or LibreOffice.
+- Use `numbers-bridge.ts` for `.numbers` files and legacy `.xls` files. It is the one
+  TypeScript script in this skill because SheetJS provides the required Apple Numbers codec.

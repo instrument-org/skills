@@ -2,8 +2,20 @@
   "name": "@instrument-org/skill-spreadsheet",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "dependencies": {
+    "cac": "^6.7.14",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.1"
+  },
   "scripts": {
     "check:skill": "node ../../scripts/check-skill.ts",
-    "test": "uv run --no-project --with pytest --with openpyxl --with pandas pytest tests/ -v -m 'not slow'"
+    "check:python": "uv run --locked --project . --extra test python -m compileall -q scripts tests",
+    "check:types": "tsc --noEmit",
+    "test": "pnpm run test:typescript && pnpm run test:python",
+    "test:python": "uv run --locked --project . --extra test pytest tests/ -v -m 'not slow'",
+    "test:typescript": "vitest run"
   }
 }

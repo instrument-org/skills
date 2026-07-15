@@ -21,8 +21,13 @@ def main():
     except ImportError:
         sys.exit("pandas not installed. Run: pip install pandas openpyxl")
 
-    if src in (".xlsx", ".xls", ".xlsm"):
+    if src in (".xlsx", ".xlsm"):
         df = pd.read_excel(args.input, sheet_name=args.sheet or 0)
+    elif src == ".xls":
+        sys.exit(
+            "Legacy .xls files need the TypeScript compatibility bridge: "
+            "tsx scripts/numbers-bridge.ts input.xls --output output.xlsx"
+        )
     elif src == ".tsv":
         df = pd.read_csv(args.input, sep="\t")
     else:
