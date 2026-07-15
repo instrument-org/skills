@@ -27,8 +27,7 @@ the floor the resolver picks a legacy `numba` that fails to build.
 
 ## Model downloads
 
-Models are downloaded on first use and cached in `~/.cache/huggingface/` and
-`~/.cache/whisper/`. Typical sizes:
+Models are downloaded on first use and cached locally. Typical sizes:
 
 - Background removal (rembg u2net): ~170 MB
 - Image classification (ViT): ~350 MB
