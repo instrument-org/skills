@@ -95,6 +95,14 @@ def main():
         page.merge_page(wm_page)
         writer.add_page(page)
 
+    metadata = {
+        key: value
+        for key, value in (reader.metadata or {}).items()
+        if isinstance(key, str) and isinstance(value, str)
+    }
+    if metadata:
+        writer.add_metadata(metadata)
+
     with open(args.output, "wb") as f:
         writer.write(f)
     print(f"Watermarked -> {args.output}")

@@ -144,7 +144,7 @@ class TestCreatePdf:
 
 
 class TestWatermark:
-    def test_adds_an_image_watermark(self, sample_pdf, tmp_path):
+    def test_adds_an_image_watermark_and_preserves_metadata(self, tmp_path):
         pytest.importorskip("PIL")
         pytest.importorskip("pypdf")
         from PIL import Image
@@ -152,19 +152,36 @@ class TestWatermark:
 
         image = tmp_path / "watermark.png"
         Image.new("RGBA", (32, 16), "red").save(image)
+        source = tmp_path / "source.pdf"
         out = tmp_path / "watermarked.pdf"
+
+        create_result = run(
+            "create-pdf.py",
+            "--content",
+            "Source content",
+            "--output",
+            str(source),
+            "--title",
+            "Watermark source",
+            "--author",
+            "Instrument",
+        )
 
         result = run(
             "watermark.py",
-            str(sample_pdf),
+            str(source),
             str(out),
             "--image",
             str(image),
         )
 
+        assert create_result.returncode == 0
         assert result.returncode == 0
-        resources = PdfReader(str(out)).pages[0]["/Resources"]
+        watermarked = PdfReader(str(out))
+        resources = watermarked.pages[0]["/Resources"]
         assert "/XObject" in resources
+        assert watermarked.metadata.title == "Watermark source"
+        assert watermarked.metadata.author == "Instrument"
 
 
 class TestImages:
