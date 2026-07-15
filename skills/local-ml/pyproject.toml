@@ -6,7 +6,10 @@ dependencies = ["Pillow"]
 
 [project.optional-dependencies]
 background = ["numba>=0.60", "rembg[cpu]"]
-speech = ["openai-whisper"]
+speech = [
+  "faster-whisper>=1.2.1; platform_system != 'Windows' or platform_machine != 'ARM64'",
+  "openai-whisper; platform_system == 'Windows' and platform_machine == 'ARM64'",
+]
 text = ["sentence-transformers", "torch", "transformers"]
 test = ["pytest"]
 vision = ["torch", "transformers"]

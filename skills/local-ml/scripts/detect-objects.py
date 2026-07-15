@@ -9,7 +9,7 @@ import sys
 def main():
     parser = argparse.ArgumentParser(description="Detect objects in an image")
     parser.add_argument("input", help="Input image file")
-    parser.add_argument("--model", default="facebook/detr-resnet-50")
+    parser.add_argument("--model", default="PekingU/rtdetr_v2_r18vd")
     parser.add_argument("--threshold", type=float, default=0.9,
                         help="Confidence threshold (default: 0.9)")
     args = parser.parse_args()

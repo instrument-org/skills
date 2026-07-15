@@ -14,7 +14,8 @@ def main():
     parser.add_argument("input", help="Input image (PNG, JPG, WEBP)")
     parser.add_argument("--output", help="Output PNG path (default: <input>-nobg.png)")
     parser.add_argument("--model", default="u2net",
-                        choices=["u2net", "u2net_human_seg", "isnet-general-use"],
+                        choices=["u2net", "u2net_human_seg", "isnet-general-use",
+                                 "birefnet-general", "birefnet-general-lite"],
                         help="Model to use (default: u2net)")
     args = parser.parse_args()
 

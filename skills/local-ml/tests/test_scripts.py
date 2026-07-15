@@ -108,12 +108,18 @@ class TestExtractEntities:
 
 
 class TestSpeechToText:
-    def test_requires_ffmpeg_before_loading_model(self):
+    def test_missing_dependency_exits_with_install_guidance(self, tmp_path):
+        (tmp_path / "faster_whisper.py").write_text(
+            "raise ImportError('faster-whisper unavailable')\n"
+        )
+        (tmp_path / "whisper.py").write_text(
+            "raise ImportError('openai-whisper unavailable')\n"
+        )
         result = run(
             "speech-to-text.py",
             "audio.mp3",
-            env={**os.environ, "PATH": ""},
+            env={**os.environ, "PYTHONPATH": str(tmp_path)},
         )
 
         assert result.returncode != 0
-        assert "ffmpeg is required" in result.stderr
+        assert "faster-whisper is not installed" in result.stderr

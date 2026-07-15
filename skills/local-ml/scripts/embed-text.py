@@ -13,7 +13,7 @@ def main():
     parser = argparse.ArgumentParser(description="Embed text as a vector")
     parser.add_argument("--text", help="Text to embed")
     parser.add_argument("--input", help="File with one text per line")
-    parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
+    parser.add_argument("--model", default="BAAI/bge-small-en-v1.5")
     args = parser.parse_args()
 
     if not args.text and not args.input:
@@ -32,7 +32,11 @@ def main():
     else:
         texts = [args.text]
 
-    embeddings = model.encode(texts, convert_to_numpy=True)
+    embeddings = model.encode(
+        texts,
+        convert_to_numpy=True,
+        normalize_embeddings=True,
+    )
 
     if len(texts) == 1:
         print(json.dumps(embeddings[0].tolist()))
