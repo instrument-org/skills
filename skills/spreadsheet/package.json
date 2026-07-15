@@ -15,7 +15,7 @@
     "check:python": "uv run --locked --project . --extra test python -m compileall -q scripts tests",
     "check:types": "tsc --noEmit",
     "test": "pnpm run test:typescript && pnpm run test:python",
-    "test:python": "uv run --locked --project . --extra test pytest tests/ -v -m 'not slow'",
+    "test:python": "uv run --locked --project . --extra test pytest tests/ -v -m \"not slow\"",
     "test:typescript": "vitest run"
   }
 }

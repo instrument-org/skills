@@ -5,6 +5,6 @@
   "scripts": {
     "check:skill": "node ../../scripts/check-skill.ts",
     "check:python": "uv run --locked --project . --extra test python -m compileall -q scripts tests",
-    "test": "uv run --locked --project . --extra test pytest tests/ -v -m 'not slow'"
+    "test": "uv run --locked --project . --extra test pytest tests/ -v -m \"not slow\""
   }
 }
