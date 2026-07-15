@@ -108,10 +108,14 @@ def replace_find_replace(prs, find: str, replace: str):
     count = 0
     for slide in prs.slides:
         for shape in slide.shapes:
-            if not shape.has_text_frame:
-                continue
-            for para in shape.text_frame.paragraphs:
-                count += replace_text(para, find, replace)
+            if shape.has_text_frame:
+                for para in shape.text_frame.paragraphs:
+                    count += replace_text(para, find, replace)
+            if shape.has_table:
+                for row in shape.table.rows:
+                    for cell in row.cells:
+                        for para in cell.text_frame.paragraphs:
+                            count += replace_text(para, find, replace)
     return count
 
 

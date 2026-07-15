@@ -174,6 +174,32 @@ class TestReplace:
         replaced = Presentation(out)
         assert replaced.slides[0].shapes[0].text == "Final Version"
 
+    def test_find_replace_in_table_cells(self, tmp_path):
+        from pptx import Presentation
+
+        source = tmp_path / "table.pptx"
+        out = tmp_path / "replaced.pptx"
+        presentation = Presentation()
+        slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+        table = slide.shapes.add_table(1, 1, 0, 0, 100, 100).table
+        table.cell(0, 0).text = "Draft table"
+        presentation.save(source)
+
+        result = run(
+            "replace.py",
+            str(source),
+            str(out),
+            "--find",
+            "Draft",
+            "--replace",
+            "Final",
+        )
+
+        assert result.returncode == 0
+        assert "Replaced 1 occurrence" in result.stdout
+        replaced = Presentation(out)
+        assert replaced.slides[0].shapes[0].table.cell(0, 0).text == "Final table"
+
     def test_inventory_replace_removes_omitted_paragraphs(self, sample_pptx, tmp_path):
         from pptx import Presentation
 
