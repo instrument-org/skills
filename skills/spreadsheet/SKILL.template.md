@@ -9,11 +9,8 @@ Use the Python scripts in `scripts/` to work with spreadsheet and tabular data f
 
 ## Dependencies
 
-Install before first use:
-
-```
-pip install openpyxl pandas
-```
+The app installs this skill's locked Python dependencies when it is loaded.
+Run its scripts with `python`; do not repeat installation.
 
 ## Scripts
 

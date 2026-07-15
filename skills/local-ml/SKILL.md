@@ -11,10 +11,12 @@ runs on CPU.
 
 ## Dependencies
 
-Install before first use:
+The app installs this skill's locked base dependency (`Pillow`) when it is
+loaded. Install only the optional feature packages required for the requested
+workflow:
 
 ```
-pip install transformers torch Pillow sentence-transformers "rembg[cpu]" "numba>=0.60" openai-whisper
+pip install transformers torch sentence-transformers "rembg[cpu]" "numba>=0.60" openai-whisper
 ```
 
 Install only what you need — `torch` is large (~2 GB). Each script lists its

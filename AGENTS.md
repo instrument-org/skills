@@ -28,13 +28,14 @@ servers, or CLI-first workflows.
   scripts. Implement scripts in TypeScript (npm deps) or Python (pip deps).
 - Python is available via bundled uv with managed CPython. A per-task
   virtualenv lives at `work/.venv`; agents call `python`, `pip`, and `uv`
-  as shell commands. Write `.py` scripts and install deps with
-  `pip install <pkg>`. List required packages at the top of SKILL.md under
-  a **Dependencies** heading so agents know to install them before first use.
+  as shell commands. The app installs locked base dependencies from a loaded
+  skill's `pyproject.toml` and `uv.lock`; write `.py` scripts and use
+  `pip install <pkg>` only for task-specific optional extras.
 - Python skills keep their complete dependency contract in `pyproject.toml`
   and a committed `uv.lock`. Tests run with `uv run --locked --project .` so
   the manifest stays executable. Keep SKILL.md's dependency guidance aligned
-  with the manifest, but optimize it for the packages an agent needs per task.
+  with the manifest: identify automatically installed base packages and any
+  optional extras the agent must install for a requested workflow.
 - Native npm dependencies are acceptable only when they provide supported
   binaries for Windows, Linux, and macOS.
 - A tool available on a contributor's machine is not necessarily available to
