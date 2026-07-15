@@ -53,6 +53,23 @@ function hasTsScripts(skillPath: string): boolean {
   return readdirSync(scriptsDir).some((f) => f.endsWith(".ts"));
 }
 
+function hasPythonScripts(skillPath: string): boolean {
+  const scriptsDir = join(skillPath, "scripts");
+  if (!existsSync(scriptsDir)) return false;
+  return readdirSync(scriptsDir).some((f) => f.endsWith(".py"));
+}
+
+function validatePythonProject(skillPath: string): string[] {
+  const errors: string[] = [];
+  if (!existsSync(join(skillPath, "pyproject.toml"))) {
+    errors.push("Missing pyproject.toml for Python scripts");
+  }
+  if (!existsSync(join(skillPath, "uv.lock"))) {
+    errors.push("Missing uv.lock for Python scripts");
+  }
+  return errors;
+}
+
 function validatePackageJson(
   folderName: string,
   skillPath: string,
@@ -357,6 +374,7 @@ export async function checkSkill({
   const hasScripts = existsSync(join(skillPath, "scripts"));
   const hasPackageJson = existsSync(join(skillPath, "package.json"));
   const tsSkill = hasTsScripts(skillPath);
+  const pythonSkill = hasPythonScripts(skillPath);
 
   if (hasScripts && !hasPackageJson) {
     errors.push(
@@ -368,6 +386,9 @@ export async function checkSkill({
 
   if (hasPackageJson && tsSkill) {
     errors.push(...validateTsconfig(skillPath));
+  }
+  if (pythonSkill) {
+    errors.push(...validatePythonProject(skillPath));
   }
   errors.push(...validateNoAbsoluteSkillPaths(folderName, skillPath));
   errors.push(...validateScriptCliUsage(skillPath));

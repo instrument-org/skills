@@ -5,7 +5,8 @@ description: Guide for creating effective Agent Skills. Use when you want to cre
 
 # Creating Registry Skills
 
-Skills live in `skills/` and are installed into the workspace on demand. Each skill has scripts the agent runs via CLI.
+Skills live in `skills/` and are installed into the workspace on demand. Each
+skill has scripts the agent runs via CLI.
 
 ## Directory Layout
 
@@ -14,12 +15,12 @@ skills/skill-name/
 ├── SKILL.template.md     # Source of truth — contains {{GENERATED_SCRIPT_DOCS}}
 ├── SKILL.md              # Generated — never edit directly
 ├── package.json
-├── pnpm-lock.yaml
-├── tsconfig.json
-├── vitest.config.ts      # Required — without this, tests are skipped silently
 └── scripts/
-    └── my-script.ts
 ```
+
+TypeScript skills add `pnpm-lock.yaml`, `tsconfig.json`, `vitest.config.ts`,
+and `tests/scripts.test.ts`. Python skills add `pyproject.toml`, a committed
+`uv.lock`, and `tests/test_scripts.py`.
 
 **`SKILL.md` is generated** from `SKILL.template.md` by running:
 
@@ -27,7 +28,10 @@ skills/skill-name/
 tsx scripts/generate-skill-md.ts --skill skill-name
 ```
 
-Run this from the **workspace root** (not from inside the skill). The generator replaces `{{GENERATED_SCRIPT_DOCS}}` with documentation extracted from each script's JSDoc and CAC `--help` output. Always edit `SKILL.template.md`, never `SKILL.md`.
+Run this from the **workspace root** (not from inside the skill). The generator
+replaces `{{GENERATED_SCRIPT_DOCS}}` with documentation extracted from
+TypeScript JSDoc or Python module docstrings plus each script's `--help`
+output. Always edit `SKILL.template.md`, never `SKILL.md`.
 
 ---
 
@@ -47,7 +51,7 @@ Brief one-liner about what this skill does.
 
 ## Scripts
 
-Each script can also be used programmatically via its exported function.
+TypeScript scripts can also be used programmatically via exported functions.
 
 {{GENERATED_SCRIPT_DOCS}}
 ```
@@ -65,9 +69,10 @@ The description is the only thing the agent sees when deciding whether to load t
 
 ---
 
-## Script Structure
+## TypeScript Script Structure
 
-Scripts use **CAC** for CLI parsing and export a named async function for programmatic use.
+TypeScript scripts use **CAC** for CLI parsing and export a named async
+function for programmatic use.
 
 ```typescript
 /**
@@ -112,7 +117,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 
 ### What gets auto-generated
 
-The generator extracts:
+For TypeScript scripts, the generator extracts:
 
 1. **Heading + description** — from the file-level JSDoc comment
 2. **Exports** — TypeScript function signatures via the type checker
@@ -120,6 +125,33 @@ The generator extracts:
 4. **Notes** — from `@note` tags in the file-level JSDoc
 
 So the only things you need to write manually in `SKILL.template.md` are the frontmatter and any context that isn't captured by scripts.
+
+## Python Script Structure
+
+Use Python when a file-centric knowledge-work library materially improves the
+outcome, such as PDF, DOCX, XLSX, or local ML processing. Use `argparse`, begin
+the file with a concise module docstring, and keep third-party imports close to
+the operation that uses them so `--help` remains reliable.
+
+Declare every runtime package in `pyproject.toml`, put test-only packages in a
+`test` extra, and refresh the committed lockfile after dependency changes:
+
+```bash
+uv lock --directory skills/skill-name
+```
+
+Use the package wrapper to test the locked project:
+
+```json
+{
+  "scripts": {
+    "check:python": "uv run --locked --project . --extra test python -m compileall -q scripts tests",
+    "test": "uv run --locked --project . --extra test pytest tests/ -v"
+  }
+}
+```
+
+Python scripts do not need TypeScript-style exported functions.
 
 ### Output paths
 
@@ -146,7 +178,9 @@ const wasmPath = _require.resolve("some-package/file.wasm");
 
 ## Tests
 
-Each skill needs a `tests/scripts.test.ts` and a `vitest.config.ts`. **Without `vitest.config.ts` the tests are silently skipped** by the root vitest workspace config (which globs `./skills/*/vitest.config.ts`).
+Each TypeScript skill needs a `tests/scripts.test.ts` and a
+`vitest.config.ts`. **Without `vitest.config.ts` the tests are silently skipped**
+by the root Vitest workspace config (which globs `./skills/*/vitest.config.ts`).
 
 ### `vitest.config.ts` (copy exactly)
 
@@ -160,7 +194,8 @@ export default defineConfig({
 });
 ```
 
-For test conventions and patterns, refer to an existing skill's `tests/scripts.test.ts` (e.g. `skills/charts` or `skills/sharp-images`).
+Python skills use `tests/test_scripts.py` and the locked `uv` project. Refer to
+an existing skill in the same runtime for test conventions and patterns.
 
 ---
 
@@ -174,12 +209,10 @@ For test conventions and patterns, refer to an existing skill's `tests/scripts.t
 
 ### Files
 
-- [ ] `tsconfig.json` (copy from another skill)
-- [ ] `vitest.config.ts` (required — without it tests are silently skipped)
-- [ ] `tests/scripts.test.ts`
-- [ ] Dependencies in `package.json` + run `pnpm install`
+- [ ] TypeScript: `tsconfig.json`, `vitest.config.ts`, `tests/scripts.test.ts`, and npm dependencies
+- [ ] Python: `pyproject.toml`, `uv.lock`, `tests/test_scripts.py`, and complete dependency extras
 
-### Scripts
+### TypeScript Scripts
 
 - [ ] File-level JSDoc describes what the script does (becomes the heading description)
 - [ ] Use `@note` tags for important caveats (rendered as callouts)
@@ -188,8 +221,15 @@ For test conventions and patterns, refer to an existing skill's `tests/scripts.t
 - [ ] Log output paths relative to `process.cwd()`
 - [ ] Use `createRequire` to resolve package-internal files (e.g. WASM), not `import.meta.resolve`
 
+### Python Scripts
+
+- [ ] Module docstring describes the script's user-visible purpose
+- [ ] `argparse` provides complete `--help` output without importing optional runtime packages
+- [ ] `pyproject.toml` declares runtime and test dependencies, and `uv.lock` is current
+- [ ] No external system package is required for the core workflow
+
 ### Tests
 
-- [ ] `beforeAll` generates any fixtures the read-path tests depend on
-- [ ] All outputs written to `os.tmpdir()`
+- [ ] Fixtures generate the read-path inputs the test depends on
+- [ ] All outputs write to an OS temporary directory
 - [ ] Tests pass: `cd skills/<name> && pnpm test`

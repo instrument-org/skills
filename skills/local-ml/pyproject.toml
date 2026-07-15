@@ -2,11 +2,14 @@
 name = "skill-local-ml"
 version = "0.0.0"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["Pillow"]
 
 [project.optional-dependencies]
-test = ["pytest", "Pillow"]
-slow = ["transformers", "torch", "sentence-transformers", "rembg[cpu]", "numba>=0.60", "openai-whisper"]
+background = ["numba>=0.60", "rembg[cpu]"]
+speech = ["openai-whisper"]
+text = ["sentence-transformers", "torch", "transformers"]
+test = ["pytest"]
+vision = ["torch", "transformers"]
 
 [tool.pytest.ini_options]
 markers = ["slow: requires model downloads (~100MB-2GB), excluded from default run"]
