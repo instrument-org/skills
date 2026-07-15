@@ -5,7 +5,7 @@ runs:
     - name: Cache HuggingFace models
       uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       with:
-        key: huggingface-models-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('skills/transformers-js/package.json') }}
+        key: huggingface-models-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('skills/local-ml/pyproject.toml') }}
         path: ~/.cache/huggingface
     - name: Cache Whisper models
       uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0

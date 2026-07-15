@@ -31,6 +31,10 @@ servers, or CLI-first workflows.
   as shell commands. Write `.py` scripts and install deps with
   `pip install <pkg>`. List required packages at the top of SKILL.md under
   a **Dependencies** heading so agents know to install them before first use.
+- Python skills keep their complete dependency contract in `pyproject.toml`
+  and a committed `uv.lock`. Tests run with `uv run --locked --project .` so
+  the manifest stays executable. Keep SKILL.md's dependency guidance aligned
+  with the manifest, but optimize it for the packages an agent needs per task.
 - Native npm dependencies are acceptable only when they provide supported
   binaries for Windows, Linux, and macOS.
 - A tool available on a contributor's machine is not necessarily available to
@@ -82,6 +86,7 @@ Run checks through Turbo from repo root for caching. Do not `cd skills/*` for re
 - `pnpm check-and-test:ci` — what CI runs (omits pedantic checks that don't affect correctness)
 - `turbo run check:types` — all packages
 - `turbo run check:types --filter=@instrument-org/skill-markdown` — one skill
+- `turbo run check:python` — Python syntax checks for every Python skill
 - Single test file only: `cd skills/<name> && pnpm test <path/to/file.test.ts>`
 
 Format hook: each Edit/Write runs Prettier only; finishing (Stop) runs Prettier + `eslint --fix` + Prettier over changed files. Don't hand-format or fix order-only/auto-fixable lint; expect files to change after you write them. Non-auto-fixable lint/type errors are not handled by the hook, run the checks above.

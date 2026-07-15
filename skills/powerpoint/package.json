@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "check:skill": "node ../../scripts/check-skill.ts",
-    "test": "uv run --no-project --with pytest --with python-pptx --with Pillow --with pymupdf pytest tests/ -v -m 'not slow'"
+    "check:python": "uv run --locked --project . --extra test python -m compileall -q scripts tests",
+    "test": "uv run --locked --project . --extra test pytest tests/ -v -m 'not slow'"
   }
 }

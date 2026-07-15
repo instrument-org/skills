@@ -20,8 +20,20 @@
         "SKILL.md",
         "SKILL.template.md",
         "package.json",
+        "pyproject.toml",
         "tsconfig.json",
+        "uv.lock",
         "scripts/**"
+      ],
+      "outputs": []
+    },
+    "check:python": {
+      "inputs": [
+        "package.json",
+        "pyproject.toml",
+        "scripts/**/*.py",
+        "tests/**/*.py",
+        "uv.lock"
       ],
       "outputs": []
     },
@@ -29,9 +41,11 @@
       "inputs": [
         "**/*.{test,spec}.{js,jsx,ts,tsx,cjs,cjsx,cts,ctsx,mjs,mjx,mts,mtsx}",
         "tests/**/*.py",
+        "pyproject.toml",
         "scripts/**",
         "vitest.config.ts",
         "tsconfig.json",
+        "uv.lock",
         "package.json"
       ],
       "outputs": []

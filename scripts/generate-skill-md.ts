@@ -139,9 +139,20 @@ async function getPythonDocstring(
 ): Promise<string | undefined> {
   const pyCode =
     'import ast,sys;t=ast.parse(open(sys.argv[1]).read());doc=ast.get_docstring(t);print(doc.splitlines()[0] if doc else "")';
-  const result = await execFileAsync("python3", ["-c", pyCode, scriptPath], {
-    encoding: "utf-8",
-  }).catch(() => ({ stdout: "" }));
+  const result = await execFileAsync(
+    "uv",
+    [
+      "run",
+      "--python",
+      "3.12",
+      "--no-project",
+      "python",
+      "-c",
+      pyCode,
+      scriptPath,
+    ],
+    { encoding: "utf-8" },
+  ).catch(() => ({ stdout: "" }));
   const text = ((result as { stdout: string }).stdout ?? "").trim();
   return text || undefined;
 }

@@ -2,7 +2,7 @@
 name = "skill-powerpoint"
 version = "0.0.0"
 requires-python = ">=3.11"
-dependencies = ["python-pptx", "Pillow"]
+dependencies = ["Pillow", "PyMuPDF", "python-pptx"]
 
 [project.optional-dependencies]
 test = ["pytest"]

@@ -36,9 +36,11 @@
     "Colour",
     "colours",
     "Colourspace",
+    "compileall",
     "ctsx",
     "CUDA",
     "demuxer",
+    "defval",
     "detr",
     "distilbert",
     "docxtpl",
@@ -94,6 +96,7 @@
     "pushstate",
     "pymupdf",
     "pypdf",
+    "pyproject",
     "pytesseract",
     "pytest",
     "Quantise",
@@ -129,6 +132,7 @@
     "virtualenv",
     "wireframes",
     "zstd",
+    "zahl",
     "zxing"
   ],
   "import": [
