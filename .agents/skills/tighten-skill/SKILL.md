@@ -5,8 +5,9 @@ description: Audit and trim a skill's token usage. Use when a skill feels verbos
 
 # Trim Skill Tokens
 
-Skills are loaded into every agent context — excess tokens are a constant tax.
-The goal is the minimum words needed for an agent to act correctly.
+Skills are loaded on demand into an agent context. Excess tokens still compete
+with the user's task, so keep the primary skill to the minimum needed to choose
+an approach and act correctly.
 
 ## What to cut
 
@@ -15,12 +16,18 @@ The goal is the minimum words needed for an agent to act correctly.
 - **Over-specified comments** — `# Navigate (aliases: goto, navigate)` is fine; a paragraph explaining it is not
 - **Grammar** — agents don't need full sentences; drop articles, compress clauses, use imperative fragments
 - **Duplicate commands** — if a flag appears in a section header comment and again as its own line, pick one
+- **Exhaustive references**: move complete CLI help and API catalogs to linked
+  reference files; keep only a concise index in the primary skill
 
 ## What to keep
 
 - **Behavioral gotchas** — silent failures, exit-0-but-no-op cases, things that look like they work but don't
 - **The "why"** — one short reason behind a non-obvious rule helps agents follow it reliably
 - **Deliberate additions** — check git log before removing; some lines exist to fix regressions
+- **Composable recipes**: preserve small executable examples that teach the
+  agent how to adapt the underlying library
+- **Routing rules**: keep the distinction between direct library work and
+  closed operations handled by bundled scripts
 
 ## Process
 

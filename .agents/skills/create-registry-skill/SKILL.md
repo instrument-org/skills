@@ -5,15 +5,17 @@ description: Guide for creating effective Agent Skills. Use when you want to cre
 
 # Creating Registry Skills
 
-Skills live in `skills/` and are installed into the workspace on demand. Each
-skill has scripts the agent runs via CLI.
+Skills live in `skills/` and are installed into the workspace on demand. A
+skill should teach the agent how to solve work in its domain. Scripts are
+convenience tools for closed operations, not the skill's primary abstraction.
 
 ## Directory Layout
 
 ```
 skills/skill-name/
-├── SKILL.template.md     # Source of truth — contains {{GENERATED_SCRIPT_DOCS}}
-├── SKILL.md              # Generated — never edit directly
+├── SKILL.template.md     # Source of truth
+├── SKILL.md              # Generated, never edit directly
+├── reference.md          # Generated full CLI docs with a script index
 ├── package.json
 └── scripts/
 ```
@@ -22,24 +24,46 @@ TypeScript skills add `pnpm-lock.yaml`, `tsconfig.json`, `vitest.config.ts`,
 and `tests/scripts.test.ts`. Python skills add `pyproject.toml`, a committed
 `uv.lock`, and `tests/test_scripts.py`.
 
-**`SKILL.md` is generated** from `SKILL.template.md` by running:
+**`SKILL.md` and optional `reference.md` are generated** from
+`SKILL.template.md` by running:
 
 ```bash
 tsx scripts/generate-skill-md.ts --skill skill-name
 ```
 
 Run this from the **workspace root** (not from inside the skill). The generator
-replaces `{{GENERATED_SCRIPT_DOCS}}` with documentation extracted from
-TypeScript JSDoc or Python module docstrings plus each script's `--help`
-output. Always edit `SKILL.template.md`, never `SKILL.md`.
+replaces `{{GENERATED_SCRIPT_INDEX}}` with concise script descriptions and
+writes complete exports and CLI help to `reference.md`. Always edit
+`SKILL.template.md`, never `SKILL.md` or generated `reference.md`.
 
 ---
 
+## Design the skill as a recipe book
+
+Start with the user's goal, then route between direct library use and bundled
+scripts:
+
+- Use direct library recipes for content, layout, data transformation,
+  composition, and other work whose requirements vary by task.
+- Keep scripts for bounded operations with a stable contract, such as listing
+  an archive, extracting text, or applying one deterministic mutation.
+- Command-first guidance is appropriate when the command is itself the best
+  compositional API, such as FFmpeg or browser automation.
+- Include a verification loop that tests the properties users care about. For
+  visual artifacts, require rendering and inspection, not just file parsing.
+- Explain consequential traps and fidelity boundaries, not every library API.
+
+Python packages are available to task-local scripts through the task
+virtualenv. TypeScript dependencies are isolated to the loaded skill package,
+so custom TypeScript files that import them must be written inside that skill
+directory and run by full path from the task root.
+
 ## SKILL.template.md
 
-Keep it minimal — script docs are injected automatically:
+Prefer progressive disclosure. Keep recipes and routing in `SKILL.md`, then
+generate complete script help into `reference.md`:
 
-```markdown
+````markdown
 ---
 name: your-skill-name
 description: "..."
@@ -47,14 +71,32 @@ description: "..."
 
 # Your Skill Name
 
-Brief one-liner about what this skill does.
+State when to use direct library code and when to use a bundled script.
 
-## Scripts
+## Choose an approach
 
-TypeScript scripts can also be used programmatically via exported functions.
+| Need                      | Approach                               |
+| ------------------------- | -------------------------------------- |
+| Custom or generative work | Write code using the installed library |
+| Closed operation          | Use the matching bundled script        |
 
-{{GENERATED_SCRIPT_DOCS}}
+## Recipe: compose with the library
+
+```python
+# Small executable example using task-relative input and output paths.
 ```
+````
+
+## Script index
+
+Read [`reference.md`](reference.md) for complete arguments.
+
+{{GENERATED_SCRIPT_INDEX}}
+
+````
+
+Use `{{GENERATED_SCRIPT_DOCS}}` only when a skill has one very small script and
+inline help is genuinely clearer than a secondary reference.
 
 ---
 
@@ -113,7 +155,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 
   console.log(`Saved to ${relative(process.cwd(), result.outputPath) || "."}`);
 }
-```
+````
 
 ### What gets auto-generated
 
@@ -124,7 +166,9 @@ For TypeScript scripts, the generator extracts:
 3. **CLI help** — from running the script with `--help` via CAC
 4. **Notes** — from `@note` tags in the file-level JSDoc
 
-So the only things you need to write manually in `SKILL.template.md` are the frontmatter and any context that isn't captured by scripts.
+With `{{GENERATED_SCRIPT_INDEX}}`, the primary skill receives concise script
+names and descriptions while full exports, CLI help, and notes are written to
+`reference.md`.
 
 ## Python Script Structure
 
@@ -204,7 +248,10 @@ an existing skill in the same runtime for test conventions and patterns.
 ### Core Quality
 
 - [ ] Description focuses on user intent, includes trigger scenarios, is under 1024 chars
-- [ ] `SKILL.template.md` contains `{{GENERATED_SCRIPT_DOCS}}`
+- [ ] The skill routes generative work to library recipes and closed work to scripts
+- [ ] Recipes are executable in the installed runtime and use task-relative paths
+- [ ] The skill includes a structural or visual verification loop
+- [ ] `SKILL.template.md` normally contains `{{GENERATED_SCRIPT_INDEX}}`
 - [ ] `SKILL.md` is generated from workspace root — `pnpm tsx scripts/generate-skill-md.ts --skill skill-name`
 
 ### Files
