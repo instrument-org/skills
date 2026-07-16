@@ -9,9 +9,10 @@ import argparse
 import io
 import re
 import sys
-import xml.etree.ElementTree as ET
 from pathlib import Path
 from xml.sax.saxutils import escape
+
+from defusedxml import ElementTree as ET
 
 DEFAULT_FRAME_PADDING = 6
 

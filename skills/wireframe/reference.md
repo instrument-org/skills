@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `create-wireframe.ts` Generate an HTML wireframe scaffold with Tailwind CSS styling
+## `create-wireframe.ts` Generate an HTML wireframe scaffold with Tailwind CSS styling
 
 Exports:
 

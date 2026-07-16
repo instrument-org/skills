@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `html-to-md.ts` Convert an HTML file or string to Markdown
+## `html-to-md.ts` Convert an HTML file or string to Markdown
 
 Exports:
 
@@ -25,7 +25,7 @@ Options:
   -h, --help                  Display this message
 ```
 
-### `md-to-pdf.ts` Convert a Markdown file to PDF
+## `md-to-pdf.ts` Convert a Markdown file to PDF
 
 Exports:
 

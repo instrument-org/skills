@@ -120,13 +120,14 @@ class TestLibraryRecipe:
         for cell, label in zip(
             table.rows[0].cells,
             ["Metric", "Current", "Target"],
+            strict=True,
         ):
             cell.text = label
             for run in cell.paragraphs[0].runs:
                 run.bold = True
                 run.font.color.rgb = RGBColor(31, 78, 121)
         cells = table.add_row().cells
-        for cell, value in zip(cells, ["Retention", "94%", "92%"]):
+        for cell, value in zip(cells, ["Retention", "94%", "92%"], strict=True):
             cell.text = value
         section.footer.paragraphs[0].text = "Confidential"
         doc.core_properties.title = "Quarterly Review"

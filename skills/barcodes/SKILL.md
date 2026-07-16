@@ -34,11 +34,12 @@ Save this as `<skill-path>/scripts/custom-generate.ts`, then run
 `tsx <skill-path>/scripts/custom-generate.ts` from the task root.
 
 ```ts
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { writeBarcode } from "zxing-wasm/writer";
 import { prepareBarcodeWriter } from "./generate-barcode.ts";
 
 await prepareBarcodeWriter();
+await mkdir("output", { recursive: true });
 
 const payload = "https://example.com/check-in";
 const result = await writeBarcode(payload, {
@@ -71,11 +72,12 @@ Save this as `<skill-path>/scripts/custom-read.ts` so package imports resolve.
 <!-- cspell:ignore tryDenoise -->
 
 ```ts
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { readBarcodes } from "zxing-wasm/reader";
 import { prepareBarcodeReader } from "./read-barcode.ts";
 
 await prepareBarcodeReader();
+await mkdir("output", { recursive: true });
 
 const bytes = await readFile("attachments/codes.png");
 const results = await readBarcodes(bytes, {

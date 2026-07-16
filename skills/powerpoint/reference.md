@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `create.py` Create a PowerPoint presentation (.pptx) from a JSON slide definition.
+## `create.py` Create a PowerPoint presentation (.pptx) from a JSON slide definition.
 
 ```text
 usage: create.py [-h] --output OUTPUT [--input INPUT] [--content CONTENT]
@@ -18,7 +18,7 @@ options:
   --title TITLE      Presentation title (metadata)
 ```
 
-### `extract-text.py` Extract text from a PowerPoint presentation (.pptx).
+## `extract-text.py` Extract text from a PowerPoint presentation (.pptx).
 
 ```text
 usage: extract-text.py [-h] [--json] input
@@ -33,7 +33,7 @@ options:
   --json      Output structured JSON with per-slide text
 ```
 
-### `inventory.py` Inventory all text shapes in a .pptx file.
+## `inventory.py` Inventory all text shapes in a .pptx file.
 
 ```text
 usage: inventory.py [-h] [--output OUTPUT] input
@@ -48,7 +48,7 @@ options:
   --output OUTPUT  Save JSON to file (default: stdout)
 ```
 
-### `replace.py` Replace text in a .pptx presentation using an inventory JSON.
+## `replace.py` Replace text in a .pptx presentation using an inventory JSON.
 
 ```text
 usage: replace.py [-h] [--find FIND] [--replace REPLACE_WITH]
@@ -70,7 +70,7 @@ options:
                         Replacement text (simple mode)
 ```
 
-### `thumbnail.py` Render a PowerPoint presentation as a thumbnail grid image.
+## `thumbnail.py` Render a PowerPoint presentation as a thumbnail grid image.
 
 ```text
 usage: thumbnail.py [-h] [--cols COLS] [--dpi DPI] input [output_prefix]

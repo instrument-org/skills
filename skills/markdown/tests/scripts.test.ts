@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { convertHtmlFile, convertHtmlString } from "../scripts/html-to-md.ts";
+import { createHtmlToMarkdownCli } from "../scripts/lib/cli.ts";
 import { createConverter } from "../scripts/lib/converter.ts";
 import { convertMdToPdf } from "../scripts/md-to-pdf.ts";
 
@@ -191,6 +192,27 @@ describe("convertHtmlFile", () => {
 
     expect(withGfm.markdown).toContain("|");
     expect(withoutGfm.markdown).not.toContain("|");
+  });
+});
+
+describe("html-to-md CLI", () => {
+  const html =
+    "<table><thead><tr><th>A</th></tr></thead><tbody><tr><td>1</td></tr></tbody></table>";
+
+  it.each([
+    ["uses GFM by default", [], true],
+    ["disables GFM with --no-gfm", ["--no-gfm"], false],
+  ])("%s", (_label, flags, includesTable) => {
+    const { options } = createHtmlToMarkdownCli().parse([
+      "node",
+      "html-to-md.ts",
+      "--html",
+      html,
+      ...flags,
+    ]);
+    const markdown = convertHtmlString({ gfm: options.gfm, html });
+
+    expect(markdown.includes("|")).toBe(includesTable);
   });
 });
 

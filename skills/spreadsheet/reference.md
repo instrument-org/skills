@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `convert.py` Convert between spreadsheet formats: CSV <-> XLSX <-> TSV.
+## `convert.py` Convert between spreadsheet formats: CSV <-> XLSX <-> TSV.
 
 ```text
 usage: convert.py [-h] --output OUTPUT [--sheet SHEET] input
@@ -18,7 +18,7 @@ options:
   --sheet SHEET    Source sheet name (for multi-sheet XLSX input)
 ```
 
-### `create.py` Create a new Excel spreadsheet from JSON data or a CSV file.
+## `create.py` Create a new Excel spreadsheet from JSON data or a CSV file.
 
 ```text
 usage: create.py [-h] --output OUTPUT [--json JSON_DATA] [--input INPUT]
@@ -36,7 +36,7 @@ options:
   --freeze-header   Freeze the first (header) row
 ```
 
-### `edit.py` Edit cells, formulas, and rows in an existing Excel spreadsheet.
+## `edit.py` Edit cells, formulas, and rows in an existing Excel spreadsheet.
 
 ```text
 usage: edit.py [-h] [--output OUTPUT] [--sheet SHEET] [--set-cell REF=VALUE]
@@ -59,7 +59,7 @@ options:
   --delete-row N        Delete row N (1-indexed)
 ```
 
-### `numbers-bridge.ts` Convert Apple Numbers and legacy XLS files through SheetJS.
+## `numbers-bridge.ts` Convert Apple Numbers and legacy XLS files through SheetJS.
 
 Exports:
 
@@ -80,7 +80,7 @@ Options:
 > [!NOTE]
 > Use this compatibility bridge only for `.numbers` or `.xls` files. The Python scripts handle XLSX, XLSM, CSV, and TSV.
 
-### `query.py` Query, filter, and analyze spreadsheet data with pandas.
+## `query.py` Query, filter, and analyze spreadsheet data with pandas.
 
 ```text
 usage: query.py [-h] [--sheet SHEET] [--filter FILTER_EXPR] [--select SELECT]
@@ -107,7 +107,7 @@ options:
   --json
 ```
 
-### `read.py` Read and display spreadsheet data (XLSX, XLSM, CSV, TSV).
+## `read.py` Read and display spreadsheet data (XLSX, XLSM, CSV, TSV).
 
 ```text
 usage: read.py [-h] [--sheet SHEET] [--json] [--limit LIMIT] input

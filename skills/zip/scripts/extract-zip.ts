@@ -2,7 +2,7 @@
  * Extract all files from a ZIP archive
  * @note If --output is not specified, files are extracted into a directory named after the zip file (without the .zip extension) in the same location as the archive.
  */
-import { existsSync, lstatSync } from "node:fs";
+import { lstatSync } from "node:fs";
 import {
   basename,
   dirname,
@@ -31,7 +31,11 @@ export function extractZip({
       ? resolve(outputDir)
       : resolve(dirname(resolvedInput), basename(resolvedInput, ".zip"));
 
-  if (!overwrite && existsSync(targetDir)) {
+  const targetStat = lstatSync(targetDir, { throwIfNoEntry: false });
+  if (targetStat?.isSymbolicLink()) {
+    throw new Error(`Unsafe extraction root is a symbolic link: ${targetDir}`);
+  }
+  if (!overwrite && targetStat !== undefined) {
     throw new Error(`Output directory already exists: ${targetDir}`);
   }
 

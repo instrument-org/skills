@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `create-zip.ts` Create a ZIP archive from files or directories
+## `create-zip.ts` Create a ZIP archive from files or directories
 
 Exports:
 
@@ -20,7 +20,7 @@ Options:
   -h, --help       Display this message
 ```
 
-### `extract-zip.ts` Extract all files from a ZIP archive
+## `extract-zip.ts` Extract all files from a ZIP archive
 
 Exports:
 
@@ -41,7 +41,7 @@ Options:
 > [!NOTE]
 > If --output is not specified, files are extracted into a directory named after the zip file (without the .zip extension) in the same location as the archive.
 
-### `list-zip.ts` List entries in a ZIP archive with sizes
+## `list-zip.ts` List entries in a ZIP archive with sizes
 
 Exports:
 

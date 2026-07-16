@@ -321,6 +321,30 @@ class TestCreatePdf:
         assert "Could not render SVG" in result.stderr
         assert not out.exists()
 
+    def test_rejects_svg_entities(self, tmp_path):
+        pytest.importorskip("reportlab")
+        pytest.importorskip("fitz")
+        svg = tmp_path / "entity.svg"
+        svg.write_text(
+            '<!DOCTYPE svg [<!ENTITY payload "unsafe">]>'
+            '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50">'
+            "<text>&payload;</text></svg>",
+            encoding="utf-8",
+        )
+        out = tmp_path / "entity.pdf"
+
+        result = run(
+            "create-pdf.py",
+            "--content",
+            f"![Entity]({svg})",
+            "--output",
+            str(out),
+        )
+
+        assert result.returncode != 0
+        assert "EntitiesForbidden" in result.stderr
+        assert not out.exists()
+
     @pytest.mark.parametrize("size", [(4000, 1000), (1000, 4000)])
     def test_fits_large_raster_images_on_page(self, tmp_path, size):
         pytest.importorskip("reportlab")

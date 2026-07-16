@@ -22,7 +22,7 @@ Tell the user what step is waiting in the browser. After they complete it,
 verify the result instead of assuming login succeeded:
 
 ```bash
-agent-browser wait --url "**/dashboard" --timeout 120000
+agent-browser wait --url "https://app.example.com/dashboard**" --timeout 120000
 agent-browser get url
 agent-browser read
 ```
@@ -41,7 +41,7 @@ After the user finishes, wait for the application origin or authenticated UI,
 then take a fresh snapshot because refs from before the redirect are stale.
 
 ```bash
-agent-browser wait --url "**/app.example.com/**" --timeout 120000
+agent-browser wait --url "https://app.example.com/**" --timeout 120000
 agent-browser snapshot -i
 agent-browser read
 ```

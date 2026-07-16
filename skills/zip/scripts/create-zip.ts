@@ -1,7 +1,7 @@
 /**
  * Create a ZIP archive from files or directories
  */
-import { existsSync, lstatSync } from "node:fs";
+import { existsSync, lstatSync, writeFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { cac } from "cac";
@@ -34,7 +34,9 @@ export function createZip({
     }
   }
 
-  zip.writeZip(resolvedOutput);
+  writeFileSync(resolvedOutput, zip.toBuffer(), {
+    flag: overwrite ? "w" : "wx",
+  });
 
   const entries = zip.getEntries();
   return {

@@ -45,7 +45,8 @@ agent-browser snapshot -i
 agent-browser fill @e1 "Jane Doe"
 agent-browser fill @e2 "jane@example.com"
 agent-browser click @e3
-agent-browser wait --url "**/success"
+agent-browser wait --url "https://example.com/success**"
+agent-browser get url
 agent-browser get text body
 ```
 

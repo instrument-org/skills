@@ -43,6 +43,7 @@
     "ctsx",
     "demuxer",
     "deberta",
+    "defusedxml",
     "defval",
     "distilbert",
     "docxtpl",

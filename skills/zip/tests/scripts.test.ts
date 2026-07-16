@@ -11,6 +11,10 @@ function makeTempDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), "zip-test-"));
 }
 
+function isErrnoWithCode(error: unknown, code: string) {
+  return error instanceof Error && "code" in error && error.code === code;
+}
+
 function writeArchiveWithRawMember(zipPath: string, memberName: string) {
   const archive = new AdmZip();
   const unsafeName = Buffer.from(memberName);
@@ -211,7 +215,7 @@ describe("zip scripts", () => {
     try {
       fs.symlinkSync(outsideDir, path.join(extractDir, "link"), "dir");
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "EPERM") return;
+      if (isErrnoWithCode(error, "EPERM")) return;
       throw error;
     }
 
@@ -241,7 +245,7 @@ describe("zip scripts", () => {
     try {
       fs.symlinkSync(outsideFile, path.join(extractDir, "pwned.txt"), "file");
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "EPERM") return;
+      if (isErrnoWithCode(error, "EPERM")) return;
       throw error;
     }
 
@@ -257,5 +261,33 @@ describe("zip scripts", () => {
       }),
     ).toThrow(/through symlink/);
     expect(fs.existsSync(outsideFile)).toBe(false);
+  });
+
+  it("rejects a symbolic-link extraction root", () => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const zipPath = path.join(sourceDir, "unsafe-root-symlink.zip");
+    const outsideDir = makeTempDir();
+    tempDirs.push(outsideDir);
+    const extractDir = path.join(sourceDir, "linked-output");
+    try {
+      fs.symlinkSync(outsideDir, extractDir, "dir");
+    } catch (error) {
+      if (isErrnoWithCode(error, "EPERM")) return;
+      throw error;
+    }
+
+    const archive = new AdmZip();
+    archive.addFile("pwned.txt", Buffer.from("unsafe"));
+    archive.writeZip(zipPath);
+
+    expect(() =>
+      extractZip({
+        inputPath: zipPath,
+        outputDir: extractDir,
+        overwrite: true,
+      }),
+    ).toThrow(/extraction root is a symbolic link/);
+    expect(fs.existsSync(path.join(outsideDir, "pwned.txt"))).toBe(false);
   });
 });

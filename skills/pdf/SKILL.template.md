@@ -209,10 +209,12 @@ one.
 
 ## Mandatory visual verification
 
-After every creation or meaningful modification:
+After every creation or meaningful modification, set `PDF_PATH` to the actual
+PDF that was created or changed:
 
-```text
-python <pdf-skill-path>/scripts/render-pages.py output/result.pdf --output work/pdf-preview --dpi 150
+```bash
+PDF_PATH=output/report.pdf
+python <pdf-skill-path>/scripts/render-pages.py "$PDF_PATH" --output work/pdf-preview --dpi 150
 ```
 
 Then read every rendered PNG with the file-reading tool and compare it with the

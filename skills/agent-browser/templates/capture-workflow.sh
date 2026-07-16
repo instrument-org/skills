@@ -6,7 +6,7 @@
 # Outputs:
 #   - page-viewport.png: Current viewport screenshot
 #   - page-structure.txt: Page element structure with refs
-#   - page-text.txt: All text content
+#   - page-text.txt: Agent-friendly page text or Markdown
 #   - page.pdf: PDF version
 
 set -euo pipefail
@@ -29,14 +29,14 @@ echo "URL: $URL"
 
 # Capture the current viewport. Instrument does not support full-page PNG
 # capture; the PDF below covers the full document.
-agent-browser screenshot "$OUTPUT_DIR/page-viewport.png"
-echo "Saved: $OUTPUT_DIR/page-viewport.png"
+SCREENSHOT_RESULT=$(agent-browser screenshot "$OUTPUT_DIR/page-viewport.png")
+printf '%s\n' "$SCREENSHOT_RESULT"
 
 # Get page structure with refs
 agent-browser snapshot -i > "$OUTPUT_DIR/page-structure.txt"
 echo "Saved: $OUTPUT_DIR/page-structure.txt"
 
-# Extract all text content
+# Extract agent-friendly page content
 agent-browser read > "$OUTPUT_DIR/page-text.txt"
 echo "Saved: $OUTPUT_DIR/page-text.txt"
 

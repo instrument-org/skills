@@ -209,22 +209,20 @@ async function buildHelpFromRuntime({
   return ["Usage:", `  ${execName} ${relativeScriptPath} --help`].join("\n");
 }
 
-function formatScriptDocBlock({
-  description,
-  exportedSignatures,
-  helpOutput,
-  notes,
-  scriptName,
-}: {
-  description?: string;
-  exportedSignatures?: string[];
-  helpOutput: string;
-  notes: string[];
-  scriptName: string;
-}) {
+function formatScriptDocBlock(
+  {
+    description,
+    exportedSignatures,
+    helpOutput,
+    notes,
+    scriptName,
+  }: ScriptDocumentation,
+  headingLevel: 2 | 3 = 3,
+) {
+  const headingMarker = "#".repeat(headingLevel);
   const heading = description
-    ? `### \`${scriptName}\` ${description}`
-    : `### \`${scriptName}\``;
+    ? `${headingMarker} \`${scriptName}\` ${description}`
+    : `${headingMarker} \`${scriptName}\``;
 
   const noteBlock =
     notes.length > 0
@@ -308,8 +306,13 @@ async function getScriptDocumentation(skillPath: string) {
   );
 }
 
-function generateScriptDocsSection(scripts: ScriptDocumentation[]) {
-  return scripts.map((script) => formatScriptDocBlock(script)).join("\n\n");
+function generateScriptDocsSection(
+  scripts: ScriptDocumentation[],
+  headingLevel: 2 | 3 = 3,
+) {
+  return scripts
+    .map((script) => formatScriptDocBlock(script, headingLevel))
+    .join("\n\n");
 }
 
 function generateScriptIndexSection(scripts: ScriptDocumentation[]) {
@@ -350,6 +353,7 @@ async function generateSkillMarkdown({
 
   const scripts = await getScriptDocumentation(skillPath);
   const generatedScriptDocs = generateScriptDocsSection(scripts);
+  const generatedReferenceDocs = generateScriptDocsSection(scripts, 2);
   const progressive = scriptIndexMarkers === 1;
   const raw = template.replace(
     progressive ? SCRIPT_INDEX_PLACEHOLDER : SCRIPT_DOCS_PLACEHOLDER,
@@ -363,7 +367,7 @@ async function generateSkillMarkdown({
           "",
           "Complete command-line usage for the scripts indexed in `SKILL.md`.",
           "",
-          generatedScriptDocs,
+          generatedReferenceDocs,
         ].join("\n"),
         { filepath: referencePath },
       )

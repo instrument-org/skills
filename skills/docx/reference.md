@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `create.py` Create a Word document (.docx) from Markdown or structured JSON.
+## `create.py` Create a Word document (.docx) from Markdown or structured JSON.
 
 ```text
 usage: create.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
@@ -19,7 +19,7 @@ options:
   --author AUTHOR    Document author (metadata)
 ```
 
-### `edit.py` Edit an existing Word document: add content, modify paragraphs, or do find-and-replace.
+## `edit.py` Edit an existing Word document: add content, modify paragraphs, or do find-and-replace.
 
 ```text
 usage: edit.py [-h] [--output OUTPUT] [--append APPEND] [--style STYLE]
@@ -43,7 +43,7 @@ options:
   --add-table JSON   Append a table from a JSON array of row arrays
 ```
 
-### `extract-text.py` Extract text from a Word document (.docx).
+## `extract-text.py` Extract text from a Word document (.docx).
 
 ```text
 usage: extract-text.py [-h] [--json] [--include-tables] input
@@ -59,7 +59,7 @@ options:
   --include-tables  Include table cell text (default: included)
 ```
 
-### `fill-template.py` Fill a .docx Jinja2 template using docxtpl -- supports {{ var }}, {% for %}, {% if %}.
+## `fill-template.py` Fill a .docx Jinja2 template using docxtpl -- supports {{ var }}, {% for %}, {% if %}.
 
 ```text
 usage: fill-template.py [-h] [--values VALUES] [--values-file VALUES_FILE]

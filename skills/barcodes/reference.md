@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `generate-barcode.ts` Generate a barcode or QR code image from text content
+## `generate-barcode.ts` Generate a barcode or QR code image from text content
 
 Exports:
 
@@ -25,7 +25,7 @@ Options:
 > [!NOTE]
 > The image format is always PNG. Use --format to produce any supported barcode type (e.g. QRCode, Code128, DataMatrix, Aztec, EAN13). Defaults to QRCode.
 
-### `read-barcode.ts` Read and decode barcodes or QR codes from an image file
+## `read-barcode.ts` Read and decode barcodes or QR codes from an image file
 
 Exports:
 

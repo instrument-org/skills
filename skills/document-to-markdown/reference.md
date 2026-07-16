@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `convert.py` Convert a local document to Markdown for analysis or reuse.
+## `convert.py` Convert a local document to Markdown for analysis or reuse.
 
 ```text
 usage: convert.py [-h] --output OUTPUT [--force] input

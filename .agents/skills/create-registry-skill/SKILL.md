@@ -85,14 +85,12 @@ State when to use direct library code and when to use a bundled script.
 ```python
 # Small executable example using task-relative input and output paths.
 ```
-````
 
 ## Script index
 
 Read [`reference.md`](reference.md) for complete arguments.
 
 {{GENERATED_SCRIPT_INDEX}}
-
 ````
 
 Use `{{GENERATED_SCRIPT_DOCS}}` only when a skill has one very small script and
@@ -155,7 +153,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 
   console.log(`Saved to ${relative(process.cwd(), result.outputPath) || "."}`);
 }
-````
+```
 
 ### What gets auto-generated
 

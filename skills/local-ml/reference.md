@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `classify-image.py` Classify an image using a zero-shot or ImageNet model.
+## `classify-image.py` Classify an image using a zero-shot or ImageNet model.
 
 ```text
 usage: classify-image.py [-h] [--labels LABELS] [--model MODEL]
@@ -21,7 +21,7 @@ options:
   --top-k TOP_K
 ```
 
-### `classify-text.py` Classify text using sentiment analysis or zero-shot labels.
+## `classify-text.py` Classify text using sentiment analysis or zero-shot labels.
 
 ```text
 usage: classify-text.py [-h] --text TEXT [--labels LABELS] [--multi-label]
@@ -38,7 +38,7 @@ options:
   --top-k TOP_K
 ```
 
-### `describe-image.py` Generate a natural-language description of an image (image captioning).
+## `describe-image.py` Generate a natural-language description of an image (image captioning).
 
 ```text
 usage: describe-image.py [-h] [--model MODEL] input
@@ -53,7 +53,7 @@ options:
   --model MODEL
 ```
 
-### `detect-objects.py` Detect objects in an image and return bounding boxes with labels.
+## `detect-objects.py` Detect objects in an image and return bounding boxes with labels.
 
 ```text
 usage: detect-objects.py [-h] [--model MODEL] [--threshold THRESHOLD] input
@@ -70,7 +70,7 @@ options:
                         Confidence threshold (default: 0.9)
 ```
 
-### `embed-text.py` Generate sentence embeddings for semantic search or similarity.
+## `embed-text.py` Generate sentence embeddings for semantic search or similarity.
 
 ```text
 usage: embed-text.py [-h] [--text TEXT] [--input INPUT] [--model MODEL]
@@ -84,7 +84,7 @@ options:
   --model MODEL
 ```
 
-### `extract-entities.py` Extract named entities such as people, organizations, and locations from text.
+## `extract-entities.py` Extract named entities such as people, organizations, and locations from text.
 
 ```text
 usage: extract-entities.py [-h] [--text TEXT] [--input INPUT] [--model MODEL]
@@ -100,7 +100,7 @@ options:
   --json
 ```
 
-### `remove-background.py` Remove the background from an image, outputting a PNG with transparency.
+## `remove-background.py` Remove the background from an image, outputting a PNG with transparency.
 
 ```text
 usage: remove-background.py [-h] [--output OUTPUT]
@@ -119,7 +119,7 @@ options:
                         Model to use (default: u2net)
 ```
 
-### `speech-to-text.py` Transcribe audio to text using Whisper.
+## `speech-to-text.py` Transcribe audio to text using Whisper.
 
 ```text
 usage: speech-to-text.py [-h]

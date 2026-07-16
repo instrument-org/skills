@@ -90,7 +90,7 @@ memory. Keep a small worker pool.
 
 ```ts
 import { mkdir, readdir } from "node:fs/promises";
-import { basename, extname, join } from "node:path";
+import { extname, join } from "node:path";
 import sharp from "sharp";
 
 const inputDir = "attachments/photos";
@@ -108,7 +108,7 @@ async function worker(queue: string[]) {
       .rotate()
       .resize({ width: 1600, withoutEnlargement: true })
       .webp({ quality: 82 })
-      .toFile(join(outputDir, `${basename(name, extname(name))}.webp`));
+      .toFile(join(outputDir, `${name}.webp`));
   }
 }
 

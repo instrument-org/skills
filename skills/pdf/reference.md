@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-### `add-page-numbers.py` Add page numbers (and optional header/footer text) to a PDF.
+## `add-page-numbers.py` Add page numbers (and optional header/footer text) to a PDF.
 
 ```text
 usage: add-page-numbers.py [-h] [--start START]
@@ -27,7 +27,7 @@ options:
   --footer FOOTER
 ```
 
-### `create-pdf.py` Create a quick PDF from simple text or Markdown using reportlab.
+## `create-pdf.py` Create a quick PDF from simple text or Markdown using reportlab.
 
 ```text
 usage: create-pdf.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
@@ -46,7 +46,7 @@ options:
   --author AUTHOR
 ```
 
-### `extract-images.py` Extract embedded images from a PDF and save them as files.
+## `extract-images.py` Extract embedded images from a PDF and save them as files.
 
 ```text
 usage: extract-images.py [-h] [--output OUTPUT] [--page PAGE] input
@@ -62,7 +62,7 @@ options:
   --page PAGE      Only extract from this page (1-indexed)
 ```
 
-### `extract-links.py` Extract hyperlinks from a PDF.
+## `extract-links.py` Extract hyperlinks from a PDF.
 
 ```text
 usage: extract-links.py [-h] [--json] input
@@ -77,7 +77,7 @@ options:
   --json
 ```
 
-### `extract-tables.py` Extract tables from a PDF using pdfplumber.
+## `extract-tables.py` Extract tables from a PDF using pdfplumber.
 
 ```text
 usage: extract-tables.py [-h] [--page PAGE] [--csv] [--json] input
@@ -94,7 +94,7 @@ options:
   --json       Output tables as JSON
 ```
 
-### `extract-text.py` Extract text from a PDF file.
+## `extract-text.py` Extract text from a PDF file.
 
 ```text
 usage: extract-text.py [-h] [--pages PAGES] [--json] input
@@ -110,7 +110,7 @@ options:
   --json         Output structured JSON with per-page text and page count
 ```
 
-### `fill-form.py` Fill PDF form fields.
+## `fill-form.py` Fill PDF form fields.
 
 ```text
 usage: fill-form.py [-h] [--fields FIELDS] [--list-fields] input [output]
@@ -128,7 +128,7 @@ options:
   --list-fields    List available form fields and exit
 ```
 
-### `get-meta.py` Read PDF metadata.
+## `get-meta.py` Read PDF metadata.
 
 ```text
 usage: get-meta.py [-h] input
@@ -142,7 +142,7 @@ options:
   -h, --help  show this help message and exit
 ```
 
-### `image-to-pdf.py` Create a PDF from raster images, one image per page.
+## `image-to-pdf.py` Create a PDF from raster images, one image per page.
 
 ```text
 usage: image-to-pdf.py [-h] --output OUTPUT [--dpi DPI] inputs [inputs ...]
@@ -160,7 +160,7 @@ options:
   --dpi DPI        Resolution metadata for the output PDF (default: 150)
 ```
 
-### `insert-image.py` Insert an image into a page of an existing PDF.
+## `insert-image.py` Insert an image into a page of an existing PDF.
 
 ```text
 usage: insert-image.py [-h] --image IMAGE [--page PAGE] [--x X] [--y Y]
@@ -183,7 +183,7 @@ options:
   --height HEIGHT  Image height in points
 ```
 
-### `merge.py` Merge multiple PDF files into one.
+## `merge.py` Merge multiple PDF files into one.
 
 ```text
 usage: merge.py [-h] --output OUTPUT inputs [inputs ...]
@@ -198,7 +198,7 @@ options:
   --output OUTPUT  Output PDF file
 ```
 
-### `render-pages.py` Render PDF pages to PNG images using PyMuPDF (no external tools required).
+## `render-pages.py` Render PDF pages to PNG images using PyMuPDF (no external tools required).
 
 ```text
 usage: render-pages.py [-h] [--output OUTPUT] [--dpi DPI] [--pages PAGES]
@@ -216,7 +216,7 @@ options:
   --pages PAGES    Page range, e.g. 1-3 or 2
 ```
 
-### `rotate.py` Rotate pages in a PDF.
+## `rotate.py` Rotate pages in a PDF.
 
 ```text
 usage: rotate.py [-h] --angle {90,180,270} [--pages PAGES] input output
@@ -233,7 +233,7 @@ options:
   --pages PAGES         Comma-separated 1-indexed page numbers (default: all)
 ```
 
-### `set-meta.py` Update PDF metadata.
+## `set-meta.py` Update PDF metadata.
 
 ```text
 usage: set-meta.py [-h] [--title TITLE] [--author AUTHOR] [--subject SUBJECT]
@@ -254,7 +254,7 @@ options:
   --creator CREATOR
 ```
 
-### `split.py` Split a PDF into pages or named ranges.
+## `split.py` Split a PDF into pages or named ranges.
 
 ```text
 usage: split.py [-h] [--output OUTPUT] [--ranges RANGES] input
@@ -270,7 +270,7 @@ options:
   --ranges RANGES  Page ranges, e.g. '1-3,4-6' or 'intro:1-2,body:3-10'
 ```
 
-### `watermark.py` Add a text or image watermark to every page of a PDF.
+## `watermark.py` Add a text or image watermark to every page of a PDF.
 
 ```text
 usage: watermark.py [-h] [--text TEXT] [--image IMAGE] [--opacity OPACITY]
