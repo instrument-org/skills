@@ -120,7 +120,9 @@ EOF
 ```
 
 Use only a URL already supplied or discovered from the page. Check the download
-command's reported path and inspect the saved file before relying on it.
+command's reported path and inspect the saved file before relying on it. This
+fallback composes `eval --stdin` with `download <selector> <path>`; there is no
+separate authenticated fetch-to-file command in the managed surface.
 
 ## Read and Get Information
 
@@ -245,12 +247,20 @@ agent-browser network requests --filter api    # Filter requests
 ## Tabs and Windows
 
 ```bash
-agent-browser tab                 # List tabs
-agent-browser tab new [url]       # New tab
-agent-browser tab 2               # Switch to tab by index
-agent-browser tab close           # Close current tab
-agent-browser tab close 2         # Close tab by index
+agent-browser tab                              # List tabs with stable IDs
+agent-browser tab new [url]                    # New tab
+agent-browser tab new --label docs [url]       # New labeled tab
+agent-browser tab t2                           # Switch by stable ID
+agent-browser tab docs                         # Switch by label
+agent-browser tab close                        # Close current tab
+agent-browser tab close t2                     # Close by stable ID
+agent-browser tab close docs                   # Close by label
 ```
+
+Tab IDs have the form `t1`, `t2`, and so on. Positional integers are not
+accepted. IDs remain stable as other tabs open or close; labels must be unique
+within the managed target. Re-snapshot after switching because refs belong to
+the tab that was active when the snapshot ran.
 
 ## Frames
 

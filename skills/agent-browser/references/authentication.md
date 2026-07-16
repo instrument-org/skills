@@ -1,9 +1,10 @@
 # Authentication in Instrument
 
-Use the browser session that Instrument manages for the current project.
-Cookies, `localStorage`, `sessionStorage`, IndexedDB, and service workers persist
-across `agent-browser` commands. Upstream auth vault, named session, saved state,
-connection, and lifecycle commands are unavailable in the managed browser.
+Instrument reuses one browser target for commands in the current task. The
+target keeps its page, tabs, and `sessionStorage` while it remains live. Cookies,
+`localStorage`, IndexedDB, and service workers use the workspace's persistent
+browser profile. Upstream auth vault, named session, saved state, connection,
+and lifecycle commands are unavailable in the managed browser.
 
 ## User-assisted login
 
@@ -48,8 +49,10 @@ agent-browser read
 
 ## Reuse and expiry
 
-The managed session persists for subsequent commands in the project. Open a
-protected page directly and check whether the site redirects to login:
+The current task reuses its managed browser target across commands. Durable
+site data can also remain in the workspace browser profile when a target is
+recreated. Open a protected page directly and check whether the site redirects
+to login:
 
 ```bash
 agent-browser open https://app.example.com/dashboard
@@ -60,7 +63,7 @@ agent-browser get url
 If the session expired, repeat the user-assisted login. To sign out, use the
 site's own sign-out control. Use `agent-browser cookies clear` only when the
 task explicitly requires clearing browser cookies; it can sign the user out of
-unrelated sites in the same managed project session.
+unrelated sites in the same workspace browser profile.
 
 ## Security rules
 

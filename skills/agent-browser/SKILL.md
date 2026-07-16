@@ -26,7 +26,7 @@ which may differ from the requested path.
 | Understand a visual layout       | Screenshot and inspect the saved image        |
 | Extract structured repeated data | Scoped text first, browser `eval` if needed   |
 | Diagnose broken behavior         | Screenshot, console, errors, then network     |
-| Reuse authenticated access       | Managed persistent session or user sign-in    |
+| Reuse authenticated access       | Managed browser profile or user sign-in       |
 
 ## Core loop
 
@@ -71,7 +71,7 @@ identifies the same element.
 | Inspect app performance       | `vitals`, `react`, `profiler`, `trace`               |
 
 The command map is for discovery, not a substitute for observing the page.
-Read command output before choosing refs, paths, tab indexes, frame targets, or
+Read command output before choosing refs, paths, tab IDs, frame targets, or
 follow-up actions.
 
 ## Critical invariants
@@ -201,7 +201,8 @@ a higher-resolution URL by editing path segments or query parameters.
 
 ## Recipe: authenticated work
 
-Instrument preserves the managed browser session within the project. Open the
+Commands in the current task reuse its managed browser target. Cookies and
+durable site storage use the workspace's persistent browser profile. Open the
 login page, let the user enter credentials or complete OAuth and two-factor
 steps in the visible browser, then wait for and verify the authenticated state.
 Do not ask for secrets in chat or pass them through commands. See
