@@ -68,7 +68,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   cli.option("--html-file <path>", "Input HTML file path");
   cli.option("--html <htmlString>", "Inline HTML string input");
   cli.option("--output <path>", "Output Markdown file path");
-  cli.option("--gfm", "Enable GitHub-Flavored Markdown", { default: true });
+  cli.option("--no-gfm", "Disable GitHub-Flavored Markdown");
   cli.option("--heading-style <style>", "Heading style: atx or setext", {
     default: "atx",
   });

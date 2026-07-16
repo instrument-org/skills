@@ -128,7 +128,7 @@ Set relative volume:
 
 ```bash
 ffmpeg -n -i "$INPUT" \
-  -map 0:v:0? -map 0:a:0 \
+  -map "0:v:0?" -map 0:a:0 \
   -c:v copy -af "volume=0.5" -c:a aac \
   "$OUTPUT"
 ```
@@ -137,7 +137,7 @@ Use the EBU R128 loudness normalizer for a simple one-pass normalization:
 
 ```bash
 ffmpeg -n -i "$INPUT" \
-  -map 0:v:0? -map 0:a:0 \
+  -map "0:v:0?" -map 0:a:0 \
   -c:v copy -af "loudnorm" -c:a aac \
   "$OUTPUT"
 ```
@@ -309,7 +309,7 @@ Place an image ten pixels from the top-left corner:
 ffmpeg -n \
   -i "$INPUT" -i "$IMAGE" \
   -filter_complex "[0:v:0][1:v:0]overlay=10:10[v]" \
-  -map "[v]" -map 0:a:0? \
+  -map "[v]" -map "0:a:0?" \
   -c:v libx264 -crf 23 -preset medium -c:a aac \
   "$OUTPUT"
 ```
@@ -330,7 +330,7 @@ ffmpeg -n \
   -i "$BACKGROUND" -i "$FOREGROUND" \
   -filter_complex \
   "[1:v:0][0:v:0]scale2ref=w=main_w*0.25:h=-2[pip][base];[base][pip]overlay=main_w-overlay_w-24:main_h-overlay_h-24[v]" \
-  -map "[v]" -map 0:a:0? \
+  -map "[v]" -map "0:a:0?" \
   -c:v libx264 -crf 23 -preset medium -c:a aac \
   "$OUTPUT"
 ```

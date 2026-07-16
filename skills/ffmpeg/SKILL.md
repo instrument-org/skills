@@ -9,6 +9,11 @@ compatibility: "Requires ffmpeg and ffprobe on PATH."
 Use the pre-installed `ffmpeg` and `ffprobe` commands directly. Prefer simple,
 explicit commands over elaborate filter graphs.
 
+Treat every recipe as a starting point. Probe the actual inputs, then adapt
+stream selectors, filters, codecs, dimensions, and mappings to the requested
+result. Do not force a file through an example whose assumed streams do not
+match.
+
 Read [references/recipes.md](references/recipes.md) for advanced audio, subtitle,
 overlay, GIF, slideshow, social-media, and multi-input recipes.
 
@@ -97,7 +102,7 @@ and fast-start metadata:
 
 ```bash
 ffmpeg -n -i "$INPUT" \
-  -map 0:v:0 -map 0:a:0? \
+  -map 0:v:0 -map "0:a:0?" \
   -c:v libx264 -crf 23 -preset medium \
   -c:a aac -b:a 128k \
   -pix_fmt yuv420p -movflags +faststart \
@@ -141,7 +146,7 @@ Frame-accurate trim:
 
 ```bash
 ffmpeg -n -i "$INPUT" -ss 00:01:00 -t 00:00:10 \
-  -map 0:v:0 -map 0:a:0? \
+  -map 0:v:0 -map "0:a:0?" \
   -c:v libx264 -crf 23 -preset medium -c:a aac \
   "$OUTPUT"
 ```
@@ -241,7 +246,7 @@ Do not rely on implicit stream selection for files with multiple streams.
 
 ```bash
 # First video and optional first audio
--map 0:v:0 -map 0:a:0?
+-map 0:v:0 -map "0:a:0?"
 
 # All streams
 -map 0
@@ -251,6 +256,34 @@ Do not rely on implicit stream selection for files with multiple streams.
 ```
 
 The trailing `?` makes a mapping optional. Use it when audio may be absent.
+
+## Compose a filter graph
+
+For multi-step visual work, build the graph from left to right:
+
+1. Select each input stream explicitly.
+2. Normalize or transform each stream and give it a label.
+3. Combine labeled streams.
+4. Map only the final labels and any retained streams.
+
+This example scales a foreground image, labels both stages, overlays it on the
+video, and preserves optional audio from the first input:
+
+```bash
+ffmpeg -n \
+  -i "$VIDEO" -i "$IMAGE" \
+  -filter_complex \
+  "[1:v:0]scale=240:-2[mark];[0:v:0][mark]overlay=main_w-overlay_w-24:24[video]" \
+  -map "[video]" -map "0:a:0?" \
+  -c:v libx264 -crf 23 -preset medium \
+  -c:a aac -b:a 128k -pix_fmt yuv420p \
+  "$OUTPUT"
+```
+
+Add a labeled stage instead of rewriting the entire graph when the request
+gains another transform. If a graph becomes hard to quote or inspect, write
+the filter expression to a workspace file and pass it with
+`-filter_complex_script`.
 
 ## Verify output
 

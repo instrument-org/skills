@@ -1,127 +1,73 @@
-# Authentication Patterns
+# Authentication in Instrument
 
-Login flows, OAuth, 2FA, and authenticated browsing inside the harness.
+Use the browser session that Instrument manages for the current project.
+Cookies, `localStorage`, `sessionStorage`, IndexedDB, and service workers persist
+across `agent-browser` commands. Upstream auth vault, named session, saved state,
+connection, and lifecycle commands are unavailable in the managed browser.
 
-**Related**: [SKILL.md](../SKILL.md) for quick start, [commands.md](commands.md) for the full command surface.
+## User-assisted login
 
-## Session model
-
-Cookies, `localStorage`, `sessionStorage`, IndexedDB, and service workers persist across `agent-browser` invocations within a project. Log in once, then every subsequent command in the same project is already authenticated.
-
-To start fresh, use `agent-browser cookies clear` and inspect/clear storage with `agent-browser storage local` / `storage session`.
-
-## Contents
-
-- [Basic Login Flow](#basic-login-flow)
-- [OAuth / SSO Flows](#oauth--sso-flows)
-- [Two-Factor Authentication](#two-factor-authentication)
-- [HTTP Basic Auth](#http-basic-auth)
-- [Cookie-Based Auth](#cookie-based-auth)
-- [Detecting Session Expiry](#detecting-session-expiry)
-- [Security Best Practices](#security-best-practices)
-
-## Basic Login Flow
+Do not request passwords, one-time codes, tokens, or recovery codes in chat and
+do not pass them through shell commands. Open the real login page, let the user
+enter secrets in the visible browser, then continue after the authenticated
+state appears.
 
 ```bash
 agent-browser open https://app.example.com/login
 agent-browser wait --load networkidle
 agent-browser snapshot -i
-# Output: @e1 [input type="email"], @e2 [input type="password"], @e3 [button] "Sign In"
+```
 
-agent-browser fill @e1 "$APP_USERNAME"
-agent-browser fill @e2 "$APP_PASSWORD"
-agent-browser click @e3
-agent-browser wait --url "**/dashboard"
+Tell the user what step is waiting in the browser. After they complete it,
+verify the result instead of assuming login succeeded:
 
-# Verify
+```bash
+agent-browser wait --url "**/dashboard" --timeout 120000
+agent-browser get url
+agent-browser read
+```
+
+If the application does not change URL, wait for authenticated copy or a stable
+control and verify it with text or element state.
+
+## OAuth, SSO, CAPTCHA, and two-factor flows
+
+OAuth redirects work inside the same managed browser. Let the user complete
+provider consent, CAPTCHA, security-key, passkey, and two-factor steps in the
+visible browser. Do not automate a challenge whose purpose is human or device
+verification.
+
+After the user finishes, wait for the application origin or authenticated UI,
+then take a fresh snapshot because refs from before the redirect are stale.
+
+```bash
+agent-browser wait --url "**/app.example.com/**" --timeout 120000
+agent-browser snapshot -i
+agent-browser read
+```
+
+## Reuse and expiry
+
+The managed session persists for subsequent commands in the project. Open a
+protected page directly and check whether the site redirects to login:
+
+```bash
+agent-browser open https://app.example.com/dashboard
+agent-browser wait --load networkidle
 agent-browser get url
 ```
 
-Subsequent commands in this project are already authenticated — just `open` protected URLs directly.
+If the session expired, repeat the user-assisted login. To sign out, use the
+site's own sign-out control. Use `agent-browser cookies clear` only when the
+task explicitly requires clearing browser cookies; it can sign the user out of
+unrelated sites in the same managed project session.
 
-## OAuth / SSO Flows
+## Security rules
 
-OAuth redirects work normally; just follow them with `wait --url` between steps:
-
-```bash
-agent-browser open https://app.example.com/auth/google
-
-agent-browser wait --url "**/accounts.google.com**"
-agent-browser snapshot -i
-agent-browser fill @e1 "user@gmail.com"
-agent-browser click @e2  # Next
-agent-browser wait 2000
-agent-browser snapshot -i
-agent-browser fill @e3 "$GOOGLE_PASSWORD"
-agent-browser click @e4  # Sign in
-
-agent-browser wait --url "**/app.example.com**"
-```
-
-For consent screens that require human review, see 2FA below.
-
-## Two-Factor Authentication
-
-For 2FA, captcha, or any flow that requires a human, let the user complete it in the visible browser window:
-
-```bash
-agent-browser open https://app.example.com/login
-agent-browser snapshot -i
-agent-browser fill @e1 "$APP_USERNAME"
-agent-browser fill @e2 "$APP_PASSWORD"
-agent-browser click @e3
-
-# Tell the user to complete 2FA in the browser window, then wait for the
-# post-2FA URL. Use a generous timeout in ms.
-agent-browser wait --url "**/dashboard" --timeout 120000
-```
-
-Once the wait resolves, the session is authenticated for the rest of the project.
-
-## HTTP Basic Auth
-
-```bash
-agent-browser set credentials "$USERNAME" "$PASSWORD"
-agent-browser open https://protected.example.com/api
-```
-
-## Cookie-Based Auth
-
-If you have a session token from another source, set it directly:
-
-```bash
-agent-browser cookies set session_token "$TOKEN" --url https://app.example.com
-agent-browser open https://app.example.com/dashboard
-```
-
-## Detecting Session Expiry
-
-Check whether you got bounced to a login page:
-
-```bash
-agent-browser open https://app.example.com/dashboard
-URL=$(agent-browser get url)
-case "$URL" in
-  *"/login"*) echo "session expired"; ;;
-  *) echo "ok"; ;;
-esac
-```
-
-If expired, re-run the login flow above.
-
-## Security Best Practices
-
-1. **Use environment variables for credentials** — never inline them.
-
-   ```bash
-   agent-browser fill @e1 "$APP_USERNAME"
-   agent-browser fill @e2 "$APP_PASSWORD"
-   ```
-
-2. **Clear cookies when you're done with a sensitive task**:
-
-   ```bash
-   agent-browser cookies clear
-   ```
-
-3. **Don't echo tokens** to the agent's stdout (they end up in conversation transcripts). Prefer `cookies set` and `set credentials` over `eval`-based token injection that prints the token back.
+- Never write browser state, cookies, tokens, or credentials into task files.
+- Never echo secrets or include them in `fill`, `type`, `eval`, cookie, header,
+  or HTTP-auth command arguments.
+- Verify the site origin before asking the user to enter credentials.
+- Stop and ask the user when a consent or security step is ambiguous.
+- Treat authenticated downloads and mutations as external actions requiring
+  the same authorization as any other browser action.

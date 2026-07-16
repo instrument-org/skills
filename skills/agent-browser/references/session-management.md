@@ -1,194 +1,67 @@
-# Session Management
+# Managed browser session
 
-Multiple isolated browser sessions with state persistence and concurrent browsing.
+Instrument owns the browser connection, profile, state, screenshots, downloads,
+and lifecycle. Every `agent-browser` command in a project targets the same
+managed session.
 
-**Related**: [authentication.md](authentication.md) for login patterns, [SKILL.md](../SKILL.md) for quick start.
+## What persists
 
-## Contents
+- Navigation and open tabs
+- Cookies and web storage
+- IndexedDB and service workers
+- Authenticated site state
 
-- [Named Sessions](#named-sessions)
-- [Session Isolation Properties](#session-isolation-properties)
-- [Session State Persistence](#session-state-persistence)
-- [Common Patterns](#common-patterns)
-- [Default Session](#default-session)
-- [Session Cleanup](#session-cleanup)
-- [Best Practices](#best-practices)
+The command daemon may stop while idle, but the managed browser view and its
+site state remain available to later commands.
 
-## Named Sessions
+## Unsupported upstream controls
 
-Use `--session` flag to isolate browser contexts:
+Do not use these upstream surfaces in Instrument:
 
-```bash
-# Session 1: Authentication flow
-agent-browser --session auth open https://app.example.com/login
+- `auth`, `state`, `session`, `profiles`, `connect`, or `close` subcommands
+- `--session`, `--state`, `--profile`, `--provider`, `--cdp`, `--restore`, or
+  related connection and persistence flags
 
-# Session 2: Public browsing (separate cookies, storage)
-agent-browser --session public open https://example.com
+They are blocked because they would bypass or duplicate the workspace-owned
+browser context.
 
-# Commands are isolated by session
-agent-browser --session auth fill @e1 "user@example.com"
-agent-browser --session public get text body
-```
+## Continue existing work
 
-## Session Isolation Properties
-
-Each session has independent:
-
-- Cookies
-- LocalStorage / SessionStorage
-- IndexedDB
-- Cache
-- Browsing history
-- Open tabs
-
-## Session State Persistence
-
-### Save Session State
+Read the current URL and take a fresh snapshot before acting:
 
 ```bash
-# Save cookies, storage, and auth state
-agent-browser state save /path/to/auth-state.json
-```
-
-### Load Session State
-
-```bash
-# Restore saved state
-agent-browser state load /path/to/auth-state.json
-
-# Continue with authenticated session
-agent-browser open https://app.example.com/dashboard
-```
-
-### State File Contents
-
-```json
-{
-  "cookies": [...],
-  "localStorage": {...},
-  "sessionStorage": {...},
-  "origins": [...]
-}
-```
-
-## Common Patterns
-
-### Authenticated Session Reuse
-
-```bash
-#!/bin/bash
-# Save login state once, reuse many times
-
-STATE_FILE="auth-state.json"
-
-# Check if we have saved state
-if [[ -f "$STATE_FILE" ]]; then
-    agent-browser state load "$STATE_FILE"
-    agent-browser open https://app.example.com/dashboard
-else
-    # Perform login
-    agent-browser open https://app.example.com/login
-    agent-browser snapshot -i
-    agent-browser fill @e1 "$USERNAME"
-    agent-browser fill @e2 "$PASSWORD"
-    agent-browser click @e3
-    agent-browser wait --load networkidle
-
-    # Save for future use
-    agent-browser state save "$STATE_FILE"
-fi
-```
-
-### Concurrent Scraping
-
-```bash
-#!/bin/bash
-# Scrape multiple sites concurrently
-
-# Start all sessions
-agent-browser --session site1 open https://site1.com &
-agent-browser --session site2 open https://site2.com &
-agent-browser --session site3 open https://site3.com &
-wait
-
-# Extract from each
-agent-browser --session site1 get text body > site1.txt
-agent-browser --session site2 get text body > site2.txt
-agent-browser --session site3 get text body > site3.txt
-
-# Cleanup
-agent-browser --session site1 close
-agent-browser --session site2 close
-agent-browser --session site3 close
-```
-
-### A/B Testing Sessions
-
-```bash
-# Test different user experiences
-agent-browser --session variant-a open "https://app.com?variant=a"
-agent-browser --session variant-b open "https://app.com?variant=b"
-
-# Compare
-agent-browser --session variant-a screenshot variant-a.png
-agent-browser --session variant-b screenshot variant-b.png
-```
-
-## Default Session
-
-When `--session` is omitted, commands use the default session:
-
-```bash
-# These use the same default session
-agent-browser open https://example.com
+agent-browser get url
 agent-browser snapshot -i
-agent-browser close  # Closes default session
 ```
 
-## Session Cleanup
+Refs are tied to the latest page state, not to a saved session. Re-snapshot
+after navigation, form submission, tab changes, or major DOM updates.
+
+## Tabs instead of named sessions
+
+Use tabs when one task needs several pages in the same browser context:
 
 ```bash
-# Close specific session
-agent-browser --session auth close
-
-# List active sessions
-agent-browser session list
+agent-browser tab new https://example.com/one
+agent-browser tab new https://example.com/two
+agent-browser tab
+agent-browser tab 1
 ```
 
-## Best Practices
+Tabs share cookies and storage. They are not isolated identities. If a task
+requires separate authenticated profiles or proxy contexts, explain that the
+managed browser does not expose them and ask for a different workflow.
 
-### 1. Name Sessions Semantically
+## Resetting site state
+
+Prefer the site's own sign-out or reset controls. When the task explicitly
+requires a cookie reset:
 
 ```bash
-# GOOD: Clear purpose
-agent-browser --session github-auth open https://github.com
-agent-browser --session docs-scrape open https://docs.example.com
-
-# AVOID: Generic names
-agent-browser --session s1 open https://github.com
+agent-browser cookies clear
+agent-browser storage local clear
 ```
 
-### 2. Always Clean Up
-
-```bash
-# Close sessions when done
-agent-browser --session auth close
-agent-browser --session scrape close
-```
-
-### 3. Handle State Files Securely
-
-```bash
-# Don't commit state files (contain auth tokens!)
-echo "*.auth-state.json" >> .gitignore
-
-# Delete after use
-rm auth-state.json
-```
-
-### 4. Timeout Long Sessions
-
-```bash
-# Set timeout for automated scripts
-timeout 60 agent-browser --session long-task get text body
-```
+Clearing state affects the managed project session and may sign the user out of
+other sites. Do not do it as routine cleanup. Instrument handles browser
+lifecycle automatically.

@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { convertHtmlFile, convertHtmlString } from "../scripts/html-to-md.ts";
+import { createConverter } from "../scripts/lib/converter.ts";
 import { convertMdToPdf } from "../scripts/md-to-pdf.ts";
 
 describe("convertHtmlString", () => {
@@ -107,6 +108,41 @@ describe("convertHtmlString", () => {
 
       ### Three"
     `);
+  });
+});
+
+describe("createConverter", () => {
+  it("supports source-specific rules and removals", () => {
+    const converter = createConverter();
+    converter.remove(["nav", "script"]);
+    converter.addRule("callout", {
+      filter: (node) =>
+        node.nodeName === "ASIDE" && node.getAttribute("data-kind") === "note",
+      replacement: (content) => `\n\n> **Note:** ${content.trim()}\n\n`,
+    });
+
+    const result = converter.turndown(
+      '<nav>Discard me</nav><h1>Keep me</h1><aside data-kind="note">Check this</aside><script>alert(1)</script>',
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "# Keep me
+
+      > **Note:** Check this"
+    `);
+  });
+
+  it("can preserve selected elements as HTML", () => {
+    const converter = createConverter({ gfm: false });
+    converter.keep(["details"]);
+
+    expect(
+      converter.turndown(
+        "<details><summary>More</summary><p>Hidden copy</p></details>",
+      ),
+    ).toMatchInlineSnapshot(
+      `"<details><summary>More</summary><p>Hidden copy</p></details>"`,
+    );
   });
 });
 

@@ -1,6 +1,9 @@
 # Command Reference
 
-Complete reference for all agent-browser commands. For quick start and common patterns, see SKILL.md.
+Reference for the command surface exposed by Instrument's managed browser. For
+quick start and adaptive workflows, see `SKILL.md`. Instrument blocks upstream
+connection, profile, auth-vault, state-file, named-session, and lifecycle
+controls because the workspace owns that context.
 
 ## Navigation
 
@@ -12,9 +15,19 @@ agent-browser read [url]      # Read active page text, or fetch URL as readable 
 agent-browser back            # Go back
 agent-browser forward         # Go forward
 agent-browser reload          # Reload page
-agent-browser close           # Close browser (aliases: quit, exit)
-agent-browser connect 9222    # Connect to browser via CDP port
 ```
+
+## Read page content
+
+```bash
+agent-browser read             # Active page as agent-friendly text/Markdown
+agent-browser read <url>       # Fetch URL as Markdown or readable text
+agent-browser get text body    # Visible-DOM fallback after interaction
+agent-browser get text main    # Visible text in a scoped region
+```
+
+Use `read` for prose and research. Use `get text` when current rendered
+visibility or interaction state matters.
 
 ## Snapshot (page analysis)
 
@@ -84,8 +97,7 @@ agent-browser is checked @e1      # Check if checked
 agent-browser screenshot          # Save to temporary directory
 agent-browser screenshot path.png # Save to specific path
 agent-browser screenshot @e1      # Element-only screenshot (ref or CSS selector)
-agent-browser screenshot --full   # Full page
-agent-browser pdf output.pdf      # Save as PDF
+agent-browser pdf output.pdf      # Full-page PDF; full-page PNG is unavailable
 ```
 
 ## Video Recording
@@ -246,27 +258,16 @@ Array.from(links).map(a => a.href);
 EOF
 ```
 
-## State Management
+## Managed state
 
-```bash
-agent-browser state save auth.json    # Save cookies, storage, auth state
-agent-browser state load auth.json    # Restore saved state
-```
+Browser state persists automatically within the project. Upstream `auth`,
+`state`, `session`, `connect`, and `close` commands are unavailable. See
+`session-management.md` and `authentication.md`.
 
 ## Global Options
 
 ```bash
-agent-browser --session <name> ...    # Isolated browser session
 agent-browser --json ...              # JSON output for parsing
-agent-browser --full ...              # Full page screenshot (-f)
-agent-browser --cdp <port> ...        # Connect via Chrome DevTools Protocol
-agent-browser -p <provider> ...       # Cloud browser provider (--provider)
-agent-browser --proxy <url> ...       # Use proxy server
-agent-browser --proxy-bypass <hosts>  # Hosts to bypass proxy
-agent-browser --headers <json> ...    # HTTP headers scoped to URL's origin
-agent-browser --executable-path <p>   # Custom browser executable
-agent-browser --extension <path> ...  # Load browser extension (repeatable)
-agent-browser --ignore-https-errors   # Ignore SSL certificate errors
 agent-browser --help                  # Show help (-h)
 agent-browser --version               # Show version (-V)
 agent-browser <command> --help        # Show detailed help for a command
@@ -275,8 +276,6 @@ agent-browser <command> --help        # Show detailed help for a command
 ## Debugging
 
 ```bash
-agent-browser --cdp 9222 snapshot         # Connect via CDP port
-agent-browser connect 9222                # Alternative: connect command
 agent-browser console                     # View console messages
 agent-browser console --clear             # Clear console
 agent-browser errors                      # View page errors

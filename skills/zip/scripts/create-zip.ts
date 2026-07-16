@@ -1,7 +1,7 @@
 /**
  * Create a ZIP archive from files or directories
  */
-import { lstatSync } from "node:fs";
+import { existsSync, lstatSync } from "node:fs";
 import { basename, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { cac } from "cac";
@@ -10,10 +10,17 @@ import AdmZip from "adm-zip";
 export function createZip({
   outputPath,
   inputPaths,
+  overwrite = false,
 }: {
   outputPath: string;
   inputPaths: readonly string[];
+  overwrite?: boolean;
 }) {
+  const resolvedOutput = resolve(outputPath);
+  if (!overwrite && existsSync(resolvedOutput)) {
+    throw new Error(`Output already exists: ${resolvedOutput}`);
+  }
+
   const zip = new AdmZip();
 
   for (const inputPath of inputPaths) {
@@ -27,11 +34,11 @@ export function createZip({
     }
   }
 
-  zip.writeZip(resolve(outputPath));
+  zip.writeZip(resolvedOutput);
 
   const entries = zip.getEntries();
   return {
-    outputPath: resolve(outputPath),
+    outputPath: resolvedOutput,
     entryCount: entries.length,
   };
 }
@@ -40,6 +47,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const cli = cac("create-zip");
   cli.usage("--output <path> <input...>");
   cli.option("--output <path>", "Output ZIP file path");
+  cli.option("--overwrite", "Replace an existing output archive");
   cli.help();
   const parsed = cli.parse();
   const { options } = parsed;
@@ -54,6 +62,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const result = createZip({
     outputPath: options.output,
     inputPaths: positionals,
+    overwrite: options.overwrite,
   });
 
   const relOutput = result.outputPath;

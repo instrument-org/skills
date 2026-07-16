@@ -5,46 +5,76 @@ description: "Convert between HTML and Markdown, and convert Markdown to PDF. Us
 
 # Markdown
 
-Convert HTML to Markdown and Markdown to PDF.
+Use the bundled scripts for ordinary conversions. When the source needs
+cleanup, preservation rules, or custom semantics, write a small TypeScript
+program against the skill's installed Turndown library and adapt the recipes
+below.
 
-## Scripts
+## Choose an approach
 
-### `html-to-md.ts` Convert an HTML file or string to Markdown
+| Need                                       | Approach                                      |
+| ------------------------------------------ | --------------------------------------------- |
+| Ordinary HTML file or fragment to Markdown | Use `html-to-md.ts`                           |
+| Remove, preserve, or rewrite HTML elements | Write a Turndown conversion recipe            |
+| Quick Markdown file to PDF                 | Use `md-to-pdf.ts`                            |
+| Designed or precisely laid-out PDF         | Load the PDF skill and use its layout recipes |
 
-Exports:
+## Recipe: customize HTML conversion
 
-- `convertHtmlFile({ inputPath, outputPath, gfm, headingStyle, codeBlockStyle, }: { codeBlockStyle?: CodeBlockStyle; gfm?: boolean; headingStyle?: HeadingStyle; inputPath: string; outputPath?: string; }): Promise<{ markdown: string; outputPath: string; } | { markdown: string; outputPath?: undefined; }>`
-- `convertHtmlString({ html, gfm, headingStyle, codeBlockStyle, }: { codeBlockStyle?: CodeBlockStyle; gfm?: boolean; headingStyle?: HeadingStyle; html: string; }): string`
+`createConverter()` configures Turndown with optional GitHub-Flavored
+Markdown support. Dependency-using custom TypeScript must live inside the
+loaded skill package so npm imports resolve against that package.
 
-```text
-html-to-md
+Save `<markdown-skill-path>/scripts/custom-convert.ts`:
 
-Usage:
-  $ html-to-md --html-file page.html --output page.md
+```typescript
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 
-Options:
-  --html-file <path>          Input HTML file path
-  --html <htmlString>         Inline HTML string input
-  --output <path>             Output Markdown file path
-  --gfm                       Enable GitHub-Flavored Markdown (default: true)
-  --heading-style <style>     Heading style: atx or setext (default: atx)
-  --code-block-style <style>  Code block style: fenced or indented (default: fenced)
-  -h, --help                  Display this message
+import { createConverter } from "./lib/converter.ts";
+
+const html = await readFile("attachments/article.html", "utf8");
+const converter = createConverter({ gfm: true, headingStyle: "atx" });
+
+converter.remove(["script", "style", "nav"]);
+converter.addRule("callout", {
+  filter: (node) =>
+    node.nodeName === "ASIDE" && node.getAttribute("data-kind") === "note",
+  replacement: (content) => `\n\n> **Note:** ${content.trim()}\n\n`,
+});
+
+const markdown = converter.turndown(html);
+await mkdir("output", { recursive: true });
+await writeFile("output/article.md", `${markdown.trim()}\n`, "utf8");
 ```
 
-### `md-to-pdf.ts` Convert a Markdown file to PDF
+From the task root, run it with
+`tsx <markdown-skill-path>/scripts/custom-convert.ts`. Use Turndown rules to
+encode the source document's actual semantics instead of applying broad text
+replacements after conversion.
 
-Exports:
+Useful composition points:
 
-- `convertMdToPdf({ inputPath, outputPath, }: { inputPath: string; outputPath?: string; }): Promise<{ outputPath: string; }>`
+- `remove([...])` discards elements and their contents.
+- `keep([...])` preserves matching elements as HTML inside Markdown.
+- `addRule(name, { filter, replacement })` maps source-specific elements to
+  intentional Markdown.
+- Disable GFM only when the destination cannot accept tables,
+  strikethrough, or task lists.
 
-```text
-md-to-pdf
+## Recipe: verify the result
 
-Usage:
-  $ md-to-pdf document.md --output document.pdf
+Read the generated Markdown and compare it with the source. Check headings,
+list nesting, links, image paths, tables, code fences, and any custom elements.
+Conversion success does not prove that the source hierarchy or meaning was
+preserved.
 
-Options:
-  --output <path>  Output PDF file path
-  -h, --help       Display this message
-```
+`md-to-pdf.ts` is a quick convenience with limited layout control. After using
+it, render and inspect the PDF with the PDF skill. Use the PDF skill directly
+when page layout, fonts, tables, headers, or visual polish matter.
+
+## Script index
+
+Read [`reference.md`](reference.md) for complete arguments.
+
+- `html-to-md.ts`: Convert an HTML file or string to Markdown
+- `md-to-pdf.ts`: Convert a Markdown file to PDF

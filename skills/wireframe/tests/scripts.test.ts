@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import { createWireframe } from "../scripts/create-wireframe.ts";
 import { buildHtml } from "../scripts/lib/template.ts";
 
+// cspell:ignore Résumé
+
 let tmpDir: string;
 
 afterEach(async () => {
@@ -46,6 +48,18 @@ describe("buildHtml", () => {
 
     expect(html.length).toBeLessThan(5_000);
     expect(html).not.toContain("function tailwind");
+  });
+
+  it("includes custom body, theme declarations, and an escaped title", () => {
+    const html = buildHtml({
+      body: '<main class="bg-brand-500">Résumé costs $40</main>',
+      theme: "--color-brand-500: oklch(0.62 0.17 255);",
+      title: "Plans & pricing",
+    });
+
+    expect(html).toContain("Résumé costs $40");
+    expect(html).toContain("--color-brand-500: oklch(0.62 0.17 255);");
+    expect(html).toContain("<title>Plans &amp; pricing</title>");
   });
 });
 
@@ -96,5 +110,44 @@ describe("createWireframe", () => {
 
     const stat = await fs.stat(outputPath);
     expect(stat.isFile()).toBe(true);
+  });
+
+  it("reads multiline body and theme content from files", async () => {
+    const dir = await makeTmpDir();
+    const bodyFile = path.join(dir, "body.html");
+    const themeFile = path.join(dir, "theme.css");
+    const outputPath = path.join(dir, "out.html");
+    await fs.writeFile(
+      bodyFile,
+      '<main>\n  <p>Résumé costs $40</p>\n  <p data-copy="quoted">Done</p>\n</main>',
+    );
+    await fs.writeFile(themeFile, "--color-brand-500: oklch(0.62 0.17 255);\n");
+
+    await createWireframe({
+      bodyFile,
+      outputPath,
+      themeFile,
+      title: "Account & billing",
+    });
+
+    const content = await fs.readFile(outputPath, "utf-8");
+    expect(content).toContain("Résumé costs $40");
+    expect(content).toContain('data-copy="quoted"');
+    expect(content).toContain("--color-brand-500: oklch(0.62 0.17 255);");
+    expect(content).toContain("<title>Account &amp; billing</title>");
+  });
+
+  it.each([
+    { body: "<main />", bodyFile: "body.html" },
+    { theme: "--color-a: red;", themeFile: "theme.css" },
+  ])("rejects conflicting inline and file inputs", async (options) => {
+    const dir = await makeTmpDir();
+
+    await expect(
+      createWireframe({
+        ...options,
+        outputPath: path.join(dir, "out.html"),
+      }),
+    ).rejects.toThrow(/either/);
   });
 });
