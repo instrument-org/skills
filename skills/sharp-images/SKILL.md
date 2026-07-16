@@ -1,260 +1,176 @@
 ---
 name: sharp-images
-description: "Pixel-level image manipulation with sharp. Use when the user wants to resize, crop, rotate, flip, convert format (png, jpeg, webp, avif, gif, tiff), compress, optimize file size, watermark, composite, annotate, adjust brightness/saturation/contrast/sharpness, blur, grayscale, or read image metadata."
+description: "Manipulate raster images with Sharp. Use when the user wants to resize, crop, rotate, flip, convert, compress, optimize, watermark, composite, annotate, adjust color or sharpness, blur, remove alpha, preserve metadata, process image batches, or inspect dimensions and format."
 ---
 
 # Images
 
-Resize, crop, rotate, convert, composite, adjust, optimize, and inspect images using [sharp](https://sharp.pixelplumbing.com/).
+Use the supplied scripts for closed one-step operations. Write a Sharp pipeline
+when the work combines transformations, processes a batch, generates overlays,
+or needs exact control over encoding and metadata.
 
-For the complete Sharp API reference, see [references/REFERENCE.md](references/REFERENCE.md).
+## Choose an approach
 
-## Common workflows
+| Need                                                     | Approach                                                   |
+| -------------------------------------------------------- | ---------------------------------------------------------- |
+| One resize, crop, rotation, conversion, or metadata read | Run the matching script                                    |
+| Several transforms on one image                          | Compose one Sharp pipeline                                 |
+| Batch conversion or generated overlays                   | Write custom TypeScript                                    |
+| An uncommon option                                       | Consult the [Sharp API reference](references/REFERENCE.md) |
 
-### Resize and pad an image to a square canvas with exact margins
+Node dependencies are isolated per loaded skill. Put custom TypeScript inside
+the loaded skill package, then run it by full path from the task root. A custom
+file elsewhere cannot import this skill's `sharp` dependency.
 
-Use this when an image must fit inside a fixed-size square with controlled
-white space on all sides.
+## Recipes
 
-**Margin formula:** `content_size = canvas_size x (1 - 2 x margin)`
+### Decode and encode only once
 
-Example: 1080 px canvas, 15% margin -> 1080 x 0.70 = **756 px**
+Save this as `<skill-path>/scripts/custom-process.ts`, then run
+`tsx <skill-path>/scripts/custom-process.ts` from the task root.
 
-**One-step -- image fills the full canvas (letterboxed if not square):**
+```ts
+import sharp from "sharp";
 
-```bash
-tsx scripts/resize.ts input.png \
-  --width 1080 --height 1080 --fit contain --background white \
-  --output output.png
+const result = await sharp("attachments/photo.jpg", { failOn: "warning" })
+  .rotate()
+  .resize({
+    fit: "inside",
+    height: 1200,
+    width: 1200,
+    withoutEnlargement: true,
+  })
+  .flatten({ background: "#ffffff" })
+  .jpeg({ mozjpeg: true, quality: 84 })
+  .toFile("output/photo-ready.jpg");
+
+console.log(result);
 ```
 
-**Two-step -- explicit margin control (no external tools required):**
+`rotate()` without an angle applies EXIF orientation. Chaining avoids
+intermediate files, repeated decoding, and extra lossy encodes.
 
-```bash
-# 1. Scale to the content area (no background yet)
-tsx scripts/resize.ts input.png \
-  --width 756 --height 756 --fit contain \
-  --output inner.png
+### Build an exact canvas with percentage margins
 
-# 2. Pad to full canvas size with background
-tsx scripts/resize.ts inner.png \
-  --width 1080 --height 1080 --fit contain --background white \
-  --output output.png
+This produces a 1080 px square with 15 percent whitespace on every side.
+
+```ts
+import sharp from "sharp";
+
+const canvas = 1080;
+const marginFraction = 0.15;
+const padding = Math.round(canvas * marginFraction);
+const content = canvas - padding * 2;
+const background = "#ffffff";
+
+await sharp("attachments/product.png")
+  .rotate()
+  .resize({
+    background,
+    fit: "contain",
+    height: content,
+    width: content,
+  })
+  .flatten({ background })
+  .extend({
+    background,
+    bottom: padding,
+    left: padding,
+    right: padding,
+    top: padding,
+  })
+  .png()
+  .toFile("output/product-square.png");
 ```
 
-> Both steps use `resize` only -- no external tools needed. Adjust the numbers
-> using the margin formula above for any canvas size and margin percentage.
+### Process a batch with bounded concurrency
 
-## Scripts
+Sharp is efficient, but decoding many large images simultaneously can exhaust
+memory. Keep a small worker pool.
 
-### `adjust.ts` Adjust image color, brightness, blur, sharpen, and other visual properties
+```ts
+import { mkdir, readdir } from "node:fs/promises";
+import { basename, extname, join } from "node:path";
+import sharp from "sharp";
 
-Exports:
+const inputDir = "attachments/photos";
+const outputDir = "output/photos";
+await mkdir(outputDir, { recursive: true });
+const names = (await readdir(inputDir)).filter((name) =>
+  [".jpg", ".jpeg", ".png", ".webp"].includes(extname(name).toLowerCase()),
+);
 
-- `adjustImage({ inputPath, outputPath, brightness, saturation, hue, lightness, sharpen, blur, gamma, grayscale, negate, normalize, tint, threshold, median, }: { blur?: number; brightness?: number; gamma?: number; grayscale?: boolean; hue?: number; inputPath: string; lightness?: number; median?: number; negate?: boolean; normalize?: boolean; outputPath: string; saturation?: number; sharpen?: number; threshold?: number; tint?: string; }): Promise<{ bytes: number; height: number; outputPath: string; width: number; }>`
+async function worker(queue: string[]) {
+  while (queue.length > 0) {
+    const name = queue.shift();
+    if (!name) return;
+    await sharp(join(inputDir, name))
+      .rotate()
+      .resize({ width: 1600, withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toFile(join(outputDir, `${basename(name, extname(name))}.webp`));
+  }
+}
 
-```text
-adjust
-
-Usage:
-  $ adjust photo.jpg --brightness 1.2 --output adjusted.jpg
-
-Options:
-  --brightness <n>     Brightness multiplier
-  --saturation <n>     Saturation multiplier
-  --hue <deg>          Hue rotation in degrees
-  --sharpen <sigma>    Sharpen sigma value
-  --blur <sigma>       Blur sigma value
-  --gamma <n>          Gamma correction value
-  --grayscale          Convert output to grayscale
-  --negate             Invert image colors
-  --normalize          Normalize contrast
-  --tint <color>       Apply tint color
-  --threshold <0-255>  Threshold value
-  --median <size>      Median filter window size
-  --lightness <n>      Lightness multiplier
-  --output <path>      Output image path
-  -h, --help           Display this message
+const queue = [...names];
+await Promise.all(Array.from({ length: 3 }, () => worker(queue)));
 ```
 
-### `annotate.ts` Draw labeled bounding box annotations on an image
+### Check codec support at runtime
 
-Exports:
+Sharp's available codecs depend on its packaged native build. Inspect the
+runtime instead of assuming an uncommon format is enabled.
 
-- `annotateImage({ inputPath, outputPath, annotations, fontSize, strokeWidth, }: { annotations: Annotation[]; fontSize?: number; inputPath: string; outputPath: string; strokeWidth?: number; }): Promise<{ annotationCount: number; bytes: number; height: number; outputPath: string; width: number; }>`
+```ts
+import sharp from "sharp";
 
-```text
-annotate
-
-Usage:
-  $ annotate photo.jpg --json '[{"left":10,"top":10,"width":100,"height":50,"label":"Cat"}]' --output annotated.jpg
-
-Options:
-  --json <inlineJson>  Inline JSON annotations array
-  --json-file <path>   Path to annotations JSON file
-  --stroke-width <px>  Annotation stroke width in pixels
-  --font-size <px>     Annotation label font size in pixels
-  --output <path>      Output image path
-  -h, --help           Display this message
+for (const [format, support] of Object.entries(sharp.format)) {
+  console.log(format, { input: support.input, output: support.output });
+}
 ```
 
-> [!NOTE]
-> One of --json (inline JSON array) or --json-file (path to JSON file) is required. Each annotation object: `{ left, top, width, height, label?, color? }`. Colors cycle automatically when omitted.
+If the requested format reports no output support, choose a supported format
+or tell the user about the limitation. Do not silently change extensions.
 
-### `composite.ts` Overlay one image on top of another with configurable position and blend mode.
+## Traps
 
-Requires an existing file as the base image.
+- Apply `rotate()` before geometry operations when EXIF orientation matters.
+- Sharp strips metadata by default. Use `keepMetadata()`, `keepExif()`, or
+  `keepIccProfile()` only when the output should preserve it.
+- JPEG has no alpha channel. Use `flatten()` with an intentional background
+  before encoding transparent input as JPEG.
+- Animated and multi-page inputs default to one page. Open them with
+  `{ animated: true }` and verify page count and frame timing.
+- Do not write to the same path being read by a pipeline. Write a new file,
+  verify it, then replace the original only when replacement is intended.
+- Large dimensions can exceed memory or Sharp's input-pixel safety limit.
+  Read metadata first and use bounded concurrency.
+- A file extension does not enable a codec. Query `sharp.format` and inspect
+  the actual output metadata.
 
-Exports:
+## Verification
 
-- `compositeImages({ inputPath, outputPath, overlayPath, gravity, top, left, blend, tile, opacity, }: { blend?: Blend; gravity?: Gravity; inputPath: string; left?: number; opacity?: number; outputPath: string; overlayPath: string; tile?: boolean; top?: number; }): Promise<{ bytes: number; height: number; outputPath: string; width: number; }>`
+- Read output metadata and assert the expected format, dimensions, alpha, and
+  page count.
+- Compare output file size when optimization is part of the request.
+- Inspect representative images visually for crop, padding, orientation,
+  color, transparency, text, and compositing defects.
+- For batches, verify input and output counts and report skipped files.
+- For lossy output, inspect details at full resolution instead of only a
+  thumbnail.
 
-```text
-composite
+## Script index
 
-Usage:
-  $ composite base.jpg --overlay logo.png --output result.jpg
+Full command options and exported helper signatures are in
+[`reference.md`](reference.md).
 
-Options:
-  --overlay <image>  Overlay image path
-  --gravity <pos>    Overlay gravity position
-  --top <px>         Overlay top offset in pixels
-  --left <px>        Overlay left offset in pixels
-  --blend <mode>     Sharp blend mode
-  --opacity <0-1>    Overlay opacity
-  --tile             Tile the overlay image
-  --output <path>    Output image path
-  -h, --help         Display this message
-```
-
-### `convert.ts` Convert an image to a different format (jpeg, png, webp, avif, etc.)
-
-Exports:
-
-- `convertImage({ inputPath, outputPath, format, quality, }: { format: OutputFormat; inputPath: string; outputPath: string; quality?: number; }): Promise<{ bytes: number; format: keyof sharp.FormatEnum; height: number; outputPath: string; width: number; }>`
-
-```text
-convert
-
-Usage:
-  $ convert photo.jpg --format webp --output photo.webp
-
-Options:
-  --format <fmt>     Target output image format
-  --quality <1-100>  Encoder quality
-  --output <path>    Output image path
-  -h, --help         Display this message
-```
-
-### `crop.ts` Crop an image to exact dimensions, with optional auto-crop strategy
-
-Exports:
-
-- `cropImage({ inputPath, outputPath, left, top, width, height, strategy, }: { height: number; inputPath: string; left?: number; outputPath: string; strategy?: Strategy; top?: number; width: number; }): Promise<{ bytes: number; height: number; outputPath: string; width: number; }>`
-
-```text
-crop
-
-Usage:
-  $ crop photo.jpg --width 800 --height 600 --output cropped.jpg
-
-Options:
-  --width <px>                    Crop width in pixels
-  --height <px>                   Crop height in pixels
-  --left <px>                     Left offset in pixels
-  --top <px>                      Top offset in pixels
-  --strategy <entropy|attention>  Auto-crop strategy
-  --output <path>                 Output image path
-  -h, --help                      Display this message
-```
-
-> [!NOTE]
-> Without --left/--top uses smart auto-crop (entropy or attention strategy). With --left/--top does a precise pixel-coordinate extract
-> Autocrop strategies find the most visually salient region and crop aggressively toward it -- subjects that fill the frame will be cut off. Use `resize` with `--fit contain` to preserve the full image instead.
-
-### `get-metadata.ts` Read format, dimensions, color space, and file size of an image
-
-Exports:
-
-- `getImageMetadata({ inputPath }: { inputPath: string; }): Promise<{ channels: sharp.Channels; density: number | undefined; format: keyof sharp.FormatEnum; hasAlpha: boolean; height: number; size: number; space: keyof sharp.ColourspaceEnum; width: number; }>`
-
-```text
-get-metadata
-
-Usage:
-  $ get-metadata <filePath>
-
-Options:
-  -h, --help  Display this message
-```
-
-### `optimize.ts` Re-encode an image to reduce file size while preserving format
-
-Exports:
-
-- `optimizeImage({ inputPath, outputPath, quality, effort, progressive, lossless, }: { effort?: number; inputPath: string; lossless?: boolean; outputPath: string; progressive?: boolean; quality?: number; }): Promise<{ bytes: number; format: keyof sharp.FormatEnum; height: number; originalBytes: number; outputPath: string; savedBytes: number; savedPercent: number; width: number; }>`
-
-```text
-optimize
-
-Usage:
-  $ optimize photo.jpg --quality 80 --output optimized.jpg
-
-Options:
-  --quality <1-100>  Encoder quality
-  --effort <0-10>    Encoder effort/speed tradeoff
-  --progressive      Enable progressive encoding if supported
-  --lossless         Enable lossless mode if supported
-  --output <path>    Output image path
-  -h, --help         Display this message
-```
-
-### `resize.ts` Resize an image to specified dimensions with configurable fit mode
-
-Exports:
-
-- `resizeImage({ inputPath, outputPath, width, height, fit, withoutEnlargement, background, kernel, position, }: { background?: string; fit?: Fit; height?: number; inputPath: string; kernel?: "cubic" | "lanczos2" | "lanczos3" | "linear" | "mitchell" | "nearest"; outputPath: string; position?: string; width?: number; withoutEnlargement?: boolean; }): Promise<{ bytes: number; fit: keyof sharp.FitEnum; height: number; outputPath: string; width: number; }>`
-
-```text
-resize
-
-Usage:
-  $ resize photo.jpg --width 800 --height 600 --output resized.jpg
-
-Options:
-  --width <px>           Target width in pixels
-  --height <px>          Target height in pixels
-  --fit <mode>           Resize fit mode (default: cover)
-  --output <path>        Output image path
-  --background <color>   Background color for contain fit
-  --kernel <kernel>      Resize kernel
-  --no-enlarge           Prevent upscaling smaller inputs (default: true)
-  --position <position>  Gravity/crop position
-  -h, --help             Display this message
-```
-
-> [!NOTE]
-> If neither --width nor --height is provided, the script prints image metadata instead of resizing.
-> `--fit contain` scales the image to fit within the target dimensions and pads the remainder with background color. `--fit cover` fills the target dimensions by cropping.
-> `--background` only fills the padding area added by `contain` -- it does not remove the source image's existing background. For background removal a separate tool is needed.
-
-### `rotate.ts` Rotate or flip an image
-
-Exports:
-
-- `rotateImage({ inputPath, outputPath, angle, flip, flop, background, }: { angle?: number; background?: string; flip?: boolean; flop?: boolean; inputPath: string; outputPath: string; }): Promise<{ bytes: number; height: number; outputPath: string; width: number; }>`
-
-```text
-rotate
-
-Usage:
-  $ rotate photo.jpg --angle 90 --output rotated.jpg
-
-Options:
-  --angle <degrees>     Rotation angle in degrees
-  --background <color>  Background fill color
-  --flip                Flip image vertically
-  --flop                Flip image horizontally
-  --output <path>       Output image path
-  -h, --help            Display this message
-```
+- `adjust.ts`: Adjust image color, brightness, blur, sharpen, and other visual properties
+- `annotate.ts`: Draw labeled bounding box annotations on an image
+- `composite.ts`: Overlay one image on top of another with configurable position and blend mode.
+  Requires an existing file as the base image.
+- `convert.ts`: Convert an image to a different format (jpeg, png, webp, avif, etc.)
+- `crop.ts`: Crop an image to exact dimensions, with optional auto-crop strategy
+- `get-metadata.ts`: Read format, dimensions, color space, and file size of an image
+- `optimize.ts`: Re-encode an image to reduce file size while preserving format
+- `resize.ts`: Resize an image to specified dimensions with configurable fit mode
+- `rotate.ts`: Rotate or flip an image
