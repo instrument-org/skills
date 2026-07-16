@@ -2,8 +2,13 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
-import { generateBarcode } from "../scripts/generate-barcode.ts";
-import { readBarcode } from "../scripts/read-barcode.ts";
+import { readBarcodes } from "zxing-wasm/reader";
+import { writeBarcode } from "zxing-wasm/writer";
+import {
+  generateBarcode,
+  prepareBarcodeWriter,
+} from "../scripts/generate-barcode.ts";
+import { prepareBarcodeReader, readBarcode } from "../scripts/read-barcode.ts";
 
 const PNG_MAGIC_BYTES = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
@@ -73,6 +78,30 @@ describe("generateBarcode", () => {
       generateBarcode({ content: "test", format: "NotAFormat", outputPath }),
     ).rejects.toThrow();
   });
+
+  it("supports direct vector output through the writer API", async () => {
+    await prepareBarcodeWriter();
+    const result = await writeBarcode("print-ready", {
+      addQuietZones: true,
+      format: "QRCode",
+      options: "ecLevel=H",
+      scale: 6,
+    });
+
+    expect(result.error).toBe("");
+    expect(result.svg).toContain("<svg");
+    expect(result.svg).toContain("<path");
+    if (!result.image) {
+      throw new Error("Barcode writer returned no raster image");
+    }
+
+    await prepareBarcodeReader();
+    const decoded = await readBarcodes(
+      new Uint8Array(await result.image.arrayBuffer()),
+      { formats: ["QRCode"] },
+    );
+    expect(decoded[0].text).toBe("print-ready");
+  });
 });
 
 describe("readBarcode", () => {
@@ -122,5 +151,24 @@ describe("readBarcode", () => {
       limit: 0,
     });
     expect(results).toHaveLength(0);
+  });
+
+  it("supports full scan metadata through the reader API", async () => {
+    await prepareBarcodeReader();
+    const bytes = await fs.readFile(qrCodePath);
+    const results = await readBarcodes(bytes, {
+      formats: ["QRCode"],
+      maxNumberOfSymbols: 0,
+      tryHarder: true,
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject({
+      format: "QRCode",
+      isValid: true,
+      text: "https://example.com",
+    });
+    expect(results[0].position.topLeft.x).toBeGreaterThanOrEqual(0);
+    expect(results[0].position.bottomRight.y).toBeGreaterThan(0);
   });
 });

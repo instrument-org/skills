@@ -3,438 +3,267 @@ name: agent-browser
 description: Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", or any task requiring programmatic web interaction.
 ---
 
-# Browser Automation with agent-browser
+# Browser automation with agent-browser
 
-`agent-browser` is pre-installed; session persists across invocations — just run commands.
+`agent-browser` is preinstalled and reuses one managed browser target for the
+current task and agent session. Use it as an adaptive observe, act, verify
+loop. Read [`references/commands.md`](references/commands.md) when a recipe needs
+a command or option not shown here. Open the relevant reference before guessing
+syntax or working around a failed command.
 
-> `download` and `screenshot` paths: command output reports the actual saved location, which may differ.
+Screenshots without an explicit path are saved under `.instrument/screenshots/`.
+Command output reports the actual path used for screenshots and downloads,
+which may differ from the requested path.
 
-> Every command auto-saves a page image under `.instrument/screenshots/`. `ls -lt` it and read the newest to revisit a prior visual state instead of re-capturing.
+## Choose an approach
 
-## Important Reminders
+| Need                             | Start with                                    |
+| -------------------------------- | --------------------------------------------- |
+| Read or research a page          | `read [url]`; `get text body` for visible DOM |
+| Find controls                    | `snapshot -i`, optionally with `--urls`       |
+| Follow ordinary links            | Snapshot URLs, then `open` the discovered URL |
+| Fill forms or operate an app     | Repeated snapshot, action, and assertion      |
+| Understand a visual layout       | Screenshot and inspect the saved image        |
+| Extract structured repeated data | Scoped text first, browser `eval` if needed   |
+| Diagnose broken behavior         | Screenshot, console, errors, then network     |
+| Reuse authenticated access       | Managed browser profile or user sign-in       |
 
-**Refs may be outside the current viewport** — `click` scrolls refs into view automatically, but screenshots only show the current viewport.
-For links below the fold, prefer `snapshot -i --urls` then `open "<href>"` when you do not need click behavior.
-Use `is visible @eN` or `scrollintoview @eN` before screenshots, hover-only UI, or visual inspection.
+## Core loop
 
-**Never fabricate deep URLs** — paths, IDs, and query strings go stale.
-Discover via search, follow links from a root page, or use URLs the user provides.
-
-**`snapshot -i` returns interactive elements only** — not body copy.
-To read page text, use `read`; fall back to `get text body` for visible copy.
-
-## Core Workflow
-
-Every workflow:
-
-1. `agent-browser open <url>`
-2. `agent-browser snapshot -i` (add `--urls` when following links)
-3. Act on refs — use `scrollintoview` first only when visibility matters
-4. Re-snapshot after any navigation or DOM change
+1. Open a user-provided or discovered URL.
+2. Observe the relevant state with text, a snapshot, or a screenshot.
+3. Choose the narrowest reliable action.
+4. Wait for the expected result, not an arbitrary delay.
+5. Re-observe after navigation or a DOM change.
+6. Assert the requested result before reporting success.
 
 ```bash
 agent-browser open https://example.com/form
-agent-browser snapshot -i
-# Output: @e1 [input type="email"], @e2 [input type="password"], @e3 [button] "Submit"
-
-agent-browser fill @e1 "user@example.com"
-agent-browser fill @e2 "password123"
-agent-browser click @e3
 agent-browser wait --load networkidle
-agent-browser snapshot -i  # Check result
-```
-
-## Reading page content
-
-To read a page rather than interact with it:
-
-```bash
-agent-browser open https://example.com
-agent-browser wait --load networkidle
-agent-browser read > page.md
-```
-
-| Goal                           | Command                                                        |
-| ------------------------------ | -------------------------------------------------------------- |
-| Read active page content       | `read` (redirect to a file on long pages)                      |
-| Read a URL without navigation  | `read https://example.com/article`                             |
-| Read visible copy fallback     | `get text body`                                                |
-| Read one region                | `get text main`, `get text article`, or `get text "#selector"` |
-| Find controls to click or fill | `snapshot -i` (optionally `--urls`)                            |
-
-`snapshot -i` always filters to interactive elements; re-running it won't reveal more text.
-
-**Accordions/collapsed sections:** page readers only include exposed content. Expand first (`scrollintoview @eN && click @eN`), then re-run.
-
-## Command Chaining
-
-Commands share a background session — chain with `&&` for efficiency. Shell features (`$(...)`, variables) work freely.
-
-```bash
-agent-browser open https://example.com && agent-browser wait --load networkidle && agent-browser snapshot -i
-agent-browser fill @e1 "user@example.com" && agent-browser fill @e2 "pass" && agent-browser click @e3
-agent-browser open https://example.com && agent-browser screenshot page.png
-
-# Capture output mid-chain and feed it to the next command
-URL=$(agent-browser get attr @e3 href) && agent-browser open "$URL"
-```
-
-Run separately when you need to read intermediate output (e.g. `snapshot -i` to get refs first).
-
-## Handling Authentication
-
-Session cookies/localStorage persist automatically. Navigate to login, fill credentials, submit — subsequent commands are authenticated. See references/authentication.md for OAuth/2FA patterns.
-
-## Essential Commands
-
-```bash
-# Navigation
-agent-browser open <url>              # Navigate (aliases: goto, navigate)
-
-# Snapshot — for interaction refs; for page copy use read (see "Reading page content")
-agent-browser snapshot -i             # Interactive elements with refs (recommended); add -c to compact, -d N to limit depth
-agent-browser snapshot -i --urls      # Include href URLs for links
-agent-browser snapshot -s "#selector" # Scope to CSS selector
-agent-browser snapshot                # Full tree (includes headings + static text)
-
-# Interaction (use @refs from snapshot)
-agent-browser click @e1               # Click a ref; off-viewport refs are scrolled into view first
-agent-browser click @e1 --new-tab     # Click and open in new tab
-agent-browser dblclick @e1            # Double-click element
-agent-browser hover @e1               # Hover element (reveals tooltips/menus)
-agent-browser focus @e1               # Focus element
-agent-browser fill @e2 "text"         # Clear and type text
-agent-browser type @e2 "text"         # Type without clearing
-agent-browser select @e1 "option"     # Select dropdown option
-agent-browser check @e1               # Check checkbox
-agent-browser uncheck @e1             # Uncheck checkbox
-agent-browser press Enter             # Press key
-agent-browser keyboard type "text"    # Type at current focus (no selector); use inserttext to bypass key events
-agent-browser scroll down 500         # Scroll page
-agent-browser scrollintoview @e1      # Scroll element into view
-
-# Upload files
-agent-browser upload @e1 ./file.pdf             # Upload single file
-agent-browser upload @e1 ./a.png ./b.png        # Upload multiple files
-
-# Get information
-agent-browser read                    # Active page as agent-friendly text
-agent-browser read <url>              # Fetch URL as Markdown/readable text
-agent-browser get text body           # All visible text (pipe to a file if large)
-agent-browser get text @e1            # Element text
-agent-browser get html @e1            # Element outer HTML
-agent-browser get value @e1           # Input/select value
-agent-browser get attr @e1 href       # Attribute value
-agent-browser get count "li.item"     # Count matching elements
-agent-browser get url                 # Current URL
-agent-browser get title               # Page title
-
-# Check element state
-agent-browser is visible @e1          # Exit 0 if visible, 1 if not
-agent-browser is enabled @e1          # Exit 0 if enabled, 1 if not
-agent-browser is checked @e1          # Exit 0 if checked, 1 if not
-
-# Wait
-agent-browser wait @e1                # Wait for element
-agent-browser wait --load networkidle # Wait for network idle
-agent-browser wait --url "**/page"    # Wait for URL pattern
-agent-browser wait 2000               # Wait milliseconds
-agent-browser wait --text "Welcome"    # Wait for text to appear (substring match)
-agent-browser wait --fn "!document.body.innerText.includes('Loading...')"  # Wait for text to disappear
-agent-browser wait "#spinner" --state hidden  # Wait for element to disappear
-agent-browser wait @e1 --timeout 5000 # Override wait timeout in milliseconds
-
-# Downloads (see "Downloading Files" below for full guidance and caveats)
-agent-browser download @e1 <path>     # Click an element to trigger a download, save to <path>
-agent-browser wait --download <path>  # Wait for an in-progress download to finish
-
-# Cookies & Storage
-agent-browser cookies get                      # List all cookies
-agent-browser cookies set name value --url https://example.com
-agent-browser cookies clear                    # Clear all cookies
-agent-browser storage local                    # View localStorage
-agent-browser storage session                  # View sessionStorage
-
-# Network
-agent-browser network requests                 # Inspect tracked requests
-agent-browser network requests --type xhr,fetch  # Filter by resource type
-agent-browser network requests --method POST   # Filter by HTTP method
-agent-browser network requests --status 2xx    # Filter by status (200, 2xx, 400-499)
-agent-browser network request <requestId>      # View full request/response detail
-agent-browser network route "**/api/*" --abort               # Block matching requests
-agent-browser network route "**/api/user" --body '{"id":1}'  # Mock response body
-agent-browser network unroute "**/api/*"       # Remove route
-agent-browser network har start                # Start HAR recording
-agent-browser network har stop ./capture.har   # Stop and save HAR file
-
-# Debug / Recording
-agent-browser console                          # View browser console messages (--clear to reset)
-agent-browser errors                           # View page JS errors (--clear to reset)
-agent-browser trace start                      # Start Chrome DevTools trace
-agent-browser trace stop ./trace.json          # Stop and save trace
-
-# Mouse (low-level)
-agent-browser mouse move 100 200               # Move to coordinates
-agent-browser mouse down                       # Press left button
-agent-browser mouse up                         # Release left button
-agent-browser mouse wheel 300                  # Scroll wheel (dy [dx])
-
-# Capture
-agent-browser screenshot              # Screenshot to temp dir
-agent-browser screenshot --full       # Full page screenshot
-agent-browser screenshot @e1          # Screenshot just one element (by ref or CSS selector)
-agent-browser screenshot --annotate   # Annotated screenshot with numbered element labels
-agent-browser screenshot --screenshot-format jpeg --screenshot-quality 80
-agent-browser pdf output.pdf          # Save as PDF
-
-# Clipboard
-agent-browser clipboard read                      # Read text from clipboard
-agent-browser clipboard write "Hello, World!"     # Write text to clipboard
-agent-browser clipboard copy                      # Copy current selection
-agent-browser clipboard paste                     # Paste from clipboard
-
-# Dialogs (alert, confirm, prompt, beforeunload)
-# By default, alert and beforeunload dialogs are auto-accepted so they never block the agent.
-agent-browser dialog accept              # Accept dialog
-agent-browser dialog accept "my input"   # Accept prompt dialog with text
-agent-browser dialog dismiss             # Dismiss/cancel dialog
-agent-browser dialog status              # Check if a dialog is currently open
-
-# Diff (compare page states)
-agent-browser diff snapshot                          # Compare current vs last snapshot
-agent-browser diff snapshot --baseline before.txt    # Compare current vs saved file
-agent-browser diff screenshot --baseline before.png  # Visual pixel diff
-agent-browser diff url <url1> <url2>                 # Compare two pages
-agent-browser diff url <url1> <url2> --selector "#main"  # Scope to element
-```
-
-## Efficiency Strategies
-
-**`--urls` avoids re-navigation:** `snapshot -i --urls` gets all hrefs upfront; `open` each directly rather than clicking below-the-fold refs.
-
-**Snapshot once:** grab refs/URLs once, chain remaining actions with `&&`. For reading, `get text body` once — `snapshot -i` won't include paragraph text.
-
-**Multi-page workflow:**
-
-```bash
-agent-browser open https://example.com && agent-browser snapshot -i --urls
-# Read output to extract URLs, then visit each directly:
-agent-browser open https://example.com/page1 && agent-browser screenshot
-agent-browser open https://example.com/page2 && agent-browser screenshot
-```
-
-## Common Patterns
-
-### Downloading Files
-
-`download` only works for content Chrome treats as a download (`Content-Disposition: attachment` or non-renderable MIME types). Use it on the element that triggers the transfer — `click` on download links is silently cancelled. Command output reports the actual saved path.
-
-```bash
-# Option A: Click a download link/button on the page
-agent-browser open https://example.com/downloads
 agent-browser snapshot -i
-agent-browser download @e5 file.docx          # Output: "Download saved to <actual-path>"
+# Read the returned refs before continuing.
 
-# Option B: Open the file URL directly (only for content Chrome treats as a download)
-agent-browser open https://example.com/file.docx
-agent-browser wait --download file.docx
-
-# Option C: Extract the href first, then open it
-agent-browser get attr @e5 href
-agent-browser open <that-url>
-agent-browser wait --download file.docx
-```
-
-**Inline-rendered content (SVG, HTML, PNG, JPG, PDFs)** won't fire a download event — `download`/`wait --download` will time out. Instead:
-
-1. **Public URL:** `curl -fsSL -o logo.svg https://example.com/logo.svg`
-2. **Behind login (same-origin only):** `fetch()` via `eval` so cookies apply
-3. **No URL** (inline `<svg>`, canvas): grab via `eval` (`outerHTML`, etc.)
-
-For 2 and 3, pipe through `jq -r .` to unwrap the JSON-quoted string:
-
-```bash
-agent-browser eval 'document.querySelector("header svg").outerHTML' | jq -r . > logo.svg
-
-agent-browser eval --stdin <<'EOF' | jq -r . | base64 -d > image.png
-(async () => {
-  const r = await fetch("/private/image.png", { credentials: "include" });
-  if (!r.ok) throw new Error("HTTP " + r.status);
-  const bytes = new Uint8Array(await r.arrayBuffer());
-  let s = "";
-  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
-  return btoa(s);
-})()
-EOF
-```
-
-### Form Submission
-
-```bash
-agent-browser open https://example.com/signup
-agent-browser snapshot -i
 agent-browser fill @e1 "Jane Doe"
 agent-browser fill @e2 "jane@example.com"
-agent-browser select @e3 "California"
-agent-browser check @e4
-agent-browser click @e5
+agent-browser click @e3
+agent-browser wait --url "https://example.com/success**"
+agent-browser get url
+agent-browser get text body
+```
+
+Refs can change after navigation, submission, or a dynamic rerender. Re-run
+`snapshot -i` before the next action instead of assuming an old ref still
+identifies the same element.
+
+## Common command map
+
+| Need                          | Commands                                             |
+| ----------------------------- | ---------------------------------------------------- |
+| Navigate                      | `open`, `back`, `forward`, `reload`                  |
+| Read content                  | `read`, `get text`, `get html`                       |
+| Find controls                 | `snapshot -i`, `snapshot -i --urls`, `find`          |
+| Interact                      | `click`, `fill`, `type`, `press`, `select`, `upload` |
+| Wait and verify               | `wait`, `get url`, `is visible`, `is enabled`        |
+| Change page context           | `frame`, `scrollintoview`                            |
+| Capture or export             | `screenshot`, `pdf`, `record`                        |
+| Save a browser download       | `download @ref <path>`                               |
+| Diagnose or compare app state | `dialog`, `console`, `errors`, `network`, `diff`     |
+| Inspect app performance       | `vitals`, `react`, `profiler`, `trace`               |
+
+The command map is for discovery, not a substitute for observing the page.
+Read command output before choosing refs, paths, frame targets, or
+follow-up actions.
+
+## Critical invariants
+
+- Never fabricate a deep URL, identifier, or query string. Discover links from
+  a provided page or use a URL supplied by the user.
+- `snapshot -i` returns interactive elements, not all body copy. Use
+  `get text body`, `get text main`, or another scoped region to read.
+- A ref may exist outside the viewport. Use `is visible` or `scrollintoview`
+  when visibility, hover behavior, screenshots, or lazy loading matter.
+- Use element, text, URL, function, or load waits when possible. Fixed sleeps
+  are a fallback, not a readiness check.
+- Do not treat command success as task success. Verify visible text, URL,
+  control state, downloaded content, or rendered appearance as appropriate.
+- Do not place passwords, tokens, cookies, or saved browser state in project
+  files or command arguments.
+- Instrument manages the connection, session, profile, state, and lifecycle.
+  Do not use upstream `auth`, `state`, `session`, `connect`, or `close`
+  commands or their related flags.
+- Instrument exposes one browser target. Do not use `tab`, `window new`,
+  `click --new-tab`, or popup-based workflows. Follow ordinary links by
+  opening a URL discovered with `snapshot -i --urls` in the current target.
+
+## Recover from common failures
+
+- **Ref not found or wrong element:** re-run a scoped `snapshot -i`; refs are
+  invalid after navigation and may change after any major DOM update.
+- **Unexpected timeout:** inspect the URL and visible text, then run
+  `agent-browser dialog status`. A pending `confirm` or `prompt` blocks other
+  commands until accepted or dismissed.
+- **Element missing or not clickable:** check visibility, scroll it into view,
+  and inspect the newest screenshot for overlays. Interact with a covering
+  dialog or banner before retrying the target.
+- **Text input ignores `fill` or `type`:** focus the field, then use
+  `keyboard inserttext` or `keyboard type` as the fallback.
+- **Iframe control absent:** a fresh snapshot includes one level of accessible
+  iframe content and its refs work directly. Use `frame @ref` for a scoped
+  snapshot; inaccessible cross-origin frames may require a different workflow.
+
+## Recipe: read and research
+
+```bash
+agent-browser read https://example.com > work/page.txt
+agent-browser open https://example.com
 agent-browser wait --load networkidle
+agent-browser snapshot -i --urls
 ```
 
-### Login
+`read [url]` is the primary agent-friendly text or Markdown surface. With no
+URL, it reads the active page. Use `get text body` or a scoped region when the
+task specifically needs currently visible DOM copy or post-interaction state.
+Read the snapshot for controls and discovered links. On multi-page work,
+collect the real URLs once and read or open them directly. Expand accordions
+before visible-DOM extraction when the content starts hidden.
+
+## Recipe: interact and verify
+
+After each meaningful action, wait on the state it should cause and then check
+that state directly:
 
 ```bash
-agent-browser open https://app.example.com/login
 agent-browser snapshot -i
-agent-browser fill @e1 "$USERNAME" && agent-browser fill @e2 "$PASSWORD" && agent-browser click @e3
-agent-browser wait --url "**/dashboard"
-# Subsequent commands are authenticated; the harness persists session state.
-```
-
-### Working with Iframes
-
-Iframe content is inlined in snapshots; refs work directly without frame switching.
-
-```bash
-agent-browser open https://example.com/checkout
-agent-browser snapshot -i
-# @e1 [heading] "Checkout"
-# @e2 [Iframe] "payment-frame"
-#   @e3 [input] "Card number"
-#   @e4 [input] "Expiry"
-#   @e5 [button] "Pay"
-
-# Interact directly — no frame switch needed
-agent-browser fill @e3 "4111111111111111"
-agent-browser fill @e4 "12/28"
 agent-browser click @e5
-
-# To scope a snapshot to one iframe:
-agent-browser frame @e2
-agent-browser snapshot -i         # Only iframe content
-agent-browser frame main          # Return to main frame
+agent-browser wait --text "Saved"
+agent-browser get text body
 ```
 
-### Data Extraction
+For a toggle or checkbox, use `is checked`. For submission, check the resulting
+URL and confirmation copy. For destructive or externally visible actions,
+confirm that the user authorized the action before performing it.
+
+## Escalate element targeting carefully
+
+Use the least brittle option that can express the task:
+
+1. Refs from a fresh scoped snapshot.
+2. Semantic locators such as role, label, text, placeholder, or test ID.
+3. A stable CSS selector for a specific region.
+4. Browser `eval` for structured page data or behavior the CLI cannot express.
+5. Coordinates only for canvas or spatial interfaces with visual confirmation.
 
 ```bash
-agent-browser open https://example.com/products
-agent-browser wait --load networkidle
-agent-browser read > page.md             # active page content
-agent-browser snapshot -i                # refs for specific fields
-agent-browser get text @e5               # targeted cell or element
+agent-browser find label "Email" fill "user@example.com"
+agent-browser find role button click --name "Save"
 ```
 
-### Visual Browser (Debugging)
+For multiline JavaScript, use stdin so shell quoting cannot rewrite it:
 
 ```bash
-agent-browser highlight @e1            # Outline a ref on the page (visual confirmation)
-agent-browser record start demo.webm   # Start recording the session as a .webm video
-agent-browser record stop
-agent-browser profiler start           # Start CDP performance tracing
-agent-browser profiler stop trace.json # Stop and save the profile
-```
-
-### React / Performance
-
-Use only for app diagnostics, not ordinary browsing.
-
-```bash
-agent-browser vitals [url] [--json]              # Web Vitals
-agent-browser pushstate <url>                    # SPA nav without reload
-agent-browser --enable react-devtools open <url> # Required before react *
-agent-browser react tree                         # Component tree
-agent-browser react inspect <fiberId>            # Props/hooks/state
-agent-browser react renders start|stop [--json]  # Render profile
-agent-browser react suspense [--json]            # Suspense boundaries
-agent-browser --init-script ./hook.js open <url> # Script before page JS
-```
-
-### Viewport
-
-```bash
-agent-browser set viewport 1920 1080          # Set viewport size (default: 1280x720)
-agent-browser set viewport 1920 1080 2        # 2x retina (same CSS size, higher res screenshots)
-```
-
-`scale` (3rd arg) sets `devicePixelRatio` without changing CSS layout.
-
-### Local Files (PDFs, HTML)
-
-```bash
-agent-browser --allow-file-access open file:///path/to/document.pdf
-agent-browser screenshot output.png
-```
-
-## Timeouts and Slow Pages
-
-Default timeout: 25s. For slow pages use explicit waits — prefer element/text/URL waits over `wait N`.
-
-**Lazy-loaded images:** `wait --load networkidle` does not trigger lazy loading. `img.src` will return placeholder URLs until the image is scrolled into view. Always `scrollintoview @eN` before evaluating image src or expecting real URLs from search/listing pages.
-
-```bash
-agent-browser scrollintoview @e1
-agent-browser eval 'document.querySelector("img.product-image").src'
-```
-
-**Scraping image URLs:** Bulk `querySelectorAll("img").map(i => i.src)` on a listing/search page returns placeholders for off-viewport images. Either `scrollintoview` each ref (or scroll section, `wait 1`) before reading src, or better for detail images: follow each item link (`snapshot -i --urls`), open detail page, read hero image (`img#landingImage`, `data-old-hires`, or `srcset`).
-
-**Use the URL the page serves.** Don't edit a scraped URL to guess a better variant — changing size tokens (`_SX679_`→`_SL1500_`), swapping a thumbnail path for a full-res guess, or stripping query params (often signed) tends to 404 or return the wrong/expired asset. For higher resolution read `data-old-hires`/`srcset` instead.
-
-## JavaScript Dialogs
-
-`alert`/`beforeunload` are auto-accepted. `confirm`/`prompt` block all commands until dismissed — if commands time out unexpectedly, check for a pending dialog. Responses include a `warning` field when a dialog is open.
-
-```bash
-agent-browser dialog status
-agent-browser dialog accept           # or: dialog accept "my input" / dialog dismiss
-```
-
-## Ref Lifecycle
-
-Refs are invalidated on any page change (navigation, form submit, dynamic re-render). Always re-snapshot before the next interaction.
-
-## Annotated Screenshots (Vision Mode)
-
-`--annotate` overlays numbered labels; `[N]` maps to `@eN` and caches refs. Use for unlabeled icon buttons, canvas elements, or spatial reasoning.
-
-```bash
-agent-browser screenshot --annotate
-agent-browser click @e2
-```
-
-## Semantic Locators (Alternative to Refs)
-
-```bash
-agent-browser find text "Sign In" click
-agent-browser find label "Email" fill "user@test.com"
-agent-browser find role button click --name "Submit"
-agent-browser find placeholder "Search" type "query"
-agent-browser find testid "submit-btn" click
-agent-browser find nth "tr" 2 click
-```
-
-## JavaScript Evaluation (eval)
-
-Runs JS in browser context. Shell quoting corrupts complex expressions — use `--stdin` (heredoc) or `-b <base64>`.
-
-`eval` returns script **value**, not stdout — `console.log` prints `null`. Last expression returns. Use `JSON.stringify(...)` for objects/arrays, but return strings/numbers directly — `JSON.stringify` double-quotes strings.
-
-```bash
-agent-browser eval 'document.title'
-
-# Nested quotes, arrow fns, multiline — use heredoc:
 agent-browser eval --stdin <<'EOF'
 JSON.stringify(
-  Array.from(document.querySelectorAll("img"))
-    .filter(i => !i.alt)
-    .map(i => ({ src: i.src.split("/").pop(), width: i.width }))
+  Array.from(document.querySelectorAll("article h2"), (heading) => ({
+    text: heading.textContent?.trim(),
+    id: heading.id,
+  }))
 )
 EOF
 ```
 
-`eval -b <base64>` also available for generated scripts.
+`eval` returns the expression value. It does not return `console.log` output.
 
-## Deep-Dive Docs
+## Recipe: visual review
 
-See `references/`: `snapshot-refs.md`, `authentication.md`.
+Use a screenshot when correctness depends on layout, visibility, clipping,
+hover state, canvas content, or unlabeled icons.
+
+```bash
+agent-browser screenshot --annotate
+agent-browser screenshot work/page-viewport.png
+agent-browser pdf work/page-full.pdf
+```
+
+Read the resulting image. Annotated label `[N]` maps to ref `@eN`. Before
+capturing a below-the-fold or hover-only element, scroll it into view and
+establish the relevant state. Full-page screenshots are unavailable in the
+managed browser; capture successive viewports or export the full page to PDF.
+Reuse the newest image under
+`.instrument/screenshots/` when it already shows the state you need.
+
+## Recipe: structured extraction
+
+Prefer scoped text when prose is enough. Use `eval` only when repeated fields
+must remain associated or attributes contain the required values. Return JSON
+with source URLs and stable labels, save it under `work/`, then validate sample
+records against the page.
+
+Lazy images may expose placeholders until scrolled into view. Read `srcset`,
+`data-*` attributes, or the URL the detail page actually serves. Do not invent
+a higher-resolution URL by editing path segments or query parameters.
+
+## Recipe: authenticated work
+
+Commands in the current task and agent session reuse its managed browser
+target. Cookies and durable site storage use the workspace's persistent browser
+profile. Open the login page, let the user enter credentials or complete
+same-target OAuth redirects and two-factor steps in the visible browser, then
+wait for and verify the authenticated state.
+Do not ask for secrets in chat or pass them through commands. See
+[`references/authentication.md`](references/authentication.md).
+
+## Recipe: downloads and captured files
+
+Use `download`, not `click`, on a control that triggers a browser download:
+
+```bash
+agent-browser snapshot -i
+agent-browser download @e5 work/report.pdf
+```
+
+The command authorizes the transfer and waits for it. Inline PDF, image, SVG,
+and HTML responses do not produce a download event. For those, use the
+discovered public URL or same-origin `fetch()` in browser context. Check the
+command's reported output path, which may differ from the requested path, then
+inspect the saved file and confirm its type and content before continuing.
+
+## Recipe: diagnose a web workflow
+
+Reproduce the smallest failing interaction, then collect evidence in this
+order:
+
+1. Current URL, visible text, and screenshot.
+2. Browser console and page errors.
+3. Relevant XHR or fetch requests and their responses.
+4. Trace or profiler output only for a performance-specific question.
+
+```bash
+agent-browser get url
+agent-browser screenshot
+agent-browser console
+agent-browser errors
+agent-browser network requests
+```
+
+Save an explicit baseline before using `diff snapshot --baseline` or
+`diff screenshot --baseline` for before-and-after assertions.
+For app-specific diagnostics, `vitals` measures Web Vitals, `pushstate`
+navigates an SPA without a reload, and `react` exposes the component tree when
+the page was opened with the React DevTools hook. See the command reference for
+their setup and limits.
+
+## Open a reference when
+
+| Situation                                                                | Reference                                                              |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Need exact command syntax, downloads, dialogs, diffs, or app diagnostics | [`references/commands.md`](references/commands.md)                     |
+| A ref is stale, targeting fails, or an iframe is involved                | [`references/snapshot-refs.md`](references/snapshot-refs.md)           |
+| Login, OAuth, two-factor, or session expiry is involved                  | [`references/authentication.md`](references/authentication.md)         |
+| Need persistence, sequential page work, or a clean site state            | [`references/session-management.md`](references/session-management.md) |
+| Connectivity or proxy behavior differs from expectations                 | [`references/proxy-support.md`](references/proxy-support.md)           |
+| Diagnosing loading or interaction performance                            | [`references/profiling.md`](references/profiling.md)                   |
+| Capturing a reproducible browser walkthrough                             | [`references/video-recording.md`](references/video-recording.md)       |
+
+The optional `templates/capture-workflow.sh` starting point captures readable
+text, interaction structure, a viewport image, and a full-page PDF. Inspect and
+customize it before use.

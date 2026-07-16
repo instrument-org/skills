@@ -19,6 +19,7 @@
       "inputs": [
         "SKILL.md",
         "SKILL.template.md",
+        "reference.md",
         "package.json",
         "pyproject.toml",
         "tsconfig.json",
@@ -79,6 +80,7 @@
       "inputs": [
         "skills/*/SKILL.md",
         "skills/*/SKILL.template.md",
+        "skills/*/reference.md",
         "skills/*/package.json",
         "scripts/check-skills-aggregate.ts"
       ],

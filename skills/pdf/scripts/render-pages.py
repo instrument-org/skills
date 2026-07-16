@@ -31,7 +31,7 @@ def main():
     try:
         import fitz  # PyMuPDF
     except ImportError:
-        sys.exit("pymupdf not installed. Run: pip install pymupdf")
+        sys.exit("PyMuPDF is missing; the PDF skill dependencies were not installed")
 
     os.makedirs(args.output, exist_ok=True)
     doc = fitz.open(args.input)

@@ -3,6 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { convertHtmlFile, convertHtmlString } from "../scripts/html-to-md.ts";
+import { createHtmlToMarkdownCli } from "../scripts/lib/cli.ts";
+import { createConverter } from "../scripts/lib/converter.ts";
 import { convertMdToPdf } from "../scripts/md-to-pdf.ts";
 
 describe("convertHtmlString", () => {
@@ -110,6 +112,41 @@ describe("convertHtmlString", () => {
   });
 });
 
+describe("createConverter", () => {
+  it("supports source-specific rules and removals", () => {
+    const converter = createConverter();
+    converter.remove(["nav", "script"]);
+    converter.addRule("callout", {
+      filter: (node) =>
+        node.nodeName === "ASIDE" && node.getAttribute("data-kind") === "note",
+      replacement: (content) => `\n\n> **Note:** ${content.trim()}\n\n`,
+    });
+
+    const result = converter.turndown(
+      '<nav>Discard me</nav><h1>Keep me</h1><aside data-kind="note">Check this</aside><script>alert(1)</script>',
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "# Keep me
+
+      > **Note:** Check this"
+    `);
+  });
+
+  it("can preserve selected elements as HTML", () => {
+    const converter = createConverter({ gfm: false });
+    converter.keep(["details"]);
+
+    expect(
+      converter.turndown(
+        "<details><summary>More</summary><p>Hidden copy</p></details>",
+      ),
+    ).toMatchInlineSnapshot(
+      `"<details><summary>More</summary><p>Hidden copy</p></details>"`,
+    );
+  });
+});
+
 describe("convertHtmlFile", () => {
   it("reads an HTML file and returns markdown", async () => {
     const tmpInput = path.join(os.tmpdir(), "test-convert-input.html");
@@ -155,6 +192,27 @@ describe("convertHtmlFile", () => {
 
     expect(withGfm.markdown).toContain("|");
     expect(withoutGfm.markdown).not.toContain("|");
+  });
+});
+
+describe("html-to-md CLI", () => {
+  const html =
+    "<table><thead><tr><th>A</th></tr></thead><tbody><tr><td>1</td></tr></tbody></table>";
+
+  it.each([
+    ["uses GFM by default", [], true],
+    ["disables GFM with --no-gfm", ["--no-gfm"], false],
+  ])("%s", (_label, flags, includesTable) => {
+    const { options } = createHtmlToMarkdownCli().parse([
+      "node",
+      "html-to-md.ts",
+      "--html",
+      html,
+      ...flags,
+    ]);
+    const markdown = convertHtmlString({ gfm: options.gfm, html });
+
+    expect(markdown.includes("|")).toBe(includesTable);
   });
 });
 

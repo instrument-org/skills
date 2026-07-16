@@ -21,7 +21,7 @@ def main():
     try:
         import pdfplumber
     except ImportError:
-        sys.exit("pdfplumber not installed. Run: pip install pdfplumber")
+        sys.exit("pdfplumber is missing; the PDF skill dependencies were not installed")
 
     all_tables = []
     with pdfplumber.open(args.input) as pdf:

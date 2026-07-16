@@ -9,6 +9,25 @@ Skill/template registry for the Instrument desktop app. Not an app.
 - If `SKILL.template.md` exists, `SKILL.md` is generated; edit the template.
 - Wrap long lines when it helps scan code, prompts, or docs.
 
+## Skill design
+
+- Treat a skill as a recipe book for solving a domain, not as a catalog of CLI
+  wrappers. Teach the agent how to choose an approach, compose the installed
+  libraries, and verify the result.
+- Keep scripts for closed, repeatable operations. For generative, layout, data,
+  or multi-step work, include executable library recipes and make direct code
+  the primary route.
+- Use `{{GENERATED_SCRIPT_INDEX}}` when a template has scripts. Keep the concise
+  index in `SKILL.md`; the generator writes complete CLI documentation to
+  `reference.md` for progressive disclosure.
+- A command-first skill is appropriate only when the underlying interface is
+  itself the best improvisational surface, such as FFmpeg or browser
+  automation.
+- TypeScript dependencies are isolated to the loaded skill package. A custom
+  TypeScript recipe that imports them must live under that skill directory and
+  be run by its full path from the task root. Python packages are available to
+  task-local scripts through the shared task virtualenv.
+
 ## Consumer app context
 
 Primary consumer: Instrument, a cross-platform Electron desktop app for

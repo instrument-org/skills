@@ -180,7 +180,10 @@ function validateNoAbsoluteSkillPaths(
   const re = new RegExp(`skills/${escaped}/`);
 
   const dirsToCheck = ["scripts"];
-  const filesToCheck: string[] = [join(skillPath, "SKILL.md")];
+  const filesToCheck: string[] = [
+    join(skillPath, "SKILL.md"),
+    join(skillPath, "reference.md"),
+  ];
 
   for (const dir of dirsToCheck) {
     const dirPath = join(skillPath, dir);
@@ -232,7 +235,7 @@ function validateScriptCliUsage(skillPath: string): string[] {
 // `repoRoot` is the directory that contains both `scripts/` and `skills/`.
 // Errors are bucketed back to the originating skill so callers can attribute
 // them correctly.
-function runGeneratedSkillMdCheck({
+function runGeneratedSkillDocsCheck({
   repoRoot,
   skillName,
 }: {
@@ -274,14 +277,14 @@ function runGeneratedSkillMdCheck({
         const message = match[2]!;
         errorsBySkill.set(
           skill,
-          `Generated SKILL.md check failed: ${skill}: ${message}`,
+          `Generated skill docs check failed: ${skill}: ${message}`,
         );
       }
 
       if (errorsBySkill.size === 0 && errorOutput) {
         errorsBySkill.set(
           "*",
-          `Generated SKILL.md check failed: ${errorOutput}`,
+          `Generated skill docs check failed: ${errorOutput}`,
         );
       }
 
@@ -395,7 +398,7 @@ export async function checkSkill({
 
   const templatePath = join(skillPath, "SKILL.template.md");
   if (existsSync(templatePath)) {
-    const generated = await runGeneratedSkillMdCheck({
+    const generated = await runGeneratedSkillDocsCheck({
       repoRoot,
       skillName: folderName,
     });

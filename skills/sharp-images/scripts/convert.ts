@@ -13,10 +13,7 @@ type OutputFormat = keyof FormatEnum;
 const OUTPUT_FORMATS = new Set<OutputFormat>([
   "avif",
   "gif",
-  "heif",
   "jpeg",
-  "jp2",
-  "jxl",
   "png",
   "tiff",
   "webp",
@@ -25,10 +22,7 @@ const OUTPUT_FORMATS = new Set<OutputFormat>([
 const FORMAT_EXTENSIONS: Partial<Record<OutputFormat, string>> = {
   avif: ".avif",
   gif: ".gif",
-  heif: ".heif",
   jpeg: ".jpg",
-  jp2: ".jp2",
-  jxl: ".jxl",
   png: ".png",
   tiff: ".tiff",
   webp: ".webp",

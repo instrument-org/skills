@@ -325,7 +325,62 @@ describe("compositeImages", () => {
     });
 
     expect(result.bytes).toBeGreaterThan(0);
+    const pixel = await sharp(outputPath)
+      .extract({ height: 1, left: 150, top: 100, width: 1 })
+      .raw()
+      .toBuffer();
+    expect([...pixel]).toEqual([191, 0, 64, 255]);
   });
+
+  it("applies opacity to overlays without an alpha channel", async () => {
+    const overlayPath = path.join(os.tmpdir(), "composite-overlay.jpg");
+    const outputPath = path.join(os.tmpdir(), "composite-jpeg-opacity.png");
+    await sharp({
+      create: {
+        background: { b: 255, g: 0, r: 0 },
+        channels: 3,
+        height: 100,
+        width: 100,
+      },
+    })
+      .jpeg({ quality: 100 })
+      .toFile(overlayPath);
+
+    await compositeImages({
+      inputPath: testPng,
+      opacity: 0.5,
+      outputPath,
+      overlayPath,
+    });
+
+    const pixel = await sharp(outputPath)
+      .extract({ height: 1, left: 150, top: 100, width: 1 })
+      .raw()
+      .toBuffer();
+    expect(pixel[0]).toBeGreaterThanOrEqual(126);
+    expect(pixel[0]).toBeLessThanOrEqual(129);
+    expect(pixel[1]).toBe(0);
+    expect(pixel[2]).toBeGreaterThanOrEqual(126);
+    expect(pixel[2]).toBeLessThanOrEqual(129);
+    expect(pixel[3]).toBe(255);
+  });
+
+  it.each([-0.1, 1.1, Number.NaN])(
+    "rejects opacity outside the unit interval",
+    async (opacity) => {
+      await expect(
+        compositeImages({
+          inputPath: testPng,
+          opacity,
+          outputPath: path.join(
+            os.tmpdir(),
+            `composite-opacity-${opacity}.png`,
+          ),
+          overlayPath: testPngWithAlpha,
+        }),
+      ).rejects.toThrow("Opacity must be between 0 and 1");
+    },
+  );
 });
 
 describe("annotateImage", () => {

@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""Create a PDF from one or more image files."""
+"""Create a PDF from raster images, one image per page."""
 
 import argparse
 import sys
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Create a PDF from images")
+    parser = argparse.ArgumentParser(
+        description="Create a PDF from raster images (one page per image, "
+        "any Pillow-readable format). SVG is not supported here; use "
+        "the PyMuPDF vector-conversion recipe in SKILL.md instead."
+    )
     parser.add_argument("inputs", nargs="+", help="Input image paths")
     parser.add_argument("--output", required=True, help="Output PDF path")
     parser.add_argument(
@@ -20,7 +24,7 @@ def main():
     try:
         from PIL import Image
     except ImportError:
-        sys.exit("Pillow not installed. Run: pip install Pillow")
+        sys.exit("Pillow is missing; the PDF skill dependencies were not installed")
 
     images = []
     for input_path in args.inputs:

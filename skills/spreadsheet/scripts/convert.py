@@ -33,7 +33,9 @@ def main():
     try:
         import pandas as pd
     except ImportError:
-        sys.exit("pandas not installed. Run: pip install pandas openpyxl")
+        sys.exit(
+            "pandas is unavailable. Reload this skill to retry dependency setup."
+        )
 
     if src in (".xlsx", ".xlsm"):
         df = pd.read_excel(args.input, sheet_name=args.sheet or 0)

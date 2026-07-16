@@ -1,57 +1,157 @@
 ---
 name: barcodes
-description: "Read barcodes and QR codes from image files, or generate barcode/QR code PNG images. Use when the user wants to: scan a QR code from a screenshot or photo, decode a barcode to extract a URL/text/identifier, read a Wi-Fi QR code or meeting link, or create a QR code or barcode image from text. Supports all common formats: QRCode, DataMatrix, Aztec, Code128, EAN13, UPC, PDF417, and more."
+description: "Read barcodes and QR codes from images, or generate barcode and QR code assets. Use when the user wants to scan a screenshot or photo, decode a URL or identifier, read a Wi-Fi or meeting QR code, create a printable code, locate multiple codes, or inspect barcode metadata. Supports common linear and matrix formats through zxing-wasm."
 ---
 
 # Barcodes
 
-Read barcodes from image files or generate barcode images. No image processing libraries needed — pass image files directly.
+Use the supplied scripts for ordinary one-code scans and PNG generation. Write
+TypeScript against `zxing-wasm` when the task needs SVG, full scan metadata,
+recovery options, multiple symbols, or format-specific controls.
 
-## Supported formats
+## Choose an approach
 
-Common readable/writable formats: `QRCode`, `Code128`, `Code39`, `DataMatrix`, `Aztec`, `PDF417`, `EAN13`, `EAN8`, `UPCA`, `UPCE`, `ITF`, `ITF14`, `DataBar`. Meta-formats like `AllLinear`, `AllMatrix`, and `All` work in `--formats` too.
+| Need                                                           | Approach                  |
+| -------------------------------------------------------------- | ------------------------- |
+| Decode one clear code                                          | Run `read-barcode.ts`     |
+| Generate a standard PNG                                        | Run `generate-barcode.ts` |
+| Print-quality SVG or custom error correction                   | Use the writer API        |
+| Positions, orientation, raw bytes, or damaged-code diagnostics | Use the reader API        |
 
-## Scripts
+Node dependencies are isolated per loaded skill. Put custom TypeScript inside
+the loaded skill package, then run it by full path from the task root. A custom
+file elsewhere cannot import this skill's `zxing-wasm` dependency.
 
-### `generate-barcode.ts` Generate a barcode or QR code image from text content
+Common formats include `QRCode`, `Code128`, `Code39`, `DataMatrix`, `Aztec`,
+`PDF417`, `EAN13`, `EAN8`, `UPCA`, `UPCE`, `ITF`, `ITF14`, and `DataBar`.
+Format-specific capacity, checksum, and character rules still apply.
 
-Exports:
+## Recipes
 
-- `generateBarcode({ content, format, outputPath, scale, }: { content: string; format?: string; outputPath?: string; scale?: number; }): Promise<{ outputPath: string; }>`
+### Generate vector and raster versions
 
-```text
-generate-barcode
+Save this as `<skill-path>/scripts/custom-generate.ts`, then run
+`tsx <skill-path>/scripts/custom-generate.ts` from the task root.
 
-Usage:
-  $ generate-barcode <content> [options]
+```ts
+import { mkdir, writeFile } from "node:fs/promises";
+import { writeBarcode } from "zxing-wasm/writer";
+import { prepareBarcodeWriter } from "./generate-barcode.ts";
 
-Options:
-  --format <name>  Barcode format (e.g. QRCode, Code128, DataMatrix, Aztec, EAN13) (default: QRCode)
-  --output <path>  Output PNG file path (default: barcode.png)
-  --scale <n>      Pixel scale factor (default: 4)
-  -h, --help       Display this message
+await prepareBarcodeWriter();
+await mkdir("output", { recursive: true });
+
+const payload = "https://example.com/check-in";
+const result = await writeBarcode(payload, {
+  addQuietZones: true,
+  format: "QRCode",
+  options: "ecLevel=H",
+  scale: 8,
+});
+
+if (result.error || !result.image || !result.svg) {
+  throw new Error(result.error || "Barcode writer returned no image");
+}
+
+await Promise.all([
+  writeFile("output/check-in.svg", result.svg),
+  writeFile(
+    "output/check-in.png",
+    Buffer.from(await result.image.arrayBuffer()),
+  ),
+]);
 ```
 
-> [!NOTE]
-> The image format is always PNG. Use --format to produce any supported barcode type (e.g. QRCode, Code128, DataMatrix, Aztec, EAN13). Defaults to QRCode.
+SVG is preferable for print and document composition. Keep the PNG for visual
+inspection and round-trip decoding.
 
-### `read-barcode.ts` Read and decode barcodes or QR codes from an image file
+### Decode every code with positions
 
-Exports:
+Save this as `<skill-path>/scripts/custom-read.ts` so package imports resolve.
 
-- `readBarcode({ imagePath, formats, limit, }: { formats?: string[]; imagePath: string; limit?: number; }): Promise<{ format: ReadOutputBarcodeFormat; text: string; }[]>`
+<!-- cspell:ignore tryDenoise -->
 
-```text
-read-barcode
+```ts
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { readBarcodes } from "zxing-wasm/reader";
+import { prepareBarcodeReader } from "./read-barcode.ts";
 
-Usage:
-  $ read-barcode <imagePath> [options]
+await prepareBarcodeReader();
+await mkdir("output", { recursive: true });
 
-Options:
-  --formats <list>  Comma-separated barcode formats to look for (e.g. QRCode,DataMatrix)
-  --limit <n>       Max number of barcodes to return, 0 for all (default: 1)
-  -h, --help        Display this message
+const bytes = await readFile("attachments/codes.png");
+const results = await readBarcodes(bytes, {
+  maxNumberOfSymbols: 0,
+  returnErrors: true,
+  tryDenoise: true,
+  tryHarder: true,
+  tryInvert: true,
+  tryRotate: true,
+});
+
+const report = results.map((result) => ({
+  error: result.error || null,
+  format: result.format,
+  inverted: result.isInverted,
+  mirrored: result.isMirrored,
+  orientation: result.orientation,
+  position: result.position,
+  text: result.text,
+  valid: result.isValid,
+}));
+
+await writeFile("output/barcodes.json", JSON.stringify(report, null, 2));
 ```
 
-> [!NOTE]
-> Supports all common formats automatically: QR Code, DataMatrix, Aztec, Code128, EAN, UPC, PDF417, and more. Pass --formats to restrict detection to specific types.
+Restrict `formats` when the expected type is known. It reduces false positives
+and can make difficult scans faster.
+
+### Build a Wi-Fi QR payload safely
+
+The barcode writer encodes the exact string it receives. Escape structured
+payload values before composing them.
+
+```ts
+const escapeWifi = (value: string) => value.replace(/([\\;,":])/g, "\\$1");
+
+const payload = [
+  "WIFI:",
+  `T:${escapeWifi("WPA")};`,
+  `S:${escapeWifi("Studio;Guest")};`,
+  `P:${escapeWifi("correct,horse:battery")};`,
+  ";",
+].join("");
+```
+
+Do not log passwords or other sensitive payloads. Round-trip decoding proves
+the encoded text, not that another application accepts the protocol syntax.
+
+## Traps
+
+- Preserve a quiet zone and strong foreground/background contrast.
+- Do not resize a raster barcode with smoothing. Generate it at an integer
+  module scale or use SVG.
+- Linear formats may require digits, fixed lengths, or valid checksums.
+- A clean generated image is not representative of a skewed or blurred photo.
+  Try rotation, inversion, noise reduction, cropping, or a separate image
+  cleanup.
+- The upstream writer API is less stable than the reader API. Keep writer
+  options local and verify after dependency upgrades.
+- `read-barcode.ts` intentionally returns only text and format. Use the reader
+  recipe when location or diagnostics matter.
+
+## Verification
+
+- Decode every generated raster and compare the result to the exact payload.
+- Inspect the PNG or SVG for clipping, missing quiet zones, and low contrast.
+- For print, test at the intended physical size instead of relying on preview.
+- For photographs, verify the reported position encloses the visible code.
+- Treat invalid results and checksum errors as failures, not partial success.
+
+## Script index
+
+Full command options and exported helper signatures are in
+[`reference.md`](reference.md).
+
+- `generate-barcode.ts`: Generate a barcode or QR code image from text content
+- `read-barcode.ts`: Read and decode barcodes or QR codes from an image file

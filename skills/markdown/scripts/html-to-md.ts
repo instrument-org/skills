@@ -5,8 +5,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { cac } from "cac";
 
+import { createHtmlToMarkdownCli } from "./lib/cli.ts";
 import {
   type CodeBlockStyle,
   type HeadingStyle,
@@ -63,21 +63,7 @@ export function convertHtmlString({
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const cli = cac("html-to-md");
-  cli.usage("--html-file page.html --output page.md");
-  cli.option("--html-file <path>", "Input HTML file path");
-  cli.option("--html <htmlString>", "Inline HTML string input");
-  cli.option("--output <path>", "Output Markdown file path");
-  cli.option("--gfm", "Enable GitHub-Flavored Markdown", { default: true });
-  cli.option("--heading-style <style>", "Heading style: atx or setext", {
-    default: "atx",
-  });
-  cli.option(
-    "--code-block-style <style>",
-    "Code block style: fenced or indented",
-    { default: "fenced" },
-  );
-  cli.help();
+  const cli = createHtmlToMarkdownCli();
   const { options } = cli.parse();
   if (options.help) process.exit(0);
 

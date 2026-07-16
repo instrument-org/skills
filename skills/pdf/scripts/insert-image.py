@@ -20,7 +20,7 @@ def main():
     try:
         import fitz
     except ImportError:
-        sys.exit("pymupdf not installed. Run: pip install pymupdf")
+        sys.exit("PyMuPDF is missing; the PDF skill dependencies were not installed")
 
     document = fitz.open(args.input)
     if args.page < 1 or args.page > len(document):

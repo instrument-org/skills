@@ -21,7 +21,7 @@ def main():
     try:
         from pypdf import PdfReader, PdfWriter
     except ImportError:
-        sys.exit("pypdf not installed. Run: pip install pypdf")
+        sys.exit("pypdf is missing; the PDF skill dependencies were not installed")
 
     reader = PdfReader(args.input)
     fields = reader.get_fields()

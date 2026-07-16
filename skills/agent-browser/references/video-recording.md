@@ -137,7 +137,6 @@ set -e
 
 cleanup() {
     agent-browser record stop 2>/dev/null || true
-    agent-browser close 2>/dev/null || true
 }
 trap cleanup EXIT
 

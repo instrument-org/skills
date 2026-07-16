@@ -5,7 +5,15 @@ const DEFAULT_BODY = `\
     <p>Replace this content with your wireframe.</p>
   </main>`;
 
-export function buildHtml({ body, theme }: { body?: string; theme?: string }) {
+export function buildHtml({
+  body,
+  theme,
+  title = "Wireframe",
+}: {
+  body?: string;
+  theme?: string;
+  title?: string;
+}) {
   const bodyContent = body ?? DEFAULT_BODY;
   const themeContent = theme ? `\n${theme}` : "";
   return `<!DOCTYPE html>
@@ -13,7 +21,7 @@ export function buildHtml({ body, theme }: { body?: string; theme?: string }) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wireframe</title>
+  <title>${escapeHtml(title)}</title>
   <style type="text/tailwindcss">
 @import "tailwindcss";
 

@@ -11,7 +11,8 @@ import ts from "typescript";
 const execFileAsync = promisify(execFile);
 
 const SKILLS_DIR = join(process.cwd(), "skills");
-const PLACEHOLDER = "{{GENERATED_SCRIPT_DOCS}}";
+const SCRIPT_DOCS_PLACEHOLDER = "{{GENERATED_SCRIPT_DOCS}}";
+const SCRIPT_INDEX_PLACEHOLDER = "{{GENERATED_SCRIPT_INDEX}}";
 
 function parseArgs() {
   const args = process.argv.slice(2);
@@ -27,6 +28,14 @@ function parseArgs() {
 interface FileJsDoc {
   description: string | undefined;
   notes: string[];
+}
+
+interface ScriptDocumentation {
+  description: string | undefined;
+  exportedSignatures: string[] | undefined;
+  helpOutput: string;
+  notes: string[];
+  scriptName: string;
 }
 
 function getPythonCommand(skillPath: string): [string, ...string[]] {
@@ -200,22 +209,20 @@ async function buildHelpFromRuntime({
   return ["Usage:", `  ${execName} ${relativeScriptPath} --help`].join("\n");
 }
 
-function formatScriptDocBlock({
-  description,
-  exportedSignatures,
-  helpOutput,
-  notes,
-  scriptName,
-}: {
-  description?: string;
-  exportedSignatures?: string[];
-  helpOutput: string;
-  notes: string[];
-  scriptName: string;
-}) {
+function formatScriptDocBlock(
+  {
+    description,
+    exportedSignatures,
+    helpOutput,
+    notes,
+    scriptName,
+  }: ScriptDocumentation,
+  headingLevel: 2 | 3 = 3,
+) {
+  const headingMarker = "#".repeat(headingLevel);
   const heading = description
-    ? `### \`${scriptName}\` ${description}`
-    : `### \`${scriptName}\``;
+    ? `${headingMarker} \`${scriptName}\` ${description}`
+    : `${headingMarker} \`${scriptName}\``;
 
   const noteBlock =
     notes.length > 0
@@ -244,10 +251,10 @@ function formatScriptDocBlock({
   );
 }
 
-async function generateScriptDocsSection(skillPath: string) {
+async function getScriptDocumentation(skillPath: string) {
   const scriptsDir = join(skillPath, "scripts");
   if (!existsSync(scriptsDir)) {
-    return "";
+    return [];
   }
 
   const entries = await readdir(scriptsDir, { withFileTypes: true });
@@ -260,7 +267,7 @@ async function generateScriptDocsSection(skillPath: string) {
     .map((entry) => entry.name)
     .sort();
 
-  const blocks = await Promise.all(
+  return Promise.all(
     scriptFiles.map(async (scriptName) => {
       const scriptPath = join(scriptsDir, scriptName);
       const relativeScriptPath = join("scripts", scriptName);
@@ -274,12 +281,13 @@ async function generateScriptDocsSection(skillPath: string) {
             isPython: true,
           }),
         ]);
-        return formatScriptDocBlock({
+        return {
           description,
+          exportedSignatures: undefined,
           helpOutput,
           notes: [],
           scriptName,
-        });
+        } satisfies ScriptDocumentation;
       }
 
       const [exportedSignatures, helpOutput] = await Promise.all([
@@ -287,17 +295,37 @@ async function generateScriptDocsSection(skillPath: string) {
         buildHelpFromRuntime({ relativeScriptPath, skillPath }),
       ]);
       const { description, notes } = getFileJsDoc(scriptPath);
-      return formatScriptDocBlock({
+      return {
         description,
         exportedSignatures,
         helpOutput,
         notes,
         scriptName,
-      });
+      } satisfies ScriptDocumentation;
     }),
   );
+}
 
-  return blocks.join("\n\n");
+function generateScriptDocsSection(
+  scripts: ScriptDocumentation[],
+  headingLevel: 2 | 3 = 3,
+) {
+  return scripts
+    .map((script) => formatScriptDocBlock(script, headingLevel))
+    .join("\n\n");
+}
+
+function generateScriptIndexSection(scripts: ScriptDocumentation[]) {
+  return scripts
+    .map(
+      ({ description, scriptName }) =>
+        `- \`${scriptName}\`: ${description ?? "See the script reference for usage."}`,
+    )
+    .join("\n");
+}
+
+function countOccurrences(content: string, value: string) {
+  return content.split(value).length - 1;
 }
 
 async function generateSkillMarkdown({
@@ -310,24 +338,63 @@ async function generateSkillMarkdown({
   const skillPath = join(SKILLS_DIR, skillName);
   const templatePath = join(skillPath, "SKILL.template.md");
   const skillMdPath = join(skillPath, "SKILL.md");
+  const referencePath = join(skillPath, "reference.md");
   const template = await readFile(templatePath, "utf-8");
-  if (!template.includes(PLACEHOLDER)) {
-    throw new Error(`${skillName}: template missing ${PLACEHOLDER}`);
+  const scriptDocsMarkers = countOccurrences(template, SCRIPT_DOCS_PLACEHOLDER);
+  const scriptIndexMarkers = countOccurrences(
+    template,
+    SCRIPT_INDEX_PLACEHOLDER,
+  );
+  if (scriptDocsMarkers + scriptIndexMarkers !== 1) {
+    throw new Error(
+      `${skillName}: template must contain exactly one generated script marker`,
+    );
   }
 
-  const generatedScriptDocs = await generateScriptDocsSection(skillPath);
-  const raw = template.replace(PLACEHOLDER, generatedScriptDocs);
+  const scripts = await getScriptDocumentation(skillPath);
+  const generatedScriptDocs = generateScriptDocsSection(scripts);
+  const generatedReferenceDocs = generateScriptDocsSection(scripts, 2);
+  const progressive = scriptIndexMarkers === 1;
+  const raw = template.replace(
+    progressive ? SCRIPT_INDEX_PLACEHOLDER : SCRIPT_DOCS_PLACEHOLDER,
+    progressive ? generateScriptIndexSection(scripts) : generatedScriptDocs,
+  );
   const generated = await prettier.format(raw, { filepath: skillMdPath });
-  const existing = await readFile(skillMdPath, "utf-8").catch(() => "");
+  const generatedReference = progressive
+    ? await prettier.format(
+        [
+          "# Script reference",
+          "",
+          "Complete command-line usage for the scripts indexed in `SKILL.md`.",
+          "",
+          generatedReferenceDocs,
+        ].join("\n"),
+        { filepath: referencePath },
+      )
+    : undefined;
 
   if (checkOnly) {
-    if (generated !== existing) {
+    const existingSkillMd = await readFile(skillMdPath, "utf-8").catch(
+      () => "",
+    );
+    if (generated !== existingSkillMd) {
       throw new Error(`${skillName}: SKILL.md is out of date`);
+    }
+    if (generatedReference !== undefined) {
+      const existingReference = await readFile(referencePath, "utf-8").catch(
+        () => "",
+      );
+      if (generatedReference !== existingReference) {
+        throw new Error(`${skillName}: reference.md is out of date`);
+      }
     }
     return;
   }
 
   await writeFile(skillMdPath, generated, "utf-8");
+  if (generatedReference !== undefined) {
+    await writeFile(referencePath, generatedReference, "utf-8");
+  }
 }
 
 async function main() {

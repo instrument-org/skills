@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import AdmZip from "adm-zip";
 import { afterEach, describe, expect, it } from "vitest";
 import { createZip } from "../scripts/create-zip.ts";
 import { extractZip } from "../scripts/extract-zip.ts";
@@ -8,6 +9,25 @@ import { listZip } from "../scripts/list-zip.ts";
 
 function makeTempDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), "zip-test-"));
+}
+
+function isErrnoWithCode(error: unknown, code: string) {
+  return error instanceof Error && "code" in error && error.code === code;
+}
+
+function writeArchiveWithRawMember(zipPath: string, memberName: string) {
+  const archive = new AdmZip();
+  const unsafeName = Buffer.from(memberName);
+  const placeholder = Buffer.from("x".repeat(unsafeName.length));
+  archive.addFile(placeholder.toString(), Buffer.from("unsafe"));
+  const buffer = archive.toBuffer();
+
+  let offset = 0;
+  while ((offset = buffer.indexOf(placeholder, offset)) !== -1) {
+    unsafeName.copy(buffer, offset);
+    offset += placeholder.length;
+  }
+  fs.writeFileSync(zipPath, buffer);
 }
 
 describe("zip scripts", () => {
@@ -127,5 +147,147 @@ describe("zip scripts", () => {
     expect(entries[0].size).toBe(1000);
     expect(entries[0].compressedSize).toBeLessThan(1000);
     expect(entries[0].isDirectory).toBe(false);
+  });
+
+  it("refuses to replace an existing archive unless overwrite is explicit", () => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const file = path.join(sourceDir, "test.txt");
+    const zipPath = path.join(sourceDir, "archive.zip");
+    fs.writeFileSync(file, "first");
+    fs.writeFileSync(zipPath, "existing");
+
+    expect(() =>
+      createZip({ inputPaths: [file], outputPath: zipPath }),
+    ).toThrow(/already exists/);
+
+    createZip({ inputPaths: [file], outputPath: zipPath, overwrite: true });
+    expect(listZip({ inputPath: zipPath }).map((entry) => entry.name)).toEqual([
+      "test.txt",
+    ]);
+  });
+
+  it("refuses to extract into an existing directory unless overwrite is explicit", () => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const file = path.join(sourceDir, "test.txt");
+    const zipPath = path.join(sourceDir, "archive.zip");
+    const extractDir = path.join(sourceDir, "extracted");
+    fs.writeFileSync(file, "new");
+    createZip({ inputPaths: [file], outputPath: zipPath });
+    fs.mkdirSync(extractDir);
+    fs.writeFileSync(path.join(extractDir, "test.txt"), "old");
+
+    expect(() =>
+      extractZip({ inputPath: zipPath, outputDir: extractDir }),
+    ).toThrow(/already exists/);
+
+    extractZip({ inputPath: zipPath, outputDir: extractDir, overwrite: true });
+    expect(fs.readFileSync(path.join(extractDir, "test.txt"), "utf8")).toBe(
+      "new",
+    );
+  });
+
+  it.each([
+    "../escape.txt",
+    "/absolute.txt",
+    "C:/windows.txt",
+    "..\\escape.txt",
+  ])("rejects unsafe archive member path %s", (memberName) => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const zipPath = path.join(sourceDir, "unsafe.zip");
+    writeArchiveWithRawMember(zipPath, memberName);
+
+    expect(() => extractZip({ inputPath: zipPath })).toThrow(
+      /Unsafe archive member path/,
+    );
+  });
+
+  it("rejects extraction through an existing symlink", () => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const zipPath = path.join(sourceDir, "unsafe-symlink.zip");
+    const extractDir = path.join(sourceDir, "extracted");
+    const outsideDir = makeTempDir();
+    tempDirs.push(outsideDir);
+    fs.mkdirSync(extractDir);
+    try {
+      fs.symlinkSync(outsideDir, path.join(extractDir, "link"), "dir");
+    } catch (error) {
+      if (isErrnoWithCode(error, "EPERM")) return;
+      throw error;
+    }
+
+    const archive = new AdmZip();
+    archive.addFile("link/pwned.txt", Buffer.from("unsafe"));
+    archive.writeZip(zipPath);
+
+    expect(() =>
+      extractZip({
+        inputPath: zipPath,
+        outputDir: extractDir,
+        overwrite: true,
+      }),
+    ).toThrow(/through symlink/);
+    expect(fs.existsSync(path.join(outsideDir, "pwned.txt"))).toBe(false);
+  });
+
+  it("rejects extraction through a dangling file symlink", () => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const zipPath = path.join(sourceDir, "unsafe-dangling-symlink.zip");
+    const extractDir = path.join(sourceDir, "extracted");
+    const outsideDir = makeTempDir();
+    tempDirs.push(outsideDir);
+    const outsideFile = path.join(outsideDir, "pwned.txt");
+    fs.mkdirSync(extractDir);
+    try {
+      fs.symlinkSync(outsideFile, path.join(extractDir, "pwned.txt"), "file");
+    } catch (error) {
+      if (isErrnoWithCode(error, "EPERM")) return;
+      throw error;
+    }
+
+    const archive = new AdmZip();
+    archive.addFile("pwned.txt", Buffer.from("unsafe"));
+    archive.writeZip(zipPath);
+
+    expect(() =>
+      extractZip({
+        inputPath: zipPath,
+        outputDir: extractDir,
+        overwrite: true,
+      }),
+    ).toThrow(/through symlink/);
+    expect(fs.existsSync(outsideFile)).toBe(false);
+  });
+
+  it("rejects a symbolic-link extraction root", () => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const zipPath = path.join(sourceDir, "unsafe-root-symlink.zip");
+    const outsideDir = makeTempDir();
+    tempDirs.push(outsideDir);
+    const extractDir = path.join(sourceDir, "linked-output");
+    try {
+      fs.symlinkSync(outsideDir, extractDir, "dir");
+    } catch (error) {
+      if (isErrnoWithCode(error, "EPERM")) return;
+      throw error;
+    }
+
+    const archive = new AdmZip();
+    archive.addFile("pwned.txt", Buffer.from("unsafe"));
+    archive.writeZip(zipPath);
+
+    expect(() =>
+      extractZip({
+        inputPath: zipPath,
+        outputDir: extractDir,
+        overwrite: true,
+      }),
+    ).toThrow(/extraction root is a symbolic link/);
+    expect(fs.existsSync(path.join(outsideDir, "pwned.txt"))).toBe(false);
   });
 });

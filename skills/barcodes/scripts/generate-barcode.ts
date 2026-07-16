@@ -15,7 +15,7 @@ import {
 
 const _require = createRequire(import.meta.url);
 
-async function loadWasm() {
+export async function prepareBarcodeWriter() {
   const wasmPath = _require.resolve("zxing-wasm/writer/zxing_writer.wasm");
   const wasmBinary = (await readFile(wasmPath)).buffer as ArrayBuffer;
   await prepareZXingModule({
@@ -35,7 +35,7 @@ export async function generateBarcode({
   outputPath?: string;
   scale?: number;
 }) {
-  await loadWasm();
+  await prepareBarcodeWriter();
   const result = await writeBarcode(content, {
     format: format as WriteInputBarcodeFormat,
     scale,

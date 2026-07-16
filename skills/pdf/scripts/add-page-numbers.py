@@ -68,7 +68,7 @@ def main():
         from pypdf import PdfReader, PdfWriter
         from reportlab.pdfgen import canvas as rl_canvas  # noqa: F401
     except ImportError:
-        sys.exit("Required packages missing. Run: pip install pypdf reportlab")
+        sys.exit("Required PDF skill dependencies were not installed")
 
     reader = PdfReader(args.input)
     writer = PdfWriter()

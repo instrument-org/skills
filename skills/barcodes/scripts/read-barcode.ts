@@ -15,7 +15,7 @@ import {
 
 const _require = createRequire(import.meta.url);
 
-async function loadWasm() {
+export async function prepareBarcodeReader() {
   const wasmPath = _require.resolve("zxing-wasm/reader/zxing_reader.wasm");
   const wasmBinary = (await readFile(wasmPath)).buffer as ArrayBuffer;
   await prepareZXingModule({
@@ -33,7 +33,7 @@ export async function readBarcode({
   imagePath: string;
   limit?: number;
 }) {
-  await loadWasm();
+  await prepareBarcodeReader();
   const imageBytes = await readFile(imagePath);
   const results = await readBarcodes(
     imageBytes,

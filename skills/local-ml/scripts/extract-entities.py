@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract named entities (people, organizations, locations, dates) from text."""
+"""Extract named entities such as people, organizations, and locations from text."""
 
 import argparse
 import json

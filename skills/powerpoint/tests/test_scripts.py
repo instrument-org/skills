@@ -91,6 +91,60 @@ class TestCreate:
         assert "Unsupported layout" in result.stderr
 
 
+class TestLibraryRecipe:
+    def test_composes_a_positioned_slide(self, tmp_path):
+        from pptx import Presentation
+        from pptx.dml.color import RGBColor
+        from pptx.enum.shapes import MSO_SHAPE
+        from pptx.util import Inches, Pt
+
+        output = tmp_path / "quarterly-review.pptx"
+        prs = Presentation()
+        prs.slide_width = Inches(13.333)
+        prs.slide_height = Inches(7.5)
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+        background = slide.background.fill
+        background.solid()
+        background.fore_color.rgb = RGBColor(248, 249, 252)
+
+        accent = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            Inches(0),
+            Inches(0),
+            Inches(0.18),
+            prs.slide_height,
+        )
+        accent.fill.solid()
+        accent.fill.fore_color.rgb = RGBColor(48, 92, 222)
+        accent.line.fill.background()
+
+        title = slide.shapes.add_textbox(
+            Inches(0.8),
+            Inches(0.65),
+            Inches(11.8),
+            Inches(0.7),
+        )
+        title.name = "Title"
+        title.text_frame.clear()
+        run = title.text_frame.paragraphs[0].add_run()
+        run.text = "Quarterly Review"
+        run.font.size = Pt(30)
+        run.font.bold = True
+        run.font.color.rgb = RGBColor(26, 31, 44)
+        slide.notes_slide.notes_text_frame.text = "Discuss the pilot."
+        prs.save(output)
+
+        check = Presentation(output)
+        checked_slide = check.slides[0]
+        by_name = {shape.name: shape for shape in checked_slide.shapes}
+        assert check.slide_width == Inches(13.333)
+        assert check.slide_height == Inches(7.5)
+        assert by_name["Title"].text == "Quarterly Review"
+        assert by_name["Title"].left >= 0
+        assert by_name["Title"].left + by_name["Title"].width <= check.slide_width
+        assert checked_slide.notes_slide.notes_text_frame.text == "Discuss the pilot."
+
+
 class TestInventory:
     def test_outputs_shape_map(self, sample_pptx):
         result = run("inventory.py", str(sample_pptx))

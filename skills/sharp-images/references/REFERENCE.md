@@ -26,9 +26,13 @@ sharp({ text: { text: "Hello", font: "sans", dpi: 300 } }); // text image
 | `pages`            | `number`                                        | `1`         | Number of pages to extract (`-1` for all)      |
 | `density`          | `number`                                        | `72`        | DPI for vector images (SVG, PDF)               |
 
-## Input Formats
+## Runtime format support
 
-JPEG, PNG, WebP, GIF (animated), AVIF, TIFF, SVG, PDF, RAW pixel data
+Common packaged builds support JPEG, PNG, WebP, GIF, AVIF, TIFF, SVG input,
+and raw pixel buffers. Support for PDF, JPEG 2000, JPEG XL, and other uncommon
+codecs depends on the packaged native build and is often unavailable. Treat
+`sharp.format` in the installed runtime as the source of truth for input and
+output support.
 
 ## Output Formats & Options
 

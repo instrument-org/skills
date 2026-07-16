@@ -41,10 +41,8 @@ def sample_image(tmp_path_factory) -> Path:
 
 
 class TestRemoveBackground:
-    def test_missing_dep_exits_gracefully(self, tmp_path):
-        """Script exits with a clear error if rembg is missing."""
+    def test_help_does_not_import_rembg(self):
         result = run("remove-background.py", "--help")
-        # --help always succeeds
         assert result.returncode == 0
 
     @pytest.mark.slow
@@ -84,7 +82,7 @@ class TestEmbedText:
         assert result.returncode == 0
         vec = json.loads(result.stdout)
         assert isinstance(vec, list)
-        assert len(vec) == 384  # MiniLM-L6-v2 dimension
+        assert len(vec) == 384  # BGE small dimension
 
     @pytest.mark.slow
     def test_embed_file(self, tmp_path):
@@ -123,3 +121,23 @@ class TestSpeechToText:
 
         assert result.returncode != 0
         assert "faster-whisper is not installed" in result.stderr
+
+
+@pytest.mark.parametrize(
+    "script",
+    [
+        "classify-image.py",
+        "classify-text.py",
+        "describe-image.py",
+        "detect-objects.py",
+        "embed-text.py",
+        "extract-entities.py",
+        "remove-background.py",
+        "speech-to-text.py",
+    ],
+)
+def test_help_is_available_without_optional_dependencies(script):
+    result = run(script, "--help")
+
+    assert result.returncode == 0
+    assert "usage:" in result.stdout

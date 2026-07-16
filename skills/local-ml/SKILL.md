@@ -1,192 +1,219 @@
 ---
 name: local-ml
-description: "Run local AI models on images, audio, and text — no API keys needed. Use when the user wants to: remove an image background, classify or describe an image, detect objects in an image, transcribe audio to text (speech-to-text), classify text or run sentiment analysis, generate text embeddings for semantic search or similarity, or extract named entities (people, organizations, locations). Models download on first use and are cached locally."
+description: "Run local AI models on images, audio, and text with no inference API key. Use when the user wants to remove an image background, classify or describe images, detect objects, transcribe audio, classify text, create embeddings for similarity or search, or extract named entities. Model weights download on first use and are cached locally."
 ---
 
 # Local ML
 
-Run local AI models via Python's `transformers`, `sentence-transformers`,
-`rembg`, and `openai-whisper` libraries. No API keys needed. All inference
-runs on CPU.
+Use Python libraries directly when the work needs batching, model reuse,
+custom scoring, or structured outputs. The supplied scripts are convenient for
+single-input operations with standard defaults.
 
-## Dependencies
+## Choose an approach
 
-The app installs this skill's locked base dependency (`Pillow`) when it is
-loaded. Install only the optional feature packages required for the requested
-workflow:
+| Need                                                   | Approach                                                      |
+| ------------------------------------------------------ | ------------------------------------------------------------- |
+| One image, text, or audio file with standard output    | Run the matching script                                       |
+| Many inputs or repeated inference                      | Write Python that loads the model once                        |
+| Similarity, ranking, aggregation, or custom thresholds | Compose the library APIs                                      |
+| A reusable artifact                                    | Write structured results to `output/` and record the model ID |
 
-```
+Python packages share the task virtual environment, so custom recipes may live
+under `work/`. Run them from the task root so `attachments/`, `work/`, and
+`output/` resolve correctly.
+
+## Optional dependencies
+
+The app installs the locked base dependency, Pillow. Install only the feature
+stack the task needs:
+
+```bash
 pip install "rembg[cpu]" "numba>=0.60"          # background removal
-pip install faster-whisper                         # speech-to-text
-pip install openai-whisper                         # Windows on ARM only
-pip install transformers torch sentence-transformers  # vision, text, embeddings
+pip install faster-whisper                       # speech-to-text
+pip install openai-whisper                       # Windows on ARM fallback
+pip install transformers torch                   # vision, classification, NER
+pip install sentence-transformers                # embeddings and similarity
 ```
 
-Install only what you need — `torch` is large (~2 GB). Each script lists its
-specific requirements.
+Inference stays local, but the first use downloads third-party model weights
+and contacts their model host. Downloads are model-dependent, commonly around
+100 MB to 1 GB, and are cached outside the deliverable. `torch` itself is also
+large. State that cost before selecting a large model or processing a long
+recording.
 
-`rembg` needs its CPU backend (`rembg[cpu]`) and a `numba>=0.60` floor — without
-the floor the resolver picks a legacy `numba` that fails to build.
+## Recipes
 
-## Model downloads
+### Reuse a classifier across a batch
 
-Models are downloaded on first use and cached locally. Typical sizes:
+This reads one text per line and writes ranked labels as JSON. Save it as
+`work/classify-batch.py`, then run `python work/classify-batch.py`.
 
-- Background removal (rembg u2net): ~170 MB
-- Image classification (ViT): ~350 MB
-- Image captioning (BLIP): ~900 MB
-- Object detection (DETR): ~160 MB
-- Text classification (DistilBERT): ~270 MB
-- Named entity recognition (BERT NER): ~430 MB
-- Sentence embeddings (MiniLM): ~90 MB
-- Speech-to-text (Whisper base): ~140 MB
+```python
+import json
+from pathlib import Path
 
-## Scripts
+from transformers import pipeline
 
-### `classify-image.py` Classify an image using a zero-shot or ImageNet model.
+model_id = "MoritzLaurer/deberta-v3-base-zeroshot-v2.0"
+labels = ["urgent", "routine", "spam"]
+source_text = Path("attachments/messages.txt").read_text(encoding="utf-8")
+texts = [
+    line.strip()
+    for line in source_text.splitlines()
+    if line.strip()
+]
 
-```text
-usage: classify-image.py [-h] [--labels LABELS] [--model MODEL]
-                         [--top-k TOP_K]
-                         input
-
-Classify an image
-
-positional arguments:
-  input            Input image file
-
-options:
-  -h, --help       show this help message and exit
-  --labels LABELS  Comma-separated labels for zero-shot classification
-  --model MODEL    HuggingFace model ID override
-  --top-k TOP_K
+classifier = pipeline("zero-shot-classification", model=model_id)
+predictions = classifier(
+    texts,
+    candidate_labels=labels,
+    multi_label=True,
+    batch_size=8,
+)
+records = [
+    {
+        "text": text,
+        "labels": [
+            {"label": label, "score": score}
+            for label, score in zip(result["labels"], result["scores"])
+        ],
+        "model": model_id,
+    }
+    for text, result in zip(texts, predictions)
+]
+Path("output/classifications.json").write_text(
+    json.dumps(records, indent=2, ensure_ascii=False),
+    encoding="utf-8",
+)
 ```
 
-### `classify-text.py` Classify text using sentiment analysis or zero-shot labels.
+Use `multi_label=False` when labels are mutually exclusive. Calibrate a
+decision threshold from the observed scores instead of treating the top label
+as certain.
 
-```text
-usage: classify-text.py [-h] --text TEXT [--labels LABELS] [--multi-label]
-                        [--model MODEL] [--top-k TOP_K]
+### Rank text by semantic similarity
 
-Classify text
+Normalized embeddings make the dot product a cosine-similarity score. The
+default here matches `embed-text.py`: BGE small, whose vectors have 384
+dimensions.
 
-options:
-  -h, --help       show this help message and exit
-  --text TEXT      Text to classify
-  --labels LABELS  Comma-separated labels for zero-shot classification
-  --multi-label
-  --model MODEL    HuggingFace model ID override
-  --top-k TOP_K
+```python
+import json
+from pathlib import Path
+
+from sentence_transformers import SentenceTransformer
+
+model_id = "BAAI/bge-small-en-v1.5"
+query = "How do I reset my password?"
+source_text = Path("attachments/articles.txt").read_text(encoding="utf-8")
+documents = [
+    line.strip()
+    for line in source_text.splitlines()
+    if line.strip()
+]
+
+model = SentenceTransformer(model_id)
+vectors = model.encode([query, *documents], normalize_embeddings=True)
+scores = vectors[1:] @ vectors[0]
+ranked = sorted(
+    (
+        {"text": text, "score": float(score), "model": model_id}
+        for text, score in zip(documents, scores)
+    ),
+    key=lambda item: item["score"],
+    reverse=True,
+)
+Path("output/ranked.json").write_text(
+    json.dumps(ranked, indent=2, ensure_ascii=False),
+    encoding="utf-8",
+)
 ```
 
-### `describe-image.py` Generate a natural-language description of an image (image captioning).
+### Reuse one background-removal session
 
-```text
-usage: describe-image.py [-h] [--model MODEL] input
+Creating a session loads the model. Reuse it for every image in the batch.
 
-Describe an image
+```python
+from pathlib import Path
 
-positional arguments:
-  input          Input image file
+from rembg import new_session, remove
 
-options:
-  -h, --help     show this help message and exit
-  --model MODEL
+session = new_session("u2net")
+destination = Path("output/background-removed")
+destination.mkdir(parents=True, exist_ok=True)
+
+for source in Path("attachments").glob("*"):
+    if source.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp"}:
+        continue
+    result = remove(source.read_bytes(), session=session)
+    (destination / f"{source.stem}.png").write_bytes(result)
 ```
 
-### `detect-objects.py` Detect objects in an image and return bounding boxes with labels.
+### Preserve transcript timestamps
 
-```text
-usage: detect-objects.py [-h] [--model MODEL] [--threshold THRESHOLD] input
+```python
+import json
+from pathlib import Path
 
-Detect objects in an image
+from faster_whisper import WhisperModel
 
-positional arguments:
-  input                 Input image file
-
-options:
-  -h, --help            show this help message and exit
-  --model MODEL
-  --threshold THRESHOLD
-                        Confidence threshold (default: 0.9)
+model_name = "base"
+model = WhisperModel(model_name, device="cpu", compute_type="int8")
+segments, info = model.transcribe(
+    "attachments/interview.m4a",
+    vad_filter=True,
+)
+rows = [
+    {"start": segment.start, "end": segment.end, "text": segment.text.strip()}
+    for segment in segments
+]
+Path("output/transcript.json").write_text(
+    json.dumps(
+        {"language": info.language, "model": model_name, "segments": rows},
+        indent=2,
+        ensure_ascii=False,
+    ),
+    encoding="utf-8",
+)
+Path("output/transcript.txt").write_text(
+    "\n".join(row["text"] for row in rows),
+    encoding="utf-8",
+)
 ```
 
-### `embed-text.py` Generate sentence embeddings for semantic search or similarity.
+## Traps
 
-```text
-usage: embed-text.py [-h] [--text TEXT] [--input INPUT] [--model MODEL]
+- Load each model once. Repeated script invocations repeat initialization and
+  may repeat expensive setup.
+- Model output is probabilistic. Preserve scores and review low-confidence or
+  high-impact results.
+- The default NER model recognizes people, organizations, locations, and
+  miscellaneous entities. It does not provide a date category.
+- Avoid arbitrary models that require `trust_remote_code=True` unless their
+  code has been deliberately reviewed.
+- Long inputs may be truncated by a model. Chunk them with overlap and retain
+  source offsets when traceability matters.
+- Model caches and optional packages can consume several gigabytes. Do not
+  install every feature stack by default.
 
-Embed text as a vector
+## Verification
 
-options:
-  -h, --help     show this help message and exit
-  --text TEXT    Text to embed
-  --input INPUT  File with one text per line
-  --model MODEL
-```
+- Record the exact model ID and meaningful parameters in structured output.
+- Confirm result counts match input counts and inspect score distributions.
+- Spot-check transcripts against the audio, especially names and numbers.
+- Inspect masks and object boxes visually instead of trusting file existence.
+- Confirm output files contain usable data and not only successful exit codes.
 
-### `extract-entities.py` Extract named entities (people, organizations, locations, dates) from text.
+## Script index
 
-```text
-usage: extract-entities.py [-h] [--text TEXT] [--input INPUT] [--model MODEL]
-                           [--json]
+Use these for closed, single-input operations. Full options are in
+[`reference.md`](reference.md).
 
-Extract named entities from text
-
-options:
-  -h, --help     show this help message and exit
-  --text TEXT    Text to process
-  --input INPUT  Input text file
-  --model MODEL
-  --json
-```
-
-### `remove-background.py` Remove the background from an image, outputting a PNG with transparency.
-
-```text
-usage: remove-background.py [-h] [--output OUTPUT]
-                            [--model {u2net,u2net_human_seg,isnet-general-use,birefnet-general,birefnet-general-lite}]
-                            input
-
-Remove image background
-
-positional arguments:
-  input                 Input image (PNG, JPG, WEBP)
-
-options:
-  -h, --help            show this help message and exit
-  --output OUTPUT       Output PNG path (default: <input>-nobg.png)
-  --model {u2net,u2net_human_seg,isnet-general-use,birefnet-general,birefnet-general-lite}
-                        Model to use (default: u2net)
-```
-
-### `speech-to-text.py` Transcribe audio to text using Whisper.
-
-```text
-usage: speech-to-text.py [-h]
-                         [--model {tiny,base,small,medium,large,large-v3,turbo}]
-                         [--language LANGUAGE] [--json]
-                         input
-
-Transcribe audio to text
-
-positional arguments:
-  input                 Audio file
-
-options:
-  -h, --help            show this help message and exit
-  --model {tiny,base,small,medium,large,large-v3,turbo}
-                        Whisper model size (default: base)
-  --language LANGUAGE   Language code, e.g. 'en', 'fr'
-  --json                Output full JSON with timestamps
-```
-
-## Notes
-
-- All models run on CPU. Inference can be slow for large models on long inputs.
-- Background removal defaults to the established `u2net` model. Try
-  `--model birefnet-general-lite` when speed and download size matter, or
-  `birefnet-general` when output quality is more important.
-- Speech-to-text uses CPU INT8 inference by default for reliable cross-platform
-  performance on modest hardware. Windows on ARM falls back to OpenAI Whisper
-  and requires an `ffmpeg` executable.
+- `classify-image.py`: Classify an image using a zero-shot or ImageNet model.
+- `classify-text.py`: Classify text using sentiment analysis or zero-shot labels.
+- `describe-image.py`: Generate a natural-language description of an image (image captioning).
+- `detect-objects.py`: Detect objects in an image and return bounding boxes with labels.
+- `embed-text.py`: Generate sentence embeddings for semantic search or similarity.
+- `extract-entities.py`: Extract named entities such as people, organizations, and locations from text.
+- `remove-background.py`: Remove the background from an image, outputting a PNG with transparency.
+- `speech-to-text.py`: Transcribe audio to text using Whisper.

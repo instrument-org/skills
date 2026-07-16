@@ -88,6 +88,54 @@ class TestCreate:
         assert cell.data_type == "s"
 
 
+class TestLibraryRecipe:
+    def test_creates_a_styled_multi_sheet_workbook(self, tmp_path):
+        from datetime import date
+
+        from openpyxl import Workbook, load_workbook
+        from openpyxl.styles import Font, PatternFill
+        from openpyxl.worksheet.table import Table, TableStyleInfo
+
+        output = tmp_path / "sales.xlsx"
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Sales"
+        sheet.append(["Date", "Region", "Revenue", "Target", "Variance"])
+        for values in [
+            (date(2026, 1, 31), "East", 125000, 120000),
+            (date(2026, 1, 31), "West", 117500, 115000),
+        ]:
+            sheet.append(values)
+        for row in range(2, sheet.max_row + 1):
+            sheet.cell(row, 5, f"=C{row}-D{row}")
+            sheet.cell(row, 1).number_format = "mmm d, yyyy"
+        header_fill = PatternFill("solid", fgColor="1F4E78")
+        for cell in sheet[1]:
+            cell.font = Font(bold=True, color="FFFFFF")
+            cell.fill = header_fill
+        table = Table(displayName="SalesTable", ref=f"A1:E{sheet.max_row}")
+        table.tableStyleInfo = TableStyleInfo(
+            name="TableStyleMedium2",
+            showRowStripes=True,
+            showColumnStripes=False,
+        )
+        sheet.add_table(table)
+        sheet.freeze_panes = "A2"
+        summary = workbook.create_sheet("Summary")
+        summary["A1"] = "Total revenue"
+        summary["B1"] = "=SUM(Sales!C2:C3)"
+        workbook.save(output)
+
+        check = load_workbook(output, data_only=False)
+        assert check.sheetnames == ["Sales", "Summary"]
+        assert check["Sales"]["E2"].value == "=C2-D2"
+        assert check["Sales"]["A2"].number_format == "mmm d, yyyy"
+        assert check["Sales"]["A1"].font.bold
+        assert check["Sales"].freeze_panes == "A2"
+        assert "SalesTable" in check["Sales"].tables
+        assert check["Summary"]["B1"].value == "=SUM(Sales!C2:C3)"
+
+
 class TestQuery:
     def test_filters_rows(self, sample_xlsx):
         result = run("query.py", str(sample_xlsx), "--filter", "Age > 28")

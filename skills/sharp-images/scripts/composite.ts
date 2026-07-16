@@ -58,15 +58,21 @@ export async function compositeImages({
     readFile(overlayPath),
   ]);
 
+  if (
+    opacity !== undefined &&
+    (!Number.isFinite(opacity) || opacity < 0 || opacity > 1)
+  ) {
+    throw new Error("Opacity must be between 0 and 1");
+  }
+
   let overlayInput = sharp(overlayBuffer);
   if (opacity !== undefined && opacity < 1) {
-    const alpha = Math.round(opacity * 255);
     overlayInput = overlayInput.ensureAlpha().composite([
       {
         blend: "dest-in" as Blend,
         input: {
           create: {
-            background: { alpha, b: 0, g: 0, r: 0 },
+            background: { alpha: opacity, b: 0, g: 0, r: 0 },
             channels: 4,
             height: 1,
             width: 1,
@@ -77,7 +83,7 @@ export async function compositeImages({
     ]);
   }
 
-  const processedOverlay = await overlayInput.toBuffer();
+  const processedOverlay = await overlayInput.png().toBuffer();
 
   const pipeline = sharp(baseBuffer).composite([
     {

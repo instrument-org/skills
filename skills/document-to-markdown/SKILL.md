@@ -5,45 +5,59 @@ description: "Convert local office documents and data files to clean Markdown fo
 
 # Document to Markdown
 
-Convert local knowledge-work files into Markdown that preserves headings,
-tables, links, and other useful structure for an agent to read and reuse.
+Convert local files into Markdown that preserves useful semantic structure for
+an agent to read and reuse. This is a closed conversion task, so prefer the
+bundled script unless the output needs custom processing.
 
 ## Dependencies
 
-The app installs this skill's locked Python dependencies when it is loaded.
-Run its scripts with `python`; do not repeat installation.
+The app installs the locked `markitdown` dependency when this skill is loaded.
+Run Python with `python`; do not repeat installation.
 
-## When to use this skill
+## Choose an approach
 
-- Convert a document into agent-readable Markdown before analysis or summarization.
-- Extract a presentation, workbook, PDF, email export, or data file into a reusable note.
-- Prepare a local document for LLM analysis without discarding its semantic structure.
+| Need                                        | Approach                                                    |
+| ------------------------------------------- | ----------------------------------------------------------- |
+| Convert one supported local file safely     | Use `convert.py`                                            |
+| Transform or combine the Markdown in memory | Use the MarkItDown API below                                |
+| Edit or create the source format            | Use the PDF, DOCX, spreadsheet, or PowerPoint skill         |
+| Preserve visual layout                      | Work in the source format; Markdown is semantic, not visual |
 
-Use the PDF, DOCX, spreadsheet, or PowerPoint skills when the task requires
-format-specific editing or creation. Use the Markdown skill for deliberate HTML
-conversion. This skill is for local document ingestion, not preserving visual
-layout exactly.
+## Custom conversion pipeline
 
-## Security
+Use the library directly when conversion is one step in a larger Python task:
 
-The script accepts only local PDF, Office, email, text, and data files. Do not
-pass untrusted URLs, enable plugins, or use cloud conversion services through
-this skill.
+```python
+from pathlib import Path
 
-## Scripts
+from markitdown import MarkItDown
 
-### `convert.py` Convert a local document to Markdown for analysis or reuse.
+source = Path("attachments/input.docx")
+result = MarkItDown(enable_plugins=False).convert_local(str(source))
+markdown = result.text_content
 
-```text
-usage: convert.py [-h] --output OUTPUT [--force] input
-
-Convert a local document to Markdown
-
-positional arguments:
-  input            Local input file
-
-options:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Markdown output path
-  --force          Overwrite an existing output file
+# Perform task-specific cleanup or combine it with other content here.
+output = Path("output/input.md")
+output.parent.mkdir(parents=True, exist_ok=True)
+output.write_text(markdown, encoding="utf-8")
 ```
+
+Keep plugins disabled. Use only local files, not URLs or cloud conversion
+services. If a format's semantics are missing, inspect it with its dedicated
+skill instead of guessing from incomplete Markdown.
+
+## Quality gate
+
+Before using or delivering the Markdown:
+
+1. Read the output and confirm the expected sections are present.
+2. Compare representative tables, links, lists, and slide or sheet boundaries
+   against the source.
+3. Report any content that the converter could not represent cleanly.
+
+## Script reference
+
+Use the script for the standard local-file conversion. Full options are in
+[`reference.md`](reference.md).
+
+- `convert.py`: Convert a local document to Markdown for analysis or reuse.

@@ -17,7 +17,9 @@ def read_excel(path: str, sheet: str | None = None) -> dict[str, list[list]]:
     try:
         import openpyxl
     except ImportError:
-        sys.exit("openpyxl not installed. Run: pip install openpyxl")
+        sys.exit(
+            "openpyxl is unavailable. Reload this skill to retry dependency setup."
+        )
 
     wb = openpyxl.load_workbook(path, data_only=True)
     names = [sheet] if sheet else wb.sheetnames
