@@ -97,6 +97,52 @@ class TestCreate:
         assert out.exists()
 
 
+class TestLibraryRecipe:
+    def test_creates_a_styled_document(self, tmp_path):
+        from docx import Document
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        from docx.shared import Inches, Pt, RGBColor
+
+        output = tmp_path / "quarterly-review.docx"
+        doc = Document()
+        section = doc.sections[0]
+        section.top_margin = Inches(0.7)
+        section.bottom_margin = Inches(0.7)
+        section.left_margin = Inches(0.8)
+        section.right_margin = Inches(0.8)
+        doc.styles["Normal"].font.name = "Aptos"
+        doc.styles["Normal"].font.size = Pt(10.5)
+
+        title = doc.add_heading("Quarterly Review", level=0)
+        title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        table = doc.add_table(rows=1, cols=3)
+        table.style = "Table Grid"
+        for cell, label in zip(
+            table.rows[0].cells,
+            ["Metric", "Current", "Target"],
+        ):
+            cell.text = label
+            for run in cell.paragraphs[0].runs:
+                run.bold = True
+                run.font.color.rgb = RGBColor(31, 78, 121)
+        cells = table.add_row().cells
+        for cell, value in zip(cells, ["Retention", "94%", "92%"]):
+            cell.text = value
+        section.footer.paragraphs[0].text = "Confidential"
+        doc.core_properties.title = "Quarterly Review"
+        doc.save(output)
+
+        check = Document(output)
+        assert check.core_properties.title == "Quarterly Review"
+        assert check.paragraphs[0].text == "Quarterly Review"
+        assert check.paragraphs[0].alignment == WD_ALIGN_PARAGRAPH.CENTER
+        assert check.styles["Normal"].font.name == "Aptos"
+        assert check.tables[0].cell(1, 1).text == "94%"
+        header_run = check.tables[0].cell(0, 0).paragraphs[0].runs[0]
+        assert header_run.font.color.rgb == RGBColor(31, 78, 121)
+        assert check.sections[0].footer.paragraphs[0].text == "Confidential"
+
+
 class TestFillTemplate:
     def test_lists_placeholders(self, template_docx):
         result = run("fill-template.py", str(template_docx), "/dev/null", "--list-placeholders")
@@ -117,6 +163,72 @@ class TestFillTemplate:
         assert "Q4 Report" in text
         assert "Acme" in text
         assert "{{" not in text
+
+    def test_escapes_xml_sensitive_values(self, template_docx, tmp_path):
+        from docx import Document
+
+        out = tmp_path / "escaped.docx"
+        values = json.dumps(
+            {
+                "REPORT_TITLE": "R&D <Q4>",
+                "CLIENT_NAME": "A > B",
+                "DATE": "2024-01-01",
+            }
+        )
+
+        result = run(
+            "fill-template.py",
+            str(template_docx),
+            str(out),
+            "--values",
+            values,
+        )
+
+        assert result.returncode == 0
+        text = "\n".join(paragraph.text for paragraph in Document(out).paragraphs)
+        assert "R&D <Q4>" in text
+        assert "A > B" in text
+
+    def test_repeats_table_rows_without_blank_rows(self, tmp_path):
+        from docx import Document
+
+        template = tmp_path / "rows-template.docx"
+        output = tmp_path / "rows-output.docx"
+        document = Document()
+        table = document.add_table(rows=4, cols=2)
+        table.rows[0].cells[0].text = "Item"
+        table.rows[0].cells[1].text = "Amount"
+        table.rows[1].cells[0].text = "{%tr for item in items %}"
+        table.rows[2].cells[0].text = "{{ item.name }}"
+        table.rows[2].cells[1].text = "{{ item.amount }}"
+        table.rows[3].cells[0].text = "{%tr endfor %}"
+        document.save(template)
+
+        result = run(
+            "fill-template.py",
+            str(template),
+            str(output),
+            "--values",
+            json.dumps(
+                {
+                    "items": [
+                        {"name": "Discovery", "amount": "$2,500"},
+                        {"name": "Delivery", "amount": "$4,000"},
+                    ]
+                }
+            ),
+        )
+
+        assert result.returncode == 0
+        rows = [
+            [cell.text for cell in row.cells]
+            for row in Document(output).tables[0].rows
+        ]
+        assert rows == [
+            ["Item", "Amount"],
+            ["Discovery", "$2,500"],
+            ["Delivery", "$4,000"],
+        ]
 
 
 class TestEdit:

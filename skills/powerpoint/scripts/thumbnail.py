@@ -2,10 +2,9 @@
 """Render a PowerPoint presentation as a thumbnail grid image.
 
 Requires LibreOffice (soffice) for PPTX-to-PDF conversion.
-PyMuPDF handles PDF-to-image rendering (no Poppler needed).
+The skill supplies PyMuPDF and Pillow for image rendering.
 
-Install:
-  pip install pymupdf Pillow
+Install the optional system dependency when needed:
   macOS:   brew install libreoffice
   Ubuntu:  apt install libreoffice
 """
@@ -39,7 +38,9 @@ def convert_to_images(pptx_path: Path, dpi: int, temp_dir: Path) -> list[Path]:
     try:
         import fitz  # PyMuPDF
     except ImportError:
-        sys.exit("pymupdf not installed. Run: pip install pymupdf")
+        sys.exit(
+            "PyMuPDF is unavailable. Reload this skill to retry dependency setup."
+        )
 
     zoom = dpi / 72
     mat = fitz.Matrix(zoom, zoom)
@@ -56,7 +57,7 @@ def create_grid(image_paths: list[Path], cols: int, output_path: Path):
     try:
         from PIL import Image, ImageDraw, ImageFont
     except ImportError:
-        sys.exit("Pillow not installed. Run: pip install Pillow")
+        sys.exit("Pillow is unavailable. Reload this skill to retry dependency setup.")
 
     if not image_paths:
         sys.exit("No slide images found")

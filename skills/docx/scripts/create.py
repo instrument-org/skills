@@ -102,7 +102,9 @@ def main():
     try:
         from docx import Document
     except ImportError:
-        sys.exit("python-docx not installed. Run: pip install python-docx")
+        sys.exit(
+            "python-docx is unavailable. Reload this skill to retry dependency setup."
+        )
 
     doc = Document()
 

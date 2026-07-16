@@ -67,10 +67,12 @@ def main():
     try:
         from docxtpl import DocxTemplate
     except ImportError:
-        sys.exit("docxtpl not installed. Run: pip install docxtpl")
+        sys.exit(
+            "docxtpl is unavailable. Reload this skill to retry dependency setup."
+        )
 
     tpl = DocxTemplate(args.input)
-    tpl.render(context)
+    tpl.render(context, autoescape=True)
     tpl.save(args.output)
     print(f"Rendered {len(context)} variable(s) -> {args.output}")
 

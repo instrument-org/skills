@@ -38,7 +38,9 @@ def main():
         import openpyxl
         from openpyxl.styles import Font, PatternFill, Alignment
     except ImportError:
-        sys.exit("openpyxl not installed. Run: pip install openpyxl")
+        sys.exit(
+            "openpyxl is unavailable. Reload this skill to retry dependency setup."
+        )
 
     # Load data
     if args.json_data:

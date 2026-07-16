@@ -17,7 +17,9 @@ def load(path: str, sheet: str | None = None):
     try:
         import pandas as pd
     except ImportError:
-        sys.exit("pandas not installed. Run: pip install pandas openpyxl")
+        sys.exit(
+            "pandas is unavailable. Reload this skill to retry dependency setup."
+        )
 
     ext = Path(path).suffix.lower()
     if ext in (".xlsx", ".xls", ".xlsm"):

@@ -24,7 +24,9 @@ def main():
         from pptx import Presentation
         from pptx.util import Emu
     except ImportError:
-        sys.exit("python-pptx not installed. Run: pip install python-pptx")
+        sys.exit(
+            "python-pptx is unavailable. Reload this skill to retry dependency setup."
+        )
 
     prs = Presentation(args.input)
     result = {}
