@@ -1,10 +1,11 @@
 # Authentication in Instrument
 
-Instrument reuses one browser target for commands in the current task. The
-target keeps its page, tabs, and `sessionStorage` while it remains live. Cookies,
-`localStorage`, IndexedDB, and service workers use the workspace's persistent
-browser profile. Upstream auth vault, named session, saved state, connection,
-and lifecycle commands are unavailable in the managed browser.
+Instrument reuses one browser target for commands in the current task and agent
+session. The target keeps its page, navigation history, and `sessionStorage`
+while it remains live. Cookies, `localStorage`, IndexedDB, and service workers
+use the workspace's persistent browser profile. Upstream auth vault, named
+session, saved state, connection, and lifecycle commands are unavailable in the
+managed browser.
 
 ## User-assisted login
 
@@ -33,10 +34,15 @@ control and verify it with text or element state.
 
 ## OAuth, SSO, CAPTCHA, and two-factor flows
 
-OAuth redirects work inside the same managed browser. Let the user complete
-provider consent, CAPTCHA, security-key, passkey, and two-factor steps in the
-visible browser. Do not automate a challenge whose purpose is human or device
-verification.
+OAuth redirects work when they stay in the same managed target. Popup-based
+OAuth and SSO flows are unavailable because the browser denies new windows and
+does not expose tabs. If the site offers a same-window sign-in path, use that.
+Otherwise report the limitation instead of trying `tab`, `window new`, or
+`click --new-tab`.
+
+Let the user complete provider consent, CAPTCHA, security-key, passkey, and
+two-factor steps in the visible browser. Do not automate a challenge whose
+purpose is human or device verification.
 
 After the user finishes, wait for the application origin or authenticated UI,
 then take a fresh snapshot because refs from before the redirect are stale.
@@ -49,10 +55,10 @@ agent-browser read
 
 ## Reuse and expiry
 
-The current task reuses its managed browser target across commands. Durable
-site data can also remain in the workspace browser profile when a target is
-recreated. Open a protected page directly and check whether the site redirects
-to login:
+The current task and agent session reuse its managed browser target across
+commands. Durable site data can also remain in the workspace browser profile
+when a target is recreated. Open a protected page directly and check whether
+the site redirects to login:
 
 ```bash
 agent-browser open https://app.example.com/dashboard

@@ -9,7 +9,7 @@ lifecycle controls because the workspace owns that context.
 
 ```bash
 agent-browser open <url>      # Navigate to URL (aliases: goto, navigate)
-                              # Supports: https://, http://, file://, about:, data://
+                              # Supports: https://, http://, about:, data:
                               # Auto-prepends https:// if no protocol given
 agent-browser read [url]      # Read active page text, or fetch URL as readable text
 agent-browser back            # Go back
@@ -44,7 +44,6 @@ agent-browser snapshot -s "#main" # Scope to CSS selector
 
 ```bash
 agent-browser click @e1           # Click
-agent-browser click @e1 --new-tab # Click and open in new tab
 agent-browser dblclick @e1        # Double-click
 agent-browser focus @e1           # Focus element
 agent-browser fill @e2 "text"     # Clear and type
@@ -211,7 +210,6 @@ agent-browser find nth 2 "a" hover
 ## Browser Settings
 
 ```bash
-agent-browser set geo 37.7749 -122.4194       # Set geolocation (alias: geolocation)
 agent-browser set offline on                  # Toggle offline mode
 agent-browser set headers '{"X-Key":"v"}'     # Extra HTTP headers
 agent-browser set media dark                  # Emulate color scheme
@@ -222,6 +220,8 @@ Do not pass HTTP credentials, tokens, or other secrets through command
 arguments. Use the user-assisted login workflow in `authentication.md`.
 Device and viewport emulation are unavailable in the managed browser. Its
 viewport follows the visible browser panel; use PDF for a full-page capture.
+Browser permission requests, including geolocation, camera, microphone, and
+notifications, are denied by the managed target.
 
 ## Cookies and Storage
 
@@ -244,23 +244,17 @@ agent-browser network requests                 # View tracked requests
 agent-browser network requests --filter api    # Filter requests
 ```
 
-## Tabs and Windows
+## Single managed target
 
-```bash
-agent-browser tab                              # List tabs with stable IDs
-agent-browser tab new [url]                    # New tab
-agent-browser tab new --label docs [url]       # New labeled tab
-agent-browser tab t2                           # Switch by stable ID
-agent-browser tab docs                         # Switch by label
-agent-browser tab close                        # Close current tab
-agent-browser tab close t2                     # Close by stable ID
-agent-browser tab close docs                   # Close by label
-```
+Instrument exposes one browser target per task and agent session. `tab`,
+`window new`, and `click --new-tab` do not provide additional pages and may
+reuse or navigate the current target. Page popups created with `window.open`,
+`target=_blank`, or equivalent link behavior are denied.
 
-Tab IDs have the form `t1`, `t2`, and so on. Positional integers are not
-accepted. IDs remain stable as other tabs open or close; labels must be unique
-within the managed target. Re-snapshot after switching because refs belong to
-the tab that was active when the snapshot ran.
+For an ordinary link that would open a new window, use `snapshot -i --urls`
+and `open` its discovered URL in the current target. Record the current URL or
+use `back` when you need to return. Workflows that require simultaneous pages,
+an opener relationship, or popup messaging are unavailable.
 
 ## Frames
 
@@ -351,10 +345,6 @@ here.
 ## Compare page states
 
 ```bash
-agent-browser snapshot
-# Perform the interaction being tested.
-agent-browser diff snapshot
-
 agent-browser snapshot > work/before.txt
 # Perform the interaction being tested.
 agent-browser diff snapshot --baseline work/before.txt
@@ -367,8 +357,11 @@ agent-browser diff url <url1> <url2>
 ```
 
 Prefer a scoped snapshot diff for semantic changes and a screenshot diff for
-layout or rendering changes. Verify that both states reached the intended URL
-and readiness condition before comparing them.
+layout or rendering changes. A snapshot diff without `--baseline` compares
+against empty content in the pinned runtime, not the preceding snapshot.
+`diff url` navigates the one managed target to each URL sequentially and leaves
+it on the second URL. Verify that both states reached the intended URL and
+readiness condition before comparing them.
 
 ## App and framework diagnostics
 
@@ -398,7 +391,7 @@ agent-browser errors                      # View page errors
 agent-browser errors --clear              # Clear errors
 agent-browser highlight @e1               # Outline a ref on the page (visual confirmation)
 agent-browser trace start                 # Start recording trace
-agent-browser trace stop trace.zip        # Stop and save trace
+agent-browser trace stop trace.json       # Stop and save trace
 agent-browser profiler start              # Start Chrome DevTools profiling
 agent-browser profiler stop trace.json    # Stop and save profile
 ```

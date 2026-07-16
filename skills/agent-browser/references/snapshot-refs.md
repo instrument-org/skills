@@ -134,7 +134,7 @@ For complex pages, snapshot specific areas:
 
 ```bash
 # Snapshot just the form
-agent-browser snapshot @e9
+agent-browser snapshot -s "form"
 ```
 
 ## Ref Notation Details
@@ -215,7 +215,7 @@ agent-browser snapshot -i
 
 ```bash
 # Snapshot specific container
-agent-browser snapshot @e5
+agent-browser snapshot -s "#results"
 
 # Or use get text for content-only extraction
 agent-browser get text @e5

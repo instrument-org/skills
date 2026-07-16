@@ -5,14 +5,14 @@ description: Browser automation CLI for AI agents. Use when the user needs to in
 
 # Browser automation with agent-browser
 
-`agent-browser` is preinstalled and keeps a browser session across commands.
-Use it as an adaptive observe, act, verify loop. Read
-[`references/commands.md`](references/commands.md) when a recipe needs a command
-or option not shown here. Open the relevant reference before guessing syntax or
-working around a failed command.
+`agent-browser` is preinstalled and reuses one managed browser target for the
+current task and agent session. Use it as an adaptive observe, act, verify
+loop. Read [`references/commands.md`](references/commands.md) when a recipe needs
+a command or option not shown here. Open the relevant reference before guessing
+syntax or working around a failed command.
 
-Every command also saves a page image under `.instrument/screenshots/`. Command
-output reports the actual path used for explicit screenshots and downloads,
+Screenshots without an explicit path are saved under `.instrument/screenshots/`.
+Command output reports the actual path used for screenshots and downloads,
 which may differ from the requested path.
 
 ## Choose an approach
@@ -64,14 +64,14 @@ identifies the same element.
 | Find controls                 | `snapshot -i`, `snapshot -i --urls`, `find`          |
 | Interact                      | `click`, `fill`, `type`, `press`, `select`, `upload` |
 | Wait and verify               | `wait`, `get url`, `is visible`, `is enabled`        |
-| Change browser context        | `tab`, `frame`, `scrollintoview`                     |
+| Change page context           | `frame`, `scrollintoview`                            |
 | Capture or export             | `screenshot`, `pdf`, `record`                        |
 | Save a browser download       | `download @ref <path>`                               |
 | Diagnose or compare app state | `dialog`, `console`, `errors`, `network`, `diff`     |
 | Inspect app performance       | `vitals`, `react`, `profiler`, `trace`               |
 
 The command map is for discovery, not a substitute for observing the page.
-Read command output before choosing refs, paths, tab IDs, frame targets, or
+Read command output before choosing refs, paths, frame targets, or
 follow-up actions.
 
 ## Critical invariants
@@ -91,6 +91,9 @@ follow-up actions.
 - Instrument manages the connection, session, profile, state, and lifecycle.
   Do not use upstream `auth`, `state`, `session`, `connect`, or `close`
   commands or their related flags.
+- Instrument exposes one browser target. Do not use `tab`, `window new`,
+  `click --new-tab`, or popup-based workflows. Follow ordinary links by
+  opening a URL discovered with `snapshot -i --urls` in the current target.
 
 ## Recover from common failures
 
@@ -201,10 +204,11 @@ a higher-resolution URL by editing path segments or query parameters.
 
 ## Recipe: authenticated work
 
-Commands in the current task reuse its managed browser target. Cookies and
-durable site storage use the workspace's persistent browser profile. Open the
-login page, let the user enter credentials or complete OAuth and two-factor
-steps in the visible browser, then wait for and verify the authenticated state.
+Commands in the current task and agent session reuse its managed browser
+target. Cookies and durable site storage use the workspace's persistent browser
+profile. Open the login page, let the user enter credentials or complete
+same-target OAuth redirects and two-factor steps in the visible browser, then
+wait for and verify the authenticated state.
 Do not ask for secrets in chat or pass them through commands. See
 [`references/authentication.md`](references/authentication.md).
 
@@ -241,7 +245,8 @@ agent-browser errors
 agent-browser network requests
 ```
 
-Use `diff snapshot` or `diff screenshot` for before-and-after assertions.
+Save an explicit baseline before using `diff snapshot --baseline` or
+`diff screenshot --baseline` for before-and-after assertions.
 For app-specific diagnostics, `vitals` measures Web Vitals, `pushstate`
 navigates an SPA without a reload, and `react` exposes the component tree when
 the page was opened with the React DevTools hook. See the command reference for
@@ -249,15 +254,15 @@ their setup and limits.
 
 ## Open a reference when
 
-| Situation                                                                      | Reference                                                              |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| Need exact command syntax, downloads, dialogs, tabs, diffs, or app diagnostics | [`references/commands.md`](references/commands.md)                     |
-| A ref is stale, targeting fails, or an iframe is involved                      | [`references/snapshot-refs.md`](references/snapshot-refs.md)           |
-| Login, OAuth, two-factor, or session expiry is involved                        | [`references/authentication.md`](references/authentication.md)         |
-| Need persistence, multiple tabs, or a clean site state                         | [`references/session-management.md`](references/session-management.md) |
-| Connectivity or proxy behavior differs from expectations                       | [`references/proxy-support.md`](references/proxy-support.md)           |
-| Diagnosing loading or interaction performance                                  | [`references/profiling.md`](references/profiling.md)                   |
-| Capturing a reproducible browser walkthrough                                   | [`references/video-recording.md`](references/video-recording.md)       |
+| Situation                                                                | Reference                                                              |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Need exact command syntax, downloads, dialogs, diffs, or app diagnostics | [`references/commands.md`](references/commands.md)                     |
+| A ref is stale, targeting fails, or an iframe is involved                | [`references/snapshot-refs.md`](references/snapshot-refs.md)           |
+| Login, OAuth, two-factor, or session expiry is involved                  | [`references/authentication.md`](references/authentication.md)         |
+| Need persistence, sequential page work, or a clean site state            | [`references/session-management.md`](references/session-management.md) |
+| Connectivity or proxy behavior differs from expectations                 | [`references/proxy-support.md`](references/proxy-support.md)           |
+| Diagnosing loading or interaction performance                            | [`references/profiling.md`](references/profiling.md)                   |
+| Capturing a reproducible browser walkthrough                             | [`references/video-recording.md`](references/video-recording.md)       |
 
 The optional `templates/capture-workflow.sh` starting point captures readable
 text, interaction structure, a viewport image, and a full-page PDF. Inspect and

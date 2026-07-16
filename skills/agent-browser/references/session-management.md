@@ -1,11 +1,12 @@
-# Managed browser targets and site state
+# Managed browser target and site state
 
 Instrument owns the browser connection, profile, state, screenshots, downloads,
-and lifecycle. Commands in the same task reuse one managed browser target.
+and lifecycle. Commands in the same task and agent session reuse one managed
+browser target.
 
 ## While the target remains live
 
-- Navigation and open tabs
+- Current page and navigation history
 - `sessionStorage`
 
 The command daemon may stop while idle without closing the browser target, so a
@@ -19,8 +20,9 @@ reconnect and do not rely on old refs.
 - IndexedDB and service workers
 - Authenticated site state backed by those stores
 
-Profile-backed data can survive target recreation. The page, tabs, refs, and
-`sessionStorage` are live-target state and should not be assumed to survive it.
+Profile-backed data can survive target recreation. The page, navigation
+history, refs, and `sessionStorage` are live-target state and should not be
+assumed to survive it.
 
 ## Unsupported upstream controls
 
@@ -29,9 +31,11 @@ Do not use these upstream surfaces in Instrument:
 - `auth`, `state`, `session`, `profiles`, `connect`, or `close` subcommands
 - `--session`, `--state`, `--profile`, `--provider`, `--cdp`, `--restore`, or
   related connection and persistence flags
+- `tab`, `window new`, `click --new-tab`, and popup-based workflows
 
-They are blocked because they would bypass or duplicate the workspace-owned
-browser context.
+The wrapper blocks connection and persistence controls because they would
+bypass or duplicate the workspace-owned context. The CDP bridge exposes only
+one page target, so its tab and window commands cannot create another page.
 
 ## Continue existing work
 
@@ -43,25 +47,24 @@ agent-browser snapshot -i
 ```
 
 Refs are tied to the latest page state, not to a saved session. Re-snapshot
-after navigation, form submission, tab changes, or major DOM updates.
+after navigation, form submission, or major DOM updates.
 
-## Tabs instead of named sessions
+## Sequential multi-page work
 
-Use tabs when one task needs several pages in the same browser context:
+Collect real URLs before leaving a page, then open them in the same target:
 
 ```bash
-agent-browser tab new --label one https://example.com/one
-agent-browser tab new --label two https://example.com/two
-agent-browser tab
-agent-browser tab one
-agent-browser tab close two
+agent-browser get url
+agent-browser snapshot -i --urls
+agent-browser open https://example.com/discovered-page
+agent-browser back
 ```
 
-The tab list also reports stable IDs such as `t1` and `t2`; positional integers
-are not accepted. Tabs share cookies and storage. They are not isolated
-identities. If a task requires separate authenticated profiles or proxy
-contexts, explain that the managed browser does not expose them and ask for a
-different workflow.
+The managed bridge exposes one page target. Although the upstream CLI
+recognizes tab and window commands, Instrument does not create additional pages
+for them and may navigate the current target. If a task requires simultaneous
+pages, popup messaging, separate authenticated profiles, or isolated proxy
+contexts, explain the limitation and ask for a different workflow.
 
 ## Resetting site state
 
@@ -73,6 +76,6 @@ agent-browser cookies clear
 agent-browser storage local clear
 ```
 
-Clearing state affects the managed project session and may sign the user out of
-other sites. Do not do it as routine cleanup. Instrument handles browser
-lifecycle automatically.
+`cookies clear` affects the workspace browser profile and may sign the user out
+of unrelated sites. `storage local clear` affects the current origin. Do not use
+either as routine cleanup. Instrument handles browser lifecycle automatically.
