@@ -8,7 +8,8 @@ description: Browser automation CLI for AI agents. Use when the user needs to in
 `agent-browser` is preinstalled and keeps a browser session across commands.
 Use it as an adaptive observe, act, verify loop. Read
 [`references/commands.md`](references/commands.md) when a recipe needs a command
-or option not shown here.
+or option not shown here. Open the relevant reference before guessing syntax or
+working around a failed command.
 
 Every command also saves a page image under `.instrument/screenshots/`. Command
 output reports the actual path used for explicit screenshots and downloads,
@@ -54,6 +55,25 @@ Refs can change after navigation, submission, or a dynamic rerender. Re-run
 `snapshot -i` before the next action instead of assuming an old ref still
 identifies the same element.
 
+## Common command map
+
+| Need                          | Commands                                             |
+| ----------------------------- | ---------------------------------------------------- |
+| Navigate                      | `open`, `back`, `forward`, `reload`                  |
+| Read content                  | `read`, `get text`, `get html`                       |
+| Find controls                 | `snapshot -i`, `snapshot -i --urls`, `find`          |
+| Interact                      | `click`, `fill`, `type`, `press`, `select`, `upload` |
+| Wait and verify               | `wait`, `get url`, `is visible`, `is enabled`        |
+| Change browser context        | `tab`, `frame`, `scrollintoview`                     |
+| Capture or export             | `screenshot`, `pdf`, `record`                        |
+| Save a browser download       | `download @ref <path>`                               |
+| Diagnose or compare app state | `dialog`, `console`, `errors`, `network`, `diff`     |
+| Inspect app performance       | `vitals`, `react`, `profiler`, `trace`               |
+
+The command map is for discovery, not a substitute for observing the page.
+Read command output before choosing refs, paths, tab indexes, frame targets, or
+follow-up actions.
+
 ## Critical invariants
 
 - Never fabricate a deep URL, identifier, or query string. Discover links from
@@ -71,6 +91,22 @@ identifies the same element.
 - Instrument manages the connection, session, profile, state, and lifecycle.
   Do not use upstream `auth`, `state`, `session`, `connect`, or `close`
   commands or their related flags.
+
+## Recover from common failures
+
+- **Ref not found or wrong element:** re-run a scoped `snapshot -i`; refs are
+  invalid after navigation and may change after any major DOM update.
+- **Unexpected timeout:** inspect the URL and visible text, then run
+  `agent-browser dialog status`. A pending `confirm` or `prompt` blocks other
+  commands until accepted or dismissed.
+- **Element missing or not clickable:** check visibility, scroll it into view,
+  and inspect the newest screenshot for overlays. Interact with a covering
+  dialog or banner before retrying the target.
+- **Text input ignores `fill` or `type`:** focus the field, then use
+  `keyboard inserttext` or `keyboard type` as the fallback.
+- **Iframe control absent:** a fresh snapshot includes one level of accessible
+  iframe content and its refs work directly. Use `frame @ref` for a scoped
+  snapshot; inaccessible cross-origin frames may require a different workflow.
 
 ## Recipe: read and research
 
@@ -173,11 +209,18 @@ Do not ask for secrets in chat or pass them through commands. See
 
 ## Recipe: downloads and captured files
 
-Use `download` on controls that trigger an actual browser download. Inline
-PDF, image, SVG, and HTML responses do not produce a download event. For those,
-use the discovered public URL or same-origin `fetch()` in browser context.
-Check the command's reported output path, inspect the saved file, and confirm
-its type and content before continuing.
+Use `download`, not `click`, on a control that triggers a browser download:
+
+```bash
+agent-browser snapshot -i
+agent-browser download @e5 work/report.pdf
+```
+
+The command authorizes the transfer and waits for it. Inline PDF, image, SVG,
+and HTML responses do not produce a download event. For those, use the
+discovered public URL or same-origin `fetch()` in browser context. Check the
+command's reported output path, which may differ from the requested path, then
+inspect the saved file and confirm its type and content before continuing.
 
 ## Recipe: diagnose a web workflow
 
@@ -197,22 +240,23 @@ agent-browser errors
 agent-browser network requests --type xhr,fetch
 ```
 
-## References
+Use `diff snapshot` or `diff screenshot` for before-and-after assertions.
+For app-specific diagnostics, `vitals` measures Web Vitals, `pushstate`
+navigates an SPA without a reload, and `react` exposes the component tree when
+the page was opened with the React DevTools hook. See the command reference for
+their setup and limits.
 
-- [`references/commands.md`](references/commands.md): managed command and option
-  reference.
-- [`references/snapshot-refs.md`](references/snapshot-refs.md): snapshot
-  formats, ref lifecycle, iframes, and targeting failures.
-- [`references/authentication.md`](references/authentication.md): user-assisted
-  login, OAuth, two-factor, managed persistence, and session expiry.
-- [`references/session-management.md`](references/session-management.md):
-  Instrument's managed session boundary, persistence, and reset options.
-- [`references/proxy-support.md`](references/proxy-support.md): managed network
-  and proxy boundaries.
-- [`references/profiling.md`](references/profiling.md): trace categories and
-  performance workflows.
-- [`references/video-recording.md`](references/video-recording.md): recording
-  workflows and limitations.
+## Open a reference when
+
+| Situation                                                                      | Reference                                                              |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Need exact command syntax, downloads, dialogs, tabs, diffs, or app diagnostics | [`references/commands.md`](references/commands.md)                     |
+| A ref is stale, targeting fails, or an iframe is involved                      | [`references/snapshot-refs.md`](references/snapshot-refs.md)           |
+| Login, OAuth, two-factor, or session expiry is involved                        | [`references/authentication.md`](references/authentication.md)         |
+| Need persistence, multiple tabs, or a clean site state                         | [`references/session-management.md`](references/session-management.md) |
+| Connectivity or proxy behavior differs from expectations                       | [`references/proxy-support.md`](references/proxy-support.md)           |
+| Diagnosing loading or interaction performance                                  | [`references/profiling.md`](references/profiling.md)                   |
+| Capturing a reproducible browser walkthrough                                   | [`references/video-recording.md`](references/video-recording.md)       |
 
 The optional `templates/capture-workflow.sh` starting point captures readable
 text, interaction structure, a viewport image, and a full-page PDF. Inspect and
