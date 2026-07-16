@@ -33,7 +33,7 @@ def main():
     try:
         import fitz  # PyMuPDF
     except ImportError:
-        sys.exit("pymupdf not installed. Run: pip install pymupdf")
+        sys.exit("PyMuPDF is missing; the PDF skill dependencies were not installed")
 
     doc = fitz.open(args.input)
     total = len(doc)

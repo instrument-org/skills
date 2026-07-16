@@ -1,321 +1,246 @@
 ---
 name: pdf
-description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text, Markdown, or images, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or inserting images. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
+description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text, Markdown, images, or SVG, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or inserting images. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
 ---
 
 # PDF
 
-Use the Python scripts in `scripts/` to work with PDF files.
+Use bundled scripts for operations they directly cover. For content, layout, or
+other generative work, write Python against the preinstalled libraries using
+the recipes below.
 
-## Dependencies
+## Runtime
 
-The app installs this skill's locked Python dependencies when it is loaded.
-Run its scripts with `python`; do not repeat installation.
+The skill installs locked versions of `reportlab`, PyMuPDF (`fitz`),
+`pdfplumber`, `pypdf`, and Pillow into the task environment. Run Python with
+`python`; do not reinstall these packages.
 
-`render-pages.py` uses PyMuPDF for native rendering -- no Poppler or external tools needed.
+Run commands from the task root. Put temporary code and previews under `work/`
+and final deliverables under `output/`. Run bundled scripts by the full path
+shown when the skill loads; do not change into the skill directory.
 
-## Scripts
+Prefer a saved `.py` file for repeatable generation. If using a heredoc, quote
+its delimiter (`<<'PY'`) so shell expansion cannot alter dollar amounts or
+other document content.
 
-### `add-page-numbers.py` Add page numbers (and optional header/footer text) to a PDF.
+## Choose an approach
+
+| Need                                            | Approach                              |
+| ----------------------------------------------- | ------------------------------------- |
+| New report, invoice, or flowing document        | Write a ReportLab Platypus script     |
+| SVG to vector PDF or SVG placed on a PDF page   | Write a PyMuPDF script                |
+| Quick text/Markdown document with simple images | Use `create-pdf.py`                   |
+| One PDF page per raster image                   | Use `image-to-pdf.py`                 |
+| Closed operation on an existing PDF             | Use the matching bundled script       |
+| Confirm appearance                              | Render every page, then read the PNGs |
+
+## Recipe: flowing document with ReportLab
+
+Use Platypus for documents whose content must wrap and flow across pages. Keep
+the generation script so layout fixes are repeatable.
+
+```python
+from pathlib import Path
+from xml.sax.saxutils import escape
+
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+
+output = Path("output/report.pdf")
+output.parent.mkdir(parents=True, exist_ok=True)
+
+styles = getSampleStyleSheet()
+body = ParagraphStyle(
+    "Body",
+    parent=styles["BodyText"],
+    fontName="Helvetica",
+    fontSize=10.5,
+    leading=15,
+    textColor=colors.HexColor("#1f2937"),
+    spaceAfter=8,
+)
+
+doc = SimpleDocTemplate(
+    str(output),
+    pagesize=letter,
+    leftMargin=0.75 * inch,
+    rightMargin=0.75 * inch,
+    topMargin=0.7 * inch,
+    bottomMargin=0.7 * inch,
+    title="Quarterly report",
+    author="Instrument",
+)
+frame_width = doc.width - 12
+frame_height = doc.height - 12
+story = [
+    Paragraph("Quarterly report", styles["Title"]),
+    Spacer(1, 0.18 * inch),
+    Paragraph(escape("Revenue improved by 18% across the quarter."), body),
+]
+# Append any tables and images before this final build call.
+doc.build(story)
+```
+
+For tables, insert this before `doc.build(story)`. Use `LongTable`, set column
+widths, wrap cell text in `Paragraph`, and repeat the header row:
+
+```python
+from reportlab.lib import colors
+from reportlab.platypus import LongTable, Paragraph, TableStyle
+
+rows = [
+    [Paragraph("Region", body), Paragraph("Revenue", body)],
+    [Paragraph("North", body), Paragraph("$124,000", body)],
+]
+table = LongTable(
+    rows,
+    colWidths=[frame_width * 0.65, frame_width * 0.35],
+    repeatRows=1,
+)
+table.setStyle(
+    TableStyle(
+        [
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e5e7eb")),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#9ca3af")),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 6),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+        ]
+    )
+)
+story.append(table)
+```
+
+## Recipe: fit a raster image in a Platypus document
+
+ReportLab does not automatically constrain images to the document frame. Add
+the fitted image to `story` before `doc.build(story)`.
+
+```python
+from reportlab.lib.utils import ImageReader
+from reportlab.platypus import Image as PDFImage
+
+
+def fitted_image(path: str, max_width: float, max_height: float) -> PDFImage:
+    width, height = ImageReader(path).getSize()
+    scale = min(max_width / width, max_height / height, 1)
+    return PDFImage(path, width=width * scale, height=height * scale)
+
+
+story.append(
+    fitted_image("attachments/chart.png", frame_width, frame_height * 0.55)
+)
+```
+
+For mixed Markdown and images, `create-pdf.py` is a quick convenience. Put a
+Markdown image on its own line: `![alt](path)`. Raster images embed directly;
+SVG inputs are rasterized. Use PyMuPDF below when SVG must remain vector.
+
+## Recipe: convert SVG to vector PDF
+
+```python
+from pathlib import Path
+
+import fitz
+
+output = Path("output/chart.pdf")
+output.parent.mkdir(parents=True, exist_ok=True)
+
+with fitz.open("attachments/chart.svg") as svg:
+    output.write_bytes(svg.convert_to_pdf())
+```
+
+To place SVG content on a larger PDF page while keeping it vector:
+
+```python
+from pathlib import Path
+
+import fitz
+
+output = Path("output/chart-page.pdf")
+output.parent.mkdir(parents=True, exist_ok=True)
+
+with fitz.open("attachments/chart.svg") as svg:
+    with fitz.open("pdf", svg.convert_to_pdf()) as vector_pdf:
+        with fitz.open() as document:
+            page = document.new_page(width=612, height=792)
+            page.show_pdf_page(
+                fitz.Rect(54, 72, 558, 387),
+                vector_pdf,
+                0,
+                keep_proportion=True,
+            )
+            document.save(str(output))
+```
+
+PDF cannot preserve SVG or CSS animation. The renderer produces a static
+representation and may ignore animation styling. Tell the user when converting
+an animated source.
+
+## ReportLab layout traps
+
+- `Paragraph` content uses XML-like markup. Escape dynamic text with
+  `xml.sax.saxutils.escape` before adding intentional tags.
+- Built-in fonts have limited glyph coverage. Register and use a suitable TTF
+  font when the document needs characters they do not contain.
+- Do not use Unicode subscript or superscript numerals with built-in fonts;
+  they may render as black boxes. Use `<sub>` and `<super>` inside `Paragraph`.
+- ReportLab canvas coordinates start at the bottom-left. PyMuPDF coordinates
+  normally start at the top-left. Confirm coordinates before mixing APIs.
+- Set table column widths explicitly. Use `Paragraph` cells for wrapping and
+  `repeatRows=1` for multi-page tables.
+- `KeepTogether` fails when its contents cannot fit on one page. Use it only
+  for small groups; use heading styles with `keepWithNext` for section titles.
+- A `SimpleDocTemplate` frame has six points of padding on each edge. Subtract
+  12 points from `doc.width` and `doc.height` when sizing full-frame content.
+- Page dimensions are points: 72 points equal one inch. Use `letter`, `A4`,
+  `landscape(...)`, or an explicit `(width, height)` tuple.
+
+## Script index
+
+Use these scripts only for operations they directly cover. Read
+[`reference.md`](reference.md) for their complete arguments before invoking
+one.
+
+- `add-page-numbers.py`: Add page numbers (and optional header/footer text) to a PDF.
+- `create-pdf.py`: Create a quick PDF from simple text or Markdown using reportlab.
+- `extract-images.py`: Extract embedded images from a PDF and save them as files.
+- `extract-links.py`: Extract hyperlinks from a PDF.
+- `extract-tables.py`: Extract tables from a PDF using pdfplumber.
+- `extract-text.py`: Extract text from a PDF file.
+- `fill-form.py`: Fill PDF form fields.
+- `get-meta.py`: Read PDF metadata.
+- `image-to-pdf.py`: Create a PDF from raster images, one image per page.
+- `insert-image.py`: Insert an image into a page of an existing PDF.
+- `merge.py`: Merge multiple PDF files into one.
+- `render-pages.py`: Render PDF pages to PNG images using PyMuPDF (no external tools required).
+- `rotate.py`: Rotate pages in a PDF.
+- `set-meta.py`: Update PDF metadata.
+- `split.py`: Split a PDF into pages or named ranges.
+- `watermark.py`: Add a text or image watermark to every page of a PDF.
+
+## Mandatory visual verification
+
+After every creation or meaningful modification:
 
 ```text
-usage: add-page-numbers.py [-h] [--start START]
-                           [--position {bottom-center,bottom-left,bottom-right,top-center,top-left,top-right}]
-                           [--format FMT] [--font-size FONT_SIZE]
-                           [--header HEADER] [--footer FOOTER]
-                           input output
-
-Add page numbers to a PDF
-
-positional arguments:
-  input                 Input PDF file
-  output                Output PDF file
-
-options:
-  -h, --help            show this help message and exit
-  --start START         Starting page number
-  --position {bottom-center,bottom-left,bottom-right,top-center,top-left,top-right}
-  --format FMT          Label format, e.g. '{page} / {total}'
-  --font-size FONT_SIZE
-  --header HEADER
-  --footer FOOTER
+python <pdf-skill-path>/scripts/render-pages.py output/result.pdf --output work/pdf-preview --dpi 150
 ```
 
-### `create-pdf.py` Create a PDF from text or Markdown using reportlab.
-
-```text
-usage: create-pdf.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
-                     [--title TITLE] [--author AUTHOR]
-
-Create a PDF from text or Markdown
-
-options:
-  -h, --help         show this help message and exit
-  --output OUTPUT    Output PDF path
-  --content CONTENT  Text content
-  --input INPUT      Input text or Markdown file
-  --title TITLE
-  --author AUTHOR
-```
-
-### `extract-images.py` Extract embedded images from a PDF and save them as files.
-
-```text
-usage: extract-images.py [-h] [--output OUTPUT] [--page PAGE] input
-
-Extract embedded images from a PDF
-
-positional arguments:
-  input            Input PDF file
-
-options:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Output directory (default: .)
-  --page PAGE      Only extract from this page (1-indexed)
-```
-
-### `extract-links.py` Extract hyperlinks from a PDF.
-
-```text
-usage: extract-links.py [-h] [--json] input
-
-Extract hyperlinks from a PDF
-
-positional arguments:
-  input       Input PDF file
-
-options:
-  -h, --help  show this help message and exit
-  --json
-```
-
-### `extract-tables.py` Extract tables from a PDF using pdfplumber.
-
-```text
-usage: extract-tables.py [-h] [--page PAGE] [--csv] [--json] input
-
-Extract tables from a PDF
-
-positional arguments:
-  input        Input PDF file
-
-options:
-  -h, --help   show this help message and exit
-  --page PAGE  Only extract from this page (1-indexed)
-  --csv        Output tables as CSV
-  --json       Output tables as JSON
-```
-
-### `extract-text.py` Extract text from a PDF file.
-
-```text
-usage: extract-text.py [-h] [--pages PAGES] [--json] input
-
-Extract text from a PDF
-
-positional arguments:
-  input          Input PDF file
-
-options:
-  -h, --help     show this help message and exit
-  --pages PAGES  Page range, e.g. 1-3 or 1,3,5
-  --json         Output structured JSON with per-page text and page count
-```
-
-### `fill-form.py` Fill PDF form fields.
-
-```text
-usage: fill-form.py [-h] [--fields FIELDS] [--list-fields] input [output]
-
-Fill PDF form fields
-
-positional arguments:
-  input            Input PDF file
-  output           Output PDF file
-
-options:
-  -h, --help       show this help message and exit
-  --fields FIELDS  JSON object of field name -> value, e.g. '{"Name":
-                   "Alice"}'
-  --list-fields    List available form fields and exit
-```
-
-### `get-meta.py` Read PDF metadata.
-
-```text
-usage: get-meta.py [-h] input
-
-Read PDF metadata
-
-positional arguments:
-  input       Input PDF file
-
-options:
-  -h, --help  show this help message and exit
-```
-
-### `image-to-pdf.py` Create a PDF from one or more image files.
-
-```text
-usage: image-to-pdf.py [-h] --output OUTPUT [--dpi DPI] inputs [inputs ...]
-
-Create a PDF from images
-
-positional arguments:
-  inputs           Input image paths
-
-options:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Output PDF path
-  --dpi DPI        Resolution metadata for the output PDF (default: 150)
-```
-
-### `insert-image.py` Insert an image into a page of an existing PDF.
-
-```text
-usage: insert-image.py [-h] --image IMAGE [--page PAGE] [--x X] [--y Y]
-                       --width WIDTH [--height HEIGHT]
-                       input output
-
-Insert an image into a PDF page
-
-positional arguments:
-  input            Input PDF file
-  output           Output PDF file
-
-options:
-  -h, --help       show this help message and exit
-  --image IMAGE    Image file to insert
-  --page PAGE      Target page (1-indexed)
-  --x X            Left position in points
-  --y Y            Top position in points
-  --width WIDTH    Image width in points
-  --height HEIGHT  Image height in points
-```
-
-### `merge.py` Merge multiple PDF files into one.
-
-```text
-usage: merge.py [-h] --output OUTPUT inputs [inputs ...]
-
-Merge PDF files
-
-positional arguments:
-  inputs           Input PDF files (in order)
-
-options:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Output PDF file
-```
-
-### `render-pages.py` Render PDF pages to PNG images using PyMuPDF (no external tools required).
-
-```text
-usage: render-pages.py [-h] [--output OUTPUT] [--dpi DPI] [--pages PAGES]
-                       input
-
-Render PDF pages to PNG images
-
-positional arguments:
-  input            Input PDF file
-
-options:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Output directory (default: .)
-  --dpi DPI        Resolution (default: 150)
-  --pages PAGES    Page range, e.g. 1-3 or 2
-```
-
-### `rotate.py` Rotate pages in a PDF.
-
-```text
-usage: rotate.py [-h] --angle {90,180,270} [--pages PAGES] input output
-
-Rotate PDF pages
-
-positional arguments:
-  input                 Input PDF file
-  output                Output PDF file
-
-options:
-  -h, --help            show this help message and exit
-  --angle {90,180,270}  Rotation angle (clockwise)
-  --pages PAGES         Comma-separated 1-indexed page numbers (default: all)
-```
-
-### `set-meta.py` Update PDF metadata.
-
-```text
-usage: set-meta.py [-h] [--title TITLE] [--author AUTHOR] [--subject SUBJECT]
-                   [--creator CREATOR]
-                   input output
-
-Update PDF metadata
-
-positional arguments:
-  input              Input PDF file
-  output             Output PDF file
-
-options:
-  -h, --help         show this help message and exit
-  --title TITLE
-  --author AUTHOR
-  --subject SUBJECT
-  --creator CREATOR
-```
-
-### `split.py` Split a PDF into pages or named ranges.
-
-```text
-usage: split.py [-h] [--output OUTPUT] [--ranges RANGES] input
-
-Split a PDF
-
-positional arguments:
-  input            Input PDF file
-
-options:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Output directory
-  --ranges RANGES  Page ranges, e.g. '1-3,4-6' or 'intro:1-2,body:3-10'
-```
-
-### `watermark.py` Add a text or image watermark to every page of a PDF.
-
-```text
-usage: watermark.py [-h] [--text TEXT] [--image IMAGE] [--opacity OPACITY]
-                    [--angle ANGLE]
-                    input output
-
-Add a watermark to a PDF
-
-positional arguments:
-  input              Input PDF file
-  output             Output PDF file
-
-options:
-  -h, --help         show this help message and exit
-  --text TEXT        Watermark text
-  --image IMAGE      Watermark image file
-  --opacity OPACITY
-  --angle ANGLE
-```
-
-## Visual verification workflow
-
-After creating or modifying a PDF, always render and inspect before delivering:
-
-```
-python scripts/render-pages.py output.pdf --output ./preview --dpi 150
-```
-
-Review the PNG files to catch clipped text, layout issues, or broken formatting.
-
-## Notes
-
-- Text extraction accuracy depends on whether the PDF has embedded text layers. Scanned PDFs
-  require OCR (not included in this skill -- use `pytesseract` + `pdf2image` for OCR).
-- `pymupdf` (fitz) handles text and image extraction and page rendering natively and quickly.
-  `pdfplumber` provides the best table detection. `pypdf` is used for structural operations
-  (merge/split/rotate/metadata/forms).
-- `fill-form.py` works with AcroForm fields. XFA forms (Adobe LiveCycle) are not supported.
+Then read every rendered PNG with the file-reading tool and compare it with the
+request. Command success, page count, and text extraction do not verify visual
+quality. Check for clipped or overlapping content, broken tables, missing
+images, literal markup, black boxes, unreadable glyphs, weak spacing, and blurry
+graphics. Fix the source and repeat the loop. Do not deliver until the latest
+inspection has zero visual or formatting defects.
+
+## Existing-PDF notes
+
+- Scanned PDFs may not have an embedded text layer. OCR is not included in the
+  base dependencies.
+- Use `pdfplumber` for layout-aware text and table extraction, PyMuPDF for page
+  rendering and image extraction, and `pypdf` for structural operations.
+- `fill-form.py` supports AcroForm fields. It does not support XFA forms.
