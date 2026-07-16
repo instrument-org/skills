@@ -55,7 +55,8 @@ intermediate files, repeated decoding, and extra lossy encodes.
 
 ### Build an exact canvas with percentage margins
 
-This produces a 1080 px square with 15 percent whitespace on every side.
+This produces a 1080 px square with at least 15 percent whitespace on every
+side. Non-square inputs receive additional whitespace along one axis.
 
 ```ts
 import { mkdir } from "node:fs/promises";

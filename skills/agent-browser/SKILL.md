@@ -237,7 +237,7 @@ agent-browser get url
 agent-browser screenshot
 agent-browser console
 agent-browser errors
-agent-browser network requests --type xhr,fetch
+agent-browser network requests
 ```
 
 Use `diff snapshot` or `diff screenshot` for before-and-after assertions.

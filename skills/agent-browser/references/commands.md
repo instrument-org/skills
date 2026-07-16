@@ -79,8 +79,48 @@ browser download. A normal `click` is not a substitute. Command output reports
 the actual saved path, which may differ from the requested path.
 
 PDF, image, SVG, and HTML responses often render inline instead of producing a
-download event. Use the discovered public URL or a same-origin browser `fetch()`
-for those files, then inspect the saved file before relying on it.
+download event. Fetch a discovered public URL with the task's HTTP tools. For an
+authenticated same-origin URL, fetch it in the page, expose the response through
+a temporary blob-backed link, then use the managed download command:
+
+```bash
+# Replace the placeholder with a same-origin URL discovered from the page.
+agent-browser eval --stdin <<'EOF'
+(async () => {
+  const sourceUrl = "<discovered-same-origin-url>";
+  const response = await fetch(sourceUrl, { credentials: "include" });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+  const previous = document.getElementById("agent-browser-fetched-file");
+  if (previous instanceof HTMLAnchorElement) {
+    URL.revokeObjectURL(previous.href);
+    previous.remove();
+  }
+  const blob = await response.blob();
+  const anchor = document.createElement("a");
+  anchor.id = "agent-browser-fetched-file";
+  anchor.href = URL.createObjectURL(blob);
+  anchor.download = "downloaded-file";
+  anchor.textContent = "Save fetched file";
+  anchor.style.cssText =
+    "position:fixed;left:0;bottom:0;z-index:2147483647";
+  document.body.append(anchor);
+  return { bytes: blob.size, sourceUrl };
+})()
+EOF
+
+agent-browser download "#agent-browser-fetched-file" work/report.pdf
+agent-browser eval --stdin <<'EOF'
+const anchor = document.getElementById("agent-browser-fetched-file");
+if (anchor instanceof HTMLAnchorElement) {
+  URL.revokeObjectURL(anchor.href);
+  anchor.remove();
+}
+EOF
+```
+
+Use only a URL already supplied or discovered from the page. Check the download
+command's reported path and inspect the saved file before relying on it.
 
 ## Read and Get Information
 
