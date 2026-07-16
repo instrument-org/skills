@@ -30,7 +30,10 @@ Save this as `<skill-path>/scripts/custom-process.ts`, then run
 `tsx <skill-path>/scripts/custom-process.ts` from the task root.
 
 ```ts
+import { mkdir } from "node:fs/promises";
 import sharp from "sharp";
+
+await mkdir("output", { recursive: true });
 
 const result = await sharp("attachments/photo.jpg", { failOn: "warning" })
   .rotate()
@@ -55,7 +58,10 @@ intermediate files, repeated decoding, and extra lossy encodes.
 This produces a 1080 px square with 15 percent whitespace on every side.
 
 ```ts
+import { mkdir } from "node:fs/promises";
 import sharp from "sharp";
+
+await mkdir("output", { recursive: true });
 
 const canvas = 1080;
 const marginFraction = 0.15;

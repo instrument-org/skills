@@ -28,7 +28,7 @@ and `tests/scripts.test.ts`. Python skills add `pyproject.toml`, a committed
 `SKILL.template.md` by running:
 
 ```bash
-tsx scripts/generate-skill-md.ts --skill skill-name
+pnpm generate:skills-md -- --skill skill-name
 ```
 
 Run this from the **workspace root** (not from inside the skill). The generator
@@ -250,7 +250,7 @@ an existing skill in the same runtime for test conventions and patterns.
 - [ ] Recipes are executable in the installed runtime and use task-relative paths
 - [ ] The skill includes a structural or visual verification loop
 - [ ] `SKILL.template.md` normally contains `{{GENERATED_SCRIPT_INDEX}}`
-- [ ] `SKILL.md` is generated from workspace root — `pnpm tsx scripts/generate-skill-md.ts --skill skill-name`
+- [ ] `SKILL.md` is generated from workspace root — `pnpm generate:skills-md -- --skill skill-name`
 
 ### Files
 
