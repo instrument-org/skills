@@ -120,9 +120,12 @@ agent-browser wait --load networkidle
 agent-browser snapshot -i --urls
 ```
 
-`read [url]` is the primary agent-friendly text or Markdown surface. With no
-URL, it reads the active page. Use `get text body` or a scoped region when the
-task specifically needs currently visible DOM copy or post-interaction state.
+`read [url]` is the primary agent-friendly text or Markdown surface. `read <url>`
+fetches the URL without the browser, so content injected by page JS (gallery
+images, prices, reviews) is absent and a near-empty result means the page is
+client-rendered; `open` it first, then `read` with no URL to read the rendered
+tab. Use `get text body` or a scoped region when the task specifically needs
+currently visible DOM copy or post-interaction state.
 Read the snapshot for controls and discovered links. On multi-page work,
 collect the real URLs once and read or open them directly. Expand accordions
 before visible-DOM extraction when the content starts hidden.
