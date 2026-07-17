@@ -208,8 +208,8 @@ if (!clean || info.channels === 4) {
   Read metadata first and use bounded concurrency.
 - A file extension does not enable a codec. Query `sharp.format` and inspect
   the actual output metadata.
-- A source's extension or a CDN `?w=&h=` URL can lie about format and alpha. A
-  `.jpg` may decode as a transparent PNG. Read metadata for the real `format`
+- A source's extension can lie about its real format and alpha; a CDN image may
+  serve PNG-with-alpha under a `.jpg` name. Read metadata for the real `format`
   and `hasAlpha` before flattening or encoding.
 - `fit: "contain"` frames the whole file, not the subject. A cutout's own
   padding then inflates the margin. `trim()` to the subject box first when

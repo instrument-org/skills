@@ -121,10 +121,9 @@ agent-browser snapshot -i --urls
 ```
 
 `read [url]` is the primary agent-friendly text or Markdown surface. `read <url>`
-fetches the URL without the browser, so content injected by page JS (gallery
-images, prices, reviews) is absent and a near-empty result means the page is
-client-rendered; `open` it first, then `read` with no URL to read the rendered
-tab. Use `get text body` or a scoped region when the task specifically needs
+fetches the URL without the browser, so content injected by page JS is absent,
+and a sparse result usually signals a client-rendered page; `open` it first,
+then `read` with no URL to read the rendered tab. Use `get text body` or a scoped region when the task specifically needs
 currently visible DOM copy or post-interaction state.
 Read the snapshot for controls and discovered links. On multi-page work,
 collect the real URLs once and read or open them directly. Expand accordions
@@ -252,12 +251,11 @@ agent-browser download @e5 work/report.pdf
 
 The command authorizes the transfer and waits for it. Inline PDF, image, SVG,
 and HTML responses do not produce a download event. For those, use the
-discovered public URL or same-origin `fetch()` in browser context; when a shell
-downloader is simplest, keep flags minimal, since the sandboxed `curl` rejects
-some options (for example `--retry`). Check the command's reported output path,
-which may differ from the requested path, then inspect the saved file and
-confirm its type and content: a CDN resize URL can return a different format
-than its extension or query implies (a `.jpg` name serving a transparent PNG).
+discovered public URL or same-origin `fetch()` in browser context. Check the
+command's reported output path, which may differ from the requested path, then
+inspect the saved file and confirm its type and content: a CDN can serve a
+different format than the extension implies, so a downloaded `.jpg` may actually
+be PNG-with-alpha.
 
 ## Recipe: diagnose a web workflow
 
