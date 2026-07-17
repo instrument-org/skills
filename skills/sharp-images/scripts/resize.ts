@@ -3,15 +3,18 @@
  * @note If neither --width nor --height is provided, the script prints image metadata instead of resizing.
  * @note `--fit contain` scales the image to fit within the target dimensions and pads the remainder with background color. `--fit cover` fills the target dimensions by cropping.
  * @note `--background` only fills the padding area added by `contain` -- it does not remove the source image's existing background. For background removal a separate tool is needed.
+ * @note Output format follows the output file extension. Transparent input written to a format without alpha (e.g. `.jpg`) is flattened onto `--background` (default white), not left to turn black.
  */
 import { readFile, writeFile } from "node:fs/promises";
-import { parse, resolve } from "node:path";
+import { extname, parse, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { cac } from "cac";
 import sharp from "sharp";
 import type { FitEnum } from "sharp";
 
 type Fit = keyof FitEnum;
+
+type OutputFormat = "avif" | "gif" | "jpeg" | "png" | "tiff" | "webp";
 
 const VALID_FITS = new Set<Fit>([
   "contain",
@@ -20,6 +23,21 @@ const VALID_FITS = new Set<Fit>([
   "inside",
   "outside",
 ]);
+
+const FORMAT_BY_EXTENSION: Record<string, OutputFormat> = {
+  ".avif": "avif",
+  ".gif": "gif",
+  ".jpeg": "jpeg",
+  ".jpg": "jpeg",
+  ".png": "png",
+  ".tif": "tiff",
+  ".tiff": "tiff",
+  ".webp": "webp",
+};
+
+// Formats without an alpha channel: transparent input must be flattened onto a
+// background before encoding, or Sharp drops the transparency to black.
+const OPAQUE_FORMATS = new Set<OutputFormat>(["jpeg"]);
 
 export async function resizeImage({
   inputPath,
@@ -49,17 +67,28 @@ export async function resizeImage({
   withoutEnlargement?: boolean;
 }) {
   const buffer = await readFile(inputPath);
-  const resized = await sharp(buffer)
-    .resize({
-      background,
-      fit,
-      height,
-      kernel,
-      position,
-      width,
-      withoutEnlargement,
-    })
-    .toBuffer({ resolveWithObject: true });
+  let pipeline = sharp(buffer).resize({
+    background,
+    fit,
+    height,
+    kernel,
+    position,
+    width,
+    withoutEnlargement,
+  });
+
+  // Encode to the format named by the output extension. Without this Sharp
+  // keeps the input format and silently writes, e.g., PNG bytes into a `.jpg`
+  // file -- so a transparent PNG "saved as JPEG" stays a transparent PNG.
+  const format = FORMAT_BY_EXTENSION[extname(outputPath).toLowerCase()];
+  if (format) {
+    if (OPAQUE_FORMATS.has(format)) {
+      pipeline = pipeline.flatten({ background: background ?? "#ffffff" });
+    }
+    pipeline = pipeline.toFormat(format);
+  }
+
+  const resized = await pipeline.toBuffer({ resolveWithObject: true });
 
   await writeFile(outputPath, resized.data);
 

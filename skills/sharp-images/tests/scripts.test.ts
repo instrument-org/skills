@@ -115,6 +115,32 @@ describe("resizeImage", () => {
 
     expect(result.width).toBe(300);
   });
+
+  it("encodes to the format named by the output extension", async () => {
+    const outputPath = path.join(os.tmpdir(), "resize-format.jpg");
+    await resizeImage({ inputPath: testPng, outputPath, width: 50 });
+
+    const metadata = await sharp(outputPath).metadata();
+    expect(metadata.format).toBe("jpeg");
+  });
+
+  it("flattens transparent input when the target format has no alpha", async () => {
+    const outputPath = path.join(os.tmpdir(), "resize-alpha-to-jpg.jpg");
+    await resizeImage({ inputPath: testPngWithAlpha, outputPath, width: 50 });
+
+    const metadata = await sharp(outputPath).metadata();
+    expect(metadata.format).toBe("jpeg");
+    expect(metadata.hasAlpha).toBe(false);
+  });
+
+  it("preserves alpha when the target format supports it", async () => {
+    const outputPath = path.join(os.tmpdir(), "resize-alpha-to-png.png");
+    await resizeImage({ inputPath: testPngWithAlpha, outputPath, width: 50 });
+
+    const metadata = await sharp(outputPath).metadata();
+    expect(metadata.format).toBe("png");
+    expect(metadata.hasAlpha).toBe(true);
+  });
 });
 
 describe("cropImage", () => {

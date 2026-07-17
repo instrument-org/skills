@@ -192,6 +192,7 @@ Options:
 > If neither --width nor --height is provided, the script prints image metadata instead of resizing.
 > `--fit contain` scales the image to fit within the target dimensions and pads the remainder with background color. `--fit cover` fills the target dimensions by cropping.
 > `--background` only fills the padding area added by `contain` -- it does not remove the source image's existing background. For background removal a separate tool is needed.
+> Output format follows the output file extension. Transparent input written to a format without alpha (e.g. `.jpg`) is flattened onto `--background` (default white), not left to turn black.
 
 ## `rotate.ts` Rotate or flip an image
 
