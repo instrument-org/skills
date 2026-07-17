@@ -210,7 +210,7 @@ before reading, and capture each variant before moving to the next.
 
 - If the same asset URLs repeat across every variant, you are reading a stale
   gallery, not proof the variants share images. Selection often changes a URL
-  parameter (`?color=`, `?variant=`, `dwvar_...`); open that per-variant URL
+  parameter (`?color=`, `?variant=`); open that per-variant URL
   directly, or read the variation endpoint from `network requests`, instead of
   clicking swatches.
 - After selecting a variant, wait for the specific image to change

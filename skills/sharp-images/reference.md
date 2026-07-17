@@ -168,7 +168,7 @@ Options:
 
 Exports:
 
-- `resizeImage({ inputPath, outputPath, width, height, fit, withoutEnlargement, background, kernel, position, }: { background?: string; fit?: Fit; height?: number; inputPath: string; kernel?: "cubic" | "lanczos2" | "lanczos3" | "linear" | "mitchell" | "nearest"; outputPath: string; position?: string; width?: number; withoutEnlargement?: boolean; }): Promise<{ bytes: number; fit: keyof sharp.FitEnum; height: number; outputPath: string; width: number; }>`
+- `resizeImage({ inputPath, outputPath, width, height, fit, withoutEnlargement, background, kernel, position, flatten, }: { background?: string; fit?: Fit; flatten?: boolean; height?: number; inputPath: string; kernel?: "cubic" | "lanczos2" | "lanczos3" | "linear" | "mitchell" | "nearest"; outputPath: string; position?: string; width?: number; withoutEnlargement?: boolean; }): Promise<{ bytes: number; fit: keyof sharp.FitEnum; height: number; outputPath: string; width: number; }>`
 
 ```text
 resize
@@ -182,6 +182,7 @@ Options:
   --fit <mode>           Resize fit mode (default: cover)
   --output <path>        Output image path
   --background <color>   Background color for contain fit
+  --flatten              Composite transparency onto --background (default white)
   --kernel <kernel>      Resize kernel
   --no-enlarge           Prevent upscaling smaller inputs (default: true)
   --position <position>  Gravity/crop position
@@ -191,7 +192,7 @@ Options:
 > [!NOTE]
 > If neither --width nor --height is provided, the script prints image metadata instead of resizing.
 > `--fit contain` scales the image to fit within the target dimensions and pads the remainder with background color. `--fit cover` fills the target dimensions by cropping.
-> `--background` only fills the padding area added by `contain` -- it does not remove the source image's existing background. For background removal a separate tool is needed.
+> `--background` only fills the padding area added by `contain`; it does not touch the image's own pixels. Pass `--flatten` to composite existing transparency onto `--background` (e.g. a cut-out PNG onto solid white with no checkerboard). Removing an opaque background still needs a separate tool.
 > Output format follows the output file extension. Transparent input written to a format without alpha (e.g. `.jpg`) is flattened onto `--background` (default white), not left to turn black.
 
 ## `rotate.ts` Rotate or flip an image

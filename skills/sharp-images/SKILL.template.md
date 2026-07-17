@@ -53,6 +53,21 @@ console.log(result);
 `rotate()` without an angle applies EXIF orientation. Chaining avoids
 intermediate files, repeated decoding, and extra lossy encodes.
 
+### Put a product on a clean white background
+
+The most common request. Choose the path before writing code:
+
+- Subject already isolated on white or transparent (most catalog and product
+  photos): do not remove the background. Flatten and pad with the canvas recipe
+  below. Re-segmenting a clean image only adds edge halos and color fringing.
+- Subject on a busy or multi-object background: cut it out first with the
+  `local-ml` skill (prefer a BiRefNet model for hair or fine edges), then pad
+  the returned PNG with the canvas recipe below.
+
+The canvas recipe flattens transparency onto the background, so a cut-out PNG
+lands on solid white with no checkerboard. To place an existing image on white
+without changing its geometry, use `flatten({ background: "#ffffff" })` alone.
+
 ### Build an exact canvas with percentage margins
 
 This produces a 1080 px square with at least 15 percent whitespace on every

@@ -105,6 +105,7 @@ options:
 ```text
 usage: remove-background.py [-h] [--output OUTPUT]
                             [--model {u2net,u2net_human_seg,isnet-general-use,birefnet-general,birefnet-general-lite}]
+                            [--alpha-matting]
                             input
 
 Remove image background
@@ -116,7 +117,12 @@ options:
   -h, --help            show this help message and exit
   --output OUTPUT       Output PNG path (default: <input>-nobg.png)
   --model {u2net,u2net_human_seg,isnet-general-use,birefnet-general,birefnet-general-lite}
-                        Model to use (default: u2net)
+                        u2net: fast, high-contrast subjects (default).
+                        birefnet-general: best edges for hair/fur, ~1 GB
+                        download. birefnet-general-lite: lighter BiRefNet.
+                        u2net_human_seg: people. isnet-general-use: general.
+  --alpha-matting       Refine edges to reduce halos/fringing (slower; helps
+                        u2net/isnet).
 ```
 
 ## `speech-to-text.py` Transcribe audio to text using Whisper.

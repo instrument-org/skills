@@ -141,6 +141,21 @@ describe("resizeImage", () => {
     expect(metadata.format).toBe("png");
     expect(metadata.hasAlpha).toBe(true);
   });
+
+  it("flattens transparency onto the background when flatten is set", async () => {
+    const outputPath = path.join(os.tmpdir(), "resize-alpha-flatten.png");
+    await resizeImage({
+      background: "#ffffff",
+      flatten: true,
+      inputPath: testPngWithAlpha,
+      outputPath,
+      width: 50,
+    });
+
+    const metadata = await sharp(outputPath).metadata();
+    expect(metadata.format).toBe("png");
+    expect(metadata.hasAlpha).toBe(false);
+  });
 });
 
 describe("cropImage", () => {

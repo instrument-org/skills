@@ -2,7 +2,7 @@
  * Resize an image to specified dimensions with configurable fit mode
  * @note If neither --width nor --height is provided, the script prints image metadata instead of resizing.
  * @note `--fit contain` scales the image to fit within the target dimensions and pads the remainder with background color. `--fit cover` fills the target dimensions by cropping.
- * @note `--background` only fills the padding area added by `contain` -- it does not remove the source image's existing background. For background removal a separate tool is needed.
+ * @note `--background` only fills the padding area added by `contain`; it does not touch the image's own pixels. Pass `--flatten` to composite existing transparency onto `--background` (e.g. a cut-out PNG onto solid white with no checkerboard). Removing an opaque background still needs a separate tool.
  * @note Output format follows the output file extension. Transparent input written to a format without alpha (e.g. `.jpg`) is flattened onto `--background` (default white), not left to turn black.
  */
 import { readFile, writeFile } from "node:fs/promises";
@@ -49,9 +49,11 @@ export async function resizeImage({
   background,
   kernel,
   position,
+  flatten,
 }: {
   background?: string;
   fit?: Fit;
+  flatten?: boolean;
   height?: number;
   inputPath: string;
   kernel?:
@@ -81,10 +83,13 @@ export async function resizeImage({
   // keeps the input format and silently writes, e.g., PNG bytes into a `.jpg`
   // file -- so a transparent PNG "saved as JPEG" stays a transparent PNG.
   const format = FORMAT_BY_EXTENSION[extname(outputPath).toLowerCase()];
+
+  // Opaque formats must flatten or transparency turns black; `--flatten`
+  // forces it for any format so a cut-out lands on a solid background.
+  if (flatten || (format && OPAQUE_FORMATS.has(format))) {
+    pipeline = pipeline.flatten({ background: background ?? "#ffffff" });
+  }
   if (format) {
-    if (OPAQUE_FORMATS.has(format)) {
-      pipeline = pipeline.flatten({ background: background ?? "#ffffff" });
-    }
     pipeline = pipeline.toFormat(format);
   }
 
@@ -109,6 +114,10 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   cli.option("--fit <mode>", "Resize fit mode", { default: "cover" });
   cli.option("--output <path>", "Output image path");
   cli.option("--background <color>", "Background color for contain fit");
+  cli.option(
+    "--flatten",
+    "Composite transparency onto --background (default white)",
+  );
   cli.option("--kernel <kernel>", "Resize kernel");
   cli.option("--no-enlarge", "Prevent upscaling smaller inputs");
   cli.option("--position <position>", "Gravity/crop position");
@@ -146,6 +155,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const result = await resizeImage({
     background: options.background,
     fit: fit as Fit,
+    flatten: options.flatten,
     height,
     inputPath,
     kernel: options.kernel as "lanczos3" | undefined,

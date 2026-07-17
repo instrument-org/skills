@@ -149,6 +149,13 @@ for source in Path("attachments").glob("*"):
     (destination / f"{source.stem}.png").write_bytes(result)
 ```
 
+`u2net` is fast and fine for high-contrast subjects. For hair, fur, or edges
+that fringe into a gray or colored halo, switch to
+`new_session("birefnet-general")` (about 1 GB on first use) or pass
+`alpha_matting=True` to `remove`. Do not segment an image that is already
+cleanly isolated; flatten or composite it onto the target color instead (see
+Traps).
+
 ### Preserve transcript timestamps
 
 ```python
