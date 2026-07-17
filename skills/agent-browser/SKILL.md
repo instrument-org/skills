@@ -172,6 +172,8 @@ EOF
 ```
 
 `eval` returns the expression value. It does not return `console.log` output.
+It runs JavaScript, not TypeScript: type annotations or other TS-only syntax
+(`(img: any) => ...`) throw `SyntaxError`.
 
 ## Recipe: visual review
 
@@ -198,9 +200,12 @@ must remain associated or attributes contain the required values. Return JSON
 with source URLs and stable labels, save it under `work/`, then validate sample
 records against the page.
 
-Lazy images may expose placeholders until scrolled into view. Read `srcset`,
-`data-*` attributes, or the URL the detail page actually serves. Do not invent
-a higher-resolution URL by editing path segments or query parameters.
+To collect image URLs, note that `read` and `get text` return prose, not
+`<img>` sources; enumerate `document.images` (`src`, `currentSrc`, `srcset`)
+with `eval`. Lazy images may expose placeholders until scrolled into view. Read
+`srcset`, `data-*` attributes, or the URL the detail page actually serves. Do
+not invent a higher-resolution URL by editing path segments or query
+parameters.
 
 ## Recipe: product variants and galleries
 
@@ -244,9 +249,12 @@ agent-browser download @e5 work/report.pdf
 
 The command authorizes the transfer and waits for it. Inline PDF, image, SVG,
 and HTML responses do not produce a download event. For those, use the
-discovered public URL or same-origin `fetch()` in browser context. Check the
-command's reported output path, which may differ from the requested path, then
-inspect the saved file and confirm its type and content before continuing.
+discovered public URL or same-origin `fetch()` in browser context; when a shell
+downloader is simplest, keep flags minimal, since the sandboxed `curl` rejects
+some options (for example `--retry`). Check the command's reported output path,
+which may differ from the requested path, then inspect the saved file and
+confirm its type and content: a CDN resize URL can return a different format
+than its extension or query implies (a `.jpg` name serving a transparent PNG).
 
 ## Recipe: diagnose a web workflow
 
