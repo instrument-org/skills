@@ -180,6 +180,12 @@ PDF cannot preserve SVG or CSS animation. The renderer produces a static
 representation and may ignore animation styling. Tell the user when converting
 an animated source.
 
+Some SVG renderers also do not fully honor stylesheets or class selectors.
+Render and inspect the PDF after conversion. If critical colors, strokes, or
+text styling are lost, copy the SVG into `work/`, inline the required
+presentation attributes on that PDF-specific copy, and regenerate the PDF.
+Do not modify an already delivered SVG just to make its PDF rendering work.
+
 ## ReportLab layout traps
 
 - `Paragraph` content uses XML-like markup. Escape dynamic text with
