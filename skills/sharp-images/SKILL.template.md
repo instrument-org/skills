@@ -68,10 +68,13 @@ The canvas recipe flattens transparency onto the background, so a cut-out PNG
 lands on solid white with no checkerboard. To place an existing image on white
 without changing its geometry, use `flatten({ background: "#ffffff" })` alone.
 
-### Build an exact canvas with percentage margins
+### Center a subject on white with matched whitespace
 
-This produces a 1080 px square with at least 15 percent whitespace on every
-side. Non-square inputs receive additional whitespace along one axis.
+`fit: "contain"` scales the whole file, so a cutout that already carries its own
+transparent or white padding keeps it and your margin will not match a
+reference. Trim to the subject first, then pad. To match a reference exactly,
+measure its subject the same way (`trim` on its background color) and reuse that
+fraction as `marginFraction`.
 
 ```ts
 import { mkdir } from "node:fs/promises";
@@ -80,19 +83,19 @@ import sharp from "sharp";
 await mkdir("output", { recursive: true });
 
 const canvas = 1080;
-const marginFraction = 0.15;
-const padding = Math.round(canvas * marginFraction);
-const content = canvas - padding * 2;
+const marginFraction = 0.15; // whitespace on the subject's longest axis
+const content = Math.round(canvas * (1 - marginFraction * 2));
+const padding = Math.round((canvas - content) / 2);
 const background = "#ffffff";
 
-await sharp("attachments/product.png")
+// Trim the transparent (or uniform) border down to the subject's real box.
+const subject = await sharp("attachments/product.png")
   .rotate()
-  .resize({
-    background,
-    fit: "contain",
-    height: content,
-    width: content,
-  })
+  .trim()
+  .toBuffer();
+
+await sharp(subject)
+  .resize({ background, fit: "contain", height: content, width: content })
   .flatten({ background })
   .extend({
     background,
@@ -101,9 +104,14 @@ await sharp("attachments/product.png")
     right: padding,
     top: padding,
   })
-  .png()
-  .toFile("output/product-square.png");
+  .jpeg({ chromaSubsampling: "4:4:4", mozjpeg: true, quality: 90 })
+  .toFile("output/product-square.jpg");
 ```
+
+`trim()` on a transparent cutout removes fully clear margins; on an opaque
+source pass `trim({ background: "#ffffff" })`. A baked soft shadow is
+semi-transparent, so `trim` keeps it and `flatten` renders it gray -- see Traps
+to drop it when the brief says no shadow.
 
 ### Process a batch with bounded concurrency
 
@@ -154,6 +162,37 @@ for (const [format, support] of Object.entries(sharp.format)) {
 If the requested format reports no output support, choose a supported format
 or tell the user about the limitation. Do not silently change extensions.
 
+### Verify a flat background numerically
+
+Opening the result matters, but model vision is unreliable for flat color and
+whitespace: it both misses a real halo and reports one that is not there. For
+those checks, assert in code -- corners and a below-subject sample must be pure
+white, and the output must carry no alpha.
+
+```ts
+import sharp from "sharp";
+
+const { data, info } = await sharp("output/product-square.jpg")
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+const px = (x: number, y: number) => {
+  const i = (y * info.width + x) * info.channels;
+  return [data[i], data[i + 1], data[i + 2]] as const;
+};
+const samples = [
+  px(2, 2),
+  px(info.width - 3, 2),
+  px(2, info.height - 3),
+  px(info.width - 3, info.height - 3),
+  px(info.width >> 1, info.height - 3),
+];
+const clean = samples.every(([r, g, b]) => r === 255 && g === 255 && b === 255);
+console.log({ channels: info.channels, clean, samples });
+if (!clean || info.channels === 4) {
+  throw new Error("background is not clean opaque white");
+}
+```
+
 ## Traps
 
 - Apply `rotate()` before geometry operations when EXIF orientation matters.
@@ -169,6 +208,16 @@ or tell the user about the limitation. Do not silently change extensions.
   Read metadata first and use bounded concurrency.
 - A file extension does not enable a codec. Query `sharp.format` and inspect
   the actual output metadata.
+- A source's extension or a CDN `?w=&h=` URL can lie about format and alpha. A
+  `.jpg` may decode as a transparent PNG. Read metadata for the real `format`
+  and `hasAlpha` before flattening or encoding.
+- `fit: "contain"` frames the whole file, not the subject. A cutout's own
+  padding then inflates the margin. `trim()` to the subject box first when
+  whitespace must match a target.
+- A semi-transparent baked shadow flattens to gray. When the brief says no
+  shadow, binarize the alpha to 0 or 255 before `flatten` (threshold the
+  extracted alpha channel, or zero every alpha below a cutoff in a raw pass),
+  then trim and flatten.
 
 ## Verification
 
@@ -182,6 +231,8 @@ it. A script exiting cleanly is not verification.
   output and compare directly. Match it, do not estimate.
 - Read output metadata and assert the expected format, dimensions, alpha, and
   page count, and confirm the file extension matches the encoded format.
+- Confirm flat backgrounds and exact margins numerically (sample corner and
+  below-subject pixels; check the channel count), not by eye alone.
 - For a set that should vary (one per color, angle, or item), confirm the
   outputs actually differ. Identical bytes across items that should be distinct
   means the pipeline reprocessed one source, not that it succeeded.
