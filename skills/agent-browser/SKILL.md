@@ -202,6 +202,27 @@ Lazy images may expose placeholders until scrolled into view. Read `srcset`,
 `data-*` attributes, or the URL the detail page actually serves. Do not invent
 a higher-resolution URL by editing path segments or query parameters.
 
+## Recipe: product variants and galleries
+
+Selecting a color, size, or thumbnail usually swaps the gallery through a
+script or network fetch, not by mutating `img.src` on click. Confirm the change
+before reading, and capture each variant before moving to the next.
+
+- If the same asset URLs repeat across every variant, you are reading a stale
+  gallery, not proof the variants share images. Selection often changes a URL
+  parameter (`?color=`, `?variant=`, `dwvar_...`); open that per-variant URL
+  directly, or read the variation endpoint from `network requests`, instead of
+  clicking swatches.
+- After selecting a variant, wait for the specific image to change
+  (`wait --fn` on the `src`, or `wait --load networkidle` then re-read) rather
+  than a fixed sleep, then extract that variant's URLs.
+- Handle one variant fully, then the next. Do not click through every variant
+  and screenshot afterward -- every capture then shows only the final state.
+  Distinct variants that yield byte-identical outputs are a bug, not a result.
+- Consent, newsletter, and region overlays (OneTrust, marketing popups)
+  intercept clicks. Dismiss the overlay via its own button, then re-snapshot;
+  refs shift once it closes.
+
 ## Recipe: authenticated work
 
 Commands in the current task and agent session reuse its managed browser
