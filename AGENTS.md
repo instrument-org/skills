@@ -14,6 +14,11 @@ Skill/template registry for the Instrument desktop app. Not an app.
 - Treat a skill as a recipe book for solving a domain, not as a catalog of CLI
   wrappers. Teach the agent how to choose an approach, compose the installed
   libraries, and verify the result.
+- Fix skills for the general case, not the transcript. When a failure report
+  motivates a change, encode the durable rule (how a tool really works, a
+  transferable technique) and drop the incidental specifics that exposed it: the
+  one-off site, vendor, CDN token, error string, or environment quirk. Test:
+  would it help on a different task, or only replay this one?
 - Keep scripts for closed, repeatable operations. For generative, layout, data,
   or multi-step work, include executable library recipes and make direct code
   the primary route.
