@@ -157,14 +157,22 @@ or tell the user about the limitation. Do not silently change extensions.
 
 ## Verification
 
+You do not know an image is right until you have opened the output and looked at
+it. A script exiting cleanly is not verification.
+
+- Open the result and inspect it for crop, padding, orientation, color,
+  transparency, text, and compositing defects -- at full resolution for lossy
+  output, not just a thumbnail.
+- When the user gave a reference or a target framing, open it alongside the
+  output and compare directly. Match it, do not estimate.
 - Read output metadata and assert the expected format, dimensions, alpha, and
-  page count.
-- Compare output file size when optimization is part of the request.
-- Inspect representative images visually for crop, padding, orientation,
-  color, transparency, text, and compositing defects.
+  page count, and confirm the file extension matches the encoded format.
+- For a set that should vary (one per color, angle, or item), confirm the
+  outputs actually differ. Identical bytes across items that should be distinct
+  means the pipeline reprocessed one source, not that it succeeded.
 - For batches, verify input and output counts and report skipped files.
-- For lossy output, inspect details at full resolution instead of only a
-  thumbnail.
+- If you could not complete a check, say so; do not imply an inspection you did
+  not run.
 
 ## Script index
 
