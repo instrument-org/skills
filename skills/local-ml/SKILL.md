@@ -183,6 +183,12 @@ Path("output/transcript.txt").write_text(
 
 ## Traps
 
+- Do not remove a background that is already clean. Inspect the source first
+  (`Image.open(path).mode` for an alpha channel; view it for a solid backdrop).
+  Product and catalog images are often already isolated on white or already
+  transparent, and re-segmenting them only adds edge fringing and color halos.
+  When the goal is a solid background, flatten or composite the existing image
+  onto that color (the `sharp-images` skill) instead of running removal.
 - Load each model once. Repeated script invocations repeat initialization and
   may repeat expensive setup.
 - Model output is probabilistic. Preserve scores and review low-confidence or
