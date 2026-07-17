@@ -10,9 +10,6 @@ importers:
 
   .:
     dependencies:
-      '@mdpdf/mdpdf':
-        specifier: ^0.1.4
-        version: 0.1.4
       cac:
         specifier: ^6.7.14
         version: 6.7.14
@@ -30,50 +27,31 @@ importers:
         specifier: ^5.0.5
         version: 5.0.6
 
+  ../..: {}
+
+  ../../templates/basic: {}
+
+  ../barcodes: {}
+
+  ../document-to-markdown: {}
+
+  ../docx: {}
+
+  ../local-ml: {}
+
+  ../pdf: {}
+
+  ../powerpoint: {}
+
+  ../sharp-images: {}
+
+  ../spreadsheet: {}
+
+  ../wireframe: {}
+
+  ../zip: {}
+
 packages:
-
-  '@mdpdf/mdpdf-darwin-arm64@0.1.4':
-    resolution: {integrity: sha512-WVfKlZgboAvudJHCr7PTdGgKNEUIUWwW/Md4MTzXamKfcfvJ6ORm8vQ6wx0jmfjBH1UwjqnINlxxYEUt1Jf7dw==}
-    engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@mdpdf/mdpdf-darwin-x64@0.1.4':
-    resolution: {integrity: sha512-tDaEuVhuFagWmSJuS44HeG4S2VzsMCV30JaF+1zMGKxnGYtuXEL+q+Lklvt1T6JkaHaZjHVEA5klz1XXTNDDHA==}
-    engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@mdpdf/mdpdf-linux-arm64-gnu@0.1.4':
-    resolution: {integrity: sha512-Rhy5DI3uwKNjeS+JW33CZdguFYZ0uRmc5iOLDdHl2bvmDPUzfAQSD1g6KJtqrqyDXbTe2N9jP+NOCVtkOSpw3Q==}
-    engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@mdpdf/mdpdf-linux-x64-gnu@0.1.4':
-    resolution: {integrity: sha512-NWpMYDBr1z59H9GlQdBizI8H8ODygui7j9NHpn2qiMrcnMvPBtmkH84YaXSHSYmUQ41UafRA/bnY5h5tkQb+Bw==}
-    engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@mdpdf/mdpdf-linux-x64-musl@0.1.4':
-    resolution: {integrity: sha512-dwwVfZpNONyYUFkFjrgRq5igEVqCMetkYR+cCmH0fD6b0mq2gsa7/mrSUPZGX5sz/dJ5hePmJb2hRBIL9Fu3yQ==}
-    engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@mdpdf/mdpdf-win32-x64-msvc@0.1.4':
-    resolution: {integrity: sha512-NQBTbhbe+i1HjC4F4WXDiYiItBm0j3LFVpz3uaZgz88umF656j0n4YgOeJKRRx6S4k+l3nzvu19GFoR3ocHLdg==}
-    engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
-    cpu: [x64]
-    os: [win32]
-
-  '@mdpdf/mdpdf@0.1.4':
-    resolution: {integrity: sha512-xGaqXEsuIylP0lQiA17BLb7ERMvcY3VRuyBOGbTRu6TjgrX4BZHPdoi6oUCUOi8sV/vZJYnjy7Xo/b/cX9lzsQ==}
-    engines: {node: '>= 18.17.0 < 19 || >= 20.3.0 < 21 || >= 21.0.0'}
 
   '@mixmark-io/domino@2.2.0':
     resolution: {integrity: sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==}
@@ -98,33 +76,6 @@ packages:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
 snapshots:
-
-  '@mdpdf/mdpdf-darwin-arm64@0.1.4':
-    optional: true
-
-  '@mdpdf/mdpdf-darwin-x64@0.1.4':
-    optional: true
-
-  '@mdpdf/mdpdf-linux-arm64-gnu@0.1.4':
-    optional: true
-
-  '@mdpdf/mdpdf-linux-x64-gnu@0.1.4':
-    optional: true
-
-  '@mdpdf/mdpdf-linux-x64-musl@0.1.4':
-    optional: true
-
-  '@mdpdf/mdpdf-win32-x64-msvc@0.1.4':
-    optional: true
-
-  '@mdpdf/mdpdf@0.1.4':
-    optionalDependencies:
-      '@mdpdf/mdpdf-darwin-arm64': 0.1.4
-      '@mdpdf/mdpdf-darwin-x64': 0.1.4
-      '@mdpdf/mdpdf-linux-arm64-gnu': 0.1.4
-      '@mdpdf/mdpdf-linux-x64-gnu': 0.1.4
-      '@mdpdf/mdpdf-linux-x64-musl': 0.1.4
-      '@mdpdf/mdpdf-win32-x64-msvc': 0.1.4
 
   '@mixmark-io/domino@2.2.0': {}
 

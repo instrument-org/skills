@@ -1,6 +1,6 @@
 ---
 name: markdown
-description: "Convert between HTML and Markdown, and convert Markdown to PDF. Use when converting HTML to markdown, markdown to PDF, turndown, html-to-md, md-to-pdf."
+description: "Convert between HTML and Markdown. Use when converting HTML to markdown, turndown, or html-to-md."
 ---
 
 # Markdown
@@ -12,12 +12,10 @@ below.
 
 ## Choose an approach
 
-| Need                                       | Approach                                      |
-| ------------------------------------------ | --------------------------------------------- |
-| Ordinary HTML file or fragment to Markdown | Use `html-to-md.ts`                           |
-| Remove, preserve, or rewrite HTML elements | Write a Turndown conversion recipe            |
-| Quick Markdown file to PDF                 | Use `md-to-pdf.ts`                            |
-| Designed or precisely laid-out PDF         | Load the PDF skill and use its layout recipes |
+| Need                                       | Approach                           |
+| ------------------------------------------ | ---------------------------------- |
+| Ordinary HTML file or fragment to Markdown | Use `html-to-md.ts`                |
+| Remove, preserve, or rewrite HTML elements | Write a Turndown conversion recipe |
 
 ## Recipe: customize HTML conversion
 
@@ -68,13 +66,8 @@ list nesting, links, image paths, tables, code fences, and any custom elements.
 Conversion success does not prove that the source hierarchy or meaning was
 preserved.
 
-`md-to-pdf.ts` is a quick convenience with limited layout control. After using
-it, render and inspect the PDF with the PDF skill. Use the PDF skill directly
-when page layout, fonts, tables, headers, or visual polish matter.
-
 ## Script index
 
 Read [`reference.md`](reference.md) for complete arguments.
 
 - `html-to-md.ts`: Convert an HTML file or string to Markdown
-- `md-to-pdf.ts`: Convert a Markdown file to PDF

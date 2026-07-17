@@ -5,7 +5,6 @@ import { describe, expect, it } from "vitest";
 import { convertHtmlFile, convertHtmlString } from "../scripts/html-to-md.ts";
 import { createHtmlToMarkdownCli } from "../scripts/lib/cli.ts";
 import { createConverter } from "../scripts/lib/converter.ts";
-import { convertMdToPdf } from "../scripts/md-to-pdf.ts";
 
 describe("convertHtmlString", () => {
   it("converts basic HTML to markdown", () => {
@@ -213,66 +212,5 @@ describe("html-to-md CLI", () => {
     const markdown = convertHtmlString({ gfm: options.gfm, html });
 
     expect(markdown.includes("|")).toBe(includesTable);
-  });
-});
-
-describe("convertMdToPdf", () => {
-  it("converts a markdown file to PDF", async () => {
-    const tmpInput = path.join(os.tmpdir(), "test-md-to-pdf.md");
-    const tmpOutput = path.join(os.tmpdir(), "test-md-to-pdf.pdf");
-    await fs.writeFile(tmpInput, "# Hello\n\nThis is a test document.\n");
-
-    const result = await convertMdToPdf({
-      inputPath: tmpInput,
-      outputPath: tmpOutput,
-    });
-
-    expect(result.outputPath).toBe(tmpOutput);
-    const pdfBytes = await fs.readFile(tmpOutput);
-    expect(pdfBytes.length).toBeGreaterThan(0);
-    expect(pdfBytes.subarray(0, 5).toString()).toBe("%PDF-");
-  });
-
-  it("defaults output path to .pdf extension", async () => {
-    const tmpInput = path.join(os.tmpdir(), "test-md-to-pdf-default.md");
-    await fs.writeFile(tmpInput, "# Default Output\n");
-
-    const result = await convertMdToPdf({ inputPath: tmpInput });
-
-    expect(result.outputPath).toBe(
-      path.join(os.tmpdir(), "test-md-to-pdf-default.pdf"),
-    );
-    const pdfBytes = await fs.readFile(result.outputPath);
-    expect(pdfBytes.subarray(0, 5).toString()).toBe("%PDF-");
-
-    await fs.unlink(result.outputPath);
-  });
-
-  it("handles markdown with code blocks and lists", async () => {
-    const tmpInput = path.join(os.tmpdir(), "test-md-to-pdf-complex.md");
-    const tmpOutput = path.join(os.tmpdir(), "test-md-to-pdf-complex.pdf");
-    const markdown = [
-      "# Complex Document",
-      "",
-      "## Features",
-      "",
-      "- Item one",
-      "- Item two",
-      "",
-      "```javascript",
-      "const x = 42;",
-      "```",
-      "",
-    ].join("\n");
-    await fs.writeFile(tmpInput, markdown);
-
-    const result = await convertMdToPdf({
-      inputPath: tmpInput,
-      outputPath: tmpOutput,
-    });
-
-    const pdfBytes = await fs.readFile(result.outputPath);
-    expect(pdfBytes.length).toBeGreaterThan(0);
-    expect(pdfBytes.subarray(0, 5).toString()).toBe("%PDF-");
   });
 });
