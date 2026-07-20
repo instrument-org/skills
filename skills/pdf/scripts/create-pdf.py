@@ -12,8 +12,6 @@ import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-from defusedxml import ElementTree as ET
-
 DEFAULT_FRAME_PADDING = 6
 
 # A line that is exactly one Markdown image: ![alt](path) or ![alt](<path>),
@@ -53,8 +51,11 @@ def image_flowable(
     if path.suffix.lower() == ".svg":
         try:
             import fitz
+            from defusedxml import ElementTree as ET
         except ImportError:
-            sys.exit("PyMuPDF is missing; the PDF skill dependencies were not installed")
+            sys.exit(
+                "PyMuPDF or defusedxml is missing; the PDF skill dependencies were not installed"
+            )
         try:
             root = ET.parse(path).getroot()
             if root.tag.rsplit("}", 1)[-1] != "svg":
