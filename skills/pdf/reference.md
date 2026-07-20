@@ -30,8 +30,20 @@ options:
 ## `create-pdf.py` Create a quick PDF from simple text or Markdown using reportlab.
 
 ```text
-Usage:
-  python scripts/create-pdf.py --help
+usage: create-pdf.py [-h] --output OUTPUT [--content CONTENT] [--input INPUT]
+                     [--title TITLE] [--author AUTHOR]
+
+Create a quick PDF from simple text or Markdown. The supported Markdown subset
+is headings, basic bold/italic, and local images via ![alt](path) on their own
+line (raster formats and SVG).
+
+options:
+  -h, --help         show this help message and exit
+  --output OUTPUT    Output PDF path
+  --content CONTENT  Text content
+  --input INPUT      Input text or Markdown file
+  --title TITLE
+  --author AUTHOR
 ```
 
 ## `extract-images.py` Extract embedded images from a PDF and save them as files.
