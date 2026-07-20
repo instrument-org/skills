@@ -20,9 +20,14 @@ Keep these elements in every wireframe:
 ```
 
 Also keep the local Tailwind `<script>` emitted by the scaffold exactly as
-written. Its viewer asset URL lets Instrument compile Tailwind v4 without a
-build step or public CDN. Do not replace it with a package import, remote
-script, or generated CSS file.
+written. It points at the copy this skill installs into the task, which lets
+Instrument compile Tailwind v4 without a build step or public CDN. Do not
+replace it with a package import, remote script, or generated CSS file.
+
+The script is served from the task, so a wireframe only styles correctly while
+it lives in the task that installed the skill. If a page renders as unstyled
+HTML, check that request first -- a wireframe whose Tailwind never loaded has
+no background of its own and takes on whatever is behind it.
 
 ## Recipe: scaffold, then compose
 

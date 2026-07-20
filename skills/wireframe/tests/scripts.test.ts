@@ -7,6 +7,14 @@ import { buildHtml } from "../scripts/lib/template.ts";
 
 // cspell:ignore Résumé
 
+const BUNDLE = "node_modules/@tailwindcss/browser/dist/index.global.js";
+
+/** The `src` the scaffold wrote, resolved against the wireframe's own folder. */
+function resolvedScriptTarget(html: string, outputDir: string) {
+  const src = html.match(/src="([^"]+)"/)?.[1] ?? "";
+  return { resolved: path.resolve(outputDir, src), src };
+}
+
 let tmpDir: string;
 
 afterEach(async () => {
@@ -22,29 +30,27 @@ async function makeTmpDir() {
 
 describe("buildHtml", () => {
   it("produces valid HTML structure", () => {
-    const html = buildHtml({});
+    const html = buildHtml({ outputDir: "/task/output" });
 
     expect(html).toContain("<!DOCTYPE html>");
     expect(html).toContain('<html lang="en">');
     expect(html).toContain("<title>Wireframe</title>");
     expect(html).toContain('<style type="text/tailwindcss">');
     expect(html).toContain('@import "tailwindcss"');
-    expect(html).toContain(
-      "/_instrument/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
-    );
+    expect(html).toContain(BUNDLE);
     expect(html).toContain("<main");
     expect(html).toContain("</html>");
   });
 
   it("contains a bare tailwindcss import and empty @theme block", () => {
-    const html = buildHtml({});
+    const html = buildHtml({ outputDir: "/task/output" });
 
     expect(html).toContain('@import "tailwindcss"');
     expect(html).toContain("@theme {");
   });
 
   it("does not inline the tailwind script", () => {
-    const html = buildHtml({});
+    const html = buildHtml({ outputDir: "/task/output" });
 
     expect(html.length).toBeLessThan(5_000);
     expect(html).not.toContain("function tailwind");
@@ -53,6 +59,7 @@ describe("buildHtml", () => {
   it("includes custom body, theme declarations, and an escaped title", () => {
     const html = buildHtml({
       body: '<main class="bg-brand-500">Résumé costs $40</main>',
+      outputDir: "/task/output",
       theme: "--color-brand-500: oklch(0.62 0.17 255);",
       title: "Plans & pricing",
     });
@@ -64,7 +71,7 @@ describe("buildHtml", () => {
 });
 
 describe("createWireframe", () => {
-  it("generates an HTML file with the fixed script URL", async () => {
+  it("points the script at the installed bundle", async () => {
     const dir = await makeTmpDir();
     const outputPath = path.join(dir, "out.html");
 
@@ -76,13 +83,16 @@ describe("createWireframe", () => {
     expect(content).toContain("<!DOCTYPE html>");
     expect(content).toContain("<title>Wireframe</title>");
     expect(content).toContain('@import "tailwindcss"');
-    expect(content).toContain(
-      "/_instrument/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
-    );
     expect(content.length).toBeLessThan(5_000);
+
+    // The reference must reach a file that is actually there; asserting a
+    // literal URL is what let a dead path ship unnoticed.
+    const { resolved } = resolvedScriptTarget(content, dir);
+    expect(resolved.endsWith(path.normalize(BUNDLE))).toBe(true);
+    await expect(fs.stat(resolved)).resolves.toBeTruthy();
   });
 
-  it("same script URL regardless of output location", async () => {
+  it("adapts the relative script path to the output depth", async () => {
     const dir = await makeTmpDir();
     const shallowOutput = path.join(dir, "out.html");
     const deepOutput = path.join(dir, "nested", "deep", "out.html");
@@ -90,16 +100,21 @@ describe("createWireframe", () => {
     await createWireframe({ outputPath: shallowOutput });
     await createWireframe({ outputPath: deepOutput });
 
-    const shallowContent = await fs.readFile(shallowOutput, "utf-8");
-    const deepContent = await fs.readFile(deepOutput, "utf-8");
-
-    const shallowSrc = shallowContent.match(/src="([^"]+)"/)?.[1];
-    const deepSrc = deepContent.match(/src="([^"]+)"/)?.[1];
-
-    expect(shallowSrc).toBe(deepSrc);
-    expect(shallowSrc).toBe(
-      "/_instrument/assets/skills/wireframe/node_modules/@tailwindcss/browser/dist/index.global.js",
+    const shallow = resolvedScriptTarget(
+      await fs.readFile(shallowOutput, "utf-8"),
+      path.dirname(shallowOutput),
     );
+    const deep = resolvedScriptTarget(
+      await fs.readFile(deepOutput, "utf-8"),
+      path.dirname(deepOutput),
+    );
+
+    // Relative, so the deeper page needs a longer prefix...
+    expect(shallow.src.startsWith("/")).toBe(false);
+    expect(deep.src).not.toBe(shallow.src);
+    // ...and both still land on the same real file.
+    expect(deep.resolved).toBe(shallow.resolved);
+    await expect(fs.stat(shallow.resolved)).resolves.toBeTruthy();
   });
 
   it("creates intermediate directories", async () => {

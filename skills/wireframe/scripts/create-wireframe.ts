@@ -49,7 +49,12 @@ export async function createWireframe({
     bodyFile === undefined ? body : readFile(bodyFile, "utf-8"),
     themeFile === undefined ? theme : readFile(themeFile, "utf-8"),
   ]);
-  const html = buildHtml({ body: bodyContent, theme: themeContent, title });
+  const html = buildHtml({
+    body: bodyContent,
+    outputDir: dirname(outputPath),
+    theme: themeContent,
+    title,
+  });
   await mkdir(dirname(outputPath), { recursive: true });
   await writeFile(outputPath, html, "utf-8");
   return { outputPath };
