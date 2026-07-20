@@ -20,6 +20,7 @@ which may differ from the requested path.
 | Need                             | Start with                                    |
 | -------------------------------- | --------------------------------------------- |
 | Read or research a page          | `read [url]`; `get text body` for visible DOM |
+| Check a page you produced        | `open` its path, then observe as usual        |
 | Find controls                    | `snapshot -i`, optionally with `--urls`       |
 | Follow ordinary links            | Snapshot URLs, then `open` the discovered URL |
 | Fill forms or operate an app     | Repeated snapshot, action, and assertion      |
@@ -77,7 +78,12 @@ follow-up actions.
 ## Critical invariants
 
 - Never fabricate a deep URL, identifier, or query string. Discover links from
-  a provided page or use a URL supplied by the user.
+  a provided page or use a URL supplied by the user. A file you produced is
+  exempt: its path is not a guess, and `open output/report.html` is a normal
+  navigation.
+- Open a local file by the same path you would give any other tool, not as a
+  `file://` URL or an absolute host path. Those forms address the real
+  filesystem, which is often not where your working directory actually lives.
 - `snapshot -i` returns interactive elements, not all body copy. Use
   `get text body`, `get text main`, or another scoped region to read.
 - A ref may exist outside the viewport. Use `is visible` or `scrollintoview`
@@ -128,6 +134,31 @@ currently visible DOM copy or post-interaction state.
 Read the snapshot for controls and discovered links. On multi-page work,
 collect the real URLs once and read or open them directly. Expand accordions
 before visible-DOM extraction when the content starts hidden.
+
+## Recipe: check a page you produced
+
+An HTML deliverable is only done once it has been loaded and exercised. Reading
+back the source proves the file was written, not that it renders, that its
+scripts run, or that its data reached the page. Open it by the same path you
+would give any other tool and run the observe loop you would use on any site:
+
+```bash
+agent-browser open output/report.html
+agent-browser wait --load networkidle
+agent-browser get text body
+agent-browser errors
+agent-browser screenshot
+```
+
+A path works anywhere a URL is expected, so no separate command is needed. Use
+a browser running on this machine; a remote one cannot reach local files.
+
+Check the things source alone cannot show: that computed or fetched values
+appear as text rather than placeholders, that controls change what they claim
+to (`click` a filter, then re-read), and that `errors` is empty. A chart or
+table built by script is a common silent failure -- the markup is present and
+correct while the rendered page is blank. Fix the generator and reopen; a
+reopened page is a fresh load, so take a new snapshot before acting again.
 
 ## Recipe: interact and verify
 
