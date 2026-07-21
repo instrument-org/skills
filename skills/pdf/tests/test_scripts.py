@@ -540,3 +540,86 @@ class TestExtractLinks:
         assert result.returncode == 0
         data = json.loads(result.stdout)
         assert isinstance(data, list)
+
+
+class TestOverlayForm:
+    @pytest.fixture
+    def blank_form(self, tmp_path):
+        pytest.importorskip("reportlab")
+        from reportlab.pdfgen import canvas
+
+        path = tmp_path / "blank-form.pdf"
+        document = canvas.Canvas(str(path), pagesize=(300, 200))
+        document.drawString(20, 160, "Name:")
+        document.rect(70, 150, 180, 20)
+        document.save()
+        return path
+
+    def test_places_flattened_text(self, blank_form, tmp_path):
+        fitz = pytest.importorskip("fitz")
+        fields = tmp_path / "fields.json"
+        fields.write_text(
+            json.dumps(
+                {
+                    "fields": [
+                        {
+                            "page": 1,
+                            "box": [74, 31, 170, 16],
+                            "text": "Alice Example",
+                            "fontSize": 10,
+                        }
+                    ]
+                }
+            )
+        )
+        output = tmp_path / "filled.pdf"
+
+        result = run("overlay-form.py", str(blank_form), str(fields), str(output))
+
+        assert result.returncode == 0
+        with fitz.open(output) as document:
+            assert "Alice Example" in document[0].get_text()
+
+    def test_validate_only_does_not_write_output(self, blank_form, tmp_path):
+        fields = tmp_path / "fields.json"
+        fields.write_text(
+            json.dumps(
+                {"fields": [{"page": 1, "box": [70, 30, 180, 20], "text": "Alice"}]}
+            )
+        )
+
+        result = run(
+            "overlay-form.py", str(blank_form), str(fields), "--validate-only"
+        )
+
+        assert result.returncode == 0
+        assert result.stdout.strip() == "Validated 1 field(s)"
+
+    @pytest.mark.parametrize(
+        ("fields", "message"),
+        [
+            (
+                [
+                    {"page": 1, "box": [10, 10, 40, 20], "text": "First"},
+                    {"page": 1, "box": [20, 15, 40, 20], "text": "Second"},
+                ],
+                "overlaps another field",
+            ),
+            (
+                [{"page": 1, "box": [290, 10, 20, 20], "text": "Outside"}],
+                "extends outside page",
+            ),
+        ],
+    )
+    def test_rejects_invalid_boxes(self, blank_form, tmp_path, fields, message):
+        fields_path = tmp_path / "fields.json"
+        fields_path.write_text(json.dumps({"fields": fields}))
+        output = tmp_path / "filled.pdf"
+
+        result = run(
+            "overlay-form.py", str(blank_form), str(fields_path), str(output)
+        )
+
+        assert result.returncode != 0
+        assert message in result.stderr
+        assert not output.exists()

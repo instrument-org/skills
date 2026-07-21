@@ -1,6 +1,6 @@
 ---
 name: pdf
-description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text, Markdown, images, or SVG, merging or splitting PDFs, filling form fields, rotating pages, adding page numbers, watermarking, or inserting images. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
+description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text, Markdown, images, or SVG, merging or splitting PDFs, filling interactive or non-interactive forms, rotating pages, adding page numbers, watermarking, or inserting images. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
 ---
 
 # PDF
@@ -30,6 +30,8 @@ other document content.
 | New report, invoice, or flowing document        | Write a ReportLab Platypus script     |
 | SVG to vector PDF or SVG placed on a PDF page   | Write a PyMuPDF script                |
 | Quick text/Markdown document with simple images | Use `create-pdf.py`                   |
+| Fill an interactive AcroForm                    | Use `fill-form.py`                    |
+| Fill a scanned or non-interactive form          | Use `overlay-form.py`                 |
 | One PDF page per raster image                   | Use `image-to-pdf.py`                 |
 | Closed operation on an existing PDF             | Use the matching bundled script       |
 | Confirm appearance                              | Render every page, then read the PNGs |
@@ -186,6 +188,48 @@ text styling are lost, copy the SVG into `work/`, inline the required
 presentation attributes on that PDF-specific copy, and regenerate the PDF.
 Do not modify an already delivered SVG just to make its PDF rendering work.
 
+## Recipe: fill a non-interactive form
+
+Run `fill-form.py --list-fields` first. If the PDF has no AcroForm fields,
+render the blank form and measure each entry area in PDF points. Coordinates
+for `overlay-form.py` start at the page's top-left; each box is
+`[x, top, width, height]`.
+
+```json
+{
+  "fields": [
+    {
+      "page": 1,
+      "box": [144, 96, 220, 18],
+      "text": "Alice Example",
+      "fontSize": 10,
+      "minFontSize": 8,
+      "align": "left",
+      "color": "#000000"
+    },
+    {
+      "page": 1,
+      "box": [412, 214, 12, 12],
+      "text": "X",
+      "fontSize": 10,
+      "align": "center"
+    }
+  ]
+}
+```
+
+Validate before writing, then create a new PDF:
+
+```bash
+python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf work/fields.json --validate-only
+python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf work/fields.json output/filled-form.pdf
+```
+
+The script writes page content, not editable form controls. It rejects rotated
+pages, overlapping or out-of-page boxes, and text that cannot fit at the
+minimum font size. Normalize page rotation before using it. Use only built-in
+PDF font aliases unless a task-specific script embeds the required font.
+
 ## ReportLab layout traps
 
 - `Paragraph` content uses XML-like markup. Escape dynamic text with
@@ -222,6 +266,7 @@ one.
 - `image-to-pdf.py`: Create a PDF from raster images, one image per page.
 - `insert-image.py`: Insert an image into a page of an existing PDF.
 - `merge.py`: Merge multiple PDF files into one.
+- `overlay-form.py`: Place flattened text into top-left coordinate boxes on a non-interactive PDF form.
 - `render-pages.py`: Render PDF pages to PNG images using PyMuPDF (no external tools required).
 - `rotate.py`: Rotate pages in a PDF.
 - `set-meta.py`: Update PDF metadata.
@@ -252,3 +297,5 @@ inspection has zero visual or formatting defects.
 - Use `pdfplumber` for layout-aware text and table extraction, PyMuPDF for page
   rendering and image extraction, and `pypdf` for structural operations.
 - `fill-form.py` supports AcroForm fields. It does not support XFA forms.
+- `overlay-form.py` is appropriate when visual placement is the intended
+  deliverable. It does not create interactive fields or implement XFA.

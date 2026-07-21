@@ -198,6 +198,23 @@ options:
   --output OUTPUT  Output PDF file
 ```
 
+## `overlay-form.py` Place flattened text into top-left coordinate boxes on a non-interactive PDF form.
+
+```text
+usage: overlay-form.py [-h] [--validate-only] input fields [output]
+
+Place flattened text into a non-interactive PDF form.
+
+positional arguments:
+  input            Input PDF file
+  fields           JSON file describing text boxes
+  output           Output PDF file
+
+options:
+  -h, --help       show this help message and exit
+  --validate-only  Validate field data without writing a PDF
+```
+
 ## `render-pages.py` Render PDF pages to PNG images using PyMuPDF (no external tools required).
 
 ```text
