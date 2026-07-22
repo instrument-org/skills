@@ -5,9 +5,7 @@ description: Guide for creating effective Agent Skills. Use when you want to cre
 
 # Creating Registry Skills
 
-Skills live in `skills/` and are installed into the workspace on demand. A
-skill should teach the agent how to solve work in its domain. Scripts are
-convenience tools for closed operations, not the skill's primary abstraction.
+Skills live in `skills/` and are installed into the workspace on demand. A skill should teach the agent how to solve work in its domain. Scripts are convenience tools for closed operations, not the skill's primary abstraction.
 
 ## Directory Layout
 
@@ -20,48 +18,33 @@ skills/skill-name/
 └── scripts/
 ```
 
-TypeScript skills add `pnpm-lock.yaml`, `tsconfig.json`, `vitest.config.ts`,
-and `tests/scripts.test.ts`. Python skills add `pyproject.toml`, a committed
-`uv.lock`, and `tests/test_scripts.py`.
+TypeScript skills add `pnpm-lock.yaml`, `tsconfig.json`, `vitest.config.ts`, and `tests/scripts.test.ts`. Python skills add `pyproject.toml`, a committed `uv.lock`, and `tests/test_scripts.py`.
 
-**`SKILL.md` and optional `reference.md` are generated** from
-`SKILL.template.md` by running:
+**`SKILL.md` and optional `reference.md` are generated** from `SKILL.template.md` by running:
 
 ```bash
 pnpm generate:skills-md -- --skill skill-name
 ```
 
-Run this from the **workspace root** (not from inside the skill). The generator
-replaces `{{GENERATED_SCRIPT_INDEX}}` with concise script descriptions and
-writes complete exports and CLI help to `reference.md`. Always edit
-`SKILL.template.md`, never `SKILL.md` or generated `reference.md`.
+Run this from the **workspace root** (not from inside the skill). The generator replaces `{{GENERATED_SCRIPT_INDEX}}` with concise script descriptions and writes complete exports and CLI help to `reference.md`. Always edit `SKILL.template.md`, never `SKILL.md` or generated `reference.md`.
 
 ---
 
 ## Design the skill as a recipe book
 
-Start with the user's goal, then route between direct library use and bundled
-scripts:
+Start with the user's goal, then route between direct library use and bundled scripts:
 
-- Use direct library recipes for content, layout, data transformation,
-  composition, and other work whose requirements vary by task.
-- Keep scripts for bounded operations with a stable contract, such as listing
-  an archive, extracting text, or applying one deterministic mutation.
-- Command-first guidance is appropriate when the command is itself the best
-  compositional API, such as FFmpeg or browser automation.
-- Include a verification loop that tests the properties users care about. For
-  visual artifacts, require rendering and inspection, not just file parsing.
+- Use direct library recipes for content, layout, data transformation, composition, and other work whose requirements vary by task.
+- Keep scripts for bounded operations with a stable contract, such as listing an archive, extracting text, or applying one deterministic mutation.
+- Command-first guidance is appropriate when the command is itself the best compositional API, such as FFmpeg or browser automation.
+- Include a verification loop that tests the properties users care about. For visual artifacts, require rendering and inspection, not just file parsing.
 - Explain consequential traps and fidelity boundaries, not every library API.
 
-Python packages are available to task-local scripts through the task
-virtualenv. TypeScript dependencies are isolated to the loaded skill package,
-so custom TypeScript files that import them must be written inside that skill
-directory and run by full path from the task root.
+Python packages are available to task-local scripts through the task virtualenv. TypeScript dependencies are isolated to the loaded skill package, so custom TypeScript files that import them must be written inside that skill directory and run by full path from the task root.
 
 ## SKILL.template.md
 
-Prefer progressive disclosure. Keep recipes and routing in `SKILL.md`, then
-generate complete script help into `reference.md`:
+Prefer progressive disclosure. Keep recipes and routing in `SKILL.md`, then generate complete script help into `reference.md`:
 
 ````markdown
 ---
@@ -93,8 +76,7 @@ Read [`reference.md`](reference.md) for complete arguments.
 {{GENERATED_SCRIPT_INDEX}}
 ````
 
-Use `{{GENERATED_SCRIPT_DOCS}}` only when a skill has one very small script and
-inline help is genuinely clearer than a secondary reference.
+Use `{{GENERATED_SCRIPT_DOCS}}` only when a skill has one very small script and inline help is genuinely clearer than a secondary reference.
 
 ---
 
@@ -111,8 +93,7 @@ The description is the only thing the agent sees when deciding whether to load t
 
 ## TypeScript Script Structure
 
-TypeScript scripts use **CAC** for CLI parsing and export a named async
-function for programmatic use.
+TypeScript scripts use **CAC** for CLI parsing and export a named async function for programmatic use.
 
 ```typescript
 /**
@@ -164,19 +145,13 @@ For TypeScript scripts, the generator extracts:
 3. **CLI help** — from running the script with `--help` via CAC
 4. **Notes** — from `@note` tags in the file-level JSDoc
 
-With `{{GENERATED_SCRIPT_INDEX}}`, the primary skill receives concise script
-names and descriptions while full exports, CLI help, and notes are written to
-`reference.md`.
+With `{{GENERATED_SCRIPT_INDEX}}`, the primary skill receives concise script names and descriptions while full exports, CLI help, and notes are written to `reference.md`.
 
 ## Python Script Structure
 
-Use Python when a file-centric knowledge-work library materially improves the
-outcome, such as PDF, DOCX, XLSX, or local ML processing. Use `argparse`, begin
-the file with a concise module docstring, and keep third-party imports close to
-the operation that uses them so `--help` remains reliable.
+Use Python when a file-centric knowledge-work library materially improves the outcome, such as PDF, DOCX, XLSX, or local ML processing. Use `argparse`, begin the file with a concise module docstring, and keep third-party imports close to the operation that uses them so `--help` remains reliable.
 
-Declare every runtime package in `pyproject.toml`, put test-only packages in a
-`test` extra, and refresh the committed lockfile after dependency changes:
+Declare every runtime package in `pyproject.toml`, put test-only packages in a `test` extra, and refresh the committed lockfile after dependency changes:
 
 ```bash
 uv lock --directory skills/skill-name
@@ -220,9 +195,7 @@ const wasmPath = _require.resolve("some-package/file.wasm");
 
 ## Tests
 
-Each TypeScript skill needs a `tests/scripts.test.ts` and a
-`vitest.config.ts`. **Without `vitest.config.ts` the tests are silently skipped**
-by the root Vitest workspace config (which globs `./skills/*/vitest.config.ts`).
+Each TypeScript skill needs a `tests/scripts.test.ts` and a `vitest.config.ts`. **Without `vitest.config.ts` the tests are silently skipped** by the root Vitest workspace config (which globs `./skills/*/vitest.config.ts`).
 
 ### `vitest.config.ts` (copy exactly)
 
@@ -236,8 +209,7 @@ export default defineConfig({
 });
 ```
 
-Python skills use `tests/test_scripts.py` and the locked `uv` project. Refer to
-an existing skill in the same runtime for test conventions and patterns.
+Python skills use `tests/test_scripts.py` and the locked `uv` project. Refer to an existing skill in the same runtime for test conventions and patterns.
 
 ---
 

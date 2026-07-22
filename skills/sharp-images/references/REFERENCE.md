@@ -28,11 +28,7 @@ sharp({ text: { text: "Hello", font: "sans", dpi: 300 } }); // text image
 
 ## Runtime format support
 
-Common packaged builds support JPEG, PNG, WebP, GIF, AVIF, TIFF, SVG input,
-and raw pixel buffers. Support for PDF, JPEG 2000, JPEG XL, and other uncommon
-codecs depends on the packaged native build and is often unavailable. Treat
-`sharp.format` in the installed runtime as the source of truth for input and
-output support.
+Common packaged builds support JPEG, PNG, WebP, GIF, AVIF, TIFF, SVG input, and raw pixel buffers. Support for PDF, JPEG 2000, JPEG XL, and other uncommon codecs depends on the packaged native build and is often unavailable. Treat `sharp.format` in the installed runtime as the source of truth for input and output support.
 
 ## Output Formats & Options
 

@@ -199,8 +199,7 @@ Full command options and exported helper signatures are in [`reference.md`](refe
 
 - `adjust.ts`: Adjust image color, brightness, blur, sharpen, and other visual properties
 - `annotate.ts`: Draw labeled bounding box annotations on an image
-- `composite.ts`: Overlay one image on top of another with configurable position and blend mode.
-  Requires an existing file as the base image.
+- `composite.ts`: Overlay one image on top of another with configurable position and blend mode. Requires an existing file as the base image.
 - `convert.ts`: Convert an image to a different format (jpeg, png, webp, avif, etc.)
 - `crop.ts`: Crop an image to exact dimensions, with optional auto-crop strategy
 - `get-metadata.ts`: Read format, dimensions, color space, and file size of an image

@@ -1,14 +1,10 @@
 # FFmpeg recipes
 
-Use these recipes after probing inputs. Add `-threads` limits when long or
-concurrent encodes could cause CPU contention.
+Use these recipes after probing inputs. Add `-threads` limits when long or concurrent encodes could cause CPU contention.
 
 ## Generate synthetic clips
 
-When there is no input file, build frames with a lavfi source such as `color`,
-`testsrc`, or `smptebars`. Bound the source with `d=` (or `-t` on the output): a
-lavfi source with no duration runs until the command is killed. Keep generators
-in `-i` and processing filters in `-vf`.
+When there is no input file, build frames with a lavfi source such as `color`, `testsrc`, or `smptebars`. Bound the source with `d=` (or `-t` on the output): a lavfi source with no duration runs until the command is killed. Keep generators in `-i` and processing filters in `-vf`.
 
 ```bash
 # Solid color
@@ -20,8 +16,7 @@ ffmpeg -n -f lavfi -i "testsrc=s=640x480:r=30:d=5" \
   -c:v libx264 -crf 23 -pix_fmt yuv420p "$OUTPUT"
 ```
 
-Draw a shape with `drawbox`/`drawtext` on a canvas rather than letting it fill
-the frame, so transforms applied afterward do not clip it.
+Draw a shape with `drawbox`/`drawtext` on a canvas rather than letting it fill the frame, so transforms applied afterward do not clip it.
 
 ## Rotate
 
@@ -39,9 +34,7 @@ ffmpeg -n -i "$INPUT" -vf "hflip,vflip" \
   -c:v libx264 -crf 23 -preset medium -c:a copy "$OUTPUT"
 ```
 
-`rotate` and other geometric filters spin content at a fixed output size, so
-anything reaching the frame edge is clipped and the uncovered area takes
-`fillcolor` (black under `yuv420p`, which has no alpha).
+`rotate` and other geometric filters spin content at a fixed output size, so anything reaching the frame edge is clipped and the uncovered area takes `fillcolor` (black under `yuv420p`, which has no alpha).
 
 ## Add silent audio
 
@@ -57,9 +50,7 @@ ffmpeg -n -i "$INPUT" \
 
 ## Concatenate mixed inputs
 
-The concat filter requires compatible dimensions and formats. Normalize each
-video and audio stream before concatenation. This two-input example scales and
-pads both videos to 1920x1080 and normalizes audio to stereo 48 kHz:
+The concat filter requires compatible dimensions and formats. Normalize each video and audio stream before concatenation. This two-input example scales and pads both videos to 1920x1080 and normalizes audio to stereo 48 kHz:
 
 ```bash
 ffmpeg -n \
@@ -142,8 +133,7 @@ ffmpeg -n -i "$INPUT" \
   "$OUTPUT"
 ```
 
-For delivery to a specific loudness target, use FFmpeg's documented two-pass
-`loudnorm` workflow.
+For delivery to a specific loudness target, use FFmpeg's documented two-pass `loudnorm` workflow.
 
 ## Fade audio and video
 
@@ -196,8 +186,7 @@ ffmpeg -n -i "$INPUT" \
 
 ## Create a GIF
 
-Generate and use a palette for better quality. Store the palette in temporary
-workspace storage and remove it after successful output:
+Generate and use a palette for better quality. Store the palette in temporary workspace storage and remove it after successful output:
 
 ```bash
 ffmpeg -n -ss 00:00:00 -t 00:00:03 -i "$INPUT" \
@@ -238,8 +227,7 @@ ffmpeg -n -i "$INPUT" \
   "$OUTPUT"
 ```
 
-Adjust the sampling interval and tile dimensions to cover the requested
-duration.
+Adjust the sampling interval and tile dimensions to cover the requested duration.
 
 ## Slideshow from images
 
@@ -253,8 +241,7 @@ ffmpeg -n -framerate 1/3 \
   "$OUTPUT"
 ```
 
-`-framerate 1/3` displays each image for three seconds. Prefer numbered
-sequences over shell globbing because glob behavior differs across platforms.
+`-framerate 1/3` displays each image for three seconds. Prefer numbered sequences over shell globbing because glob behavior differs across platforms.
 
 ## Add subtitles
 
@@ -267,9 +254,7 @@ ffmpeg -n -i "$INPUT" \
   "$OUTPUT"
 ```
 
-Subtitle filter path escaping is platform-sensitive. If the path contains
-special characters, use a simple workspace-relative filename or escape it for
-the current FFmpeg build.
+Subtitle filter path escaping is platform-sensitive. If the path contains special characters, use a simple workspace-relative filename or escape it for the current FFmpeg build.
 
 Add a selectable subtitle stream to MKV:
 
@@ -298,8 +283,7 @@ ffmpeg -n -i "$INPUT" \
   "$OUTPUT"
 ```
 
-Filter path escaping is platform-sensitive. Avoid interpolating user text
-directly into `drawtext=text=`.
+Filter path escaping is platform-sensitive. Avoid interpolating user text directly into `drawtext=text=`.
 
 ## Add an image overlay
 
@@ -322,8 +306,7 @@ overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2
 
 ## Picture in picture
 
-Scale the second video to 25 percent of the first video's width and place it in
-the bottom-right corner:
+Scale the second video to 25 percent of the first video's width and place it in the bottom-right corner:
 
 ```bash
 ffmpeg -n \
