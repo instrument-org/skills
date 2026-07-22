@@ -56,9 +56,7 @@ Options:
 > [!NOTE]
 > One of --json (inline JSON array) or --json-file (path to JSON file) is required. Each annotation object: `{ left, top, width, height, label?, color? }`. Colors cycle automatically when omitted.
 
-## `composite.ts` Overlay one image on top of another with configurable position and blend mode.
-
-Requires an existing file as the base image.
+## `composite.ts` Overlay one image on top of another with configurable position and blend mode. Requires an existing file as the base image.
 
 Exports:
 
