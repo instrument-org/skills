@@ -43,7 +43,7 @@
     "@cspell/dict-node": "^5.0.8",
     "@cspell/dict-npm": "^5.2.19",
     "@cspell/dict-typescript": "^3.2.3",
-    "@instrument-org/agent-hooks": "https://github.com/instrument-org/agent-hooks",
+    "@instrument-org/agent-hooks": "github:instrument-org/agent-hooks",
     "@types/node": "24.13.1",
     "actions-up": "^1.13.0",
     "cspell": "^9.2.2",
