@@ -5,15 +5,11 @@ description: "Work with PowerPoint files (.pptx). Use whenever the user wants to
 
 # PowerPoint
 
-Use `python-pptx` directly for composed presentations and custom edits. The
-bundled scripts are conveniences for extraction, inventory, replacement, quick
-text-only decks, and optional thumbnail rendering.
+Use `python-pptx` directly for composed presentations and custom edits. The bundled scripts are conveniences for extraction, inventory, replacement, quick text-only decks, and optional thumbnail rendering.
 
 ## Dependencies
 
-The app installs the locked `python-pptx`, Pillow, and PyMuPDF dependencies when
-this skill is loaded. Run Python with `python`; do not repeat installation.
-LibreOffice is an optional system dependency used only for visual rendering.
+The app installs the locked `python-pptx`, Pillow, and PyMuPDF dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. LibreOffice is an optional system dependency used only for visual rendering.
 
 ## Choose an approach
 
@@ -98,8 +94,7 @@ prs.save(output)
 
 ## Fit an image without distortion
 
-Use Pillow only to read dimensions, then place the image with preserved aspect
-ratio:
+Use Pillow only to read dimensions, then place the image with preserved aspect ratio:
 
 ```python
 from PIL import Image
@@ -140,8 +135,7 @@ slide.shapes.add_chart(
 
 ## Edit an existing template
 
-Template layout indices vary. Inspect the deck and target stable shape names
-when possible:
+Template layout indices vary. Inspect the deck and target stable shape names when possible:
 
 ```python
 from pathlib import Path
@@ -157,36 +151,24 @@ output.parent.mkdir(parents=True, exist_ok=True)
 prs.save(output)
 ```
 
-Assigning `shape.text` or clearing a text frame can erase run-level formatting.
-For existing designs, edit the smallest possible run or use the plain
-cross-run replacement script only when inheriting the first run's formatting is
-acceptable. Inventory JSON keys are shape positions in that exact deck, not
-durable identifiers across deck revisions.
+Assigning `shape.text` or clearing a text frame can erase run-level formatting. For existing designs, edit the smallest possible run or use the plain cross-run replacement script only when inheriting the first run's formatting is acceptable. Inventory JSON keys are shape positions in that exact deck, not durable identifiers across deck revisions.
 
 ## Layout traps
 
-- Coordinates and sizes use English Metric Units; use `Inches` and `Pt` instead
-  of unexplained integers.
+- Coordinates and sizes use English Metric Units; use `Inches` and `Pt` instead of unexplained integers.
 - Shapes are drawn in insertion order. Later shapes appear above earlier ones.
 - Slide layouts and placeholder indices depend on the presentation template.
 - PowerPoint may substitute fonts that are unavailable on the viewing machine.
-- Text frames do not reliably shrink text to fit. Reserve enough height and
-  inspect the rendered result.
+- Text frames do not reliably shrink text to fit. Reserve enough height and inspect the rendered result.
 - Keep all shape bounds inside the slide and leave safe margins near each edge.
 
 ## Quality gate
 
-Reopen the output with `Presentation(...)` and verify slide count, dimensions,
-shape bounds, expected text, tables, charts, images, and notes. Run
-`inventory.py` and `extract-text.py`. When LibreOffice is available, render the
-deck with `thumbnail.py` and inspect every slide for clipping, overlap, tiny
-text, image distortion, and poor contrast. State when only structural
-verification was possible.
+Reopen the output with `Presentation(...)` and verify slide count, dimensions, shape bounds, expected text, tables, charts, images, and notes. Run `inventory.py` and `extract-text.py`. When LibreOffice is available, render the deck with `thumbnail.py` and inspect every slide for clipping, overlap, tiny text, image distortion, and poor contrast. State when only structural verification was possible.
 
 ## Script reference
 
-Use scripts for bounded convenience operations. Full options are in
-[`reference.md`](reference.md).
+Use scripts for bounded convenience operations. Full options are in [`reference.md`](reference.md).
 
 - `create.py`: Create a PowerPoint presentation (.pptx) from a JSON slide definition.
 - `extract-text.py`: Extract text from a PowerPoint presentation (.pptx).

@@ -5,9 +5,7 @@ description: "Read barcodes and QR codes from images, or generate barcode and QR
 
 # Barcodes
 
-Use the supplied scripts for ordinary one-code scans and PNG generation. Write
-TypeScript against `zxing-wasm` when the task needs SVG, full scan metadata,
-recovery options, multiple symbols, or format-specific controls.
+Use the supplied scripts for ordinary one-code scans and PNG generation. Write TypeScript against `zxing-wasm` when the task needs SVG, full scan metadata, recovery options, multiple symbols, or format-specific controls.
 
 ## Choose an approach
 
@@ -18,20 +16,15 @@ recovery options, multiple symbols, or format-specific controls.
 | Print-quality SVG or custom error correction                   | Use the writer API        |
 | Positions, orientation, raw bytes, or damaged-code diagnostics | Use the reader API        |
 
-Node dependencies are isolated per loaded skill. Put custom TypeScript inside
-the loaded skill package, then run it by full path from the task root. A custom
-file elsewhere cannot import this skill's `zxing-wasm` dependency.
+Node dependencies are isolated per loaded skill. Put custom TypeScript inside the loaded skill package, then run it by full path from the task root. A custom file elsewhere cannot import this skill's `zxing-wasm` dependency.
 
-Common formats include `QRCode`, `Code128`, `Code39`, `DataMatrix`, `Aztec`,
-`PDF417`, `EAN13`, `EAN8`, `UPCA`, `UPCE`, `ITF`, `ITF14`, and `DataBar`.
-Format-specific capacity, checksum, and character rules still apply.
+Common formats include `QRCode`, `Code128`, `Code39`, `DataMatrix`, `Aztec`, `PDF417`, `EAN13`, `EAN8`, `UPCA`, `UPCE`, `ITF`, `ITF14`, and `DataBar`. Format-specific capacity, checksum, and character rules still apply.
 
 ## Recipes
 
 ### Generate vector and raster versions
 
-Save this as `<skill-path>/scripts/custom-generate.ts`, then run
-`tsx <skill-path>/scripts/custom-generate.ts` from the task root.
+Save this as `<skill-path>/scripts/custom-generate.ts`, then run `tsx <skill-path>/scripts/custom-generate.ts` from the task root.
 
 ```ts
 import { mkdir, writeFile } from "node:fs/promises";
@@ -62,8 +55,7 @@ await Promise.all([
 ]);
 ```
 
-SVG is preferable for print and document composition. Keep the PNG for visual
-inspection and round-trip decoding.
+SVG is preferable for print and document composition. Keep the PNG for visual inspection and round-trip decoding.
 
 ### Decode every code with positions
 
@@ -103,13 +95,11 @@ const report = results.map((result) => ({
 await writeFile("output/barcodes.json", JSON.stringify(report, null, 2));
 ```
 
-Restrict `formats` when the expected type is known. It reduces false positives
-and can make difficult scans faster.
+Restrict `formats` when the expected type is known. It reduces false positives and can make difficult scans faster.
 
 ### Build a Wi-Fi QR payload safely
 
-The barcode writer encodes the exact string it receives. Escape structured
-payload values before composing them.
+The barcode writer encodes the exact string it receives. Escape structured payload values before composing them.
 
 ```ts
 const escapeWifi = (value: string) => value.replace(/([\\;,":])/g, "\\$1");
@@ -123,22 +113,16 @@ const payload = [
 ].join("");
 ```
 
-Do not log passwords or other sensitive payloads. Round-trip decoding proves
-the encoded text, not that another application accepts the protocol syntax.
+Do not log passwords or other sensitive payloads. Round-trip decoding proves the encoded text, not that another application accepts the protocol syntax.
 
 ## Traps
 
 - Preserve a quiet zone and strong foreground/background contrast.
-- Do not resize a raster barcode with smoothing. Generate it at an integer
-  module scale or use SVG.
+- Do not resize a raster barcode with smoothing. Generate it at an integer module scale or use SVG.
 - Linear formats may require digits, fixed lengths, or valid checksums.
-- A clean generated image is not representative of a skewed or blurred photo.
-  Try rotation, inversion, noise reduction, cropping, or a separate image
-  cleanup.
-- The upstream writer API is less stable than the reader API. Keep writer
-  options local and verify after dependency upgrades.
-- `read-barcode.ts` intentionally returns only text and format. Use the reader
-  recipe when location or diagnostics matter.
+- A clean generated image is not representative of a skewed or blurred photo. Try rotation, inversion, noise reduction, cropping, or a separate image cleanup.
+- The upstream writer API is less stable than the reader API. Keep writer options local and verify after dependency upgrades.
+- `read-barcode.ts` intentionally returns only text and format. Use the reader recipe when location or diagnostics matter.
 
 ## Verification
 
@@ -150,7 +134,6 @@ the encoded text, not that another application accepts the protocol syntax.
 
 ## Script index
 
-Full command options and exported helper signatures are in
-[`reference.md`](reference.md).
+Full command options and exported helper signatures are in [`reference.md`](reference.md).
 
 {{GENERATED_SCRIPT_INDEX}}

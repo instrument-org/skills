@@ -5,15 +5,11 @@ description: "Work with tabular data files: Excel (.xlsx, .xlsm), Apple Numbers 
 
 # Spreadsheet
 
-Use `openpyxl` and pandas directly for multi-step spreadsheet work. The bundled
-scripts are conveniences for bounded reads, queries, flat conversion, primitive
-edits, and Apple Numbers compatibility.
+Use `openpyxl` and pandas directly for multi-step spreadsheet work. The bundled scripts are conveniences for bounded reads, queries, flat conversion, primitive edits, and Apple Numbers compatibility.
 
 ## Dependencies
 
-The app installs the locked `openpyxl` and pandas dependencies when this skill
-is loaded. Run Python with `python`; do not repeat installation. The Numbers
-compatibility bridge uses its bundled Node dependencies.
+The app installs the locked `openpyxl` and pandas dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. The Numbers compatibility bridge uses its bundled Node dependencies.
 
 ## Choose an approach
 
@@ -26,9 +22,7 @@ compatibility bridge uses its bundled Node dependencies.
 | Convert a flat table between CSV, TSV, and XLSX         | Use `convert.py`            |
 | Read or write Apple Numbers, or read legacy `.xls`      | Use `numbers-bridge.ts`     |
 
-Do not round-trip a styled workbook through pandas or `convert.py`: doing so
-can discard formulas, formatting, multiple sheets, tables, charts, validation,
-and metadata.
+Do not round-trip a styled workbook through pandas or `convert.py`: doing so can discard formulas, formatting, multiple sheets, tables, charts, validation, and metadata.
 
 ## Create a polished workbook
 
@@ -113,8 +107,7 @@ output.parent.mkdir(parents=True, exist_ok=True)
 summary.to_excel(output, index=False)
 ```
 
-Pandas is ideal for analysis but does not preserve the source workbook's full
-presentation layer. Use `openpyxl` to insert results into an existing workbook.
+Pandas is ideal for analysis but does not preserve the source workbook's full presentation layer. Use `openpyxl` to insert results into an existing workbook.
 
 ## Edit without flattening the workbook
 
@@ -134,38 +127,24 @@ output.parent.mkdir(parents=True, exist_ok=True)
 wb.save(output)
 ```
 
-Load with `data_only=False` to inspect or preserve formulas. With
-`data_only=True`, formula cells expose only their last cached result, which may
-be missing. Neither `openpyxl` nor pandas calculates formulas; Excel or
-LibreOffice must recalculate the workbook.
+Load with `data_only=False` to inspect or preserve formulas. With `data_only=True`, formula cells expose only their last cached result, which may be missing. Neither `openpyxl` nor pandas calculates formulas; Excel or LibreOffice must recalculate the workbook.
 
 ## Data and formula traps
 
-- Treat untrusted strings beginning with `=`, `+`, `-`, or `@` as potential
-  spreadsheet formulas when exporting CSV data to a workbook. Store them as
-  explicit text unless formulas are intended.
-- When sending Python through a shell heredoc, quote its delimiter as `<<'PY'`
-  so shell expansion cannot alter currency formats or formulas.
-- Preserve real dates and numbers as typed values; do not pre-format them as
-  display strings.
+- Treat untrusted strings beginning with `=`, `+`, `-`, or `@` as potential spreadsheet formulas when exporting CSV data to a workbook. Store them as explicit text unless formulas are intended.
+- When sending Python through a shell heredoc, quote its delimiter as `<<'PY'` so shell expansion cannot alter currency formats or formulas.
+- Preserve real dates and numbers as typed values; do not pre-format them as display strings.
 - `read_only=True` reduces memory for large workbooks but limits editing.
 - `write_only=True` supports large exports but gives up random cell access.
-- Sheet names, named ranges, tables, validation, hidden sheets, and merged cells
-  are part of the workbook contract. Inspect them before broad edits.
-- The TypeScript bridge remains appropriate for `.numbers` and legacy `.xls`
-  because its codec support is not available in the managed Python libraries.
+- Sheet names, named ranges, tables, validation, hidden sheets, and merged cells are part of the workbook contract. Inspect them before broad edits.
+- The TypeScript bridge remains appropriate for `.numbers` and legacy `.xls` because its codec support is not available in the managed Python libraries.
 
 ## Quality gate
 
-Reopen the saved workbook and verify sheet names, dimensions, representative
-values and types, formulas, number formats, styles, table ranges, frozen panes,
-and any hidden or macro-bearing content. Inspect representative sheets in the
-app viewer when presentation quality matters. Never claim formula results were
-recalculated unless Excel or LibreOffice actually recalculated them.
+Reopen the saved workbook and verify sheet names, dimensions, representative values and types, formulas, number formats, styles, table ranges, frozen panes, and any hidden or macro-bearing content. Inspect representative sheets in the app viewer when presentation quality matters. Never claim formula results were recalculated unless Excel or LibreOffice actually recalculated them.
 
 ## Script reference
 
-Use scripts for bounded convenience operations. Full options are in
-[`reference.md`](reference.md).
+Use scripts for bounded convenience operations. Full options are in [`reference.md`](reference.md).
 
 {{GENERATED_SCRIPT_INDEX}}

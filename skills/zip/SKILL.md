@@ -7,9 +7,7 @@ description: "Create, extract, and list zip archives. Use when working with zip 
 
 # Zip
 
-Use the bundled scripts for ordinary archive creation, listing, and
-extraction. For selective or format-aware work, write a small Python program
-with the standard-library `zipfile` module and adapt the recipes below.
+Use the bundled scripts for ordinary archive creation, listing, and extraction. For selective or format-aware work, write a small Python program with the standard-library `zipfile` module and adapt the recipes below.
 
 ## Choose an approach
 
@@ -40,8 +38,7 @@ with ZipFile(output, "x", compression=ZIP_DEFLATED) as archive:
         archive.write(source, arcname=archive_name)
 ```
 
-Mode `"x"` refuses to overwrite an existing deliverable. Use a new output
-path while iterating.
+Mode `"x"` refuses to overwrite an existing deliverable. Use a new output path while iterating.
 
 ## Recipe: inspect or read members without extracting
 
@@ -56,14 +53,11 @@ with ZipFile("attachments/archive.zip") as archive:
     print(manifest)
 ```
 
-This is the safest starting point for ZIP-based document bundles. Their
-internal files usually have format-specific relationships, so do not rewrite
-the bundle unless the requested format is understood.
+This is the safest starting point for ZIP-based document bundles. Their internal files usually have format-specific relationships, so do not rewrite the bundle unless the requested format is understood.
 
 ## Recipe: selectively extract safe members
 
-Archive member names are untrusted paths. Validate them before extraction,
-including backslashes that become separators on Windows.
+Archive member names are untrusted paths. Validate them before extraction, including backslashes that become separators on Windows.
 
 ```python
 from pathlib import Path, PurePosixPath
@@ -92,16 +86,11 @@ with ZipFile("attachments/archive.zip") as archive:
 
 ## Recipe: modify by rebuilding
 
-ZIP archives do not support reliable in-place deletion or replacement. Read
-the source and write a distinct archive, copying only members that should
-remain and then adding replacements. Verify the new member list and contents
-before delivering it.
+ZIP archives do not support reliable in-place deletion or replacement. Read the source and write a distinct archive, copying only members that should remain and then adding replacements. Verify the new member list and contents before delivering it.
 
 ## Script safety
 
-The create and extract scripts refuse to overwrite by default. Pass
-`--overwrite` only when replacing the destination is intentional. Extract to
-a new directory when inspecting an unfamiliar archive.
+The create and extract scripts refuse to overwrite by default. Pass `--overwrite` only when replacing the destination is intentional. Extract to a new directory when inspecting an unfamiliar archive.
 
 ## Script index
 

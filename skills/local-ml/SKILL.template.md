@@ -5,9 +5,7 @@ description: "Run local AI models on images, audio, and text with no inference A
 
 # Local ML
 
-Use Python libraries directly when the work needs batching, model reuse,
-custom scoring, or structured outputs. The supplied scripts are convenient for
-single-input operations with standard defaults.
+Use Python libraries directly when the work needs batching, model reuse, custom scoring, or structured outputs. The supplied scripts are convenient for single-input operations with standard defaults.
 
 ## Choose an approach
 
@@ -18,14 +16,11 @@ single-input operations with standard defaults.
 | Similarity, ranking, aggregation, or custom thresholds | Compose the library APIs                                      |
 | A reusable artifact                                    | Write structured results to `output/` and record the model ID |
 
-Python packages share the task virtual environment, so custom recipes may live
-under `work/`. Run them from the task root so `attachments/`, `work/`, and
-`output/` resolve correctly.
+Python packages share the task virtual environment, so custom recipes may live under `work/`. Run them from the task root so `attachments/`, `work/`, and `output/` resolve correctly.
 
 ## Optional dependencies
 
-The app installs the locked base dependency, Pillow. Install only the feature
-stack the task needs:
+The app installs the locked base dependency, Pillow. Install only the feature stack the task needs:
 
 ```bash
 pip install "rembg[cpu]" "numba>=0.60"          # background removal
@@ -35,18 +30,13 @@ pip install transformers torch                   # vision, classification, NER
 pip install sentence-transformers                # embeddings and similarity
 ```
 
-Inference stays local, but the first use downloads third-party model weights
-and contacts their model host. Downloads are model-dependent, commonly around
-100 MB to 1 GB, and are cached outside the deliverable. `torch` itself is also
-large. State that cost before selecting a large model or processing a long
-recording.
+Inference stays local, but the first use downloads third-party model weights and contacts their model host. Downloads are model-dependent, commonly around 100 MB to 1 GB, and are cached outside the deliverable. `torch` itself is also large. State that cost before selecting a large model or processing a long recording.
 
 ## Recipes
 
 ### Reuse a classifier across a batch
 
-This reads one text per line and writes ranked labels as JSON. Save it as
-`work/classify-batch.py`, then run `python work/classify-batch.py`.
+This reads one text per line and writes ranked labels as JSON. Save it as `work/classify-batch.py`, then run `python work/classify-batch.py`.
 
 ```python
 import json
@@ -87,15 +77,11 @@ Path("output/classifications.json").write_text(
 )
 ```
 
-Use `multi_label=False` when labels are mutually exclusive. Calibrate a
-decision threshold from the observed scores instead of treating the top label
-as certain.
+Use `multi_label=False` when labels are mutually exclusive. Calibrate a decision threshold from the observed scores instead of treating the top label as certain.
 
 ### Rank text by semantic similarity
 
-Normalized embeddings make the dot product a cosine-similarity score. The
-default here matches `embed-text.py`: BGE small, whose vectors have 384
-dimensions.
+Normalized embeddings make the dot product a cosine-similarity score. The default here matches `embed-text.py`: BGE small, whose vectors have 384 dimensions.
 
 ```python
 import json
@@ -149,12 +135,7 @@ for source in Path("attachments").glob("*"):
     (destination / f"{source.stem}.png").write_bytes(result)
 ```
 
-`u2net` is fast and fine for high-contrast subjects. For hair, fur, or edges
-that fringe into a gray or colored halo, switch to
-`new_session("birefnet-general")` (about 1 GB on first use) or pass
-`alpha_matting=True` to `remove`. Do not segment an image that is already
-cleanly isolated; flatten or composite it onto the target color instead (see
-Traps).
+`u2net` is fast and fine for high-contrast subjects. For hair, fur, or edges that fringe into a gray or colored halo, switch to `new_session("birefnet-general")` (about 1 GB on first use) or pass `alpha_matting=True` to `remove`. Do not segment an image that is already cleanly isolated; flatten or composite it onto the target color instead (see Traps).
 
 ### Preserve transcript timestamps
 
@@ -190,24 +171,13 @@ Path("output/transcript.txt").write_text(
 
 ## Traps
 
-- Do not remove a background that is already clean. Inspect the source first
-  (`Image.open(path).mode` for an alpha channel; view it for a solid backdrop).
-  Product and catalog images are often already isolated on white or already
-  transparent, and re-segmenting them only adds edge fringing and color halos.
-  When the goal is a solid background, flatten or composite the existing image
-  onto that color (the `sharp-images` skill) instead of running removal.
-- Load each model once. Repeated script invocations repeat initialization and
-  may repeat expensive setup.
-- Model output is probabilistic. Preserve scores and review low-confidence or
-  high-impact results.
-- The default NER model recognizes people, organizations, locations, and
-  miscellaneous entities. It does not provide a date category.
-- Avoid arbitrary models that require `trust_remote_code=True` unless their
-  code has been deliberately reviewed.
-- Long inputs may be truncated by a model. Chunk them with overlap and retain
-  source offsets when traceability matters.
-- Model caches and optional packages can consume several gigabytes. Do not
-  install every feature stack by default.
+- Do not remove a background that is already clean. Inspect the source first (`Image.open(path).mode` for an alpha channel; view it for a solid backdrop). Product and catalog images are often already isolated on white or already transparent, and re-segmenting them only adds edge fringing and color halos. When the goal is a solid background, flatten or composite the existing image onto that color (the `sharp-images` skill) instead of running removal.
+- Load each model once. Repeated script invocations repeat initialization and may repeat expensive setup.
+- Model output is probabilistic. Preserve scores and review low-confidence or high-impact results.
+- The default NER model recognizes people, organizations, locations, and miscellaneous entities. It does not provide a date category.
+- Avoid arbitrary models that require `trust_remote_code=True` unless their code has been deliberately reviewed.
+- Long inputs may be truncated by a model. Chunk them with overlap and retain source offsets when traceability matters.
+- Model caches and optional packages can consume several gigabytes. Do not install every feature stack by default.
 
 ## Verification
 
@@ -219,7 +189,6 @@ Path("output/transcript.txt").write_text(
 
 ## Script index
 
-Use these for closed, single-input operations. Full options are in
-[`reference.md`](reference.md).
+Use these for closed, single-input operations. Full options are in [`reference.md`](reference.md).
 
 {{GENERATED_SCRIPT_INDEX}}

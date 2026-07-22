@@ -5,14 +5,11 @@ description: "Work with Word documents (.docx). Use whenever the user wants to e
 
 # DOCX
 
-Use `python-docx` and `docxtpl` directly for composed documents and custom
-edits. The bundled scripts are conveniences for closed extraction, replacement,
-template filling, and simple documents.
+Use `python-docx` and `docxtpl` directly for composed documents and custom edits. The bundled scripts are conveniences for closed extraction, replacement, template filling, and simple documents.
 
 ## Dependencies
 
-The app installs the locked `python-docx` and `docxtpl` dependencies when this
-skill is loaded. Run Python with `python`; do not repeat installation.
+The app installs the locked `python-docx` and `docxtpl` dependencies when this skill is loaded. Run Python with `python`; do not repeat installation.
 
 ## Choose an approach
 
@@ -26,8 +23,7 @@ skill is loaded. Run Python with `python`; do not repeat installation.
 
 ## Create a styled document
 
-Build task-specific structure directly instead of forcing content through the
-limited Markdown convenience script:
+Build task-specific structure directly instead of forcing content through the limited Markdown convenience script:
 
 ```python
 from pathlib import Path
@@ -105,11 +101,7 @@ output.parent.mkdir(parents=True, exist_ok=True)
 doc.save(output)
 ```
 
-Word often splits visible text across formatting runs. Replacing
-`paragraph.text` discards run formatting. Use `edit.py` for plain cross-run
-replacement, or explicitly rebuild runs when the desired formatting is known.
-Remember to traverse table cells, headers, and footers when an edit applies to
-the entire document.
+Word often splits visible text across formatting runs. Replacing `paragraph.text` discards run formatting. Use `edit.py` for plain cross-run replacement, or explicitly rebuild runs when the desired formatting is known. Remember to traverse table cells, headers, and footers when an edit applies to the entire document.
 
 ## Fill a Word template
 
@@ -137,46 +129,28 @@ template.save(output)
 Write Jinja expressions directly in the Word template:
 
 - `{{ variable }}` for escaped substitution
-- `{% for item in items %}...{% endfor %}` for repeated content inside one
-  paragraph or cell
+- `{% for item in items %}...{% endfor %}` for repeated content inside one paragraph or cell
 - `{% if condition %}...{% endif %}` for an inline conditional
 
-To repeat whole Word structures, use `docxtpl` structural tags in dedicated
-wrapper paragraphs or rows. For a repeated table row, put
-`{%tr for item in items %}` in its own row, the `{{ item.name }}` and other
-expressions in the next row, and `{%tr endfor %}` in a third row. Use `{%p ...
-%}` the same way to repeat a whole paragraph. The tag-only wrapper rows or
-paragraphs are removed during rendering.
+To repeat whole Word structures, use `docxtpl` structural tags in dedicated wrapper paragraphs or rows. For a repeated table row, put `{%tr for item in items %}` in its own row, the `{{ item.name }}` and other expressions in the next row, and `{%tr endfor %}` in a third row. Use `{%p ... %}` the same way to repeat a whole paragraph. The tag-only wrapper rows or paragraphs are removed during rendering.
 
-Keep each control tag in one Word run as required by `docxtpl`; Word can split
-visually continuous text into multiple XML runs. Keep `autoescape=True` so
-values containing `&`, `<`, or `>` remain valid Word XML.
-When sending Python through a shell heredoc, quote its delimiter as `<<'PY'`
-so shell expansion cannot alter currency text or template expressions.
+Keep each control tag in one Word run as required by `docxtpl`; Word can split visually continuous text into multiple XML runs. Keep `autoescape=True` so values containing `&`, `<`, or `>` remain valid Word XML. When sending Python through a shell heredoc, quote its delimiter as `<<'PY'` so shell expansion cannot alter currency text or template expressions.
 
 ## Format traps
 
 - `python-docx` handles `.docx`, not legacy `.doc` files or PDF conversion.
-- Named styles and table styles must exist in the document or its template.
-  Built-in styles such as `Normal`, `Heading 1`, and `Table Grid` are portable.
-- Widths are constrained by the section margins. Word may reflow tables that
-  exceed the usable page width.
+- Named styles and table styles must exist in the document or its template. Built-in styles such as `Normal`, `Heading 1`, and `Table Grid` are portable.
+- Widths are constrained by the section margins. Word may reflow tables that exceed the usable page width.
 - A new section can change headers, footers, margins, and page orientation.
-- Page numbers and some advanced Word fields require lower-level XML. Preserve
-  existing fields when editing a template unless the task requires rebuilding them.
+- Page numbers and some advanced Word fields require lower-level XML. Preserve existing fields when editing a template unless the task requires rebuilding them.
 
 ## Quality gate
 
-Always reopen the saved document with `Document(...)` and verify expected
-paragraphs, styles, tables, images, sections, metadata, and filled values. When
-LibreOffice or Word is available, render or open the result and inspect every
-page for clipping, awkward page breaks, table overflow, and missing glyphs.
-State when only structural verification was possible.
+Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. When LibreOffice or Word is available, render or open the result and inspect every page for clipping, awkward page breaks, table overflow, and missing glyphs. State when only structural verification was possible.
 
 ## Script reference
 
-Use scripts for bounded convenience operations. Full options are in
-[`reference.md`](reference.md).
+Use scripts for bounded convenience operations. Full options are in [`reference.md`](reference.md).
 
 - `create.py`: Create a Word document (.docx) from Markdown or structured JSON.
 - `edit.py`: Edit an existing Word document: add content, modify paragraphs, or do find-and-replace.

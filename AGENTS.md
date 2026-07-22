@@ -7,7 +7,8 @@ Skill/template registry for the Instrument desktop app. Not an app.
 ## Notes
 
 - If `SKILL.template.md` exists, `SKILL.md` is generated; edit the template.
-- Wrap long lines when it helps scan code, prompts, or docs.
+- Do not soft-wrap prose in skill Markdown. The app renders source line breaks,
+  so keep each paragraph or list item on one source line.
 
 ## Skill design
 

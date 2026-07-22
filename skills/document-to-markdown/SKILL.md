@@ -5,14 +5,11 @@ description: "Convert local office documents and data files to clean Markdown fo
 
 # Document to Markdown
 
-Convert local files into Markdown that preserves useful semantic structure for
-an agent to read and reuse. This is a closed conversion task, so prefer the
-bundled script unless the output needs custom processing.
+Convert local files into Markdown that preserves useful semantic structure for an agent to read and reuse. This is a closed conversion task, so prefer the bundled script unless the output needs custom processing.
 
 ## Dependencies
 
-The app installs the locked `markitdown` dependency when this skill is loaded.
-Run Python with `python`; do not repeat installation.
+The app installs the locked `markitdown` dependency when this skill is loaded. Run Python with `python`; do not repeat installation.
 
 ## Choose an approach
 
@@ -42,22 +39,18 @@ output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(markdown, encoding="utf-8")
 ```
 
-Keep plugins disabled. Use only local files, not URLs or cloud conversion
-services. If a format's semantics are missing, inspect it with its dedicated
-skill instead of guessing from incomplete Markdown.
+Keep plugins disabled. Use only local files, not URLs or cloud conversion services. If a format's semantics are missing, inspect it with its dedicated skill instead of guessing from incomplete Markdown.
 
 ## Quality gate
 
 Before using or delivering the Markdown:
 
 1. Read the output and confirm the expected sections are present.
-2. Compare representative tables, links, lists, and slide or sheet boundaries
-   against the source.
+2. Compare representative tables, links, lists, and slide or sheet boundaries against the source.
 3. Report any content that the converter could not represent cleanly.
 
 ## Script reference
 
-Use the script for the standard local-file conversion. Full options are in
-[`reference.md`](reference.md).
+Use the script for the standard local-file conversion. Full options are in [`reference.md`](reference.md).
 
 - `convert.py`: Convert a local document to Markdown for analysis or reuse.

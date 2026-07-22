@@ -6,16 +6,11 @@ compatibility: "Requires ffmpeg and ffprobe on PATH."
 
 # FFmpeg
 
-Use the pre-installed `ffmpeg` and `ffprobe` commands directly. Prefer simple,
-explicit commands over elaborate filter graphs.
+Use the pre-installed `ffmpeg` and `ffprobe` commands directly. Prefer simple, explicit commands over elaborate filter graphs.
 
-Treat every recipe as a starting point. Probe the actual inputs, then adapt
-stream selectors, filters, codecs, dimensions, and mappings to the requested
-result. Do not force a file through an example whose assumed streams do not
-match.
+Treat every recipe as a starting point. Probe the actual inputs, then adapt stream selectors, filters, codecs, dimensions, and mappings to the requested result. Do not force a file through an example whose assumed streams do not match.
 
-Read [references/recipes.md](references/recipes.md) for advanced audio, subtitle,
-overlay, GIF, slideshow, social-media, and multi-input recipes.
+Read [references/recipes.md](references/recipes.md) for advanced audio, subtitle, overlay, GIF, slideshow, social-media, and multi-input recipes.
 
 ## Workflow
 
@@ -33,11 +28,9 @@ overlay, GIF, slideshow, social-media, and multi-input recipes.
 - Default to `-n`, which fails instead of overwriting an existing output.
 - Use `-y` only when the user explicitly requested overwrite.
 - Do not delete or replace inputs unless explicitly requested.
-- Keep user-provided text out of filter expressions. For `drawtext`, write text
-  to a file and use `textfile=`.
+- Keep user-provided text out of filter expressions. For `drawtext`, write text to a file and use `textfile=`.
 - Save partial or experimental output under a distinct name.
-- For long or concurrent encodes, avoid consuming all available CPU. Add an
-  appropriate `-threads` limit when contention is likely.
+- For long or concurrent encodes, avoid consuming all available CPU. Add an appropriate `-threads` limit when contention is likely.
 
 ## Inspect first
 
@@ -65,8 +58,7 @@ ffprobe -v error \
   -of table "$INPUT"
 ```
 
-Probe before concatenation, stream mapping, codec copying, or any operation
-whose correctness depends on the input layout.
+Probe before concatenation, stream mapping, codec copying, or any operation whose correctness depends on the input layout.
 
 ## Copy or re-encode
 
@@ -92,13 +84,11 @@ Re-encode when:
 - Normalizing incompatible inputs for concatenation.
 - Producing a browser-compatible result from unknown codecs.
 
-If stream copy fails, the streams are usually incompatible with the target
-container. Re-encode the incompatible streams instead of retrying unchanged.
+If stream copy fails, the streams are usually incompatible with the target container. Re-encode the incompatible streams instead of retrying unchanged.
 
 ## Browser-compatible MP4
 
-Use H.264 video, AAC audio, square pixels, a broadly supported pixel format,
-and fast-start metadata:
+Use H.264 video, AAC audio, square pixels, a broadly supported pixel format, and fast-start metadata:
 
 ```bash
 ffmpeg -n -i "$INPUT" \
@@ -117,8 +107,7 @@ CRF guidance for H.264:
 | General use    | 23    | Default                   |
 | Smaller output | 27-30 | More visible quality loss |
 
-Lower CRF means higher quality and a larger file. Use H.265, VP9, or AV1 only
-when the user requests them or compatibility requirements permit them.
+Lower CRF means higher quality and a larger file. Use H.265, VP9, or AV1 only when the user requests them or compatibility requirements permit them.
 
 ## Core recipes
 
@@ -191,8 +180,7 @@ ffmpeg -n -i "$INPUT" \
 ffmpeg -n -ss 00:00:07 -i "$INPUT" -frames:v 1 -q:v 2 "$OUTPUT"
 ```
 
-Use PNG output for lossless frames. Use JPEG with `-q:v 2` for compact,
-high-quality thumbnails.
+Use PNG output for lossless frames. Use JPEG with `-q:v 2` for compact, high-quality thumbnails.
 
 ### Extract audio
 
@@ -216,12 +204,9 @@ ffmpeg -n -i "$INPUT" -map 0:v:0 -c:v copy -an "$OUTPUT"
 
 ### Concatenate sequential clips
 
-Treat requests to combine, join, merge, stitch, append, or put clips end to end
-as sequential concatenation unless the user asks for a grid, overlay, or
-picture-in-picture layout.
+Treat requests to combine, join, merge, stitch, append, or put clips end to end as sequential concatenation unless the user asks for a grid, overlay, or picture-in-picture layout.
 
-When all inputs have compatible stream layouts and codecs, use the concat
-demuxer with a list file:
+When all inputs have compatible stream layouts and codecs, use the concat demuxer with a list file:
 
 ```text
 file '/absolute/path/to/clip-1.mp4'
@@ -233,12 +218,9 @@ file '/absolute/path/to/clip-3.mp4'
 ffmpeg -n -f concat -safe 0 -i "$LIST_FILE" -map 0 -c copy "$OUTPUT"
 ```
 
-Create the list with file-writing tools rather than interpolating untrusted
-paths into a shell command. Single quotes inside paths must be escaped according
-to the concat file format.
+Create the list with file-writing tools rather than interpolating untrusted paths into a shell command. Single quotes inside paths must be escaped according to the concat file format.
 
-If codecs, dimensions, time bases, or stream layouts differ, normalize or
-re-encode them. See [references/recipes.md](references/recipes.md).
+If codecs, dimensions, time bases, or stream layouts differ, normalize or re-encode them. See [references/recipes.md](references/recipes.md).
 
 ## Stream mapping
 
@@ -266,8 +248,7 @@ For multi-step visual work, build the graph from left to right:
 3. Combine labeled streams.
 4. Map only the final labels and any retained streams.
 
-This example scales a foreground image, labels both stages, overlays it on the
-video, and preserves optional audio from the first input:
+This example scales a foreground image, labels both stages, overlays it on the video, and preserves optional audio from the first input:
 
 ```bash
 ffmpeg -n \
@@ -280,10 +261,7 @@ ffmpeg -n \
   "$OUTPUT"
 ```
 
-Add a labeled stage instead of rewriting the entire graph when the request
-gains another transform. If a graph becomes hard to quote or inspect, write
-the filter expression to a workspace file and pass it with
-`-filter_complex_script`.
+Add a labeled stage instead of rewriting the entire graph when the request gains another transform. If a graph becomes hard to quote or inspect, write the filter expression to a workspace file and pass it with `-filter_complex_script`.
 
 ## Verify output
 
@@ -301,16 +279,13 @@ Check the properties relevant to the request:
 - Expected codecs and container compatibility.
 - Nonzero output size and no FFmpeg errors.
 
-FFprobe confirms structure, not appearance. When correctness is visual, such as
-generated graphics, shapes, overlays, or text position, extract a representative
-frame and inspect it before reporting success:
+FFprobe confirms structure, not appearance. When correctness is visual, such as generated graphics, shapes, overlays, or text position, extract a representative frame and inspect it before reporting success:
 
 ```bash
 ffmpeg -n -ss 00:00:01 -i "$OUTPUT" -frames:v 1 -q:v 2 frame-check.png
 ```
 
-If FFmpeg fails, read the diagnostic and change the command based on the actual
-error. Do not rerun the same command unchanged.
+If FFmpeg fails, read the diagnostic and change the command based on the actual error. Do not rerun the same command unchanged.
 
 ## Common failures
 
