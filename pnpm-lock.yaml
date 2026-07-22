@@ -4,8 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-pnpmfileChecksum: sha256-ZfwGjIvQgPR9mEJg5iihJauZ5iv1Ogj5lI/dgVj7pgI=
-
 importers:
 
   .:
@@ -679,7 +677,7 @@ packages:
     os: [win32]
 
   '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/144b17b303281240b5f0b6dea5198ae3d1d005f9':
-    resolution: {tarball: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/144b17b303281240b5f0b6dea5198ae3d1d005f9}
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/144b17b303281240b5f0b6dea5198ae3d1d005f9}
     version: 1.0.0
     engines: {node: '>=22'}
 
