@@ -5,10 +5,27 @@ import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { promisify } from "node:util";
-import * as prettier from "prettier";
+import { format } from "oxfmt";
 import ts from "typescript";
 
+import oxfmtrc from "../.oxfmtrc.json" with { type: "json" };
+
 const execFileAsync = promisify(execFile);
+
+// oxfmt's JS API does not read .oxfmtrc.json the way its CLI does, so pass the
+// repo's formatting options through explicitly. Without this, generated files
+// come out formatted differently than `check:format` demands.
+const { $schema, ignorePatterns, ...formatConfig } = oxfmtrc;
+
+async function formatGenerated(filePath: string, source: string) {
+  const { code, errors } = await format(filePath, source, formatConfig);
+  if (errors.length > 0) {
+    throw new Error(
+      `${filePath}: ${errors.map((error) => error.message).join("; ")}`,
+    );
+  }
+  return code;
+}
 
 const SKILLS_DIR = join(process.cwd(), "skills");
 const SCRIPT_DOCS_PLACEHOLDER = "{{GENERATED_SCRIPT_DOCS}}";
@@ -359,9 +376,10 @@ async function generateSkillMarkdown({
     progressive ? SCRIPT_INDEX_PLACEHOLDER : SCRIPT_DOCS_PLACEHOLDER,
     progressive ? generateScriptIndexSection(scripts) : generatedScriptDocs,
   );
-  const generated = await prettier.format(raw, { filepath: skillMdPath });
+  const generated = await formatGenerated(skillMdPath, raw);
   const generatedReference = progressive
-    ? await prettier.format(
+    ? await formatGenerated(
+        referencePath,
         [
           "# Script reference",
           "",
@@ -369,7 +387,6 @@ async function generateSkillMarkdown({
           "",
           generatedReferenceDocs,
         ].join("\n"),
-        { filepath: referencePath },
       )
     : undefined;
 

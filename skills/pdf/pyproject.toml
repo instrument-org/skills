@@ -2,7 +2,14 @@
 name = "skill-pdf"
 version = "0.0.0"
 requires-python = ">=3.11"
-dependencies = ["defusedxml", "Pillow", "pdfplumber", "pypdf", "PyMuPDF", "reportlab"]
+dependencies = [
+  "defusedxml",
+  "Pillow",
+  "pdfplumber",
+  "pypdf",
+  "PyMuPDF",
+  "reportlab",
+]
 
 [project.optional-dependencies]
 test = ["pytest"]

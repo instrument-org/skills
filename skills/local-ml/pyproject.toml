@@ -15,4 +15,6 @@ test = ["pytest"]
 vision = ["torch", "transformers"]
 
 [tool.pytest.ini_options]
-markers = ["slow: requires model downloads (~100MB-2GB), excluded from default run"]
+markers = [
+  "slow: requires model downloads (~100MB-2GB), excluded from default run",
+]

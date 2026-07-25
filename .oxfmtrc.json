@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    ".pytest_cache/",
+    ".svelte-kit/",
+    "coverage/",
+    "dist/",
+    "out/",
+    "pnpm-lock.yaml",
+    "templates/htmx/public/htmx.min.js",
+    "_tmp_*"
+  ]
+}

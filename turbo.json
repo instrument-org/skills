@@ -95,7 +95,7 @@
       "outputs": []
     },
     "//#check:format": {
-      "inputs": ["$TURBO_DEFAULT$", ".prettierignore"],
+      "inputs": ["$TURBO_DEFAULT$", ".oxfmtrc.json"],
       "outputs": []
     },
     "//#check:types": {
