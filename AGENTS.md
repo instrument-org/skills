@@ -61,9 +61,9 @@ Skills from this registry are installed into the user's workspace on demand. The
 
 - Prefer `z.output` over `z.infer` for type inference.
 
-## Cursor skills
+## Repo-local skills
 
-Repo-local skills live in `.agents/skills/` (e.g. skills-commit-message, create-registry-skill, tighten-skill).
+`.agents/skills/`: `create-registry-skill`, `skills-commit-message`, `tighten-skill`, `tsgo-lsp`. Read a `SKILL.md` before hand-rolling work one of them covers.
 
 ## Monorepo checks (Turbo)
 
@@ -76,7 +76,9 @@ Run checks through Turbo from repo root for caching. Do not `cd skills/*` for re
 - `turbo run check:python` — Python syntax checks for every Python skill
 - Single test file only: `cd skills/<name> && pnpm test <path/to/file.test.ts>`
 
-Format hook: each Edit/Write runs Prettier only; finishing (Stop) runs Prettier + `eslint --fix` + Prettier over changed files. Don't hand-format or fix order-only/auto-fixable lint; expect files to change after you write them. Non-auto-fixable lint/type errors are not handled by the hook, run the checks above.
+Format hook: each Edit/Write runs oxfmt on that file; finishing (Stop) runs oxfmt over changed files. This repo installs no ESLint or oxlint, so the hook's lint passes no-op here — formatting is the whole of it. Don't hand-format; expect files to change after you write them. Type errors and skill-rule violations are not handled by the hook, run the checks above.
+
+`scripts/generate-skill-md.ts` formats generated `SKILL.md` / `reference.md` with oxfmt's JS API, which — unlike its CLI — does not read `.oxfmtrc.json`. It passes the config through explicitly; keep that wiring if you touch the generator, or generated files will drift from `check:format`.
 
 ## Package management
 
