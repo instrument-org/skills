@@ -65,6 +65,10 @@ Skills from this registry are installed into the user's workspace on demand. The
 
 `.agents/skills/`: `create-registry-skill`, `skills-commit-message`, `tighten-skill`, `tsgo-lsp`. Read a `SKILL.md` before hand-rolling work one of them covers.
 
+## Repository knowledge base
+
+Durable, versioned docs are the system of record; prefer them over chat/history. Keep them evergreen and safe to share: leave out secrets and anything tied to one machine, person, or moment. See [`docs/README.md`](docs/README.md) for the taxonomy (`decisions/`, `findings/`, `plans/`).
+
 ## Monorepo checks (Turbo)
 
 Run checks through Turbo from repo root for caching. Do not `cd skills/*` for repo-wide check loops.
