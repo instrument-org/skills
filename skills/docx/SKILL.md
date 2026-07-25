@@ -9,7 +9,7 @@ Use `python-docx` and `docxtpl` directly for composed documents and custom edits
 
 ## Dependencies
 
-The app installs the locked `python-docx` and `docxtpl` dependencies when this skill is loaded. Run Python with `python`; do not repeat installation.
+The app installs the locked `python-docx`, `docxtpl`, and Pillow dependencies when this skill is loaded. Run Python with `python`; do not repeat installation.
 
 ## Choose an approach
 
@@ -84,6 +84,11 @@ doc.add_picture("attachments/chart.png", width=Inches(6.2))
 doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
 ```
 
+`add_picture` needs a raster file, so draw or convert one first rather than
+hand-rolling a rasterizer: Pillow is installed for images composed in Python,
+and `ffmpeg` converts an image you already have. Write it under `work/` and
+embed that path.
+
 ## Edit an existing document
 
 Load the original file and make the smallest structural change possible:
@@ -146,7 +151,7 @@ Keep each control tag in one Word run as required by `docxtpl`; Word can split v
 
 ## Quality gate
 
-Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. When LibreOffice or Word is available, render or open the result and inspect every page for clipping, awkward page breaks, table overflow, and missing glyphs. State when only structural verification was possible.
+Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. When LibreOffice or Word is available, render or open the result and inspect every page for clipping, awkward page breaks, table overflow, and missing glyphs. When neither is, open each image you generated at its own path and look at it: reopening the document proves a picture is present, never that it looks right. Say plainly when the document itself was not rendered.
 
 ## Script reference
 

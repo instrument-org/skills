@@ -2,7 +2,7 @@
 name = "skill-docx"
 version = "0.0.0"
 requires-python = ">=3.11"
-dependencies = ["docxtpl", "python-docx"]
+dependencies = ["docxtpl", "Pillow", "python-docx"]
 
 [project.optional-dependencies]
 test = ["pytest"]
