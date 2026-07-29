@@ -95,10 +95,10 @@ Commands drive the managed browser unless a targeting flag says otherwise. A fla
 | The user's Chrome profile, its logins     | `--profile <name\|dir>`             |
 | A Chromium already running with debugging | `--auto-connect`                    |
 | A specific CDP endpoint or Electron app   | `--cdp <port\|http://host:port>`    |
-| A cloud or iOS browser provider           | `--provider <name>`, `--device`     |
+| A cloud or iOS browser provider           | `--provider <name>`                 |
 | Saved storage state                       | `--state <file>`, `--restore <key>` |
 
-A normally running Chrome is not connectable, since Chrome 136+ disables remote debugging on the default profile. `--profile` is the path to the user's signed-in state: it launches a debuggable copy of their profile, logins included. `--auto-connect` only reaches instances launched with remote debugging. See [`references/commands.md`](references/commands.md) for accepted `--cdp` value formats.
+A normally running Chrome is not connectable, since Chrome 136+ disables remote debugging on the default profile. `--profile` is the path to the user's signed-in state: it launches a debuggable copy of their profile, logins included. `--auto-connect` only reaches instances launched with remote debugging. `--cdp` takes a bare port or an http origin, never a bare `host:port`; see [`references/commands.md`](references/commands.md) for the full value rules. `--device` names an iOS device and only applies alongside `--provider ios`; on its own it is ignored and the command stays on the managed browser.
 
 ```bash
 agent-browser profiles
