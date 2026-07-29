@@ -1,6 +1,6 @@
 # Command Reference
 
-Reference for the commands commonly useful through Instrument's managed browser. For quick start and adaptive workflows, see `SKILL.md`. Instrument blocks upstream connection, profile, auth-vault, state-file, named-session, and lifecycle controls because the workspace owns that context.
+Reference for the commands commonly useful through Instrument's managed browser. For quick start and adaptive workflows, see `SKILL.md`. Instrument blocks upstream auth-vault, named-session, config, plugin, and lifecycle controls because the workspace owns that context. Connection targeting flags (`--auto-connect`, `--cdp`, `--provider`, `--profile`, `--state`, `--restore`) route a single invocation to an external browser; see the External browsers section in `SKILL.md`.
 
 ## Navigation
 
@@ -149,6 +149,9 @@ agent-browser screenshot path.png # Save to specific path
 agent-browser screenshot @e1      # Element-only screenshot (ref or CSS selector)
 agent-browser pdf output.pdf      # Full-page PDF; full-page PNG is unavailable
 ```
+
+Full-page PNG is a managed-browser limit; external browsers support
+`screenshot --full`.
 
 ## Video Recording
 
