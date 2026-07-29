@@ -35,35 +35,14 @@ Skills from this registry are installed into the user's workspace on demand. The
 
 ## TypeScript
 
-- No non-null assertions (`!`); use type guards or optional chaining.
-- Avoid casts. If needed, explain why. Prefer `satisfies`; use `as` only for different-type assertions, e.g. unknown payloads.
-- Avoid `any`; never use `as any`.
-- Reuse existing types/interfaces; avoid per-file redefinitions.
-- Avoid optional props/properties unless needed.
-- Kebab-case filenames.
-- Prefer named exports.
-- No JSX section comments like `{/* Header */}<Header />`.
-- Perfectionist/import-x sort objects, interfaces, types, imports, etc. Ignore order-only lint errors; auto-fix handles them.
-- Prefer object params for many or identical params: `({ a, b }: { a: number, b: number }) => number`.
+- Avoid casts. Prefer `satisfies`; use `as` only for genuinely different types (e.g. unknown payloads), and say why.
+- Reuse existing types/interfaces rather than redefining per file. Prefer short inline non-exported types.
 - Do not run `tsc`; use built-in diagnostics.
-- `lib`: `es2023`, `DOM`, `DOM.Iterable`; modern features OK.
-- Prefer short inline non-exported type declarations.
-- Avoid `Array#reduce()`; prefer `.map`, `.filter`, or `for...of`.
-- Omit return types unless needed.
-
-## Tailwind
-
-- Use `size-` over `w-` and `h-` when width and height are the same.
-- Use `gap-x-` or `gap-y-` over `space-x` or `space-y` for gap.
-- Tailwind v4 scale utilities (`pt-17`, `gap-11`, `w-17`, etc.) are valid. Prefer over arbitrary `[...]`.
+- This repo installs no ESLint or oxlint, so nothing auto-fixes import or object key order. Match the surrounding file.
 
 ## Zod
 
-- Prefer `z.output` over `z.infer` for type inference.
-
-## Repo-local skills
-
-`.agents/skills/`: `create-registry-skill`, `skills-commit-message`, `tighten-skill`, `tsgo-lsp`. Read a `SKILL.md` before hand-rolling work one of them covers.
+Prefer `z.output` over `z.infer` for type inference.
 
 ## Repository knowledge base
 
@@ -75,12 +54,10 @@ Run checks through Turbo from repo root for caching. Do not `cd skills/*` for re
 
 - `pnpm check-and-test` — full local check (includes spelling, format, etc.)
 - `pnpm check-and-test:ci` — what CI runs (omits pedantic checks that don't affect correctness)
-- `turbo run check:types` — all packages
-- `turbo run check:types --filter=@instrument-org/skill-markdown` — one skill
+- `turbo run check:types` — all packages, or `--filter=@instrument-org/skill-<name>` for one
 - `turbo run check:python` — Python syntax checks for every Python skill
-- Single test file only: `cd skills/<name> && pnpm test <path/to/file.test.ts>`
 
-Format hook: each Edit/Write runs oxfmt on that file; finishing (Stop) runs oxfmt over changed files. This repo installs no ESLint or oxlint, so the hook's lint passes no-op here — formatting is the whole of it. Don't hand-format; expect files to change after you write them. Type errors and skill-rule violations are not handled by the hook, run the checks above.
+A format hook runs oxfmt on every file you Edit/Write, then oxfmt over all changed files on Stop. With no linter installed, formatting is the whole of it. So: expect files to change after you write them, don't hand-format, and run the checks above for type errors and skill-rule violations, which the hook does not cover.
 
 `scripts/generate-skill-md.ts` formats generated `SKILL.md` / `reference.md` with oxfmt's JS API, which — unlike its CLI — does not read `.oxfmtrc.json`. It passes the config through explicitly; keep that wiring if you touch the generator, or generated files will drift from `check:format`.
 
@@ -91,8 +68,6 @@ Format hook: each Edit/Write runs oxfmt on that file; finishing (Stop) runs oxfm
 
 ## Tests
 
-- Use `it.each` for testing repetitive cases.
-- Generate empty `toMatchInlineSnapshot` and allow the test run to fill it in.
-- Prefer `toMatchInlineSnapshot`; keep expected output visible in the test file.
-- Run a specific test file: `cd skills/<name> && pnpm test <path/to/file.test.ts>`.
-- Run all tests in a skill: `cd skills/<name> && pnpm test`.
+- Run one file or a whole skill with `cd skills/<name> && pnpm test [path/to/file.test.ts]`.
+- Prefer `toMatchInlineSnapshot` so expected output stays visible in the test file. Generate it empty and let the run fill it in.
+- Use `it.each` for repetitive cases.
