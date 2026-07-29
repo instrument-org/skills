@@ -123,3 +123,19 @@ options:
   --json
   --limit LIMIT  Max rows to display (default: 50)
 ```
+
+## `validate.py` Validate an Excel workbook's XML before delivering it.
+
+```text
+usage: validate.py [-h] [--fix] [--json] input
+
+Validate an Excel workbook's XML
+
+positional arguments:
+  input       Input .xlsx or .xlsm file
+
+options:
+  -h, --help  show this help message and exit
+  --fix       Repair inconsistent sheet view selections in place
+  --json      Emit JSON
+```
