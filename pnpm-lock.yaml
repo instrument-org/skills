@@ -28,7 +28,7 @@ importers:
         version: 3.2.3
       '@instrument-org/agent-hooks':
         specifier: github:instrument-org/agent-hooks
-        version: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/62d95a4ec186e23a962118601e7fb28cd0d8f62b
+        version: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/a8fa7ef6b9a7c3f60f3a18102359be61d7b2ce88
       '@types/node':
         specifier: 24.13.1
         version: 24.13.1
@@ -676,8 +676,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/62d95a4ec186e23a962118601e7fb28cd0d8f62b':
-    resolution: {gitHosted: true, integrity: sha512-sl1qxb2K8pqpKSlieyArOZ6nBtMLGKDscNYvZyGxcIhMwSK6QKaezHN3kq1PlDwtHfLThIU8IcPsgBUDqfgIqQ==, tarball: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/62d95a4ec186e23a962118601e7fb28cd0d8f62b}
+  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/a8fa7ef6b9a7c3f60f3a18102359be61d7b2ce88':
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/a8fa7ef6b9a7c3f60f3a18102359be61d7b2ce88}
     version: 1.2.0
     engines: {node: '>=22'}
 
@@ -1568,7 +1568,8 @@ packages:
       variants:
         - resolution:
             archive: tarball
-            bin: bin/node
+            bin:
+              node: bin/node
             integrity: sha256-3UvHfctfTJoslkNzm7WTUAzLCUE+xCyqD47w5e8RYJU=
             type: binary
             url: https://nodejs.org/download/release/v24.15.0/node-v24.15.0-aix-ppc64.tar.gz
@@ -1577,7 +1578,8 @@ packages:
               os: aix
         - resolution:
             archive: tarball
-            bin: bin/node
+            bin:
+              node: bin/node
             integrity: sha256-NyMxuWl3mrXRW5SYhPxur4jVr+h73ouogdZAC5EA/8Q=
             type: binary
             url: https://nodejs.org/download/release/v24.15.0/node-v24.15.0-darwin-arm64.tar.gz
@@ -1586,7 +1588,8 @@ packages:
               os: darwin
         - resolution:
             archive: tarball
-            bin: bin/node
+            bin:
+              node: bin/node
             integrity: sha256-/9XuKTRnkn8+5zGlU+uI/R9Iz3TuvC10prq+SvIoZzs=
             type: binary
             url: https://nodejs.org/download/release/v24.15.0/node-v24.15.0-darwin-x64.tar.gz
@@ -1595,7 +1598,8 @@ packages:
               os: darwin
         - resolution:
             archive: tarball
-            bin: bin/node
+            bin:
+              node: bin/node
             integrity: sha256-c6/CNNVYwkkZh19RwtHqACoq2k6m+DYBo4OGn++mTu0=
             type: binary
             url: https://nodejs.org/download/release/v24.15.0/node-v24.15.0-linux-arm64.tar.gz
@@ -1604,7 +1608,8 @@ packages:
               os: linux
         - resolution:
             archive: tarball
-            bin: bin/node
+            bin:
+              node: bin/node
             integrity: sha256-sfiJAKSxY2XqulYmkwT8Edp1gdvwNVLUSV+azh/AX20=
             type: binary
             url: https://nodejs.org/download/release/v24.15.0/node-v24.15.0-linux-ppc64le.tar.gz
@@ -1613,7 +1618,8 @@ packages:
               os: linux
         - resolution:
             archive: tarball
-            bin: bin/node
+            bin:
+              node: bin/node
             integrity: sha256-+YVFVDnVL+m43mqPbQe/7MxzbepSfofqyv5ajXUWo4A=
             type: binary
             url: https://nodejs.org/download/release/v24.15.0/node-v24.15.0-linux-s390x.tar.gz
@@ -1622,7 +1628,8 @@ packages:
               os: linux
         - resolution:
             archive: tarball
-            bin: bin/node
+            bin:
+              node: bin/node
             integrity: sha256-RINoctmuxJ8ea1KpqSKHLbmisC0jWmFqVoG2qF/sjYk=
             type: binary
             url: https://nodejs.org/download/release/v24.15.0/node-v24.15.0-linux-x64.tar.gz
@@ -1631,7 +1638,8 @@ packages:
               os: linux
         - resolution:
             archive: zip
-            bin: node.exe
+            bin:
+              node: node.exe
             integrity: sha256-yet0Au2ibiun5EtnJ/yFqN5WxQlbH3Hr0wYokiEaoRY=
             prefix: node-v24.15.0-win-arm64
             type: binary
@@ -1641,7 +1649,8 @@ packages:
               os: win32
         - resolution:
             archive: zip
-            bin: node.exe
+            bin:
+              node: node.exe
             integrity: sha256-zFFJ6r1Td5zh573FQBZDYi0MfmgAreGJKKdn6UC7DmI=
             prefix: node-v24.15.0-win-x64
             type: binary
@@ -1649,6 +1658,28 @@ packages:
           targets:
             - cpu: x64
               os: win32
+        - resolution:
+            archive: tarball
+            bin:
+              node: bin/node
+            integrity: sha256-MemKqWCgZ9qR7f/V2TvEZle10qgClhLDWfXyrABgFSo=
+            type: binary
+            url: https://unofficial-builds.nodejs.org/download/release/v24.15.0/node-v24.15.0-linux-arm64-musl.tar.gz
+          targets:
+            - cpu: arm64
+              os: linux
+              libc: musl
+        - resolution:
+            archive: tarball
+            bin:
+              node: bin/node
+            integrity: sha256-9Vr1vUicU0exE8pllMrgClSzC6V6xYdTJDEb/G9HYuM=
+            type: binary
+            url: https://unofficial-builds.nodejs.org/download/release/v24.15.0/node-v24.15.0-linux-x64-musl.tar.gz
+          targets:
+            - cpu: x64
+              os: linux
+              libc: musl
     version: 24.15.0
     hasBin: true
 
@@ -2679,7 +2710,7 @@ snapshots:
   '@esbuild/win32-x64@0.27.7':
     optional: true
 
-  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/62d95a4ec186e23a962118601e7fb28cd0d8f62b': {}
+  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/a8fa7ef6b9a7c3f60f3a18102359be61d7b2ce88': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
