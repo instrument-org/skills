@@ -5,7 +5,7 @@ description: Browser automation CLI for AI agents. Use when the user needs to in
 
 # Browser automation with agent-browser
 
-`agent-browser` is preinstalled and by default reuses one managed browser target for the current task and agent session. Targeting flags on an invocation drive an external browser instead (except `--provider instrument`, which names the task browser); see [External browsers](#external-browsers). Use it as an adaptive observe, act, verify loop. Read [`references/commands.md`](references/commands.md) when a recipe needs a command or option not shown here. Open the relevant reference before guessing syntax or working around a failed command.
+`agent-browser` is preinstalled and by default reuses one managed browser target for the current task and agent session. Targeting flags on an invocation drive an external browser instead; see [External browsers](#external-browsers). Use it as an adaptive observe, act, verify loop. Read [`references/commands.md`](references/commands.md) when a recipe needs a command or option not shown here. Open the relevant reference before guessing syntax or working around a failed command.
 
 Screenshots without an explicit path are saved under `work/screenshots/`. Command output reports the actual path used for screenshots and downloads, which may differ from the requested path.
 
@@ -75,8 +75,8 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - Use element, text, URL, function, or load waits when possible. Fixed sleeps are a fallback, not a readiness check.
 - Do not treat command success as task success. Verify visible text, URL, control state, downloaded content, or rendered appearance as appropriate.
 - Do not place passwords, tokens, cookies, or saved browser state in project files or command arguments.
-- Instrument manages the task browser's connection, profile, state, and lifecycle. The `auth`, `state`, `session`, `connect`, `close`, and `batch` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them. External browsers are selected only through the targeting flags in [External browsers](#external-browsers).
-- The managed task browser exposes one target. Do not use `tab`, `window new`, `click --new-tab`, or popup-based workflows there. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target. External browsers are real browsers, so `tab` works against their tabs.
+- Instrument manages the managed browser's connection, profile, state, and lifecycle. The `auth`, `state`, `session`, `connect`, `close`, and `batch` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them. External browsers are selected only through the targeting flags in [External browsers](#external-browsers).
+- The managed browser exposes one target. Do not use `tab`, `window new`, `click --new-tab`, or popup-based workflows there. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target. External browsers are real browsers, so `tab` works against their tabs.
 
 ## Recover from common failures
 
@@ -88,10 +88,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 
 ## External browsers
 
-Default commands drive the Instrument-managed task browser. A targeting flag
-routes that one invocation to an external browser; a bare follow-up command
-returns to the task browser, so repeat the flag on every command in an
-external flow.
+Commands drive the managed browser unless a targeting flag says otherwise. A flag applies only to the invocation it appears on, so repeat it on every command of an external flow.
 
 | Target                                    | Flags                               |
 | ----------------------------------------- | ----------------------------------- |
@@ -101,7 +98,7 @@ external flow.
 | A cloud or iOS browser provider           | `--provider <name>`, `--device`     |
 | Saved storage state                       | `--state <file>`, `--restore <key>` |
 
-`--provider instrument` names the task browser explicitly. Give `--cdp` a bare port (`--cdp 9222`) or an http origin (`--cdp http://127.0.0.1:9222`); `host:port` is rejected outright, and a `ws://` value must be a complete devtools URL, since a bare `ws://host:port` fails with a bare 404. Modern Chrome (136+) disables remote debugging on its default profile, so a normally running Chrome is not connectable; `--profile` launches a debuggable copy of the user's profile, logins included, and is the primary path to their signed-in state. `--auto-connect` only reaches instances explicitly launched with remote debugging.
+A normally running Chrome is not connectable, since Chrome 136+ disables remote debugging on the default profile. `--profile` is the path to the user's signed-in state: it launches a debuggable copy of their profile, logins included. `--auto-connect` only reaches instances launched with remote debugging. See [`references/commands.md`](references/commands.md) for accepted `--cdp` value formats.
 
 ```bash
 agent-browser profiles
@@ -110,31 +107,9 @@ agent-browser --profile Default snapshot -i
 agent-browser --profile Default read
 ```
 
-Prefer an external browser when the task benefits from the user's existing
-logged-in sessions (shopping, subscriptions, dashboards), when a site blocks
-the embedded browser (bot detection, CAPTCHA, login friction), or when the
-user asks for a specific browser, profile, device, provider, or CDP endpoint.
-Prefer the task browser for clean task-scoped browsing, local app testing,
-docs lookup, and anything the user should observe inside Studio.
+Targeting a browser changes which signed-in identity you act as, so never switch silently and re-verify signed-in state afterward rather than assuming the previous session carried over. Actions inside the user's own logged-in sessions are consequential (purchases, posts, messages): confirm scope before mutating anything there, and treat their open tabs and history as private.
 
-Fall back in both directions: if an external target cannot connect or none
-exists, use the task browser; if the task browser hits bot detection or a
-login wall, consider an external browser. A fallback switches authentication
-context, so never switch silently: tell the user, get their go-ahead before
-entering their logged-in browser, and re-verify signed-in state after any
-switch instead of assuming the previous browser's session carried over.
-
-An external invocation acts on a real browser. Actions inside the user's
-logged-in sessions are consequential (purchases, posts, messages), so confirm
-scope with the user before mutating anything there, and treat their open tabs
-and history as private: touch only what the task requires.
-
-Screenshots and downloads from external browsers land in the same task
-locations as managed-browser output, and `screenshot --full` works there
-(it is only unavailable in the managed browser). Avoid `download` in the
-user's own browser: it redirects that browser's download destination and
-does not reset it afterward. Prefer the task browser or a page-level fetch
-for file downloads.
+`screenshot --full` works against an external browser. Avoid `download` there: it redirects that browser's download destination without resetting it afterward. See [`references/session-management.md`](references/session-management.md).
 
 ## Recipe: read and research
 
