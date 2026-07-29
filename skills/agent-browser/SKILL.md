@@ -97,16 +97,11 @@ external flow.
 | ----------------------------------------- | ----------------------------------- |
 | The user's Chrome profile, its logins     | `--profile <name\|dir>`             |
 | A Chromium already running with debugging | `--auto-connect`                    |
-| A specific CDP endpoint or Electron app   | `--cdp <port\|ws-url>`              |
+| A specific CDP endpoint or Electron app   | `--cdp <port\|http://host:port>`    |
 | A cloud or iOS browser provider           | `--provider <name>`, `--device`     |
 | Saved storage state                       | `--state <file>`, `--restore <key>` |
 
-`--provider instrument` names the task browser explicitly. Modern Chrome
-(136+) disables remote debugging on its default profile, so a normally
-running Chrome is not connectable; `--profile` launches a debuggable copy of
-the user's profile, logins included, and is the primary path to their
-signed-in state. `--auto-connect` only reaches instances explicitly launched
-with remote debugging.
+`--provider instrument` names the task browser explicitly. Give `--cdp` a bare port (`--cdp 9222`) or an http origin (`--cdp http://127.0.0.1:9222`); `host:port` is rejected outright, and a `ws://` value must be a complete devtools URL, since a bare `ws://host:port` fails with a bare 404. Modern Chrome (136+) disables remote debugging on its default profile, so a normally running Chrome is not connectable; `--profile` launches a debuggable copy of the user's profile, logins included, and is the primary path to their signed-in state. `--auto-connect` only reaches instances explicitly launched with remote debugging.
 
 ```bash
 agent-browser profiles
