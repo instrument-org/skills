@@ -87,7 +87,9 @@ The command map is for discovery, not a substitute for observing the page. Read 
 
 ## The browser you get
 
-Every command drives the task's managed browser, and it is the only browser available. There is no way to reach the user's own Chrome, their profiles, or their existing logins. When a page needs an account, open it here and ask the user to sign in; they can see and use this browser in the app, and the session persists for the rest of the task.
+Commands drive the task's managed browser, the one the user watches in the app. Its cookies and signed-in sessions last for the whole task, so when a page needs an account, open it there and ask the user to sign in rather than looking for credentials.
+
+Whether this environment can reach any other browser, and which flags select one, is up to the environment: `agent-browser --help` lists what it allows. Do not infer a target from this document.
 
 ## Recipe: read and research
 
