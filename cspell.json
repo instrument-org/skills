@@ -13,7 +13,8 @@
     "package-lock.json",
     "yarn.lock",
     "**/*.tsbuildinfo",
-    "*.local/**"
+    "*.local/**",
+    "skills/spreadsheet/schemas/**"
   ],
   "dictionaries": ["typescript", "node", "npm", "html", "css", "bash"],
   "words": [
@@ -36,6 +37,7 @@
     "cjsx",
     "clahe",
     "cmyk",
+    "colorscale",
     "Colour",
     "colours",
     "Colourspace",
@@ -72,6 +74,7 @@
     "libx",
     "llms",
     "loudnorm",
+    "lxml",
     "markitdown",
     "Moritz",
     "mediabox",
@@ -121,6 +124,7 @@
     "smptebars",
     "soffice",
     "splitlines",
+    "sqref",
     "STARTPTS",
     "stdev",
     "Steinberg",

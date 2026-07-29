@@ -9,7 +9,7 @@ Use `openpyxl` and pandas directly for multi-step spreadsheet work. The bundled 
 
 ## Dependencies
 
-The app installs the locked `openpyxl` and pandas dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. The Numbers compatibility bridge uses its bundled Node dependencies.
+The app installs the locked `openpyxl`, pandas, and `lxml` dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. The Numbers compatibility bridge uses its bundled Node dependencies.
 
 ## Choose an approach
 
@@ -21,6 +21,7 @@ The app installs the locked `openpyxl` and pandas dependencies when this skill i
 | Preview or perform a one-step query                     | Use `read.py` or `query.py` |
 | Convert a flat table between CSV, TSV, and XLSX         | Use `convert.py`            |
 | Read or write Apple Numbers, or read legacy `.xls`      | Use `numbers-bridge.ts`     |
+| Confirm a saved workbook opens without repair           | Use `validate.py`           |
 
 Do not round-trip a styled workbook through pandas or `convert.py`: doing so can discard formulas, formatting, multiple sheets, tables, charts, validation, and metadata.
 
@@ -129,6 +130,19 @@ wb.save(output)
 
 Load with `data_only=False` to inspect or preserve formulas. With `data_only=True`, formula cells expose only their last cached result, which may be missing. Neither `openpyxl` nor pandas calculates formulas; Excel or LibreOffice must recalculate the workbook.
 
+### Reset inherited sheet views before freezing panes
+
+`ws.freeze_panes` adds to the pane selections a loaded workbook already carries instead of replacing them. Freezing a file that was saved with frozen panes therefore leaves duplicate `<selection>` entries and entries naming panes the new split does not create, and Excel discards the whole sheet view as unreadable content. Clear the inherited state first:
+
+```python
+from openpyxl.worksheet.views import Selection
+
+ws.sheet_view.selection = [Selection()]
+ws.freeze_panes = "A2"
+```
+
+A workbook built from scratch carries a single selection, so this applies only to workbooks loaded from disk.
+
 ## Data and formula traps
 
 - Treat untrusted strings beginning with `=`, `+`, `-`, or `@` as potential spreadsheet formulas when exporting CSV data to a workbook. Store them as explicit text unless formulas are intended.
@@ -141,7 +155,9 @@ Load with `data_only=False` to inspect or preserve formulas. With `data_only=Tru
 
 ## Quality gate
 
-Reopen the saved workbook and verify sheet names, dimensions, representative values and types, formulas, number formats, styles, table ranges, frozen panes, and any hidden or macro-bearing content. Inspect representative sheets in the app viewer when presentation quality matters. Never claim formula results were recalculated unless Excel or LibreOffice actually recalculated them.
+Run `validate.py` on every workbook you deliver. Reopening a file with `openpyxl` proves only that `openpyxl` can read it back: it accepts markup that Excel rejects, so a workbook that round-trips cleanly in Python can still open with a repair prompt. `validate.py` checks the saved XML against the ECMA-376 schema and checks the sheet views for pane and selection combinations Excel refuses, and `--fix` repairs the sheet views in place.
+
+Then reopen the workbook and verify sheet names, dimensions, representative values and types, formulas, number formats, styles, table ranges, frozen panes, and any hidden or macro-bearing content. Inspect representative sheets in the app viewer when presentation quality matters. Never claim formula results were recalculated unless Excel or LibreOffice actually recalculated them.
 
 ## Script reference
 

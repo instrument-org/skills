@@ -3,11 +3,15 @@
 import json
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
+from xml.etree import ElementTree
 
 import pytest
 import openpyxl
 import pandas
+from openpyxl.formatting.rule import ColorScaleRule
+from openpyxl.worksheet.views import Selection
 
 SCRIPTS = Path(__file__).parent.parent / "scripts"
 
@@ -204,3 +208,113 @@ class TestEdit:
         assert sheet["D2"].data_type == "s"
         assert sheet["A5"].value == "=2+2"
         assert sheet["A5"].data_type == "s"
+
+
+# A workbook as Excel saves it: a frozen corner plus one selection per pane.
+EXCEL_AUTHORED_VIEWS = (
+    '<sheetViews><sheetView tabSelected="1" workbookViewId="0">'
+    '<pane xSplit="1" ySplit="1" topLeftCell="B2" activePane="bottomRight" state="frozen"/>'
+    '<selection pane="topRight" activeCell="B1" sqref="B1"/>'
+    '<selection pane="bottomLeft" activeCell="A2" sqref="A2"/>'
+    '<selection pane="bottomRight" activeCell="B2" sqref="B2"/>'
+    "</sheetView></sheetViews>"
+)
+
+
+def rewrite_sheet_views(source: Path, target: Path, views: str) -> Path:
+    """Replace sheet1's sheetViews so the fixture is not openpyxl's own output."""
+    with zipfile.ZipFile(source) as archive_in, zipfile.ZipFile(
+        target, "w", zipfile.ZIP_DEFLATED
+    ) as archive_out:
+        for item in archive_in.infolist():
+            data = archive_in.read(item.filename)
+            if item.filename == "xl/worksheets/sheet1.xml":
+                text = data.decode()
+                start = text.find("<sheetViews")
+                end = text.find("</sheetViews>") + len("</sheetViews>")
+                text = text[:start] + views + text[end:]
+                data = text.encode()
+            archive_out.writestr(item, data)
+    return target
+
+
+def selection_panes(path: Path) -> list[str]:
+    namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+    with zipfile.ZipFile(path) as archive:
+        root = ElementTree.fromstring(archive.read("xl/worksheets/sheet1.xml"))
+    view = root.find(f"{namespace}sheetViews/{namespace}sheetView")
+    return [s.get("pane") or "topLeft" for s in view.findall(f"{namespace}selection")]
+
+
+@pytest.fixture
+def frozen_source(sample_xlsx, tmp_path) -> Path:
+    return rewrite_sheet_views(sample_xlsx, tmp_path / "frozen.xlsx", EXCEL_AUTHORED_VIEWS)
+
+
+class TestValidate:
+    def test_accepts_a_workbook_built_from_scratch(self, sample_xlsx):
+        result = run("validate.py", str(sample_xlsx))
+        assert result.returncode == 0
+        assert "valid" in result.stdout
+
+    def test_accepts_an_excel_authored_workbook(self, frozen_source):
+        result = run("validate.py", str(frozen_source))
+        assert result.returncode == 0
+
+    @pytest.mark.parametrize(
+        ("freeze", "expected"),
+        [
+            ("A2", 'selections for pane "bottomLeft"'),
+            ("B2", "the schema allows at most 4"),
+        ],
+    )
+    def test_rejects_selections_left_behind_by_freeze_panes(
+        self, frozen_source, tmp_path, freeze, expected
+    ):
+        out = tmp_path / f"refrozen-{freeze}.xlsx"
+        workbook = openpyxl.load_workbook(frozen_source)
+        workbook.active.freeze_panes = freeze
+        workbook.save(out)
+
+        result = run("validate.py", str(out))
+
+        assert result.returncode == 1
+        assert expected in result.stdout
+
+    def test_fix_repairs_the_sheet_view_and_keeps_the_freeze(self, frozen_source, tmp_path):
+        out = tmp_path / "refrozen.xlsx"
+        workbook = openpyxl.load_workbook(frozen_source)
+        workbook.active.freeze_panes = "B2"
+        workbook.save(out)
+
+        assert run("validate.py", str(out), "--fix").returncode == 0
+        assert run("validate.py", str(out)).returncode == 0
+        assert selection_panes(out) == ["topRight", "bottomLeft", "bottomRight"]
+
+        sheet = openpyxl.load_workbook(out).active
+        assert sheet.freeze_panes == "B2"
+        assert sheet["A2"].value == "Alice"
+
+    def test_resetting_the_view_avoids_the_problem(self, frozen_source, tmp_path):
+        out = tmp_path / "reset.xlsx"
+        workbook = openpyxl.load_workbook(frozen_source)
+        sheet = workbook.active
+        sheet.sheet_view.selection = [Selection()]
+        sheet.freeze_panes = "B2"
+        workbook.save(out)
+
+        assert run("validate.py", str(out)).returncode == 0
+
+    def test_rejects_a_color_scale_without_colors(self, tmp_path):
+        out = tmp_path / "colorscale.xlsx"
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        for row in [["n"], [1], [2]]:
+            sheet.append(row)
+        sheet.conditional_formatting.add("A2:A3", ColorScaleRule(start_type="min", end_type="max"))
+        workbook.save(out)
+
+        result = run("validate.py", str(out))
+
+        assert result.returncode == 1
+        assert "colorScale" in result.stdout
