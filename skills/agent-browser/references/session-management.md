@@ -24,15 +24,10 @@ Do not use these upstream surfaces in Instrument:
 - `auth`, `state`, `session`, `connect`, or `close` subcommands
 - `batch`, `plugin`, `mcp`, `chat`, `inspect`, `stream`, `launch`, and the install, upgrade, doctor, and dashboard subcommands. Issue each command on its own rather than batching them.
 - `--session`, `--session-name`, `--config`, or `--namespace` flags
-- `tab`, `window new`, `click --new-tab`, and popup-based workflows in the managed browser
+- `tab`, `window new`, `click --new-tab`, and popup-based workflows
+- Connection and persistence flags (`--cdp`, `--auto-connect`, `--provider`, `--profile`, `--state`, `--restore`), which would target a browser outside the app
 
-The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. Connection and persistence flags (`--cdp`, `--auto-connect`, `--provider`, `--profile`, `--state`, `--restore`) are allowed and route that invocation to an external browser (see the External browsers section in `SKILL.md`); they never affect the managed browser. The managed browser's CDP bridge exposes only one page target, so its tab and window commands cannot create another page.
-
-## External browser sessions
-
-An invocation carrying an external targeting flag runs in a sibling daemon session, so the managed browser connection and an external connection coexist. The flag applies to that invocation only: a bare follow-up command routes back to the managed browser, so repeat the flag on every command of an external flow. External refs and page state live in that sibling session; re-snapshot when switching targets.
-
-Screenshots and downloads from an external browser land in the same task locations as managed-browser output. `screenshot --full` works against an external browser; it is unavailable only in the managed browser. Avoid `download` against the user's own browser: it redirects that browser's download destination and does not reset it afterward, which outlives the task. Prefer the managed browser or a page-level fetch for file downloads.
+The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. Connection targeting is refused rather than ignored, so a command carrying one fails instead of quietly running somewhere else. The CDP bridge exposes only one page target, so tab and window commands cannot create another page.
 
 ## Continue existing work
 
@@ -56,7 +51,7 @@ agent-browser open https://example.com/discovered-page
 agent-browser back
 ```
 
-The managed bridge exposes one page target. Although the upstream CLI recognizes tab and window commands, Instrument does not create additional pages for them and may navigate the current target. If a task requires simultaneous pages, popup messaging, separate authenticated profiles, or isolated proxy contexts, consider an external browser (see the External browsers section in `SKILL.md`) or explain the limitation and ask for a different workflow.
+The managed bridge exposes one page target. Although the upstream CLI recognizes tab and window commands, Instrument does not create additional pages for them and may navigate the current target. If a task requires simultaneous pages, popup messaging, separate authenticated profiles, or isolated proxy contexts, explain the limitation and ask for a different workflow.
 
 ## Resetting site state
 

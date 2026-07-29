@@ -1,6 +1,6 @@
 # Managed network and proxy boundary
 
-By default Instrument connects `agent-browser` to an existing in-app browser context, so launch-time proxy flags do not apply to it. External local launches (`--profile`, `--executable-path`) accept `--proxy`; use that only when the task genuinely requires a different network context and the user has provided the proxy.
+Instrument connects `agent-browser` to an existing in-app browser context, so launch-time proxy flags do not apply: there is no launch for them to configure.
 
 ## What to do
 
@@ -17,7 +17,7 @@ Open a user-approved diagnostic endpoint or the actual target and inspect the re
 agent-browser read https://example.com
 ```
 
-If the target is unreachable, record the actual error. Do not retry with `--proxy`, `--provider`, `--profile`, or other launch flags as a connectivity fix: they never change the managed browser's network path; they route the invocation to an external browser, which is a deliberate choice, not a retry.
+If the target is unreachable, record the actual error. Do not retry with `--proxy` or other launch flags as a connectivity fix: they never change the browser's network path, and the command will be refused.
 
 ## Alternative HTTP retrieval
 

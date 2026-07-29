@@ -1,10 +1,6 @@
 # Command Reference
 
-Reference for the commands commonly useful through Instrument's managed browser. For quick start and adaptive workflows, see `SKILL.md`. Instrument blocks upstream auth-vault, named-session, config, plugin, and lifecycle controls because the workspace owns that context. Connection targeting flags (`--auto-connect`, `--cdp`, `--provider`, `--profile`, `--state`, `--restore`) route a single invocation to an external browser; see the External browsers section in `SKILL.md`.
-
-## Targeting flag values
-
-`--cdp` accepts a bare port (`--cdp 9222`) or an http origin (`--cdp http://127.0.0.1:9222`). A bare `host:port` is rejected outright. A `ws://` value must be a complete devtools URL: a bare `ws://host:port` fails with an unhelpful 404.
+Reference for the commands commonly useful through Instrument's managed browser. For quick start and adaptive workflows, see `SKILL.md`. Instrument blocks upstream auth-vault, named-session, config, plugin, lifecycle, and connection-targeting controls because the workspace owns that context.
 
 ## Navigation
 
@@ -154,8 +150,7 @@ agent-browser screenshot @e1      # Element-only screenshot (ref or CSS selector
 agent-browser pdf output.pdf      # Full-page PDF; full-page PNG is unavailable
 ```
 
-Full-page PNG is a managed-browser limit; external browsers support
-`screenshot --full`.
+Full-page PNG is unavailable; use `pdf` when a whole-page capture matters.
 
 ## Video Recording
 

@@ -1,11 +1,11 @@
 ---
 name: agent-browser
-description: Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task, and for anything involving the user's own browser, profiles, or logins. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", "use my browser logins", "list my Chrome profiles", "check a site with my existing session", or any task requiring programmatic web interaction.
+description: Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", "check a site with my existing session", or any task requiring programmatic web interaction.
 ---
 
 # Browser automation with agent-browser
 
-`agent-browser` is preinstalled and by default reuses one managed browser target for the current task and agent session. Targeting flags on an invocation drive an external browser instead; see [External browsers](#external-browsers). Use it as an adaptive observe, act, verify loop. Read [`references/commands.md`](references/commands.md) when a recipe needs a command or option not shown here. Open the relevant reference before guessing syntax or working around a failed command.
+`agent-browser` is preinstalled and reuses one managed browser target for the current task and agent session. Use it as an adaptive observe, act, verify loop. Read [`references/commands.md`](references/commands.md) when a recipe needs a command or option not shown here. Open the relevant reference before guessing syntax or working around a failed command.
 
 Screenshots without an explicit path are saved under `work/screenshots/`. Command output reports the actual path used for screenshots and downloads, which may differ from the requested path.
 
@@ -22,7 +22,6 @@ Screenshots without an explicit path are saved under `work/screenshots/`. Comman
 | Extract structured repeated data | Scoped text first, browser `eval` if needed   |
 | Diagnose broken behavior         | Screenshot, console, errors, then network     |
 | Reuse authenticated access       | Managed browser profile or user sign-in       |
-| Use the user's existing logins   | External browser via `--profile`              |
 
 ## Core loop
 
@@ -75,8 +74,8 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - Use element, text, URL, function, or load waits when possible. Fixed sleeps are a fallback, not a readiness check.
 - Do not treat command success as task success. Verify visible text, URL, control state, downloaded content, or rendered appearance as appropriate.
 - Do not place passwords, tokens, cookies, or saved browser state in project files or command arguments.
-- Instrument manages the managed browser's connection, profile, state, and lifecycle. The `auth`, `state`, `session`, `connect`, `close`, and `batch` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them. External browsers are selected only through the targeting flags in [External browsers](#external-browsers).
-- The managed browser exposes one target. Do not use `tab`, `window new`, `click --new-tab`, or popup-based workflows there. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target. External browsers are real browsers, so `tab` works against their tabs.
+- Instrument manages the browser's connection, profile, state, and lifecycle. The `auth`, `state`, `session`, `connect`, `close`, and `batch` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them.
+- The browser exposes one target. Do not use `tab`, `window new`, `click --new-tab`, or popup-based workflows. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target.
 
 ## Recover from common failures
 
@@ -86,30 +85,9 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - **Text input ignores `fill` or `type`:** focus the field, then use `keyboard inserttext` or `keyboard type` as the fallback.
 - **Iframe control absent:** a fresh snapshot includes one level of accessible iframe content and its refs work directly. Use `frame @ref` for a scoped snapshot; inaccessible cross-origin frames may require a different workflow.
 
-## External browsers
+## The browser you get
 
-Commands drive the managed browser unless a targeting flag says otherwise. A flag applies only to the invocation it appears on, so repeat it on every command of an external flow.
-
-| Target                                    | Flags                               |
-| ----------------------------------------- | ----------------------------------- |
-| The user's Chrome profile, its logins     | `--profile <name\|dir>`             |
-| A Chromium already running with debugging | `--auto-connect`                    |
-| A specific CDP endpoint or Electron app   | `--cdp <port\|http://host:port>`    |
-| A cloud or iOS browser provider           | `--provider <name>`                 |
-| Saved storage state                       | `--state <file>`, `--restore <key>` |
-
-A normally running Chrome is not connectable, since Chrome 136+ disables remote debugging on the default profile. `--profile` is the path to the user's signed-in state: it launches a debuggable copy of their profile, logins included. `--auto-connect` only reaches instances launched with remote debugging. `--cdp` takes a bare port or an http origin, never a bare `host:port`; see [`references/commands.md`](references/commands.md) for the full value rules. `--device` names an iOS device and only applies alongside `--provider ios`; on its own it is ignored and the command stays on the managed browser.
-
-```bash
-agent-browser profiles
-agent-browser --profile Default open https://example.com/orders
-agent-browser --profile Default snapshot -i
-agent-browser --profile Default read
-```
-
-Targeting a browser changes which signed-in identity you act as, so never switch silently and re-verify signed-in state afterward rather than assuming the previous session carried over. Actions inside the user's own logged-in sessions are consequential (purchases, posts, messages): confirm scope before mutating anything there, and treat their open tabs and history as private.
-
-`screenshot --full` works against an external browser. Avoid `download` there: it redirects that browser's download destination without resetting it afterward. See [`references/session-management.md`](references/session-management.md).
+Every command drives the task's managed browser, and it is the only browser available. There is no way to reach the user's own Chrome, their profiles, or their existing logins. When a page needs an account, open it here and ask the user to sign in; they can see and use this browser in the app, and the session persists for the rest of the task.
 
 ## Recipe: read and research
 

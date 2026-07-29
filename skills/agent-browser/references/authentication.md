@@ -2,7 +2,7 @@
 
 Instrument reuses one browser target for commands in the current task and agent session. The target keeps its page, navigation history, and `sessionStorage` while it remains live. Cookies, `localStorage`, IndexedDB, and service workers use the workspace's persistent browser profile. Upstream auth vault, named session, and lifecycle commands are unavailable in the managed browser.
 
-When the task needs the user's existing logged-in session rather than a fresh login, an external browser can reuse it: `--profile <name>` (list names with `profiles`) launches a debuggable copy of their Chrome profile with its logins; see the External browsers section in `SKILL.md`. Confirm scope with the user before mutating anything in their logged-in sessions.
+The user's own browser and its logins are out of reach, so a task that needs a signed-in session signs in here. Ask the user to authenticate in the visible browser once; the profile keeps that session for the rest of the task.
 
 ## User-assisted login
 
