@@ -25,41 +25,7 @@ dx: drop unsafe eslint --cache from editor settings
 
 Use comma-separated scopes only when changes genuinely span two areas. Omit scope only for truly repo-wide changes.
 
-## How to write the message
-
-**Determine what's being committed:**
+## What the message describes
 
 - If conversation context describes recent work, use that as the primary signal -- don't let unrelated staged or unstaged changes dilute the subject.
 - Otherwise, prefer staged changes (`git diff --cached`). If nothing is staged, assume the user wants to commit everything (`git diff HEAD`).
-
-**Then write the message:**
-
-1. Pick the `scope` -- the skill's directory name, or `skills` when changes span multiple skills.
-2. Write the subject as a short description: _what does this commit do?_
-3. Add a body only when the subject alone would be cryptic -- keep bullets tight.
-
-## Display & clipboard
-
-Display the message inline at the end of your response -- no code block. Subject-only example (no trailing newline):
-
-agent-browser: document console/errors and element screenshots
-
-With body:
-
-skills: avoid outputting recording.wav in root
-
-- script was writing to cwd instead of the output directory
-
-Copy to clipboard immediately after displaying (pipe through `tr -s '\n'` to suppress blank lines):
-
-```bash
-printf %s "agent-browser: document console/errors and element screenshots" | tr -s '\n' | pbcopy
-```
-
-With body:
-
-```bash
-printf %s "skills: avoid outputting recording.wav in root
-
-- script was writing to cwd instead of the output directory" | tr -s '\n' | pbcopy
-```
