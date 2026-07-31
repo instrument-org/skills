@@ -62,6 +62,7 @@ Refs can change after navigation, submission, or a dynamic rerender. Re-run `sna
 | Save a browser download       | `download @ref <path>`                               |
 | Diagnose or compare app state | `dialog`, `console`, `errors`, `network`, `diff`     |
 | Inspect app performance       | `vitals`, `react`, `profiler`, `trace`               |
+| Audit accessibility           | `a11y`, scoped with `--selector` or `--tags`         |
 
 The command map is for discovery, not a substitute for observing the page. Read command output before choosing refs, paths, frame targets, or follow-up actions.
 
@@ -74,7 +75,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - Use element, text, URL, function, or load waits when possible. Fixed sleeps are a fallback, not a readiness check.
 - Do not treat command success as task success. Verify visible text, URL, control state, downloaded content, or rendered appearance as appropriate.
 - Do not place passwords, tokens, cookies, or saved browser state in project files or command arguments.
-- Instrument manages the browser's connection, profile, state, and lifecycle. The `auth`, `state`, `session`, `connect`, `close`, and `batch` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them.
+- Instrument manages the browser's connection, profile, state, and lifecycle. The `auth`, `batch`, `chat`, `close`, `connect`, `dashboard`, `doctor`, `inspect`, `install`, `launch`, `mcp`, `plugin`, `session`, `skills`, `state`, `stream`, and `upgrade` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them, and diagnose with `console`, `errors`, `network`, and `screenshot` rather than reaching for `doctor` or `inspect`.
 - The browser exposes one target. Do not use `tab`, `window new`, `click --new-tab`, or popup-based workflows. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target.
 
 ## Recover from common failures
@@ -112,11 +113,12 @@ agent-browser wait --load networkidle
 agent-browser get text body
 agent-browser errors
 agent-browser screenshot
+agent-browser a11y
 ```
 
 A path works anywhere a URL is expected, so no separate command is needed. Use a browser running on this machine; a remote one cannot reach local files.
 
-Check the things source alone cannot show: that computed or fetched values appear as text rather than placeholders, that controls change what they claim to (`click` a filter, then re-read), and that `errors` is empty. A chart or table built by script is a common silent failure -- the markup is present and correct while the rendered page is blank. Fix the generator and reopen; a reopened page is a fresh load, so take a new snapshot before acting again.
+Check the things source alone cannot show: that computed or fetched values appear as text rather than placeholders, that controls change what they claim to (`click` a filter, then re-read), that `errors` is empty, and that `a11y` reports no critical or serious violations. Missing alt text, an unlabeled icon button, and unreadable contrast are defects in a deliverable, and the audit names them with the element and a fix reference. A chart or table built by script is a common silent failure -- the markup is present and correct while the rendered page is blank. Fix the generator and reopen; a reopened page is a fresh load, so take a new snapshot before acting again.
 
 ## Recipe: interact and verify
 

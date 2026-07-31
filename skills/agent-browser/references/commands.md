@@ -199,6 +199,8 @@ agent-browser find last ".item" click
 agent-browser find nth 2 "a" hover
 ```
 
+`find role` matches implicit roles as well as explicit `role=` attributes, so `find role heading` resolves a plain `<h2>` and `find role list` resolves a `<ul>`. `--name` matches the accessible name the browser computes, case-insensitively and as a substring, so a button labeled by an `aria-label` or by nested markup is reachable without a selector.
+
 ## Browser Settings
 
 ```bash
@@ -333,6 +335,20 @@ agent-browser diff url <url1> <url2>
 ```
 
 Prefer a scoped snapshot diff for semantic changes and a screenshot diff for layout or rendering changes. A snapshot diff without `--baseline` compares against empty content in the pinned runtime, not the preceding snapshot. `diff url` navigates the one managed target to each URL sequentially and leaves it on the second URL. Verify that both states reached the intended URL and readiness condition before comparing them.
+
+## Accessibility audit
+
+```bash
+agent-browser a11y                        # Audit the current page
+agent-browser a11y <url>                  # Open and audit in one step
+agent-browser a11y --selector "main"      # Scope to a region
+agent-browser a11y --tags wcag2a,wcag2aa  # Only rules carrying these tags
+agent-browser a11y --json                 # Machine-readable results
+```
+
+Runs axe-core against the page and prints one line per violation: impact, rule id, description, node count, a documentation URL, and the matching elements. Text output ends at the element list, so use `--json` when you need each node's failure summary. The engine is embedded, so no network access is required. Iframe content is included.
+
+Violations are ranked `critical`, `serious`, `moderate`, `minor`. `incomplete` counts checks axe could not decide alone and that need a human look, most often color contrast over an image or a gradient. Rules that do not apply to the page are reported as `inapplicable` and are not a problem.
 
 ## App and framework diagnostics
 
