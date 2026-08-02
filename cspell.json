@@ -105,6 +105,7 @@
     "pillarbox",
     "pixmap",
     "pushstate",
+    "pyarrow",
     "pypdf",
     "pyproject",
     "pytest",

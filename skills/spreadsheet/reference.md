@@ -2,7 +2,7 @@
 
 Complete command-line usage for the scripts indexed in `SKILL.md`.
 
-## `convert.py` Convert between spreadsheet formats: CSV <-> XLSX <-> TSV.
+## `convert.py` Convert between spreadsheet formats: CSV, TSV, XLSX, and Parquet.
 
 ```text
 usage: convert.py [-h] --output OUTPUT [--sheet SHEET] input
@@ -10,11 +10,11 @@ usage: convert.py [-h] --output OUTPUT [--sheet SHEET] input
 Convert spreadsheet formats
 
 positional arguments:
-  input            Input file
+  input            Input file (.csv, .tsv, .xlsx, .xlsm, .parquet)
 
 options:
   -h, --help       show this help message and exit
-  --output OUTPUT  Output file
+  --output OUTPUT  Output file (.csv, .tsv, .xlsx, .parquet)
   --sheet SHEET    Source sheet name (for multi-sheet XLSX input)
 ```
 
@@ -91,7 +91,7 @@ usage: query.py [-h] [--sheet SHEET] [--filter FILTER_EXPR] [--select SELECT]
 Query spreadsheet data
 
 positional arguments:
-  input                 Input file (.xlsx, .csv, .tsv)
+  input                 Input file (.xlsx, .csv, .tsv, .parquet)
 
 options:
   -h, --help            show this help message and exit
@@ -103,11 +103,11 @@ options:
   --desc                Sort descending
   --limit LIMIT         Max rows to return
   --describe            Print summary statistics
-  --output OUTPUT       Save result to .xlsx or .csv
+  --output OUTPUT       Save result to .xlsx, .csv, .tsv, or .parquet
   --json
 ```
 
-## `read.py` Read and display spreadsheet data (XLSX, XLSM, CSV, TSV).
+## `read.py` Read and display spreadsheet data (XLSX, XLSM, CSV, TSV, Parquet).
 
 ```text
 usage: read.py [-h] [--sheet SHEET] [--json] [--limit LIMIT] input
@@ -115,7 +115,7 @@ usage: read.py [-h] [--sheet SHEET] [--json] [--limit LIMIT] input
 Read spreadsheet data
 
 positional arguments:
-  input          Input file (.xlsx, .xlsm, .csv, .tsv)
+  input          Input file (.xlsx, .xlsm, .csv, .tsv, .parquet)
 
 options:
   -h, --help     show this help message and exit

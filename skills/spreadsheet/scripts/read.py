@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read and display spreadsheet data (XLSX, XLSM, CSV, TSV)."""
+"""Read and display spreadsheet data (XLSX, XLSM, CSV, TSV, Parquet)."""
 
 import argparse
 import csv
@@ -11,6 +11,22 @@ from pathlib import Path
 def read_csv(path: str, delimiter: str = ",") -> list[list]:
     with open(path, newline="", encoding="utf-8-sig") as f:
         return list(csv.reader(f, delimiter=delimiter))
+
+
+def read_parquet(path: str) -> list[list]:
+    try:
+        import pyarrow.parquet as pq
+    except ImportError:
+        sys.exit(
+            "pyarrow is unavailable. Reload this skill to retry dependency setup."
+        )
+
+    table = pq.read_table(path)
+    # to_pylist() decodes dictionary and nested columns into native Python
+    # values, so the rows print and serialize like the other formats do.
+    columns = [column.to_pylist() for column in table.columns]
+    rows = [list(values) for values in zip(*columns)] if columns else []
+    return [table.column_names, *rows]
 
 
 def read_excel(path: str, sheet: str | None = None) -> dict[str, list[list]]:
@@ -32,7 +48,7 @@ def read_excel(path: str, sheet: str | None = None) -> dict[str, list[list]]:
 
 def main():
     parser = argparse.ArgumentParser(description="Read spreadsheet data")
-    parser.add_argument("input", help="Input file (.xlsx, .xlsm, .csv, .tsv)")
+    parser.add_argument("input", help="Input file (.xlsx, .xlsm, .csv, .tsv, .parquet)")
     parser.add_argument("--sheet", help="Sheet name (Excel only)")
     parser.add_argument("--json", action="store_true", dest="as_json")
     parser.add_argument("--limit", type=int, default=50, help="Max rows to display (default: 50)")
@@ -46,6 +62,8 @@ def main():
     elif ext in (".tsv",):
         rows = read_csv(args.input, delimiter="\t")
         data = {"Sheet1": rows}
+    elif ext == ".parquet":
+        data = {"Sheet1": read_parquet(args.input)}
     elif ext in (".xlsx", ".xlsm"):
         data = read_excel(args.input, args.sheet)
     else:

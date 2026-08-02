@@ -45,6 +45,22 @@ def sample_csv(tmp_path_factory) -> Path:
     return path
 
 
+@pytest.fixture(scope="session")
+def sample_parquet(tmp_path_factory) -> Path:
+    """The same rows as the other fixtures, plus a dictionary-encoded column."""
+    path = tmp_path_factory.mktemp("parquet") / "sample.parquet"
+    frame = pandas.DataFrame(
+        {
+            "Name": ["Alice", "Bob", "Carol"],
+            "Age": [30, 25, 35],
+            "Score": [95, 82, 91],
+            "Region": pandas.Categorical(["East", "West", "East"]),
+        }
+    )
+    frame.to_parquet(path, index=False)
+    return path
+
+
 class TestRead:
     def test_reads_xlsx(self, sample_xlsx):
         result = run("read.py", str(sample_xlsx))
@@ -62,6 +78,19 @@ class TestRead:
         result = run("read.py", str(sample_csv))
         assert result.returncode == 0
         assert "Alice" in result.stdout
+
+    def test_reads_parquet(self, sample_parquet):
+        result = run("read.py", str(sample_parquet))
+        assert result.returncode == 0
+        assert "Alice" in result.stdout
+
+    def test_reads_parquet_json(self, sample_parquet):
+        result = run("read.py", str(sample_parquet), "--json")
+        assert result.returncode == 0
+        data = json.loads(result.stdout)
+        assert data["Sheet1"][0] == ["Name", "Age", "Score", "Region"]
+        # Parquet carries types, so the values arrive as numbers, not strings.
+        assert data["Sheet1"][1] == ["Alice", 30, 95, "East"]
 
 
 class TestCreate:
@@ -140,6 +169,24 @@ class TestLibraryRecipe:
         assert check["Summary"]["B1"].value == "=SUM(Sales!C2:C3)"
 
 
+class TestParquetRecipe:
+    def test_inspects_and_projects_a_parquet_file(self, sample_parquet, tmp_path):
+        import pyarrow.parquet as pq
+
+        metadata = pq.ParquetFile(sample_parquet)
+        assert metadata.metadata.num_rows == 3
+        assert metadata.schema_arrow.names == ["Name", "Age", "Score", "Region"]
+
+        frame = pandas.read_parquet(sample_parquet, columns=["Name", "Region"])
+        output = tmp_path / "by-region.parquet"
+        frame.to_parquet(output, index=False)
+
+        written = pandas.read_parquet(output)
+        assert list(written.columns) == ["Name", "Region"]
+        # Parquet keeps column types, including dictionary-encoded categories.
+        assert list(written["Region"].cat.categories) == ["East", "West"]
+
+
 class TestQuery:
     def test_filters_rows(self, sample_xlsx):
         result = run("query.py", str(sample_xlsx), "--filter", "Age > 28")
@@ -159,6 +206,40 @@ class TestQuery:
         data = json.loads(result.stdout)
         assert isinstance(data, list)
         assert len(data) == 3
+
+    def test_filters_parquet_rows(self, sample_parquet):
+        result = run("query.py", str(sample_parquet), "--filter", "Age > 28")
+        assert result.returncode == 0
+        assert "Alice" in result.stdout
+        assert "Carol" in result.stdout
+        assert "Bob" not in result.stdout
+
+    def test_parquet_is_not_parsed_as_csv(self, sample_parquet):
+        """Unrecognized extensions used to fall through to read_csv, which silently
+        turns a Parquet file into garbage rows instead of failing."""
+        result = run("query.py", str(sample_parquet), "--json")
+        assert result.returncode == 0
+        assert json.loads(result.stdout) == [
+            {"Name": "Alice", "Age": 30, "Score": 95, "Region": "East"},
+            {"Name": "Bob", "Age": 25, "Score": 82, "Region": "West"},
+            {"Name": "Carol", "Age": 35, "Score": 91, "Region": "East"},
+        ]
+
+    def test_saves_result_as_parquet(self, sample_xlsx, tmp_path):
+        out = tmp_path / "result.parquet"
+        result = run("query.py", str(sample_xlsx), "--filter", "Age > 28", "--output", str(out))
+        assert result.returncode == 0
+        frame = pandas.read_parquet(out)
+        assert list(frame["Name"]) == ["Alice", "Carol"]
+
+    def test_rejects_an_unsupported_input_format(self, tmp_path):
+        source = tmp_path / "data.dat"
+        source.write_text("Name,Age\nAlice,30\n")
+
+        result = run("query.py", str(source))
+
+        assert result.returncode != 0
+        assert "Unsupported format: .dat" in result.stderr
 
 
 class TestConvert:
@@ -186,6 +267,42 @@ class TestConvert:
         cell = openpyxl.load_workbook(out).active["A2"]
         assert cell.value == "=1+1"
         assert cell.data_type == "s"
+
+    @pytest.mark.parametrize("suffix", [".csv", ".tsv", ".xlsx"])
+    def test_parquet_to_other_formats(self, sample_parquet, tmp_path, suffix):
+        out = tmp_path / f"from-parquet{suffix}"
+
+        result = run("convert.py", str(sample_parquet), "--output", str(out))
+
+        assert result.returncode == 0
+        if suffix == ".xlsx":
+            assert openpyxl.load_workbook(out).active["A2"].value == "Alice"
+        else:
+            assert "Alice" in out.read_text()
+
+    @pytest.mark.parametrize("source_fixture", ["sample_csv", "sample_xlsx", "sample_parquet"])
+    def test_other_formats_to_parquet(self, request, tmp_path, source_fixture):
+        source = request.getfixturevalue(source_fixture)
+        out = tmp_path / "converted.parquet"
+
+        result = run("convert.py", str(source), "--output", str(out))
+
+        assert result.returncode == 0
+        frame = pandas.read_parquet(out)
+        assert list(frame["Name"]) == ["Alice", "Bob", "Carol"]
+        assert list(frame["Age"]) == [30, 25, 35]
+
+    @pytest.mark.parametrize(
+        ("source_suffix", "output_suffix"), [(".dat", ".csv"), (".csv", ".dat")]
+    )
+    def test_rejects_unsupported_formats(self, tmp_path, source_suffix, output_suffix):
+        source = tmp_path / f"data{source_suffix}"
+        source.write_text("Name,Age\nAlice,30\n")
+
+        result = run("convert.py", str(source), "--output", str(tmp_path / f"out{output_suffix}"))
+
+        assert result.returncode != 0
+        assert "Unsupported format: .dat" in result.stderr
 
 
 class TestEdit:
