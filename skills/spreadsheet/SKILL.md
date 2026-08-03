@@ -11,6 +11,8 @@ Use `openpyxl` and pandas directly for multi-step spreadsheet work. The bundled 
 
 The app installs the locked `openpyxl`, pandas, `pyarrow`, and `lxml` dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. `pyarrow` is the engine behind `read_parquet` and `to_parquet`, and also reads Feather, Arrow IPC, and ORC. The Numbers compatibility bridge uses its bundled Node dependencies.
 
+`pyarrow` ships no Windows on ARM build, so Parquet is unavailable on that platform and the scripts say so rather than failing obscurely. Everything else in this skill works there. Convert the file to CSV or XLSX elsewhere when a task needs its contents.
+
 ## Choose an approach
 
 | Need                                                     | Approach                                   |
@@ -120,8 +122,8 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 # Inspect the schema and row count before loading a large file.
-metadata = pq.ParquetFile("attachments/events.parquet")
-print(metadata.schema_arrow, metadata.metadata.num_rows)
+parquet_file = pq.ParquetFile("attachments/events.parquet")
+print(parquet_file.schema_arrow, parquet_file.metadata.num_rows)
 
 frame = pd.read_parquet("attachments/events.parquet", columns=["ts", "region", "revenue"])
 frame.to_parquet("output/by-region.parquet", index=False)
@@ -171,7 +173,7 @@ A workbook built from scratch carries a single selection, so this applies only t
 - `write_only=True` supports large exports but gives up random cell access.
 - Sheet names, named ranges, tables, validation, hidden sheets, and merged cells are part of the workbook contract. Inspect them before broad edits.
 - The TypeScript bridge remains appropriate for `.numbers` and legacy `.xls` because its codec support is not available in the managed Python libraries.
-- `read.py`, `query.py`, and `convert.py` route by file extension and refuse an extension they do not recognize rather than guessing CSV. Read an unusual delimited file with pandas directly.
+- `read.py`, `query.py`, and `convert.py` route by file extension: they point `.numbers` and `.xls` at the bridge, and refuse an extension they do not recognize rather than guessing CSV. Read an unusual delimited file with pandas directly.
 
 ## Quality gate
 

@@ -61,6 +61,15 @@ def sample_parquet(tmp_path_factory) -> Path:
     return path
 
 
+@pytest.fixture(scope="session")
+def large_parquet(tmp_path_factory) -> Path:
+    """More rows than a default preview shows, to exercise batched reads."""
+    path = tmp_path_factory.mktemp("parquet-large") / "large.parquet"
+    frame = pandas.DataFrame({"Row": range(500)})
+    frame.to_parquet(path, index=False)
+    return path
+
+
 class TestRead:
     def test_reads_xlsx(self, sample_xlsx):
         result = run("read.py", str(sample_xlsx))
@@ -91,6 +100,30 @@ class TestRead:
         assert data["Sheet1"][0] == ["Name", "Age", "Score", "Region"]
         # Parquet carries types, so the values arrive as numbers, not strings.
         assert data["Sheet1"][1] == ["Alice", 30, 95, "East"]
+
+    def test_previews_parquet_without_reading_every_row(self, large_parquet):
+        result = run("read.py", str(large_parquet), "--limit", "5")
+
+        assert result.returncode == 0
+        lines = result.stdout.splitlines()
+        assert lines[:2] == ["Row", "0"]
+        # The footer row count reports the remainder that the preview skipped.
+        assert lines[-1] == "... (496 more rows)"
+
+    def test_parquet_json_emits_every_row(self, large_parquet):
+        result = run("read.py", str(large_parquet), "--limit", "5", "--json")
+
+        assert result.returncode == 0
+        assert len(json.loads(result.stdout)["Sheet1"]) == 501
+
+    def test_points_numbers_files_at_the_bridge(self, tmp_path):
+        source = tmp_path / "deck.numbers"
+        source.write_bytes(b"PK\x03\x04")
+
+        result = run("read.py", str(source))
+
+        assert result.returncode != 0
+        assert "numbers-bridge.ts" in result.stderr
 
 
 class TestCreate:
@@ -173,9 +206,9 @@ class TestParquetRecipe:
     def test_inspects_and_projects_a_parquet_file(self, sample_parquet, tmp_path):
         import pyarrow.parquet as pq
 
-        metadata = pq.ParquetFile(sample_parquet)
-        assert metadata.metadata.num_rows == 3
-        assert metadata.schema_arrow.names == ["Name", "Age", "Score", "Region"]
+        parquet_file = pq.ParquetFile(sample_parquet)
+        assert parquet_file.metadata.num_rows == 3
+        assert parquet_file.schema_arrow.names == ["Name", "Age", "Score", "Region"]
 
         frame = pandas.read_parquet(sample_parquet, columns=["Name", "Region"])
         output = tmp_path / "by-region.parquet"
@@ -215,8 +248,7 @@ class TestQuery:
         assert "Bob" not in result.stdout
 
     def test_parquet_is_not_parsed_as_csv(self, sample_parquet):
-        """Unrecognized extensions used to fall through to read_csv, which silently
-        turns a Parquet file into garbage rows instead of failing."""
+        """A Parquet file decodes to its real records rather than garbage CSV rows."""
         result = run("query.py", str(sample_parquet), "--json")
         assert result.returncode == 0
         assert json.loads(result.stdout) == [
@@ -240,6 +272,18 @@ class TestQuery:
 
         assert result.returncode != 0
         assert "Unsupported format: .dat" in result.stderr
+
+    @pytest.mark.parametrize("suffix", [".numbers", ".xls"])
+    def test_points_bridge_formats_at_the_bridge(self, tmp_path, suffix):
+        """pandas cannot open these, so the message names the bridge, not pandas."""
+        source = tmp_path / f"legacy{suffix}"
+        source.write_bytes(b"PK\x03\x04")
+
+        result = run("query.py", str(source))
+
+        assert result.returncode != 0
+        assert "numbers-bridge.ts" in result.stderr
+        assert "pandas" not in result.stderr
 
 
 class TestConvert:
@@ -303,6 +347,19 @@ class TestConvert:
 
         assert result.returncode != 0
         assert "Unsupported format: .dat" in result.stderr
+
+    @pytest.mark.parametrize("suffix", [".numbers", ".xls"])
+    def test_points_bridge_formats_at_the_bridge(self, sample_csv, tmp_path, suffix):
+        """The bridge handles these in both directions, so neither side suggests pandas."""
+        source = tmp_path / f"legacy{suffix}"
+        source.write_bytes(b"PK\x03\x04")
+
+        reading = run("convert.py", str(source), "--output", str(tmp_path / "out.csv"))
+        writing = run("convert.py", str(sample_csv), "--output", str(tmp_path / f"out{suffix}"))
+
+        for result in (reading, writing):
+            assert result.returncode != 0
+            assert "numbers-bridge.ts" in result.stderr
 
 
 class TestEdit:

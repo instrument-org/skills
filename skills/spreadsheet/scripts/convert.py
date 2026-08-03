@@ -5,12 +5,25 @@ import argparse
 import sys
 from pathlib import Path
 
-FORMATS = ".csv, .tsv, .xlsx, or .parquet"
+INPUT_FORMATS = ".csv, .tsv, .xlsx, .xlsm, or .parquet"
+OUTPUT_FORMATS = ".csv, .tsv, .xlsx, or .parquet"
+
+BRIDGE = (
+    "Apple Numbers and legacy .xls files need the TypeScript compatibility bridge: "
+    "tsx scripts/numbers-bridge.ts <input> --output <output>"
+)
+
+PYARROW_MISSING = (
+    "pyarrow is unavailable, so this run cannot handle Parquet. Reload this skill "
+    "to retry dependency setup; Windows on ARM has no pyarrow build."
+)
 
 
-def unsupported(ext: str) -> str:
+def unsupported(ext: str, formats: str) -> str:
+    if ext in (".numbers", ".xls"):
+        return BRIDGE
     return (
-        f"Unsupported format: {ext or '(no extension)'}. Expected {FORMATS}. "
+        f"Unsupported format: {ext or '(no extension)'}. Expected {formats}. "
         "Handle any other format with pandas directly."
     )
 
@@ -48,33 +61,34 @@ def main():
 
     if src in (".xlsx", ".xlsm"):
         df = pd.read_excel(args.input, sheet_name=args.sheet or 0)
-    elif src == ".xls":
-        sys.exit(
-            "Legacy .xls files need the TypeScript compatibility bridge: "
-            "tsx scripts/numbers-bridge.ts input.xls --output output.xlsx"
-        )
     elif src == ".parquet":
-        df = pd.read_parquet(args.input)
+        try:
+            df = pd.read_parquet(args.input)
+        except ImportError:
+            sys.exit(PYARROW_MISSING)
     elif src == ".tsv":
         df = pd.read_csv(args.input, sep="\t")
     elif src == ".csv":
         df = pd.read_csv(args.input)
     else:
-        # Guessing CSV for an unrecognized extension parses a binary format into
-        # garbage rows instead of reporting that it is unsupported.
-        sys.exit(unsupported(src))
+        # Refusing an unrecognized extension keeps a binary format from parsing
+        # into garbage rows.
+        sys.exit(unsupported(src, INPUT_FORMATS))
 
     if dst == ".xlsx":
         df.to_excel(args.output, index=False)
         store_formula_like_values_as_text(args.output, df)
     elif dst == ".parquet":
-        df.to_parquet(args.output, index=False)
+        try:
+            df.to_parquet(args.output, index=False)
+        except ImportError:
+            sys.exit(PYARROW_MISSING)
     elif dst == ".tsv":
         df.to_csv(args.output, sep="\t", index=False)
     elif dst == ".csv":
         df.to_csv(args.output, index=False)
     else:
-        sys.exit(unsupported(dst))
+        sys.exit(unsupported(dst, OUTPUT_FORMATS))
 
     print(f"Converted {len(df)} rows: {args.input} -> {args.output}")
 

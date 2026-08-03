@@ -14,7 +14,20 @@ import sys
 from pathlib import Path
 
 
+BRIDGE = (
+    "Apple Numbers and legacy .xls files need the TypeScript compatibility bridge: "
+    "tsx scripts/numbers-bridge.ts <input> --output <output>"
+)
+
+PYARROW_MISSING = (
+    "pyarrow is unavailable, so this run cannot handle Parquet. Reload this skill "
+    "to retry dependency setup; Windows on ARM has no pyarrow build."
+)
+
+
 def unsupported(ext: str, formats: str) -> str:
+    if ext in (".numbers", ".xls"):
+        return BRIDGE
     return (
         f"Unsupported format: {ext or '(no extension)'}. Expected {formats}. "
         "Handle any other format with pandas directly."
@@ -30,18 +43,21 @@ def load(path: str, sheet: str | None = None):
         )
 
     ext = Path(path).suffix.lower()
-    if ext in (".xlsx", ".xls", ".xlsm"):
+    if ext in (".xlsx", ".xlsm"):
         return pd.read_excel(path, sheet_name=sheet or 0)
     elif ext == ".parquet":
-        return pd.read_parquet(path)
+        try:
+            return pd.read_parquet(path)
+        except ImportError:
+            sys.exit(PYARROW_MISSING)
     elif ext == ".tsv":
         return pd.read_csv(path, sep="\t")
     elif ext == ".csv":
         return pd.read_csv(path)
     else:
-        # Guessing CSV for an unrecognized extension parses a binary format into
-        # garbage rows instead of reporting that it is unsupported.
-        sys.exit(unsupported(ext, ".xlsx, .xlsm, .xls, .csv, .tsv, or .parquet"))
+        # Refusing an unrecognized extension keeps a binary format from parsing
+        # into garbage rows.
+        sys.exit(unsupported(ext, ".xlsx, .xlsm, .csv, .tsv, or .parquet"))
 
 
 def main():
@@ -85,7 +101,10 @@ def main():
         if ext == ".xlsx":
             df.to_excel(args.output, index=False)
         elif ext == ".parquet":
-            df.to_parquet(args.output, index=False)
+            try:
+                df.to_parquet(args.output, index=False)
+            except ImportError:
+                sys.exit(PYARROW_MISSING)
         elif ext == ".tsv":
             df.to_csv(args.output, sep="\t", index=False)
         elif ext == ".csv":

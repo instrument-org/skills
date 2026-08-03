@@ -2,7 +2,17 @@
 name = "skill-spreadsheet"
 version = "0.0.0"
 requires-python = ">=3.11"
-dependencies = ["lxml", "openpyxl", "pandas", "pyarrow"]
+dependencies = [
+  "lxml",
+  "openpyxl",
+  "pandas",
+  # pyarrow publishes no Windows on ARM wheel, and building Arrow from source is
+  # not viable in the app runtime. Skipping it there keeps the rest of the skill
+  # installable; the scripts report that Parquet is unavailable.
+  # Spelled `sys_platform` because uv releases disagree on whether to canonicalize
+  # `platform_system` to it, which makes the locked marker version-dependent.
+  "pyarrow; sys_platform != 'win32' or platform_machine != 'ARM64'",
+]
 
 [project.optional-dependencies]
 test = ["pytest"]
