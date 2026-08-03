@@ -62,7 +62,7 @@ def load(path: str, sheet: str | None = None):
 
 def main():
     parser = argparse.ArgumentParser(description="Query spreadsheet data")
-    parser.add_argument("input", help="Input file (.xlsx, .csv, .tsv, .parquet)")
+    parser.add_argument("input", help="Input file (.xlsx, .xlsm, .csv, .tsv, .parquet)")
     parser.add_argument("--sheet", help="Sheet name or index (Excel only)")
     parser.add_argument("--filter", dest="filter_expr",
                         help="Filter expression, e.g. 'Age > 30 and Status == \"active\"'")

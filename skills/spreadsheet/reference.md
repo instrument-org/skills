@@ -91,7 +91,7 @@ usage: query.py [-h] [--sheet SHEET] [--filter FILTER_EXPR] [--select SELECT]
 Query spreadsheet data
 
 positional arguments:
-  input                 Input file (.xlsx, .csv, .tsv, .parquet)
+  input                 Input file (.xlsx, .xlsm, .csv, .tsv, .parquet)
 
 options:
   -h, --help            show this help message and exit
