@@ -4,6 +4,7 @@
 Examples:
   python scripts/query.py data.xlsx --filter "Age > 30"
   python scripts/query.py data.csv --select "Name,Age" --sort Age --limit 10
+  python scripts/query.py events.parquet --sort ts --limit 20 --output recent.parquet
   python scripts/query.py report.xlsx --describe
 """
 
@@ -11,6 +12,26 @@ import argparse
 import json
 import sys
 from pathlib import Path
+
+
+BRIDGE = (
+    "Apple Numbers and legacy .xls files need the TypeScript compatibility bridge: "
+    "tsx scripts/numbers-bridge.ts <input> --output <output>"
+)
+
+PYARROW_MISSING = (
+    "pyarrow is unavailable, so this run cannot handle Parquet. Reload this skill "
+    "to retry dependency setup; Windows on ARM has no pyarrow build."
+)
+
+
+def unsupported(ext: str, formats: str) -> str:
+    if ext in (".numbers", ".xls"):
+        return BRIDGE
+    return (
+        f"Unsupported format: {ext or '(no extension)'}. Expected {formats}. "
+        "Handle any other format with pandas directly."
+    )
 
 
 def load(path: str, sheet: str | None = None):
@@ -22,17 +43,26 @@ def load(path: str, sheet: str | None = None):
         )
 
     ext = Path(path).suffix.lower()
-    if ext in (".xlsx", ".xls", ".xlsm"):
+    if ext in (".xlsx", ".xlsm"):
         return pd.read_excel(path, sheet_name=sheet or 0)
+    elif ext == ".parquet":
+        try:
+            return pd.read_parquet(path)
+        except ImportError:
+            sys.exit(PYARROW_MISSING)
     elif ext == ".tsv":
         return pd.read_csv(path, sep="\t")
-    else:
+    elif ext == ".csv":
         return pd.read_csv(path)
+    else:
+        # Refusing an unrecognized extension keeps a binary format from parsing
+        # into garbage rows.
+        sys.exit(unsupported(ext, ".xlsx, .xlsm, .csv, .tsv, or .parquet"))
 
 
 def main():
     parser = argparse.ArgumentParser(description="Query spreadsheet data")
-    parser.add_argument("input", help="Input file (.xlsx, .csv, .tsv)")
+    parser.add_argument("input", help="Input file (.xlsx, .xlsm, .csv, .tsv, .parquet)")
     parser.add_argument("--sheet", help="Sheet name or index (Excel only)")
     parser.add_argument("--filter", dest="filter_expr",
                         help="Filter expression, e.g. 'Age > 30 and Status == \"active\"'")
@@ -42,7 +72,7 @@ def main():
     parser.add_argument("--limit", type=int, help="Max rows to return")
     parser.add_argument("--describe", action="store_true",
                         help="Print summary statistics")
-    parser.add_argument("--output", help="Save result to .xlsx or .csv")
+    parser.add_argument("--output", help="Save result to .xlsx, .csv, .tsv, or .parquet")
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
 
@@ -68,10 +98,19 @@ def main():
 
     if args.output:
         ext = Path(args.output).suffix.lower()
-        if ext in (".xlsx",):
+        if ext == ".xlsx":
             df.to_excel(args.output, index=False)
-        else:
+        elif ext == ".parquet":
+            try:
+                df.to_parquet(args.output, index=False)
+            except ImportError:
+                sys.exit(PYARROW_MISSING)
+        elif ext == ".tsv":
+            df.to_csv(args.output, sep="\t", index=False)
+        elif ext == ".csv":
             df.to_csv(args.output, index=False)
+        else:
+            sys.exit(unsupported(ext, ".xlsx, .csv, .tsv, or .parquet"))
         print(f"Saved {len(df)} rows -> {args.output}")
     elif args.as_json:
         print(df.to_json(orient="records", indent=2, default_handler=str))

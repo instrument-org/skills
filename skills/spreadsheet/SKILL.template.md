@@ -1,6 +1,6 @@
 ---
 name: spreadsheet
-description: "Work with tabular data files: Excel (.xlsx, .xlsm), Apple Numbers (.numbers), CSV, and TSV. Use whenever the user wants to read, write, create, edit, style, filter, query, convert, or analyze a spreadsheet. Activate for rows, columns, formulas, tables, charts, formatting, data cleaning, aggregation, or format conversion."
+description: "Work with tabular data files: Excel (.xlsx, .xlsm), Apple Numbers (.numbers), Parquet (.parquet), CSV, and TSV. Use whenever the user wants to read, write, create, edit, style, filter, query, convert, or analyze a spreadsheet or a columnar data file. Activate for rows, columns, formulas, tables, charts, formatting, data cleaning, aggregation, or format conversion."
 ---
 
 # Spreadsheet
@@ -9,19 +9,22 @@ Use `openpyxl` and pandas directly for multi-step spreadsheet work. The bundled 
 
 ## Dependencies
 
-The app installs the locked `openpyxl`, pandas, and `lxml` dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. The Numbers compatibility bridge uses its bundled Node dependencies.
+The app installs the locked `openpyxl`, pandas, `pyarrow`, and `lxml` dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. `pyarrow` is the engine behind `read_parquet` and `to_parquet`, and also reads Feather, Arrow IPC, and ORC. The Numbers compatibility bridge uses its bundled Node dependencies.
+
+`pyarrow` ships no Windows on ARM build, so Parquet is unavailable on that platform and the scripts say so rather than failing obscurely. Everything else in this skill works there. Convert the file to CSV or XLSX elsewhere when a task needs its contents.
 
 ## Choose an approach
 
-| Need                                                    | Approach                    |
-| ------------------------------------------------------- | --------------------------- |
-| Preserve workbook structure, formulas, and formatting   | Use `openpyxl`              |
-| Create a styled multi-sheet workbook                    | Use `openpyxl`              |
-| Filter, join, reshape, group, or summarize tabular data | Use pandas                  |
-| Preview or perform a one-step query                     | Use `read.py` or `query.py` |
-| Convert a flat table between CSV, TSV, and XLSX         | Use `convert.py`            |
-| Read or write Apple Numbers, or read legacy `.xls`      | Use `numbers-bridge.ts`     |
-| Confirm a saved workbook opens without repair           | Use `validate.py`           |
+| Need                                                     | Approach                                   |
+| -------------------------------------------------------- | ------------------------------------------ |
+| Preserve workbook structure, formulas, and formatting    | Use `openpyxl`                             |
+| Create a styled multi-sheet workbook                     | Use `openpyxl`                             |
+| Filter, join, reshape, group, or summarize tabular data  | Use pandas                                 |
+| Read or write Parquet                                    | Use pandas `read_parquet` and `to_parquet` |
+| Preview or perform a one-step query                      | Use `read.py` or `query.py`                |
+| Convert a flat table between CSV, TSV, XLSX, and Parquet | Use `convert.py`                           |
+| Read or write Apple Numbers, or read legacy `.xls`       | Use `numbers-bridge.ts`                    |
+| Confirm a saved workbook opens without repair            | Use `validate.py`                          |
 
 Do not round-trip a styled workbook through pandas or `convert.py`: doing so can discard formulas, formatting, multiple sheets, tables, charts, validation, and metadata.
 
@@ -110,6 +113,24 @@ summary.to_excel(output, index=False)
 
 Pandas is ideal for analysis but does not preserve the source workbook's full presentation layer. Use `openpyxl` to insert results into an existing workbook.
 
+## Read and write Parquet
+
+`pd.read_parquet` and `DataFrame.to_parquet` cover Parquet through `pyarrow`. Read only the columns you need, and write without the index unless it carries data:
+
+```python
+import pandas as pd
+import pyarrow.parquet as pq
+
+# Inspect the schema and row count before loading a large file.
+parquet_file = pq.ParquetFile("attachments/events.parquet")
+print(parquet_file.schema_arrow, parquet_file.metadata.num_rows)
+
+frame = pd.read_parquet("attachments/events.parquet", columns=["ts", "region", "revenue"])
+frame.to_parquet("output/by-region.parquet", index=False)
+```
+
+A Parquet file is one typed table. It preserves column types, nulls, and dictionary-encoded categories, but carries no sheets, formulas, formatting, or charts, so writing a styled workbook to Parquet keeps a single sheet's values and nothing else. Going the other way, prefer Parquet over CSV whenever types must survive the round trip.
+
 ## Edit without flattening the workbook
 
 ```python
@@ -152,6 +173,7 @@ A workbook built from scratch carries a single selection, so this applies only t
 - `write_only=True` supports large exports but gives up random cell access.
 - Sheet names, named ranges, tables, validation, hidden sheets, and merged cells are part of the workbook contract. Inspect them before broad edits.
 - The TypeScript bridge remains appropriate for `.numbers` and legacy `.xls` because its codec support is not available in the managed Python libraries.
+- `read.py`, `query.py`, and `convert.py` route by file extension: they point `.numbers` and `.xls` at the bridge, and refuse an extension they do not recognize rather than guessing CSV. Read an unusual delimited file with pandas directly.
 
 ## Quality gate
 
