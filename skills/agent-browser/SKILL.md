@@ -76,7 +76,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - Do not treat command success as task success. Verify visible text, URL, control state, downloaded content, or rendered appearance as appropriate.
 - Do not place passwords, tokens, cookies, or saved browser state in project files or command arguments.
 - Instrument manages the browser's connection, profile, state, and lifecycle. The `auth`, `batch`, `chat`, `close`, `connect`, `dashboard`, `doctor`, `inspect`, `install`, `launch`, `mcp`, `plugin`, `session`, `skills`, `state`, `stream`, and `upgrade` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them, and diagnose with `console`, `errors`, `network`, and `screenshot` rather than reaching for `doctor` or `inspect`.
-- The browser exposes one target. Do not use `tab`, `window new`, `click --new-tab`, or popup-based workflows. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target.
+- The browser exposes one page target. Additional pages and popup-based workflows are unavailable. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target.
 
 ## Recover from common failures
 
@@ -101,7 +101,7 @@ agent-browser wait --load networkidle
 agent-browser snapshot -i --urls
 ```
 
-`read [url]` is the primary agent-friendly text or Markdown surface. `read <url>` fetches the URL without the browser, so content injected by page JS is absent, and a sparse result usually signals a client-rendered page; `open` it first, then `read` with no URL to read the rendered tab. Use `get text body` or a scoped region when the task specifically needs currently visible DOM copy or post-interaction state. Read the snapshot for controls and discovered links. On multi-page work, collect the real URLs once and read or open them directly. Expand accordions before visible-DOM extraction when the content starts hidden.
+`read [url]` is the primary agent-friendly text or Markdown surface. `read <url>` fetches the URL without the browser, so content injected by page JS is absent, and a sparse result usually signals a client-rendered page; `open` it first, then `read` with no URL to read the rendered page. Use `get text body` or a scoped region when the task specifically needs currently visible DOM copy or post-interaction state. Read the snapshot for controls and discovered links. On multi-page work, collect the real URLs once and read or open them directly. Expand accordions before visible-DOM extraction when the content starts hidden.
 
 ## Recipe: check a page you produced
 

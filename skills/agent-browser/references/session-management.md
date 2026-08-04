@@ -24,10 +24,10 @@ Do not use these upstream surfaces in Instrument:
 - `auth`, `state`, `session`, `connect`, or `close` subcommands
 - `batch`, `plugin`, `mcp`, `chat`, `inspect`, `stream`, `launch`, and the install, upgrade, doctor, and dashboard subcommands. Issue each command on its own rather than batching them.
 - `--session`, `--session-name`, `--config`, or `--namespace` flags
-- `tab`, `window new`, `click --new-tab`, and popup-based workflows
+- Popup-based workflows and anything else that needs a second page
 - Connection and persistence flags (`--cdp`, `--auto-connect`, `--provider`, `--profile`, `--state`, `--restore`), which would target a browser outside the app
 
-The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. Connection targeting is refused rather than ignored, so a command carrying one fails instead of quietly running somewhere else. The CDP bridge exposes only one page target, so tab and window commands cannot create another page.
+The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. Connection targeting is refused rather than ignored, so a command carrying one fails instead of quietly running somewhere else. The CDP bridge exposes only one page target, so nothing can create another page.
 
 ## Continue existing work
 
@@ -51,7 +51,7 @@ agent-browser open https://example.com/discovered-page
 agent-browser back
 ```
 
-The managed bridge exposes one page target. Although the upstream CLI recognizes tab and window commands, Instrument does not create additional pages for them and may navigate the current target. If a task requires simultaneous pages, popup messaging, separate authenticated profiles, or isolated proxy contexts, explain the limitation and ask for a different workflow.
+The managed bridge exposes one page target, and a command that would otherwise open another page navigates the current one instead. If a task requires simultaneous pages, popup messaging, separate authenticated profiles, or isolated proxy contexts, explain the limitation and ask for a different workflow.
 
 ## Resetting site state
 

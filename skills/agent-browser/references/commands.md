@@ -235,7 +235,7 @@ agent-browser network requests --filter api    # Filter requests
 
 ## Single managed target
 
-Instrument exposes one browser target per task and agent session. `tab`, `window new`, and `click --new-tab` do not provide additional pages and may reuse or navigate the current target. Page popups created with `window.open`, `target=_blank`, or equivalent link behavior are denied.
+Instrument exposes one browser target per task and agent session. A command that would otherwise open another page reuses or navigates the current target instead. Page popups created with `window.open`, `target=_blank`, or equivalent link behavior are denied.
 
 For an ordinary link that would open a new window, use `snapshot -i --urls` and `open` its discovered URL in the current target. Record the current URL or use `back` when you need to return. Workflows that require simultaneous pages, an opener relationship, or popup messaging are unavailable.
 
