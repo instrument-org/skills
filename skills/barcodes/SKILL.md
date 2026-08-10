@@ -1,6 +1,7 @@
 ---
 name: barcodes
 description: "Read barcodes and QR codes from images, or generate barcode and QR code assets. Use when the user wants to scan a screenshot or photo, decode a URL or identifier, read a Wi-Fi or meeting QR code, create a printable code, locate multiple codes, or inspect barcode metadata. Supports common linear and matrix formats through zxing-wasm."
+user-invocable: false
 ---
 
 # Barcodes

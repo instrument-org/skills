@@ -1,6 +1,7 @@
 ---
 name: local-ml
 description: "Run local AI models on images, audio, and text with no inference API key. Use when the user wants to remove an image background, classify or describe images, detect objects, transcribe audio, classify text, create embeddings for similarity or search, or extract named entities. Model weights download on first use and are cached locally."
+user-invocable: false
 ---
 
 # Local ML

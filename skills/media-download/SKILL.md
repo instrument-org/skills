@@ -2,6 +2,7 @@
 name: media-download
 description: "Download video, audio, subtitles, and metadata from web URLs with yt-dlp. Use when the user wants to save a video or podcast from a link, pull the audio out of an online video, get captions or a transcript for a URL, grab one clip or section of a long video, fetch a thumbnail or chapter list, or archive a playlist. Also use when a task needs a remote media file on disk before it can be processed locally. For editing or converting media already on disk, use the `ffmpeg` skill. For transcribing audio that has no published captions, hand off to the `local-ml` skill."
 compatibility: "Requires yt-dlp and ffmpeg on PATH. Install yt-dlp with `pip install -U yt-dlp`, or run it without installing via `uvx yt-dlp`."
+user-invocable: false
 ---
 
 # Media Download

@@ -1,6 +1,7 @@
 ---
 name: sharp-images
 description: "Manipulate raster images with Sharp. Use when the user wants to resize, crop, rotate, flip, convert, compress, optimize, watermark, composite, annotate, adjust color or sharpness, blur, remove alpha, preserve metadata, process image batches, or inspect dimensions and format."
+user-invocable: false
 ---
 
 # Images

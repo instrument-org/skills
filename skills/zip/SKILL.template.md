@@ -1,6 +1,7 @@
 ---
 name: zip
 description: "Create, extract, and list zip archives. Use when working with zip files, archives, compressed files, .zip, .numbers, extracting/unzipping archives, or compressing files into a zip."
+user-invocable: false
 ---
 
 <!-- cspell:ignore arcname infolist -->

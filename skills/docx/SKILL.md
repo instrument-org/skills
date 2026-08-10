@@ -1,6 +1,7 @@
 ---
 name: docx
 description: "Work with Word documents (.docx). Use whenever the user wants to extract text from a .docx file, create a new Word document with headings, paragraphs, lists, tables, images, headers, or footers, fill a Word template, or edit an existing document. Activate whenever the user mentions a .docx file, Word document, or asks to read, create, generate, fill, edit, or template one."
+user-invocable: false
 ---
 
 # DOCX
