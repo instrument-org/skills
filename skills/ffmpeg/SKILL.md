@@ -24,7 +24,7 @@ Read [references/recipes.md](references/recipes.md) for advanced audio, subtitle
 ## Safety
 
 - Quote every path.
-- Use local file paths as inputs. Do not pass untrusted URLs to FFmpeg.
+- Use local file paths as inputs. Do not pass untrusted URLs to FFmpeg. To fetch remote media first, use the `media-download` skill.
 - Default to `-n`, which fails instead of overwriting an existing output.
 - Use `-y` only when the user explicitly requested overwrite.
 - Do not delete or replace inputs unless explicitly requested.
