@@ -1,7 +1,6 @@
 ---
 name: document-to-markdown
 description: "Convert local office documents and data files to clean Markdown for analysis, search, summarization, or reuse in notes. Use when the user wants the semantic content of a PDF, Word document, PowerPoint, Excel workbook, or common data file in Markdown. Use this for ingestion, not for layout-preserving or final human-facing document conversion."
-user-invocable: false
 ---
 
 # Document to Markdown

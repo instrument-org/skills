@@ -1,7 +1,6 @@
 ---
 name: pdf
 description: "Work with PDF files. Use whenever the user wants to do anything with a PDF: extracting text content, extracting tables, finding hyperlinks, pulling embedded images, reading or updating document metadata, rendering pages as images, creating new PDFs from text, Markdown, images, or SVG, merging or splitting PDFs, filling interactive or non-interactive forms, rotating pages, adding page numbers, watermarking, or inserting images. Activate whenever the user mentions a .pdf file or asks to read, parse, inspect, render, create, modify, merge, split, or fill one."
-user-invocable: false
 ---
 
 # PDF

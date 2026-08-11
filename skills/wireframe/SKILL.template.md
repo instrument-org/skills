@@ -1,7 +1,6 @@
 ---
 name: wireframe
 description: "Generate HTML wireframes and prototypes with Tailwind CSS. Use when the user wants to create a wireframe, mockup, prototype, HTML artifact, layout sketch, or UI concept — even if they don't say 'wireframe' explicitly. Activate for requests like 'sketch a login page', 'mock up a dashboard', 'create an HTML prototype', or 'wireframe the settings screen'. Not for building full applications (use a template for that)."
-user-invocable: false
 ---
 
 # Wireframe

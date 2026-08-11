@@ -1,7 +1,6 @@
 ---
 name: color
 description: "Choose, generate, and audit colors for interfaces, documents, charts, and brand systems. Use when the user wants a color palette or shade scale, needs WCAG contrast checked, is designing light or dark themes, wants accessible status or data-visualization colors, or asks whether foreground and background colors are readable. Activate for hex, RGB, HSL, OKLCH, contrast ratios, color accessibility, and color-token work."
-user-invocable: false
 ---
 
 # Color

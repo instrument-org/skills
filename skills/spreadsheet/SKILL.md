@@ -1,7 +1,6 @@
 ---
 name: spreadsheet
 description: "Work with tabular data files: Excel (.xlsx, .xlsm), Apple Numbers (.numbers), Parquet (.parquet), CSV, and TSV. Use whenever the user wants to read, write, create, edit, style, filter, query, convert, or analyze a spreadsheet or a columnar data file. Activate for rows, columns, formulas, tables, charts, formatting, data cleaning, aggregation, or format conversion."
-user-invocable: false
 ---
 
 # Spreadsheet

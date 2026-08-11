@@ -1,7 +1,6 @@
 ---
 name: powerpoint
 description: "Work with PowerPoint files (.pptx). Use whenever the user wants to create a presentation, generate slides with custom layout, images, tables, charts, or speaker notes, extract or inspect slide content, edit an existing deck, or fill a presentation template. Activate whenever the user mentions a .pptx file, PowerPoint, presentation slides, or asks to create, read, edit, or extract text from one."
-user-invocable: false
 ---
 
 # PowerPoint
