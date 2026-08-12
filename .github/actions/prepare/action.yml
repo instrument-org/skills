@@ -14,6 +14,14 @@ runs:
           pnpm-lock.yaml
           pnpm-workspace.yaml
         node-version: "24"
+    # pnpm decides a github: dep's clone URL with a network probe at resolve
+    # time and falls back to SSH when it fails, so any re-resolution can drop a
+    # git+ssh URL into the lockfile. Runners have no key and every git dep here
+    # is a public repo, so send those clones over anonymous HTTPS.
+    - run: |
+        git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+        git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
+      shell: bash
     - run: pnpm install --frozen-lockfile
       shell: bash
     # SHA should be pinned — run `pnpm update:actions` after merging
