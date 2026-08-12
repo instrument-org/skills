@@ -59,7 +59,7 @@ sharp(input).toFormat("jpeg", options).toBuffer();
 | Option             | Type      | Default | Description                            |
 | ------------------ | --------- | ------- | -------------------------------------- |
 | `compressionLevel` | `0-9`     | `6`     | zlib compression level                 |
-| `palette`          | `boolean` | `false` | Quantise to palette-based              |
+| `palette`          | `boolean` | `false` | Quantize to palette-based              |
 | `quality`          | `1-100`   | `100`   | Palette quality (when `palette: true`) |
 | `effort`           | `1-10`    | `7`     | CPU effort for palette                 |
 | `colours`          | `2-256`   | `256`   | Max palette colors                     |

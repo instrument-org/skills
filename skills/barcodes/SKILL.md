@@ -61,8 +61,6 @@ SVG is preferable for print and document composition. Keep the PNG for visual in
 
 Save this as `<skill-path>/scripts/custom-read.ts` so package imports resolve.
 
-<!-- cspell:ignore tryDenoise -->
-
 ```ts
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { readBarcodes } from "zxing-wasm/reader";

@@ -87,11 +87,7 @@
       "outputs": []
     },
     "//#check:spelling": {
-      "inputs": ["$TURBO_DEFAULT$", "cspell.json"],
-      "outputs": []
-    },
-    "//#check:unused-words": {
-      "inputs": ["$TURBO_DEFAULT$", "cspell.json"],
+      "inputs": ["$TURBO_DEFAULT$", "typos.toml"],
       "outputs": []
     },
     "//#check:format": {

@@ -6,7 +6,7 @@ const config: KnipConfig = {
       entry: ["scripts/**/*.ts"],
     },
   },
-  ignoreBinaries: ["uv", "python3"],
+  ignoreBinaries: ["uv", "python3", "powershell.exe"],
   ignoreDependencies: [
     "@instrument-org/agent-hooks", // Used in .codex/hooks.json and .claude/settings.json hook commands
     "jscodeshift",

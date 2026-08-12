@@ -449,7 +449,6 @@ class TestWatermark:
         Image.new("RGBA", (32, 16), "red").save(image)
         source = tmp_path / "source.pdf"
         out = tmp_path / "watermarked.pdf"
-        # cspell:disable
         xmp_metadata = b"""<?xpacket begin=\"\xef\xbb\xbf\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>
 <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">
   <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">
@@ -457,7 +456,6 @@ class TestWatermark:
   </rdf:RDF>
 </x:xmpmeta>
 <?xpacket end=\"w\"?>"""
-        # cspell:enable
         writer = PdfWriter()
         writer.add_blank_page(width=144, height=144)
         writer.add_metadata({"/Title": "Watermark source", "/Author": "Instrument"})

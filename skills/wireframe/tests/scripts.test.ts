@@ -5,8 +5,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { createWireframe } from "../scripts/create-wireframe.ts";
 import { buildHtml } from "../scripts/lib/template.ts";
 
-// cspell:ignore Résumé
-
 const BUNDLE = "node_modules/@tailwindcss/browser/dist/index.global.js";
 
 /** The `src` the scaffold wrote, resolved against the wireframe's own folder. */

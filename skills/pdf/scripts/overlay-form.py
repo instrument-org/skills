@@ -6,8 +6,6 @@ import json
 import sys
 from pathlib import Path
 
-# cspell:ignore cobi cobo coit cour hebi hebo heit helv symb tibi tibo tiit zapfdingbats fontname
-
 ALIGNMENTS = {"left": 0, "center": 1, "right": 2}
 BUILTIN_FONTS = {
     "cobi",

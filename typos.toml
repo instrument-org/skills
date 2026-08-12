@@ -1,0 +1,49 @@
+# Spell checking, run by `pnpm check:spelling` (scripts/typos.ts).
+#
+# typos only flags words it has a correction for, so novel identifiers, library
+# names, and tool flags need no allowlist. Anything listed here is a real token
+# that collides with a known misspelling, so the list should stay short. If
+# entries start arriving in bulk, the file probably wants an exclude instead.
+
+[default]
+# Makes the standing American English rule executable: `behaviour`, `labelled`,
+# `honour`, and friends are corrections, not preferences.
+locale = "en-us"
+# Abbreviated git hashes, which docs and comments cite constantly. Without this
+# every `1242ba1` reads as a misspelled `by`.
+extend-ignore-identifiers-re = ["\\b[0-9a-f]{7,40}\\b"]
+
+# Third-party surface the skills quote verbatim. These sit here rather than
+# under extend-words so each matches a whole token only, which leaves
+# `colourful`, `coloured`, and `centred` in prose still failing.
+[default.extend-identifiers]
+# axe-core, the accessibility audit library.
+axe = "axe"
+# yt-dlp's format selector for the best audio-only stream.
+ba = "ba"
+# sharp option names, values, and blend modes, which libvips spells in British
+# English: `colours`, `position: "centre"`, `colour-dodge`. Repo-wide rather
+# than scoped to the sharp skill, because typos matches globs against the file
+# name and has no way to confine an allowlist to a directory.
+centre = "centre"
+colour = "colour"
+colours = "colours"
+# reportlab's canvas method.
+drawCentredString = "drawCentredString"
+# A plural acronym, which splits into `PN` and `Gs`.
+PNGs = "PNGs"
+
+[files]
+# Dotted directories are content too: workflows, agent config, editor config.
+# Without this the checker silently skips .github, .agents, .claude and .codex.
+ignore-hidden = false
+
+extend-exclude = [
+  # Reachable once hidden files are in scope, and none of it is ours: sample
+  # hooks, rerere caches, and staged patches.
+  ".git/",
+  # Generated or vendored, and not ours to spell.
+  "pnpm-lock.yaml",
+  # OOXML schemas, published by Microsoft and read by the spreadsheet scripts.
+  "skills/spreadsheet/schemas/",
+]

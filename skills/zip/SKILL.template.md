@@ -3,8 +3,6 @@ name: zip
 description: "Create, extract, and list zip archives. Use when working with zip files, archives, compressed files, .zip, .numbers, extracting/unzipping archives, or compressing files into a zip."
 ---
 
-<!-- cspell:ignore arcname infolist -->
-
 # Zip
 
 Use the bundled scripts for ordinary archive creation, listing, and extraction. For selective or format-aware work, write a small Python program with the standard-library `zipfile` module and adapt the recipes below.
