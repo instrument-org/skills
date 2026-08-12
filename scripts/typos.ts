@@ -5,10 +5,6 @@
 // binary is cached under node_modules, so a clean install re-fetches it and
 // nothing lands in the working tree.
 //
-// A matching install on PATH is used ahead of any download, since Homebrew and
-// cargo ship the same release. A mismatched one is a last resort, taken only
-// when the release cannot be fetched at all.
-//
 // Arguments are forwarded, so `pnpm check:spelling --write-changes` applies the
 // corrections and `pnpm check:spelling <path>` narrows the scan.
 
@@ -25,6 +21,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { setTimeout } from "node:timers/promises";
 
 const CACHE_DIR = path.resolve(
   import.meta.dirname,
@@ -35,7 +32,8 @@ const CACHE_DIR = path.resolve(
 // the release page, or by hashing each downloaded asset with `shasum -a 256`.
 const TYPOS_VERSION = "1.49.0";
 
-const BINARY_NAME = process.platform === "win32" ? "typos.exe" : "typos";
+type NodeArch = "arm64" | "x64";
+type NodePlatform = "darwin" | "linux" | "win32";
 
 // sha256 of each release asset, keyed by rust target triple. Pinned here because
 // crate-ci publishes no checksum sidecar to fetch alongside the archive.
@@ -53,8 +51,9 @@ const CHECKSUMS: Record<string, string> = {
 };
 
 // Linux builds are musl-only upstream, and there is no Windows arm64 artifact.
-const TARGET_TRIPLES: Partial<
-  Record<NodeJS.Platform, Partial<Record<NodeJS.Architecture, string>>>
+const TARGET_TRIPLES: Record<
+  NodePlatform,
+  Partial<Record<NodeArch, string>>
 > = {
   darwin: {
     arm64: "aarch64-apple-darwin",
@@ -69,18 +68,30 @@ const TARGET_TRIPLES: Partial<
   },
 };
 
-function cachedPath(target: string): string {
-  return path.join(CACHE_DIR, `${TYPOS_VERSION}-${target}`, BINARY_NAME);
-}
+// Ensure the pinned binary is cached and return its path.
+async function ensureBinary(): Promise<string> {
+  const platform = resolvePlatform();
+  const arch = resolveArch();
+  const target = TARGET_TRIPLES[platform][arch];
+  if (!target) {
+    throw new Error(
+      `typos publishes no ${platform} ${arch} build; skip the spelling check on this host`,
+    );
+  }
 
-// Fetch the pinned release into the cache and return its path.
-async function downloadBinary(target: string): Promise<string> {
+  const binaryName = platform === "win32" ? "typos.exe" : "typos";
+  const versionDir = path.join(CACHE_DIR, `${TYPOS_VERSION}-${target}`);
+  const destPath = path.join(versionDir, binaryName);
+  if (existsSync(destPath)) {
+    return destPath;
+  }
+
   const expected = CHECKSUMS[target];
   if (!expected) {
     throw new Error(`No pinned checksum for ${target}; add one to CHECKSUMS`);
   }
 
-  const ext = process.platform === "win32" ? "zip" : "tar.gz";
+  const ext = platform === "win32" ? "zip" : "tar.gz";
   const asset = `typos-v${TYPOS_VERSION}-${target}.${ext}`;
   // eslint-disable-next-line no-console
   console.log(`Downloading ${asset}...`);
@@ -98,15 +109,14 @@ async function downloadBinary(target: string): Promise<string> {
   // Extract to a scratch dir and move the binary into place as the last step, so
   // a killed download never leaves a half-written binary that the cache check
   // above would treat as good.
-  const destPath = cachedPath(target);
   const extractDir = mkdtempSync(path.join(tmpdir(), "typos-download-"));
   try {
     const archivePath = path.join(extractDir, asset);
     writeFileSync(archivePath, archive);
     extractArchive({ archivePath, asset, ext, extractDir });
-    mkdirSync(path.dirname(destPath), { recursive: true });
-    renameSync(path.join(extractDir, BINARY_NAME), destPath);
-    if (process.platform !== "win32") {
+    mkdirSync(versionDir, { recursive: true });
+    renameSync(path.join(extractDir, binaryName), destPath);
+    if (platform !== "win32") {
       chmodSync(destPath, 0o755);
     }
   } finally {
@@ -146,67 +156,62 @@ function extractArchive({
   execFileSync("tar", ["-xf", asset], { cwd: extractDir, stdio: "inherit" });
 }
 
+// Retry the transient half of a failed release download: a dropped socket, or a
+// 5xx or 429 from GitHub, both of which cleared on their own the last time they
+// bit. A 404 means the pinned version is wrong, so it fails on the first try
+// rather than stalling for three.
 async function fetchBuffer(url: string): Promise<Buffer> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(
-      `Failed to download ${url}: ${response.status} ${response.statusText}`,
-    );
-  }
-  return Buffer.from(await response.arrayBuffer());
-}
-
-// The typos to run: the vendored copy once it is cached, a matching install on
-// PATH ahead of any download, and the pinned release otherwise.
-async function resolveBinary(): Promise<string> {
-  const target = TARGET_TRIPLES[process.platform]?.[process.arch];
-  if (target && existsSync(cachedPath(target))) {
-    return cachedPath(target);
-  }
-
-  const installed = resolveInstalledVersion();
-  if (installed === TYPOS_VERSION) {
-    return BINARY_NAME;
-  }
-
-  if (!target) {
-    throw new Error(
-      `typos publishes no ${process.platform} ${process.arch} build; install typos ${TYPOS_VERSION} on PATH to check spelling on this host`,
-    );
-  }
-
-  try {
-    return await downloadBinary(target);
-  } catch (error) {
-    // A release outage should not block the check when a usable binary is
-    // already here. Name the version, so a result that disagrees with CI's is
-    // explainable rather than mysterious.
-    if (!installed) {
-      throw error;
+  const ATTEMPTS = 3;
+  for (let attempt = 1; ; attempt++) {
+    const lastAttempt = attempt === ATTEMPTS;
+    let response: Response;
+    try {
+      response = await fetch(url);
+    } catch (error) {
+      if (lastAttempt) {
+        throw error;
+      }
+      await pauseBeforeRetry(attempt);
+      continue;
     }
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Could not fetch typos ${TYPOS_VERSION} (${String(error)}).\nFalling back to typos ${installed} on PATH, which may not agree with CI.`,
-    );
-    return BINARY_NAME;
+
+    if (response.ok) {
+      return Buffer.from(await response.arrayBuffer());
+    }
+    if (lastAttempt || (response.status < 500 && response.status !== 429)) {
+      throw new Error(
+        `Failed to download ${url}: ${response.status} ${response.statusText}`,
+      );
+    }
+    await pauseBeforeRetry(attempt);
   }
 }
 
-// The version of a typos already on PATH, or undefined when there is none.
-function resolveInstalledVersion(): string | undefined {
-  try {
-    // `typos --version` prints `typos-cli <semver>`.
-    const output = execFileSync(BINARY_NAME, ["--version"], {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    });
-    return output.trim().split(/\s+/).at(-1);
-  } catch {
-    return undefined;
-  }
+// Say so before waiting, so a run slowed by a flaky release host reads as a
+// retry rather than a hang.
+async function pauseBeforeRetry(attempt: number): Promise<void> {
+  // eslint-disable-next-line no-console
+  console.log(`Download failed, retrying in ${attempt}s...`);
+  await setTimeout(attempt * 1000);
 }
 
-const binary = await resolveBinary();
+function resolveArch(): NodeArch {
+  const { arch } = process;
+  if (arch === "arm64" || arch === "x64") {
+    return arch;
+  }
+  throw new Error(`Unsupported architecture for typos: ${arch}`);
+}
+
+function resolvePlatform(): NodePlatform {
+  const { platform } = process;
+  if (platform === "darwin" || platform === "linux" || platform === "win32") {
+    return platform;
+  }
+  throw new Error(`Unsupported platform for typos: ${platform}`);
+}
+
+const binary = await ensureBinary();
 const { status } = spawnSync(binary, process.argv.slice(2), {
   stdio: "inherit",
 });
