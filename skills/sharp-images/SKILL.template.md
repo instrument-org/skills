@@ -22,7 +22,7 @@ Node dependencies are isolated per loaded skill. Put custom TypeScript inside th
 
 ### Decode and encode only once
 
-Save this as `<skill-path>/scripts/custom-process.ts`, then run `tsx <skill-path>/scripts/custom-process.ts` from the task root.
+Save this as `<skill-path>/scripts/custom-process.ts`, then run `node <skill-path>/scripts/custom-process.ts` from the task root.
 
 ```ts
 import { mkdir } from "node:fs/promises";

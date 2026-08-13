@@ -26,7 +26,7 @@ The script is served from the task, so a wireframe only styles correctly while i
 Create the shell at the final project-relative path:
 
 ```text
-tsx <wireframe-skill-path>/scripts/create-wireframe.ts --output output/wireframe.html --title "Account settings"
+node <wireframe-skill-path>/scripts/create-wireframe.ts --output output/wireframe.html --title "Account settings"
 ```
 
 Then edit `output/wireframe.html` directly. Replace the placeholder body with semantic HTML and Tailwind utilities. This is the main creative step; the script is only a reliable scaffold.
@@ -34,7 +34,7 @@ Then edit `output/wireframe.html` directly. Replace the placeholder body with se
 For substantial generated markup, write it to a file and avoid shell quoting:
 
 ```text
-tsx <wireframe-skill-path>/scripts/create-wireframe.ts --output output/wireframe.html --body-file work/body.html --theme-file work/theme.css --title "Dashboard"
+node <wireframe-skill-path>/scripts/create-wireframe.ts --output output/wireframe.html --body-file work/body.html --theme-file work/theme.css --title "Dashboard"
 ```
 
 `theme.css` contains declarations for the existing `@theme` block, for example:

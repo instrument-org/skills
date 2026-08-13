@@ -24,7 +24,7 @@ Common formats include `QRCode`, `Code128`, `Code39`, `DataMatrix`, `Aztec`, `PD
 
 ### Generate vector and raster versions
 
-Save this as `<skill-path>/scripts/custom-generate.ts`, then run `tsx <skill-path>/scripts/custom-generate.ts` from the task root.
+Save this as `<skill-path>/scripts/custom-generate.ts`, then run `node <skill-path>/scripts/custom-generate.ts` from the task root.
 
 ```ts
 import { mkdir, writeFile } from "node:fs/promises";

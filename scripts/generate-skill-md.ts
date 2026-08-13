@@ -222,7 +222,7 @@ async function buildHelpFromRuntime({
   ) {
     return output;
   }
-  const execName = isPython ? "python" : "tsx";
+  const execName = isPython ? "python" : "node";
   return ["Usage:", `  ${execName} ${relativeScriptPath} --help`].join("\n");
 }
 

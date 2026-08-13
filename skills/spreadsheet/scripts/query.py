@@ -16,7 +16,7 @@ from pathlib import Path
 
 BRIDGE = (
     "Apple Numbers and legacy .xls files need the TypeScript compatibility bridge: "
-    "tsx scripts/numbers-bridge.ts <input> --output <output>"
+    "node scripts/numbers-bridge.ts <input> --output <output>"
 )
 
 PYARROW_MISSING = (

@@ -123,6 +123,7 @@ function validatePackageJson(
 
 const CANONICAL_TSCONFIG_COMPILER_OPTIONS = {
   allowImportingTsExtensions: true,
+  erasableSyntaxOnly: true,
   esModuleInterop: true,
   isolatedModules: true,
   lib: ["ES2023"],
