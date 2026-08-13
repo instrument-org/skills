@@ -196,6 +196,8 @@ Create mono 16 kHz WAV for speech processing:
 ffmpeg -n -i "$INPUT" -vn -c:a pcm_s16le -ar 16000 -ac 1 "$OUTPUT"
 ```
 
+This is the form transcribers want, and `-vn` means a video input needs no separate extraction pass. To transcribe the result, hand off to the `local-ml` skill, which covers choosing a model against the recording's duration. Converting does not itself make transcription faster, since the decoder reads only the audio stream either way.
+
 ### Remove audio
 
 ```bash

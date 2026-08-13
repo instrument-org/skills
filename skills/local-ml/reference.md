@@ -130,7 +130,7 @@ options:
 ```text
 usage: speech-to-text.py [-h]
                          [--model {tiny,base,small,medium,large,large-v3,turbo}]
-                         [--language LANGUAGE] [--json]
+                         [--language LANGUAGE] [--json] [--output OUTPUT]
                          input
 
 Transcribe audio to text
@@ -144,4 +144,6 @@ options:
                         Whisper model size (default: base)
   --language LANGUAGE   Language code, e.g. 'en', 'fr'
   --json                Output full JSON with timestamps
+  --output OUTPUT       Write segments to this file as they are transcribed,
+                        so a stopped run keeps its work
 ```

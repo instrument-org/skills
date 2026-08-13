@@ -32,6 +32,60 @@ pip install sentence-transformers                # embeddings and similarity
 
 Inference stays local, but the first use downloads third-party model weights and contacts their model host. Downloads are model-dependent, commonly around 100 MB to 1 GB, and are cached outside the deliverable. `torch` itself is also large. State that cost before selecting a large model or processing a long recording.
 
+## Transcribe a recording
+
+Speech-to-text runs on the CPU. `faster-whisper` is built on CTranslate2, which accelerates only on NVIDIA GPUs, so on every other machine the work is CPU-bound no matter which model is chosen. Treat transcription as minutes of compute, not seconds, and plan the job before starting it.
+
+### Convert the audio first
+
+When the recording came from a URL, use the `media-download` skill instead of anything here: published captions are a small text download and cost no inference, so they are worth checking before transcribing at all.
+
+For a local file, the transcriber wants mono 16 kHz audio. Produce it with the `ffmpeg` skill before transcribing, whatever the source container:
+
+```bash
+ffmpeg -n -i "$INPUT" -vn -c:a pcm_s16le -ar 16000 -ac 1 work/audio.wav
+```
+
+`-vn` drops the video stream, so a video file needs no separate extraction step. This does not make the transcription itself faster, since the decoder only ever reads the audio stream. It is worth doing because it produces a small intermediate file, fixes the sample rate and channel count the model expects, and gives you a duration to plan against.
+
+Read the duration before deciding anything else:
+
+```bash
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 work/audio.wav
+```
+
+### Choose a model against the duration
+
+Larger models cost more per minute of audio and the difference compounds over a long recording. Rough throughput on a laptop CPU, as a multiple of realtime:
+
+| Model                | Throughput           | Use it for                                           |
+| -------------------- | -------------------- | ---------------------------------------------------- |
+| `tiny`, `base`       | 3-25x realtime       | Long recordings, drafts, keyword spotting            |
+| `turbo`              | 2-6x realtime        | The default choice for accuracy on a long recording  |
+| `small`              | 1-3x realtime        | Rarely worth it; `turbo` is faster and more accurate |
+| `medium`, `large-v3` | At or below realtime | Short clips only, where accuracy dominates           |
+
+The spread inside each row is real: audio that sends the decoder into repetition loops, such as music, cross-talk, or long silence, costs several times what clean speech costs. `medium` and `large-v3` can take longer than the recording itself and are almost never the right choice for a full-length recording.
+
+Do not guess from that table when the recording is long. Calibrate on the machine you are actually running on:
+
+```bash
+ffmpeg -n -i work/audio.wav -t 60 work/sample.wav
+time python <local-ml-skill-path>/scripts/speech-to-text.py work/sample.wav --model turbo
+```
+
+Multiply by the number of minutes in the recording, tell the user the estimate before starting the full run, and pick a smaller model if the answer is unreasonable.
+
+### Run it so a stopped job keeps its work
+
+Pass `--output` for anything longer than a few minutes. Segments are written as they are produced, so a run that is interrupted leaves a usable partial transcript instead of nothing:
+
+```bash
+python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --model turbo --output output/transcript.txt
+```
+
+There is no speaker diarization here. Whisper returns text and timings, not who was speaking. Say so rather than labeling speakers by inference, and do not reach for a diarization stack without agreeing the cost first: those models are a separate download, several of them are gated behind an account, and on a CPU they can cost more than the transcription.
+
 ## Recipes
 
 ### Reuse a classifier across a batch
@@ -145,12 +199,9 @@ from pathlib import Path
 
 from faster_whisper import WhisperModel
 
-model_name = "base"
+model_name = "turbo"
 model = WhisperModel(model_name, device="cpu", compute_type="int8")
-segments, info = model.transcribe(
-    "attachments/interview.m4a",
-    vad_filter=True,
-)
+segments, info = model.transcribe("work/audio.wav")
 rows = [
     {"start": segment.start, "end": segment.end, "text": segment.text.strip()}
     for segment in segments
@@ -178,6 +229,8 @@ Path("output/transcript.txt").write_text(
 - Avoid arbitrary models that require `trust_remote_code=True` unless their code has been deliberately reviewed.
 - Long inputs may be truncated by a model. Chunk them with overlap and retain source offsets when traceability matters.
 - Model caches and optional packages can consume several gigabytes. Do not install every feature stack by default.
+- `segments` from `faster_whisper` is a generator, and the transcription runs as it is consumed. Nothing has happened until you iterate it, and iterating it is where the minutes go. Write each segment out as it arrives rather than materializing the whole list and saving at the end.
+- Transcription has no progress output of its own. For a long recording, say what you are about to do and roughly how long it will take before you start, since the run is otherwise indistinguishable from a hang.
 
 ## Verification
 
