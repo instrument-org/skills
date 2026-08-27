@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-reference.dev/schema/agent-reference.schema.json",
+  "references": {
+    "anthropic-skills": {
+      "source": "github:anthropics/skills",
+      "description": "Anthropic's own published skills, one folder per skill with its SKILL.md and supporting files. The reference for how a skill is structured and worded."
+    }
+  }
+}
