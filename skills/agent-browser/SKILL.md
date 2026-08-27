@@ -163,6 +163,8 @@ EOF
 
 `eval` returns the expression value. It does not return `console.log` output. It runs JavaScript, not TypeScript: type annotations or other TS-only syntax (`(img: any) => ...`) throw `SyntaxError`.
 
+An `eval` finishes before the next command starts, so a later command cannot observe a state that `eval` only passed through. Drive and observe in the same loop, one step per command, whenever you need a reading per state rather than a reading at the end.
+
 ## Recipe: visual review
 
 Use a screenshot when correctness depends on layout, visibility, clipping, hover state, canvas content, or unlabeled icons.
