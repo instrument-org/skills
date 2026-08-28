@@ -109,6 +109,40 @@ CRF guidance for H.264:
 
 Lower CRF means higher quality and a larger file. Use H.265, VP9, or AV1 only when the user requests them or compatibility requirements permit them.
 
+## Target a file size
+
+When a size ceiling is the requirement, bitrate is the control and CRF is not: CRF asks for a quality level and reports the size afterward. Derive the bitrate from the budget and the real duration, then hold the encoder to it across two passes.
+
+```
+total bitrate (bits/s) = target bytes * 8 / duration in seconds
+video bitrate          = total bitrate - audio bitrate
+```
+
+Probe the duration rather than trusting the one in the request, and leave 5-10% of the budget for container overhead.
+
+Pass 1 measures the material, pass 2 encodes to that measurement. Every encoding setting must match between them, or the statistics describe a different encode than the one they steer:
+
+```bash
+ffmpeg -n -i "$INPUT" -map 0:v:0 -vf "scale=1280:-2,setsar=1" \
+  -c:v libx264 -preset slow -b:v "$VIDEO_BITRATE" \
+  -pass 1 -an -f null -
+
+ffmpeg -n -i "$INPUT" -map 0:v:0 -map "0:a:0?" -vf "scale=1280:-2,setsar=1" \
+  -c:v libx264 -preset slow -b:v "$VIDEO_BITRATE" \
+  -pass 2 -c:a aac -b:a 128k -movflags +faststart "$OUTPUT"
+```
+
+`-f null -` throws pass 1's frames away without naming a sink file, and is spelled the same on every platform. The passes hand statistics to each other through `ffmpeg2pass-0.log` in the working directory, so run both from the same directory and delete the log and its `.mbtree` companion afterward.
+
+Spend the budget on dimensions and frame rate before spending it on bitrate. A screen recording encoded at capture resolution puts most of its bits into detail that a 720p player never shows, and 60 fps costs roughly a third more than 30 for footage that does not need it.
+
+Two passes land near the target, not exactly on it, so confirm the result against the ceiling before reporting success:
+
+```bash
+ffprobe -v error -show_entries format=size \
+  -of default=noprint_wrappers=1:nokey=1 "$OUTPUT"
+```
+
 ## Core recipes
 
 ### Remux without re-encoding

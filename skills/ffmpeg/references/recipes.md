@@ -133,7 +133,21 @@ ffmpeg -n -i "$INPUT" \
   "$OUTPUT"
 ```
 
-For delivery to a specific loudness target, use FFmpeg's documented two-pass `loudnorm` workflow.
+For delivery to a specific loudness target, measure first and feed the measurement back, which is what lets `loudnorm` apply linear gain instead of guessing dynamically. Pass 1 prints a JSON block on stderr; read `input_i`, `input_tp`, `input_lra`, `input_thresh`, and `target_offset` out of it and substitute them into pass 2. The two passes must carry identical `I`, `TP`, and `LRA` values.
+
+```bash
+ffmpeg -i "$INPUT" -map 0:a:0 \
+  -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" \
+  -f null -
+
+ffmpeg -n -i "$INPUT" \
+  -map "0:v:0?" -map 0:a:0 -c:v copy \
+  -af "loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=$INPUT_I:measured_TP=$INPUT_TP:measured_LRA=$INPUT_LRA:measured_thresh=$INPUT_THRESH:offset=$TARGET_OFFSET:linear=true" \
+  -c:a aac -b:a 192k \
+  "$OUTPUT"
+```
+
+`-f null -` discards pass 1's output without naming a sink file, and is spelled the same on every platform.
 
 ## Fade audio and video
 
