@@ -9,30 +9,24 @@ importers:
   .:
     dependencies:
       adm-zip:
-        specifier: ^0.5.16
-        version: 0.5.16
+        specifier: ^0.6.0
+        version: 0.6.0
       cac:
         specifier: ^6.7.14
         version: 6.7.14
     devDependencies:
-      '@types/adm-zip':
-        specifier: ^0.5.7
-        version: 0.5.8
       '@types/node':
         specifier: 24.13.1
         version: 24.13.1
 
 packages:
 
-  '@types/adm-zip@0.5.8':
-    resolution: {integrity: sha512-RVVH7QvZYbN+ihqZ4kX/dMiowf6o+Jk1fNwiSdx0NahBJLU787zkULhGhJM8mf/obmLGmgdMM0bXsQTmyfbR7Q==}
-
   '@types/node@24.13.1':
     resolution: {integrity: sha512-RSpUJGmvsJ1ZeBehQZFhIdpsz+bIpES0nIQXko4Ybq+N+kX6XvOq3Jo+iJ82FWLdblFq85AsMikd3m35jgezYg==}
 
-  adm-zip@0.5.16:
-    resolution: {integrity: sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==}
-    engines: {node: '>=12.0'}
+  adm-zip@0.6.0:
+    resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
+    engines: {node: '>=14.0'}
 
   cac@6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
@@ -43,15 +37,11 @@ packages:
 
 snapshots:
 
-  '@types/adm-zip@0.5.8':
-    dependencies:
-      '@types/node': 24.13.1
-
   '@types/node@24.13.1':
     dependencies:
       undici-types: 7.18.2
 
-  adm-zip@0.5.16: {}
+  adm-zip@0.6.0: {}
 
   cac@6.7.14: {}
 
