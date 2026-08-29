@@ -84,7 +84,7 @@ Options:
 
 Exports:
 
-- `convertImage({ inputPath, outputPath, format, quality, }: { format: OutputFormat; inputPath: string; outputPath: string; quality?: number; }): Promise<{ bytes: number; format: keyof sharp.FormatEnum; height: number; outputPath: string; width: number; }>`
+- `convertImage({ inputPath, outputPath, format, quality, }: { format: OutputFormat; inputPath: string; outputPath: string; quality?: number; }): Promise<{ bytes: number; format: OutputFormat; height: number; outputPath: string; width: number; }>`
 
 ```text
 convert
@@ -129,7 +129,7 @@ Options:
 
 Exports:
 
-- `getImageMetadata({ inputPath }: { inputPath: string; }): Promise<{ channels: sharp.Channels; density: number | undefined; format: keyof sharp.FormatEnum; hasAlpha: boolean; height: number; size: number; space: keyof sharp.ColourspaceEnum; width: number; }>`
+- `getImageMetadata({ inputPath }: { inputPath: string; }): Promise<{ channels: Channels; density: number | undefined; format: keyof FormatEnum; hasAlpha: boolean; height: number; size: number; space: keyof ColourspaceEnum; width: number; }>`
 
 ```text
 get-metadata
@@ -145,7 +145,7 @@ Options:
 
 Exports:
 
-- `optimizeImage({ inputPath, outputPath, quality, effort, progressive, lossless, }: { effort?: number; inputPath: string; lossless?: boolean; outputPath: string; progressive?: boolean; quality?: number; }): Promise<{ bytes: number; format: keyof sharp.FormatEnum; height: number; originalBytes: number; outputPath: string; savedBytes: number; savedPercent: number; width: number; }>`
+- `optimizeImage({ inputPath, outputPath, quality, effort, progressive, lossless, }: { effort?: number; inputPath: string; lossless?: boolean; outputPath: string; progressive?: boolean; quality?: number; }): Promise<{ bytes: number; format: keyof FormatEnum; height: number; originalBytes: number; outputPath: string; savedBytes: number; savedPercent: number; width: number; }>`
 
 ```text
 optimize
@@ -166,7 +166,7 @@ Options:
 
 Exports:
 
-- `resizeImage({ inputPath, outputPath, width, height, fit, withoutEnlargement, background, kernel, position, flatten, }: { background?: string; fit?: Fit; flatten?: boolean; height?: number; inputPath: string; kernel?: "cubic" | "lanczos2" | "lanczos3" | "linear" | "mitchell" | "nearest"; outputPath: string; position?: string; width?: number; withoutEnlargement?: boolean; }): Promise<{ bytes: number; fit: keyof sharp.FitEnum; height: number; outputPath: string; width: number; }>`
+- `resizeImage({ inputPath, outputPath, width, height, fit, withoutEnlargement, background, kernel, position, flatten, }: { background?: string; fit?: Fit; flatten?: boolean; height?: number; inputPath: string; kernel?: "cubic" | "lanczos2" | "lanczos3" | "linear" | "mitchell" | "nearest"; outputPath: string; position?: string; width?: number; withoutEnlargement?: boolean; }): Promise<{ bytes: number; fit: keyof FitEnum; height: number; outputPath: string; width: number; }>`
 
 ```text
 resize
