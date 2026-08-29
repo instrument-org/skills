@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "cac": "^6.7.14",
-    "sharp": "^0.34.5"
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@types/node": "24.13.1"

@@ -6,9 +6,8 @@ import { parse, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { cac } from "cac";
 import sharp from "sharp";
-import type { FormatEnum } from "sharp";
 
-type OutputFormat = keyof FormatEnum;
+type OutputFormat = "avif" | "gif" | "jpeg" | "png" | "tiff" | "webp";
 
 const OUTPUT_FORMATS = new Set<OutputFormat>([
   "avif",
