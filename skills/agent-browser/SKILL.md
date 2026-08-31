@@ -51,11 +51,11 @@ Refs can change after navigation, submission, or a dynamic rerender. Re-run `sna
 
 `open` already blocks until the load event, so nothing needs waiting for after it. When you do need to wait, name the thing you are waiting for:
 
-| Waiting for                                     | Use                                                          |
-| ----------------------------------------------- | ------------------------------------------------------------ |
-| A navigation whose destination you know          | `wait --url "**/checkout/**"`                                 |
-| Content that appears after an action             | `wait --text "Saved"`, `wait <selector>`, `wait --fn "..."`   |
-| A navigation whose destination you do not know   | nothing: click, then read `get url`                           |
+| Waiting for                                    | Use                                                         |
+| ---------------------------------------------- | ----------------------------------------------------------- |
+| A navigation whose destination you know        | `wait --url "**/checkout/**"`                               |
+| Content that appears after an action           | `wait --text "Saved"`, `wait <selector>`, `wait --fn "..."` |
+| A navigation whose destination you do not know | nothing: click, then read `get url`                         |
 
 Each of those returns in milliseconds when the condition already holds, so there is no cost to asking.
 
