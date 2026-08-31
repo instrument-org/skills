@@ -168,7 +168,9 @@ agent-browser wait @e1                     # Wait for element
 agent-browser wait 2000                    # Wait milliseconds
 agent-browser wait --text "Success"        # Wait for text (or -t)
 agent-browser wait --url "**/dashboard"    # Wait for URL pattern (or -u)
-agent-browser wait --load networkidle      # Wait for network idle (or -l)
+agent-browser wait --load networkidle      # Wait for network idle (or -l); ~1s floor,
+                                           # runs to the timeout on pages that keep a
+                                           # request open. Prefer --url/--text/--fn.
 agent-browser wait --fn "window.ready"     # Wait for JS condition (or -f)
 agent-browser wait "#spinner" --state hidden
 agent-browser wait @e1 --timeout 5000      # Override timeout in milliseconds

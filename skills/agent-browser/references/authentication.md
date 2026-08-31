@@ -10,7 +10,6 @@ Do not request passwords, one-time codes, tokens, or recovery codes in chat and 
 
 ```bash
 agent-browser open https://app.example.com/login
-agent-browser wait --load networkidle
 agent-browser snapshot -i
 ```
 
@@ -44,7 +43,6 @@ The current task and agent session reuse its managed browser target across comma
 
 ```bash
 agent-browser open https://app.example.com/dashboard
-agent-browser wait --load networkidle
 agent-browser get url
 ```
 
