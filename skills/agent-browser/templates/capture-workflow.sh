@@ -19,7 +19,6 @@ mkdir -p "$OUTPUT_DIR"
 
 # Navigate to target
 agent-browser open "$TARGET_URL"
-agent-browser wait --load networkidle
 
 # Get metadata
 TITLE=$(agent-browser get title)

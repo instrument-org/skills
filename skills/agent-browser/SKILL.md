@@ -34,7 +34,6 @@ Screenshots without an explicit path are saved under `work/screenshots/`. Comman
 
 ```bash
 agent-browser open https://example.com/form
-agent-browser wait --load networkidle
 agent-browser snapshot -i
 # Read the returned refs before continuing.
 
@@ -47,6 +46,22 @@ agent-browser get text body
 ```
 
 Refs can change after navigation, submission, or a dynamic rerender. Re-run `snapshot -i` before the next action instead of assuming an old ref still identifies the same element.
+
+## Wait for a condition, not for the network
+
+`open` already blocks until the load event, so nothing needs waiting for after it. When you do need to wait, name the thing you are waiting for:
+
+| Waiting for                                     | Use                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------ |
+| A navigation whose destination you know          | `wait --url "**/checkout/**"`                                 |
+| Content that appears after an action             | `wait --text "Saved"`, `wait <selector>`, `wait --fn "..."`   |
+| A navigation whose destination you do not know   | nothing: click, then read `get url`                           |
+
+Each of those returns in milliseconds when the condition already holds, so there is no cost to asking.
+
+`wait --load networkidle` is the last resort. It carries a floor of roughly a second on every call, including pages with nothing in flight, and it returns only once no request has been open for 500 ms, so a page holding an analytics beacon, a long poll, or an event stream open never satisfies it and the command runs to its timeout. Reach for it only when you cannot name what you are waiting for.
+
+Following an ordinary link is the common case with no known destination: click, then read `get url`. Read it even when the click reported success, because a click whose coordinates land next to the target rather than on it still reports success.
 
 ## Common command map
 
@@ -97,7 +112,6 @@ Whether this environment can reach any other browser, and which flags select one
 ```bash
 agent-browser read https://example.com > work/page.txt
 agent-browser open https://example.com
-agent-browser wait --load networkidle
 agent-browser snapshot -i --urls
 ```
 
@@ -109,7 +123,6 @@ An HTML deliverable is only done once it has been loaded and exercised. Reading 
 
 ```bash
 agent-browser open output/report.html
-agent-browser wait --load networkidle
 agent-browser get text body
 agent-browser errors
 agent-browser screenshot
@@ -188,7 +201,7 @@ To collect image URLs, note that `read` and `get text` return prose, not `<img>`
 Selecting a color, size, or thumbnail usually swaps the gallery through a script or network fetch, not by mutating `img.src` on click. Confirm the change before reading, and capture each variant before moving to the next.
 
 - If the same asset URLs repeat across every variant, you are reading a stale gallery, not proof the variants share images. Selection often changes a URL parameter (`?color=`, `?variant=`); open that per-variant URL directly, or read the variation endpoint from `network requests`, instead of clicking swatches.
-- After selecting a variant, wait for the specific image to change (`wait --fn` on the `src`, or `wait --load networkidle` then re-read) rather than a fixed sleep, then extract that variant's URLs.
+- After selecting a variant, wait for the specific image to change with `wait --fn` on the `src` rather than a fixed sleep or a network wait, then extract that variant's URLs.
 - Handle one variant fully, then the next. Do not click through every variant and screenshot afterward -- every capture then shows only the final state. Distinct variants that yield byte-identical outputs are a bug, not a result.
 - Consent, newsletter, and region overlays (OneTrust, marketing popups) intercept clicks. Dismiss the overlay via its own button, then re-snapshot; refs shift once it closes.
 
