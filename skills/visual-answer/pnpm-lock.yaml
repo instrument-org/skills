@@ -1,0 +1,56 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@highlightjs/cdn-assets':
+        specifier: ^11.11.1
+        version: 11.12.0
+      '@tailwindcss/browser':
+        specifier: ^4.2.2
+        version: 4.3.3
+      cac:
+        specifier: ^6.7.14
+        version: 6.7.14
+    devDependencies:
+      '@types/node':
+        specifier: 24.13.1
+        version: 24.13.1
+
+packages:
+
+  '@highlightjs/cdn-assets@11.12.0':
+    resolution: {integrity: sha512-KvOKXODaiFmId9xaq3xc5xCL66wVLUuOngDbO9B/kewbFTqdGbn2nJxNhN3H5R1cgDTVj6R8vH0zgiNDEGjpDw==}
+    engines: {node: '>=12.0.0'}
+
+  '@tailwindcss/browser@4.3.3':
+    resolution: {integrity: sha512-fFaqX18SiyiukLoEI7/cVc0B65mkTslDNo2TxazSDZ9rKs5umOEoujmEkpy8z6GrMdoVzBDbWD8j5DTKLyAWWw==}
+
+  '@types/node@24.13.1':
+    resolution: {integrity: sha512-RSpUJGmvsJ1ZeBehQZFhIdpsz+bIpES0nIQXko4Ybq+N+kX6XvOq3Jo+iJ82FWLdblFq85AsMikd3m35jgezYg==}
+
+  cac@6.7.14:
+    resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
+    engines: {node: '>=8'}
+
+  undici-types@7.18.2:
+    resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
+
+snapshots:
+
+  '@highlightjs/cdn-assets@11.12.0': {}
+
+  '@tailwindcss/browser@4.3.3': {}
+
+  '@types/node@24.13.1':
+    dependencies:
+      undici-types: 7.18.2
+
+  cac@6.7.14: {}
+
+  undici-types@7.18.2: {}
