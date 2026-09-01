@@ -1,0 +1,287 @@
+import { relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+/** The bundles this skill installs alongside its scripts. */
+const TAILWIND_BUNDLE = fileURLToPath(
+  new URL(
+    "../../node_modules/@tailwindcss/browser/dist/index.global.js",
+    import.meta.url,
+  ),
+);
+const HLJS_BUNDLE = fileURLToPath(
+  new URL(
+    "../../node_modules/@highlightjs/cdn-assets/highlight.min.js",
+    import.meta.url,
+  ),
+);
+
+/**
+ * Reference the bundles relative to the page rather than by absolute path, so
+ * the page styles itself wherever it is opened from -- a static origin, a
+ * plain file, or another host -- instead of only where a server maps the task
+ * root to `/`.
+ */
+export function tailwindScriptSrc(outputDir: string) {
+  return relative(outputDir, TAILWIND_BUNDLE).replaceAll("\\", "/");
+}
+
+export function hljsScriptSrc(outputDir: string) {
+  return relative(outputDir, HLJS_BUNDLE).replaceAll("\\", "/");
+}
+
+const DEFAULT_BODY = `      <header class="max-w-3xl">
+        <p class="mb-3 text-xs font-medium tracking-[0.14em] text-brand-700 uppercase">Visual answer</p>
+        <h1 class="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">TITLE</h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">THESIS</p>
+      </header>
+
+      <!-- Replace this scaffold with the visual structure the question needs. -->
+      <section class="mt-10 rounded-xl border border-border bg-card p-6 shadow-sm">
+        <p class="text-sm text-muted-foreground">Build the answer here.</p>
+      </section>`;
+
+export function buildHtml({
+  body,
+  outputDir,
+  title = "Visual answer",
+}: {
+  body?: string;
+  outputDir: string;
+  title?: string;
+}) {
+  const bodyContent = body ?? DEFAULT_BODY;
+  const tailwindSrc = tailwindScriptSrc(outputDir);
+  const hljsSrc = hljsScriptSrc(outputDir);
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Placeholder only. The real tab title is derived from the h1 by the
+         script at the end of the body, so the two cannot drift apart. -->
+    <title>${escapeHtml(title)}</title>
+    <link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg/%3E" />
+    <style type="text/tailwindcss">
+      @import "tailwindcss";
+
+      /* Studio's light theme. \`static\` matters: without it Tailwind emits
+         only the variables some utility class on the page uses, so a
+         var(--color-...) in generated SVG can silently resolve to nothing and
+         the fill falls back to black. */
+      @theme static {
+        --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm: 0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06), 0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl: 0 12px 24px -4px rgb(10 13 18 / 0.07), 0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+    </style>
+    <style>
+      @media print {
+        * {
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+      }
+    </style>
+    <style>
+      /* highlight.js token colors on the dark code surface, matched to the
+         theme. The script at the end of the body loads highlight.js only when
+         a pre > code block exists. */
+      pre code.hljs {
+        background: transparent;
+        padding: 0;
+        color: var(--color-gray-100); /* code excerpts sit on the dark surface */
+      }
+      .hljs-comment, .hljs-quote { color: var(--color-gray-400); }
+      .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-built_in, .hljs-type { color: var(--color-brand-300); }
+      .hljs-string, .hljs-addition, .hljs-regexp { color: var(--color-success-300); }
+      .hljs-number, .hljs-attr, .hljs-attribute, .hljs-symbol, .hljs-meta { color: var(--color-warning-300); }
+      .hljs-title, .hljs-name, .hljs-section, .hljs-selector-id, .hljs-selector-class { color: var(--color-gray-100); }
+      .hljs-deletion { color: var(--color-error-300); }
+      .hljs-variable, .hljs-template-variable, .hljs-bullet { color: var(--color-gray-200); }
+    </style>
+    <script src="${escapeHtml(tailwindSrc)}"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
+${bodyContent}
+    </main>
+
+    <!-- The h1 leads the tab title: browsers truncate from the end, and a
+         shared prefix would render every open answer identical. -->
+    <script>
+      const heading = document.querySelector("h1");
+      if (heading) {
+        document.title = heading.textContent.trim() + " \\u00b7 Visual answer";
+      }
+
+      // Stacked bars on near-black, so a row of tabs separates on sight.
+      document.querySelector("#favicon").href =
+        "data:image/svg+xml," +
+        encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#171412"/><rect x="7" y="9" width="18" height="3.5" rx="1.75" fill="#ffffff"/><rect x="7" y="15" width="13" height="3.5" rx="1.75" fill="#ffffff" opacity="0.75"/><rect x="7" y="21" width="8" height="3.5" rx="1.75" fill="#ffffff" opacity="0.5"/></svg>',
+        );
+
+      // Orientation strip, built from main > section[id] h2s and shown at
+      // every width: the document title, then the section names with the
+      // current one marked by darker weight and a quiet underline. It
+      // occupies the very top of the page from load and sticks without
+      // moving or resizing.
+      const tocSections = [...document.querySelectorAll("main section[id]")].filter((s) => s.querySelector("h2"));
+      if (tocSections.length >= 4) {
+        const escToc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/'/g, "&#39;");
+        const tocStrip = document.createElement("nav");
+        tocStrip.setAttribute("aria-label", "Sections");
+        tocStrip.className = "sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur print:hidden";
+        tocStrip.innerHTML =
+          "<div class='mx-auto flex max-w-4xl items-center gap-x-3 px-5 text-xs sm:px-8'>" +
+          "<span class='max-w-48 shrink-0 truncate py-2 font-semibold text-foreground'>" + escToc(heading ? heading.textContent.trim() : "") + "</span>" +
+          "<span class='h-4 w-px shrink-0 bg-border'></span>" +
+          "<div data-strip class='flex gap-x-4 overflow-x-auto whitespace-nowrap'>" +
+          tocSections
+            .map((s) => {
+              const h = s.querySelector("h2");
+              const label = escToc(h.dataset.short || h.textContent.trim());
+              return "<a href='#" + s.id + "' data-spy='" + s.id + "' class='shrink-0 border-b-2 border-transparent py-2 text-gray-600 hover:text-foreground'>" + label + "</a>";
+            })
+            .join("") +
+          "</div></div>";
+        document.body.prepend(tocStrip);
+
+        const markSpy = (id) => {
+          document.querySelectorAll("a[data-spy]").forEach((a) => {
+            const on = a.dataset.spy === id;
+            a.classList.toggle("border-foreground", on);
+            a.classList.toggle("border-transparent", !on);
+            a.classList.toggle("text-foreground", on);
+            a.classList.toggle("font-semibold", on);
+            a.classList.toggle("text-gray-600", !on);
+            if (on) {
+              const c = a.closest("[data-strip]");
+              c.scrollTo({ left: a.offsetLeft - c.offsetLeft - c.clientWidth / 2 + a.clientWidth / 2, behavior: "smooth" });
+            }
+          });
+        };
+        const spy = new IntersectionObserver(
+          (entries) => entries.forEach((e) => { if (e.isIntersecting) markSpy(e.target.id); }),
+          { rootMargin: "-15% 0px -75% 0px" },
+        );
+        tocSections.forEach((s) => {
+          s.style.scrollMarginTop = "3rem";
+          spy.observe(s);
+        });
+        // The spy alone never reaches a short final section; the page end does.
+        addEventListener("scroll", () => {
+          if (innerHeight + scrollY >= document.body.scrollHeight - 8) markSpy(tocSections[tocSections.length - 1].id);
+        }, { passive: true });
+        markSpy(tocSections[0].id);
+      }
+
+      // Syntax highlighting, loaded only when the page has code excerpts.
+      // Hand-colored terminal output stays a bare <pre> with spans; real code
+      // is <pre><code class="language-x"> and gets highlighted here.
+      if (document.querySelector("pre code")) {
+        const hl = document.createElement("script");
+        hl.src = "${escapeHtml(hljsSrc)}";
+        hl.onload = () => window.hljs && window.hljs.highlightAll();
+        document.head.appendChild(hl);
+      }
+    </script>
+  </body>
+</html>
+`;
+}
+
+function escapeHtml(str: string) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
