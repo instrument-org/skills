@@ -100,6 +100,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - **Element missing or not clickable:** check visibility, scroll it into view, and inspect the newest screenshot for overlays. Interact with a covering dialog or banner before retrying the target.
 - **Text input ignores `fill` or `type`:** focus the field, then use `keyboard inserttext` or `keyboard type` as the fallback.
 - **Iframe control absent:** a fresh snapshot includes one level of accessible iframe content and its refs work directly. Use `frame @ref` for a scoped snapshot; inaccessible cross-origin frames may require a different workflow.
+- **Human-verification or access-denied interstitial:** the judgment is the site's, so reissuing the command in the same browser only repeats it, and the block usually covers the whole origin rather than the page you were on. Do not automate the challenge itself (see [authentication.md](references/authentication.md)); check `agent-browser --help` for the targeting flags this environment allows and retry in a browser the user can clear it in, telling them you are switching. When no other browser is reachable, say the site blocked the browser before falling back to another source, so a thinner answer is never reported as the whole one.
 
 ## The browser you get
 
