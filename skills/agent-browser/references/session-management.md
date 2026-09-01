@@ -25,9 +25,14 @@ Do not use these upstream surfaces in Instrument:
 - `batch`, `plugin`, `mcp`, `chat`, `inspect`, `stream`, `launch`, and the install, upgrade, doctor, and dashboard subcommands. Issue each command on its own rather than batching them.
 - `--session`, `--session-name`, `--config`, or `--namespace` flags
 - Popup-based workflows and anything else that needs a second page
-- Connection and persistence flags (`--cdp`, `--auto-connect`, `--provider`, `--profile`, `--state`, `--restore`), which would target a browser outside the app
 
-The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. Connection targeting is refused rather than ignored, so a command carrying one fails instead of quietly running somewhere else. The CDP bridge exposes only one page target, so nothing can create another page.
+The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. The CDP bridge exposes only one page target, so nothing can create another page.
+
+## Targeting a browser outside the app
+
+Connection and launch flags (`--cdp`, `--auto-connect`, `--provider`, `--profile`, and the launch-state flags that imply a local launch) are not on that list. Whether this environment reaches any browser outside the app is up to the environment, and `agent-browser --help` is what says so; do not conclude either way from this document.
+
+Targeting applies to the single invocation that carries it, so repeat the flag on every command of an external flow — a bare follow-up silently lands back on the managed target. Switching browsers changes which signed-in identity you act as, so say you are switching rather than doing it silently, and re-verify signed-in state afterward instead of assuming the previous session carried over.
 
 ## Continue existing work
 
