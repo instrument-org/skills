@@ -61,6 +61,15 @@ export function buildHtml({
          script at the end of the body, so the two cannot drift apart. -->
     <title>${escapeHtml(title)}</title>
     <link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg/%3E" />
+    <!-- The two faces the theme below names. Without this the page declares
+         them and renders in whatever the platform's sans and mono happen to
+         be, which is a different page on every machine that opens it. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
     <style type="text/tailwindcss">
       @import "tailwindcss";
 
