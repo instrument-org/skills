@@ -16,8 +16,12 @@ Pick the lightest form that answers the question. Hand-rolled HTML/SVG covers ra
 
 ```html
 <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
-  <p class="text-3xl font-semibold tracking-[-0.03em]">412<span class="ml-1 text-lg text-muted-foreground">h</span></p>
-  <p class="mt-1 text-xs leading-5 text-muted-foreground">what the figure is, plus the comparison that gives it meaning</p>
+  <p class="text-3xl font-semibold tracking-[-0.03em]">
+    412<span class="ml-1 text-lg text-muted-foreground">h</span>
+  </p>
+  <p class="mt-1 text-xs leading-5 text-muted-foreground">
+    what the figure is, plus the comparison that gives it meaning
+  </p>
 </div>
 ```
 
@@ -28,13 +32,27 @@ A toned figure (`text-error-700`) marks the tile carrying the problem.
 ```html
 <div id="bars" class="space-y-2"></div>
 <script>
-  const barData = [["checkout", 42], ["search", 28], ["uploads", 17]];
+  const barData = [
+    ["checkout", 42],
+    ["search", 28],
+    ["uploads", 17],
+  ];
   const barMax = 42; // state the base in the caption
-  document.querySelector("#bars").innerHTML = barData.map(([label, n]) =>
-    '<div class="flex items-center gap-3">' +
-    '<span class="w-32 shrink-0 text-right font-mono text-xs text-muted-foreground">' + label + '</span>' +
-    '<div class="h-4 flex-1 overflow-hidden rounded bg-muted"><div class="h-4 rounded" style="width:' + (n / barMax) * 100 + '%;background:var(--color-brand-500)"></div></div>' +
-    '<span class="w-10 shrink-0 text-right font-mono text-xs">' + n + '</span></div>').join("");
+  document.querySelector("#bars").innerHTML = barData
+    .map(
+      ([label, n]) =>
+        '<div class="flex items-center gap-3">' +
+        '<span class="w-32 shrink-0 text-right font-mono text-xs text-muted-foreground">' +
+        label +
+        "</span>" +
+        '<div class="h-4 flex-1 overflow-hidden rounded bg-muted"><div class="h-4 rounded" style="width:' +
+        (n / barMax) * 100 +
+        '%;background:var(--color-brand-500)"></div></div>' +
+        '<span class="w-10 shrink-0 text-right font-mono text-xs">' +
+        n +
+        "</span></div>",
+    )
+    .join("");
 </script>
 ```
 
@@ -55,16 +73,34 @@ The `flex-[n]` trick keeps segments proportional with no percentage math. Captio
 ## Sparkline (generated SVG)
 
 ```html
-<svg id="spark" viewBox="0 0 560 110" class="w-full" role="img" aria-label="What the line shows, including the peak"></svg>
+<svg
+  id="spark"
+  viewBox="0 0 560 110"
+  class="w-full"
+  role="img"
+  aria-label="What the line shows, including the peak"
+></svg>
 <script>
   const PTS = [3, 1, 0, 5, 11, 14, 2, 8];
-  const W = 560, H = 110, P = 14, MAX = Math.max(...PTS);
+  const W = 560,
+    H = 110,
+    P = 14,
+    MAX = Math.max(...PTS);
   const x = (i) => P + (i * (W - 2 * P)) / (PTS.length - 1);
   const y = (v) => P + (1 - v / MAX) * (H - 2 * P);
   document.querySelector("#spark").innerHTML =
     '<polyline fill="none" stroke-width="2" style="stroke:var(--color-brand-500)" points="' +
-    PTS.map((v, i) => x(i) + "," + y(v)).join(" ") + '"/>' +
-    PTS.map((v, i) => v ? '<circle r="2.5" cx="' + x(i) + '" cy="' + y(v) + '" style="fill:var(--color-brand-600)"/>' : "").join("");
+    PTS.map((v, i) => x(i) + "," + y(v)).join(" ") +
+    '"/>' +
+    PTS.map((v, i) =>
+      v
+        ? '<circle r="2.5" cx="' +
+          x(i) +
+          '" cy="' +
+          y(v) +
+          '" style="fill:var(--color-brand-600)"/>'
+        : "",
+    ).join("");
 </script>
 ```
 
