@@ -69,7 +69,7 @@ export function buildHtml({
          var(--color-...) in generated SVG can silently resolve to nothing and
          the fill falls back to black. */
       @theme static {
-        --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
         --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
         --radius: 0.5rem;
