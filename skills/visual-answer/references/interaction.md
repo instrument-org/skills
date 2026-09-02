@@ -31,60 +31,151 @@ When the page needs decisions back from the reader, collect them as a form a non
 This is the most intricate pattern in the skill, so copy the complete working example below and extend it rather than re-deriving the machinery; everything is driven by `data-q`/`data-topic`/`data-reply` attributes, and the styling of selected segments rides entirely on `aria-pressed:` variants.
 
 ```html
-<div data-q="1" id="q1" data-topic="Form shape" class="mt-5 rounded-xl border-2 border-brand-200 bg-card p-5 shadow-sm">
-  <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">Question 1 of 2</p>
-  <p data-question class="mt-2 text-sm leading-6 font-medium">The question, in plain language?</p>
-  <p class="mt-1 text-sm leading-6 text-muted-foreground">Pick one; clicking it again clears it. Your answers build a reply at the bottom to copy and paste back into the chat.</p>
-  <div class="mt-3 inline-flex overflow-hidden rounded-lg border border-border" role="radiogroup">
-    <button data-opt data-reply="option one" aria-pressed="false" class="border-l border-border px-3.5 py-2 text-sm text-muted-foreground transition-colors first:border-l-0 hover:text-foreground aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:hover:text-white">Option one</button>
-    <button data-opt data-reply="option two" aria-pressed="false" class="border-l border-border px-3.5 py-2 text-sm text-muted-foreground transition-colors first:border-l-0 hover:text-foreground aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:hover:text-white">Option two</button>
+<div
+  data-q="1"
+  id="q1"
+  data-topic="Form shape"
+  class="mt-5 rounded-xl border-2 border-brand-200 bg-card p-5 shadow-sm"
+>
+  <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+    Question 1 of 2
+  </p>
+  <p data-question class="mt-2 text-sm leading-6 font-medium">
+    The question, in plain language?
+  </p>
+  <p class="mt-1 text-sm leading-6 text-muted-foreground">
+    Pick one; clicking it again clears it. Your answers build a reply at the
+    bottom to copy and paste back into the chat.
+  </p>
+  <div
+    class="mt-3 inline-flex overflow-hidden rounded-lg border border-border"
+    role="radiogroup"
+  >
+    <button
+      data-opt
+      data-reply="option one"
+      aria-pressed="false"
+      class="border-l border-border px-3.5 py-2 text-sm text-muted-foreground transition-colors first:border-l-0 hover:text-foreground aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:hover:text-white"
+    >
+      Option one
+    </button>
+    <button
+      data-opt
+      data-reply="option two"
+      aria-pressed="false"
+      class="border-l border-border px-3.5 py-2 text-sm text-muted-foreground transition-colors first:border-l-0 hover:text-foreground aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:hover:text-white"
+    >
+      Option two
+    </button>
   </div>
 </div>
 
-<div data-reply-bar hidden class="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4 print:hidden">
-  <div class="bar-inner pointer-events-auto rounded-xl border border-border bg-card px-4 py-3 shadow-xl">
-    <p class="text-xs leading-4 text-muted-foreground">Your answers to this page's questions</p>
+<div
+  data-reply-bar
+  hidden
+  class="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4 print:hidden"
+>
+  <div
+    class="bar-inner pointer-events-auto rounded-xl border border-border bg-card px-4 py-3 shadow-xl"
+  >
+    <p class="text-xs leading-4 text-muted-foreground">
+      Your answers to this page's questions
+    </p>
     <div class="mt-2 flex items-center justify-between gap-4">
       <span data-reply-marks class="flex items-center gap-1.5"></span>
-      <button data-reply-copy class="shrink-0 rounded-md bg-primary px-3 py-1.5 text-sm font-medium whitespace-nowrap text-primary-foreground hover:opacity-90">Copy reply</button>
+      <button
+        data-reply-copy
+        class="shrink-0 rounded-md bg-primary px-3 py-1.5 text-sm font-medium whitespace-nowrap text-primary-foreground hover:opacity-90"
+      >
+        Copy reply
+      </button>
     </div>
   </div>
 </div>
 
 <script>
   (() => {
-    document.head.insertAdjacentHTML("beforeend", "<style>@keyframes bar-rise{from{transform:translateY(14px);opacity:0}}[data-reply-bar]:not([hidden]) .bar-inner{animation:bar-rise .3s ease}</style>");
+    document.head.insertAdjacentHTML(
+      "beforeend",
+      "<style>@keyframes bar-rise{from{transform:translateY(14px);opacity:0}}[data-reply-bar]:not([hidden]) .bar-inner{animation:bar-rise .3s ease}</style>",
+    );
     const qs = [...document.querySelectorAll("[data-q]")];
     const bar = document.querySelector("[data-reply-bar]");
     const state = {};
     const render = () => {
       const answered = qs.filter((q) => state[q.dataset.q]).length;
       bar.hidden = answered === 0;
-      document.querySelector("main").style.paddingBottom = answered ? "4.5rem" : "";
+      document.querySelector("main").style.paddingBottom = answered
+        ? "4.5rem"
+        : "";
       document.querySelector("[data-reply-marks]").innerHTML = qs
         .map((q, i) => {
           const a = state[q.dataset.q];
-          return "<a href='#" + q.id + "' title='" + q.dataset.topic + (a ? ": " + a : " · pending") + "' class='flex size-6 items-center justify-center rounded-full font-mono text-[11px] " + (a ? "bg-brand-600 text-white" : "border border-border text-muted-foreground") + "'>" + (i + 1) + "</a>";
+          return (
+            "<a href='#" +
+            q.id +
+            "' title='" +
+            q.dataset.topic +
+            (a ? ": " + a : " · pending") +
+            "' class='flex size-6 items-center justify-center rounded-full font-mono text-[11px] " +
+            (a
+              ? "bg-brand-600 text-white"
+              : "border border-border text-muted-foreground") +
+            "'>" +
+            (i + 1) +
+            "</a>"
+          );
         })
         .join("");
-      qs.forEach((q) => q.querySelectorAll("[data-opt]").forEach((btn) => btn.setAttribute("aria-pressed", state[q.dataset.q] === btn.dataset.reply ? "true" : "false")));
+      qs.forEach((q) =>
+        q
+          .querySelectorAll("[data-opt]")
+          .forEach((btn) =>
+            btn.setAttribute(
+              "aria-pressed",
+              state[q.dataset.q] === btn.dataset.reply ? "true" : "false",
+            ),
+          ),
+      );
     };
     qs.forEach((q) => {
       q.style.scrollMarginTop = "3rem";
       q.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-opt]");
         if (!btn) return;
-        state[q.dataset.q] = state[q.dataset.q] === btn.dataset.reply ? undefined : btn.dataset.reply;
+        state[q.dataset.q] =
+          state[q.dataset.q] === btn.dataset.reply
+            ? undefined
+            : btn.dataset.reply;
         render();
       });
     });
     const buildReply = () =>
       'Answers from "PAGE TITLE" (FILENAME.html):\n\n' +
-      qs.map((q, i) => i + 1 + ". **Q:** " + q.querySelector("[data-question]").textContent.trim() + "\n   **A:** " + (state[q.dataset.q] || "_unanswered_")).join("\n\n");
-    document.querySelector("[data-reply-copy]").addEventListener("click", () => {
-      const btn = document.querySelector("[data-reply-copy]");
-      if (navigator.clipboard) navigator.clipboard.writeText(buildReply()).then(() => { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = "Copy reply"), 1200); }).catch(() => {});
-    });
+      qs
+        .map(
+          (q, i) =>
+            i +
+            1 +
+            ". **Q:** " +
+            q.querySelector("[data-question]").textContent.trim() +
+            "\n   **A:** " +
+            (state[q.dataset.q] || "_unanswered_"),
+        )
+        .join("\n\n");
+    document
+      .querySelector("[data-reply-copy]")
+      .addEventListener("click", () => {
+        const btn = document.querySelector("[data-reply-copy]");
+        if (navigator.clipboard)
+          navigator.clipboard
+            .writeText(buildReply())
+            .then(() => {
+              btn.textContent = "Copied";
+              setTimeout(() => (btn.textContent = "Copy reply"), 1200);
+            })
+            .catch(() => {});
+      });
   })();
 </script>
 ```
@@ -107,8 +198,12 @@ Field observation from real readers: collapsed regions go unnoticed entirely, ev
 
 ```html
 <details class="group rounded-xl border border-border bg-card shadow-sm">
-  <summary class="flex cursor-pointer items-center gap-2 p-5 text-sm font-medium select-none">
-    <span class="inline-block transition-transform group-open:rotate-90">&#9656;</span>
+  <summary
+    class="flex cursor-pointer items-center gap-2 p-5 text-sm font-medium select-none"
+  >
+    <span class="inline-block transition-transform group-open:rotate-90"
+      >&#9656;</span
+    >
     All 21 per-suite timings · slowest is e2e-checkout at 14m
   </summary>
   <div class="px-5 pb-5">…the table…</div>
@@ -130,8 +225,20 @@ Default to stacking content vertically. Tabs are justified only when the panels 
 ```html
 <div data-tabs>
   <div role="tablist" class="flex flex-wrap gap-1 border-b border-border">
-    <button data-tab="a" aria-selected="true" class="rounded-t-lg border border-b-0 border-transparent px-3.5 py-2 text-sm text-muted-foreground aria-selected:border-border aria-selected:bg-background aria-selected:font-medium aria-selected:text-foreground">macOS</button>
-    <button data-tab="b" aria-selected="false" class="rounded-t-lg border border-b-0 border-transparent px-3.5 py-2 text-sm text-muted-foreground aria-selected:border-border aria-selected:bg-background aria-selected:font-medium aria-selected:text-foreground">Linux</button>
+    <button
+      data-tab="a"
+      aria-selected="true"
+      class="rounded-t-lg border border-b-0 border-transparent px-3.5 py-2 text-sm text-muted-foreground aria-selected:border-border aria-selected:bg-background aria-selected:font-medium aria-selected:text-foreground"
+    >
+      macOS
+    </button>
+    <button
+      data-tab="b"
+      aria-selected="false"
+      class="rounded-t-lg border border-b-0 border-transparent px-3.5 py-2 text-sm text-muted-foreground aria-selected:border-border aria-selected:bg-background aria-selected:font-medium aria-selected:text-foreground"
+    >
+      Linux
+    </button>
   </div>
   <div data-panel="a" class="p-4 text-sm leading-6">…</div>
   <div data-panel="b" hidden class="p-4 text-sm leading-6">…</div>
@@ -139,10 +246,16 @@ Default to stacking content vertically. Tabs are justified only when the panels 
 <script>
   document.querySelectorAll("[data-tabs]").forEach((root) => {
     const tabs = root.querySelectorAll("[data-tab]");
-    tabs.forEach((btn) => btn.addEventListener("click", () => {
-      tabs.forEach((b) => b.setAttribute("aria-selected", b === btn ? "true" : "false"));
-      root.querySelectorAll("[data-panel]").forEach((p) => (p.hidden = p.dataset.panel !== btn.dataset.tab));
-    }));
+    tabs.forEach((btn) =>
+      btn.addEventListener("click", () => {
+        tabs.forEach((b) =>
+          b.setAttribute("aria-selected", b === btn ? "true" : "false"),
+        );
+        root
+          .querySelectorAll("[data-panel]")
+          .forEach((p) => (p.hidden = p.dataset.panel !== btn.dataset.tab));
+      }),
+    );
   });
 </script>
 ```
