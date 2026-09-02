@@ -6,9 +6,17 @@ Boxes, lanes, grids, rails, and comparisons are HTML/Tailwind jobs: they reflow,
 
 ```html
 <div class="flex flex-wrap items-stretch gap-2">
-  <div class="min-w-40 flex-1 rounded-lg border border-border bg-card p-3 text-sm">producer</div>
+  <div
+    class="min-w-40 flex-1 rounded-lg border border-border bg-card p-3 text-sm"
+  >
+    producer
+  </div>
   <span class="self-center text-muted-foreground">&rarr;</span>
-  <div class="min-w-40 flex-1 rounded-lg border border-border bg-card p-3 text-sm">queue</div>
+  <div
+    class="min-w-40 flex-1 rounded-lg border border-border bg-card p-3 text-sm"
+  >
+    queue
+  </div>
 </div>
 ```
 
@@ -19,16 +27,53 @@ Pick one arrow mechanism per page (`&rarr;` characters between HTML elements, or
 Every diagram: `viewBox`, full width with a minimum, inside a scroll wrapper, labeled for assistive tech.
 
 ```html
-<div class="overflow-x-auto rounded-xl border border-border bg-card p-6 shadow-sm">
-  <svg viewBox="0 0 940 220" class="w-full min-w-[680px]" role="img" aria-label="One sentence saying what the diagram shows and how it ends">
+<div
+  class="overflow-x-auto rounded-xl border border-border bg-card p-6 shadow-sm"
+>
+  <svg
+    viewBox="0 0 940 220"
+    class="w-full min-w-[680px]"
+    role="img"
+    aria-label="One sentence saying what the diagram shows and how it ends"
+  >
     <defs>
-      <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <marker
+        id="ar"
+        markerWidth="8"
+        markerHeight="8"
+        refX="7"
+        refY="4"
+        orient="auto"
+      >
         <path d="M0 0 L8 4 L0 8 z" class="fill-gray-400" />
       </marker>
     </defs>
-    <rect x="0" y="20" width="170" height="56" rx="8" class="fill-card stroke-border" />
-    <text x="14" y="52" class="fill-foreground" font-family="JetBrains Mono, monospace" font-size="11">scheduler</text>
-    <line x1="176" y1="48" x2="230" y2="48" stroke-width="1.5" class="stroke-gray-400" marker-end="url(#ar)" />
+    <rect
+      x="0"
+      y="20"
+      width="170"
+      height="56"
+      rx="8"
+      class="fill-card stroke-border"
+    />
+    <text
+      x="14"
+      y="52"
+      class="fill-foreground"
+      font-family="JetBrains Mono, monospace"
+      font-size="11"
+    >
+      scheduler
+    </text>
+    <line
+      x1="176"
+      y1="48"
+      x2="230"
+      y2="48"
+      stroke-width="1.5"
+      class="stroke-gray-400"
+      marker-end="url(#ar)"
+    />
   </svg>
 </div>
 ```
