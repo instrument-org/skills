@@ -58,6 +58,10 @@ agent-browser back
 
 The managed bridge exposes one page target, and a command that would otherwise open another page navigates the current one instead. If a task requires simultaneous pages, popup messaging, separate authenticated profiles, or isolated proxy contexts, explain the limitation and ask for a different workflow.
 
+Pace a run of pages on one origin. A shell loop that opens eight of a site's pages back to back issues them faster than any person browses, and a site that meters requests answers with a rate limit and then, often, an origin-wide block that outlasts it — so the loop costs the remaining pages and the ones already read. Take the pages a few at a time, do the work for each before fetching the next, and treat a slow or refused page as a reason to stop rather than to retry harder.
+
+When an origin does push back, do not answer it by fetching the same URLs another way. Reaching past the browser to a scripted HTTP client abandons the cookies and session that made the earlier requests legitimate, presents an obviously non-browser client, and adds to the very count that caused the limit; a limit answered this way reliably becomes a harder block. Slow down, or tell the user the site is refusing and offer what you can source another way.
+
 ## Resetting site state
 
 Prefer the site's own sign-out or reset controls. When the task explicitly requires a cookie reset:
