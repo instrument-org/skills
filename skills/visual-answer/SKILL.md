@@ -16,7 +16,7 @@ The page is the primary reading surface. The reader often skips the conversation
 3. Generate the page with the bundled script, which owns the shell (Studio theme, locally served Tailwind and syntax highlighting, the orientation strip):
 
 ```text
-tsx <visual-answer-skill-path>/scripts/create-visual-answer.ts --output output/<topic>.html --body-file work/<topic>-body.html --title "Short title"
+node <visual-answer-skill-path>/scripts/create-visual-answer.ts --output output/<topic>.html --body-file work/<topic>-body.html --title "Short title"
 ```
 
 4. Never hand-build or edit the shell, add remote `<link>` or `<script>` tags, or point at a CDN; the script pins local bundles so the page works offline exactly as generated. Page-local `<script>` blocks inside your body content are welcome.
