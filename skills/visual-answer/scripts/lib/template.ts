@@ -170,6 +170,27 @@ export function buildHtml({
       }
     </style>
     <style>
+      /* The strip scrolls itself, and a scrollbar flashing in and out over the
+         top of the page while you read is pure distraction. Fades stand in for
+         it, and only on an edge with more strip beyond it. */
+      [data-strip] {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      [data-strip]::-webkit-scrollbar {
+        display: none;
+      }
+      [data-strip][data-overflow="both"] {
+        mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+      }
+      [data-strip][data-overflow="end"] {
+        mask-image: linear-gradient(90deg, #000 calc(100% - 20px), transparent 100%);
+      }
+      [data-strip][data-overflow="start"] {
+        mask-image: linear-gradient(90deg, transparent 0, #000 20px);
+      }
+    </style>
+    <style>
       @media print {
         * {
           print-color-adjust: exact;
@@ -243,6 +264,16 @@ ${bodyContent}
           "</div></div>";
         document.body.prepend(tocStrip);
 
+        const strip = tocStrip.querySelector("[data-strip]");
+        const markEdges = () => {
+          const more = strip.scrollWidth - strip.clientWidth;
+          strip.dataset.overflow =
+            more < 4 ? "none" : strip.scrollLeft < 4 ? "end" : strip.scrollLeft > more - 4 ? "start" : "both";
+        };
+        strip.addEventListener("scroll", markEdges, { passive: true });
+        addEventListener("resize", markEdges);
+        markEdges();
+
         const markSpy = (id) => {
           document.querySelectorAll("a[data-spy]").forEach((a) => {
             const on = a.dataset.spy === id;
@@ -254,6 +285,7 @@ ${bodyContent}
             if (on) {
               const c = a.closest("[data-strip]");
               c.scrollTo({ left: a.offsetLeft - c.offsetLeft - c.clientWidth / 2 + a.clientWidth / 2, behavior: "smooth" });
+              setTimeout(markEdges, 320);
             }
           });
         };
