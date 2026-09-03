@@ -59,9 +59,9 @@ Refs can change after navigation, submission, or a dynamic rerender. Re-run `sna
 
 Each of those returns in milliseconds when the condition already holds, so there is no cost to asking.
 
-`wait --load networkidle` is the last resort. It carries a floor of roughly a second on every call, including pages with nothing in flight, and it returns only once no request has been open for 500 ms, so a page holding an analytics beacon, a long poll, or an event stream open never satisfies it and the command runs to its timeout. Reach for it only when you cannot name what you are waiting for.
+`wait --load networkidle` is the last resort. It carries a floor of roughly a second on every call, including pages with nothing in flight, and it returns only once no request has been open for 500 ms, so a page holding an analytics beacon, a long poll, or an event stream open never satisfies it and the command runs to its timeout.
 
-Following an ordinary link is the common case with no known destination: click, then read `get url`. Read it even when the click reported success, because a click whose coordinates land next to the target rather than on it still reports success.
+Read `get url` even when the click reported success: a click whose coordinates land next to the target rather than on it still reports success.
 
 ## Common command map
 
@@ -100,7 +100,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - **Element missing or not clickable:** check visibility, scroll it into view, and inspect the newest screenshot for overlays. Interact with a covering dialog or banner before retrying the target.
 - **Text input ignores `fill` or `type`:** focus the field, then use `keyboard inserttext` or `keyboard type` as the fallback.
 - **Iframe control absent:** a fresh snapshot includes one level of accessible iframe content and its refs work directly. Use `frame @ref` for a scoped snapshot; inaccessible cross-origin frames may require a different workflow.
-- **Human-verification or access-denied interstitial:** the judgment is the site's, so reissuing the command only repeats it, and the block usually covers the whole origin rather than the page you were on. Do not automate the challenge itself (see [authentication.md](references/authentication.md)). The managed browser is one the user is watching and can drive, so the first move is to ask them to clear the challenge there; `agent-browser --help` says whether this environment can also target a browser outside the app. Neither is a guaranteed way through, since a real browser gets refused by these sites too, so say plainly that the site blocked you rather than reporting a thinner answer as the whole one. Read [session-management.md](references/session-management.md) for what not to try instead.
+- **Human-verification or access-denied interstitial:** the judgment is the site's, so reissuing the command only repeats it, and the block usually covers the whole origin rather than the page you were on. Do not automate the challenge itself (see [authentication.md](references/authentication.md)). The managed browser is one the user is watching and can drive, so the first move is to ask them to clear the challenge there. That is not a guaranteed way through, since a real browser gets refused by these sites too, so say plainly that the site blocked you rather than reporting a thinner answer as the whole one. Read [session-management.md](references/session-management.md) for what not to try instead.
 
 ## The browser you get
 
