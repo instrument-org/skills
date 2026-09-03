@@ -34,7 +34,9 @@ Inference stays local, but the first use downloads third-party model weights and
 
 ## Transcribe a recording
 
-Speech-to-text runs on the CPU. `faster-whisper` is built on CTranslate2, which accelerates only on NVIDIA GPUs, so on every other machine the work is CPU-bound no matter which model is chosen. Treat transcription as minutes of compute, not seconds, and plan the job before starting it.
+Speech-to-text usually runs on the CPU. `faster-whisper` is built on CTranslate2, which accelerates only on NVIDIA GPUs; the script uses one when it finds one, and every other machine, Apple silicon included, is CPU-bound no matter which model is chosen. Treat transcription as minutes of compute, not seconds, and plan the job before starting it.
+
+Silence is skipped and repetition loops are disarmed by default, so the pathological audio in a real recording costs closer to what its speech costs. That is throughput, not accuracy: it does not change how long the speech itself takes.
 
 ### Convert the audio first
 
@@ -60,10 +62,12 @@ Larger models cost more per minute of audio and the difference compounds over a 
 
 | Model                | Throughput           | Use it for                                           |
 | -------------------- | -------------------- | ---------------------------------------------------- |
-| `tiny`, `base`       | 3-25x realtime       | Long recordings, drafts, keyword spotting            |
-| `turbo`              | 2-6x realtime        | The default choice for accuracy on a long recording  |
+| `tiny`, `base`       | 3-25x realtime       | The default. Drafts, keyword spotting, clean speech  |
+| `turbo`              | 2-6x realtime        | When accuracy matters: names, jargon, poor recording |
 | `small`              | 1-3x realtime        | Rarely worth it; `turbo` is faster and more accurate |
 | `medium`, `large-v3` | At or below realtime | Short clips only, where accuracy dominates           |
+
+The script defaults to `base`, so pass `--model turbo` deliberately when the transcript has to be right rather than quick. Both handle clean speech well; `turbo` earns its cost on proper nouns and difficult audio.
 
 The spread inside each row is real: audio that sends the decoder into repetition loops, such as music, cross-talk, or long silence, costs several times what clean speech costs. `medium` and `large-v3` can take longer than the recording itself and are almost never the right choice for a full-length recording.
 
@@ -76,12 +80,26 @@ time python <local-ml-skill-path>/scripts/speech-to-text.py work/sample.wav --mo
 
 Multiply by the number of minutes in the recording, tell the user the estimate before starting the full run, and pick a smaller model if the answer is unreasonable.
 
+### Tell it the words it cannot guess
+
+Whisper spells unfamiliar proper nouns phonetically: a product name becomes two ordinary words, a surname becomes a similar-sounding one. It is the largest single source of error in an otherwise good transcript, and it is the one you can fix before the run rather than after.
+
+Build a term list from the context you already have. Names in the surrounding filenames and folders, people and products in the task's own documents, and whatever the user called things in their request are all fair game, and the user is the best source of any the recording will use.
+
+```bash
+python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --vocabulary "Instrument, Finalpoint, ripgrep, oxlint, tsgo"
+```
+
+Names, products, jargon, and acronyms. Not ordinary words the model already knows, and not so many that the list stops being about this recording; roughly the terms a new colleague would have to be told. `--vocabulary` sets both of Whisper's biasing inputs, which behave differently and are individually unreliable, so prefer it over passing either one by hand.
+
+Repair what is left afterward, but expect much less of it.
+
 ### Run it so a stopped job keeps its work
 
 Pass `--output` for anything longer than a few minutes. Segments are written as they are produced, so a run that is interrupted leaves a usable partial transcript instead of nothing:
 
 ```bash
-python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --model turbo --output output/transcript.txt
+python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --model turbo --vocabulary "..." --output output/transcript.txt
 ```
 
 There is no speaker diarization here. Whisper returns text and timings, not who was speaking. Say so rather than labeling speakers by inference, and do not reach for a diarization stack without agreeing the cost first: those models are a separate download, several of them are gated behind an account, and on a CPU they can cost more than the transcription.
@@ -200,8 +218,15 @@ from pathlib import Path
 from faster_whisper import WhisperModel
 
 model_name = "turbo"
+terms = "Instrument, Finalpoint, ripgrep, oxlint, tsgo"
 model = WhisperModel(model_name, device="cpu", compute_type="int8")
-segments, info = model.transcribe("work/audio.wav")
+segments, info = model.transcribe(
+    "work/audio.wav",
+    vad_filter=True,
+    condition_on_previous_text=False,
+    initial_prompt=f"Glossary: {terms}.",
+    hotwords=terms,
+)
 rows = [
     {"start": segment.start, "end": segment.end, "text": segment.text.strip()}
     for segment in segments
@@ -231,6 +256,8 @@ Path("output/transcript.txt").write_text(
 - Model caches and optional packages can consume several gigabytes. Do not install every feature stack by default.
 - `segments` from `faster_whisper` is a generator, and the transcription runs as it is consumed. Nothing has happened until you iterate it, and iterating it is where the minutes go. Write each segment out as it arrives rather than materializing the whole list and saving at the end.
 - Transcription has no progress output of its own. For a long recording, say what you are about to do and roughly how long it will take before you start, since the run is otherwise indistinguishable from a hang.
+- An empty transcript from a file that does have audio usually means voice activity detection found no speech. Retry once with `--no-vad` before concluding the recording is silent: a very quiet or heavily processed track can fall under the threshold. Whisper invents text over digital silence, which is why detection is on by default, so a `--no-vad` transcript of near-silence needs reading before it is trusted.
+- A custom recipe that calls `model.transcribe` directly gets library defaults, not the script's. Carry `vad_filter=True` and `condition_on_previous_text=False` across, and pass a glossary as both `initial_prompt` and `hotwords`, or the recipe will be slower and spell names worse than the script for the same audio.
 
 ## Verification
 

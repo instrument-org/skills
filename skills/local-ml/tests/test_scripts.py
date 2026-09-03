@@ -105,7 +105,87 @@ class TestExtractEntities:
         assert "Apple" in result.stdout or result.returncode == 0
 
 
+@pytest.fixture(scope="session")
+def speech_module():
+    """Loads speech-to-text.py as a module so its pure helpers are testable."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "speech_to_text", SCRIPTS / "speech-to-text.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture(scope="session")
+def silent_audio(tmp_path_factory) -> Path:
+    """Writes a silent WAV without needing ffmpeg or any optional dependency."""
+    import wave
+
+    path = tmp_path_factory.mktemp("audio") / "silence.wav"
+    with wave.open(str(path), "wb") as handle:
+        handle.setnchannels(1)
+        handle.setsampwidth(2)
+        handle.setframerate(16000)
+        handle.writeframes(b"\x00\x00" * 16000 * 3)
+    return path
+
+
+class TestResolveDevice:
+    def test_explicit_cpu_uses_int8(self, speech_module):
+        assert speech_module.resolve_device("cpu") == ("cpu", "int8")
+
+    def test_explicit_cuda_uses_float16(self, speech_module):
+        assert speech_module.resolve_device("cuda") == ("cuda", "float16")
+
+    def test_auto_falls_back_to_cpu_when_the_probe_fails(self, speech_module, monkeypatch):
+        # A driver mismatch raises rather than reporting zero devices, and the
+        # answer has to be the CPU either way.
+        import builtins
+
+        real_import = builtins.__import__
+
+        def explode(name, *args, **kwargs):
+            if name == "ctranslate2":
+                raise ImportError("no ctranslate2")
+            return real_import(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", explode)
+        assert speech_module.resolve_device("auto") == ("cpu", "int8")
+
+
+class TestBuildBias:
+    def test_no_vocabulary_biases_nothing(self, speech_module):
+        assert speech_module.build_bias(None) == (None, None)
+        assert speech_module.build_bias("") == (None, None)
+        assert speech_module.build_bias(" , , ") == (None, None)
+
+    def test_sets_both_biasing_inputs_from_one_list(self, speech_module):
+        # initial_prompt seeds the first window and hotwords every window, so a
+        # term list has to reach both to survive a long recording.
+        initial_prompt, hotwords = speech_module.build_bias("ripgrep, oxlint")
+
+        assert initial_prompt == "Glossary: ripgrep, oxlint."
+        assert hotwords == "ripgrep, oxlint"
+
+    def test_trims_terms_and_drops_empties(self, speech_module):
+        initial_prompt, hotwords = speech_module.build_bias("  ripgrep ,, oxlint  ")
+
+        assert initial_prompt == "Glossary: ripgrep, oxlint."
+        assert hotwords == "ripgrep, oxlint"
+
+
 class TestSpeechToText:
+    @pytest.mark.slow
+    def test_silence_reports_no_speech_rather_than_inventing_it(self, silent_audio):
+        pytest.importorskip("faster_whisper")
+        result = run("speech-to-text.py", str(silent_audio))
+
+        assert result.returncode == 0
+        assert result.stdout.strip() == ""
+        assert "No speech found" in result.stderr
+
     def test_missing_dependency_exits_with_install_guidance(self, tmp_path):
         (tmp_path / "faster_whisper.py").write_text(
             "raise ImportError('faster-whisper unavailable')\n"

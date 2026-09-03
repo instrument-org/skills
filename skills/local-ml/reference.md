@@ -130,7 +130,9 @@ options:
 ```text
 usage: speech-to-text.py [-h]
                          [--model {tiny,base,small,medium,large,large-v3,turbo}]
-                         [--language LANGUAGE] [--json] [--output OUTPUT]
+                         [--language LANGUAGE] [--vocabulary VOCABULARY]
+                         [--device {auto,cpu,cuda}] [--no-vad] [--json]
+                         [--output OUTPUT]
                          input
 
 Transcribe audio to text
@@ -143,6 +145,13 @@ options:
   --model {tiny,base,small,medium,large,large-v3,turbo}
                         Whisper model size (default: base)
   --language LANGUAGE   Language code, e.g. 'en', 'fr'
+  --vocabulary VOCABULARY
+                        Comma-separated names, products, and jargon the
+                        recording uses, to bias spelling
+  --device {auto,cpu,cuda}
+                        Compute device (default: auto)
+  --no-vad              Disable voice activity detection, which is on by
+                        default and skips silence
   --json                Output full JSON with timestamps
   --output OUTPUT       Write segments to this file as they are transcribed,
                         so a stopped run keeps its work
