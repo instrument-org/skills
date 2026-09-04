@@ -147,6 +147,15 @@ agent-browser get text body
 
 For a toggle or checkbox, use `is checked`. For submission, check the resulting URL and confirmation copy. For destructive or externally visible actions, confirm that the user authorized the action before performing it.
 
+`fill` writes the field's value from script and emits no key events, which is the fast path and the wrong one twice over. A field whose framework tracks its own value can swallow the write, re-render what it had, and leave the next `fill` appending rather than replacing, so a field filled twice submits its contents twice. And a page that watches for typing -- validation as you go, a search box that opens suggestions, anything scoring how the input arrived -- sees nothing happen. Click the field and type when either could be true:
+
+```bash
+agent-browser click @e2
+agent-browser keyboard type "user@example.com"
+```
+
+That produces real key events at the focused element. `keyboard inserttext` does not, so reach for it only when the text is long enough that typing it is the bottleneck. Neither clears the field first: select the existing value and delete it before typing over it.
+
 ## Escalate element targeting carefully
 
 Use the least brittle option that can express the task:
