@@ -17,10 +17,16 @@ const HLJS_BUNDLE = fileURLToPath(
 /** Phosphor's regular and fill weights, the two Studio uses. Each stylesheet
  *  names its font files relative to itself, so linking the CSS is enough. */
 const PHOSPHOR_REGULAR = fileURLToPath(
-  new URL("../../node_modules/@phosphor-icons/web/src/regular/style.css", import.meta.url),
+  new URL(
+    "../../node_modules/@phosphor-icons/web/src/regular/style.css",
+    import.meta.url,
+  ),
 );
 const PHOSPHOR_FILL = fileURLToPath(
-  new URL("../../node_modules/@phosphor-icons/web/src/fill/style.css", import.meta.url),
+  new URL(
+    "../../node_modules/@phosphor-icons/web/src/fill/style.css",
+    import.meta.url,
+  ),
 );
 
 /**

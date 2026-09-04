@@ -70,7 +70,9 @@ describe("buildHtml", () => {
       phosphorStylesheetHrefs(outputDir).map((href) =>
         path.resolve(outputDir, href),
       ),
-    ).toEqual(PHOSPHOR_CSS.map((css) => path.join(SKILL_DIR, ...css.split("/"))));
+    ).toEqual(
+      PHOSPHOR_CSS.map((css) => path.join(SKILL_DIR, ...css.split("/"))),
+    );
   });
 
   it("substitutes a provided body inside main", () => {
