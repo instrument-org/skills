@@ -37,13 +37,17 @@ agent-browser open https://example.com/form
 agent-browser snapshot -i
 # Read the returned refs before continuing.
 
-agent-browser fill @e1 "Jane Doe"
-agent-browser fill @e2 "jane@example.com"
+agent-browser click @e1
+agent-browser keyboard type "Jane Doe"
+agent-browser click @e2
+agent-browser keyboard type "jane@example.com"
 agent-browser click @e3
 agent-browser wait --url "https://example.com/success**"
 agent-browser get url
 agent-browser get text body
 ```
+
+`open` reports the navigation, not the page. A block page, a consent wall, and an error page are all successful navigations, so the line it prints can carry a title like `Access to this page has been denied` behind its checkmark. Read that title: when it does not name the page you asked for, you have been refused, and continuing as though the page loaded produces an answer assembled from somewhere else and reported as though you had read it.
 
 Refs can change after navigation, submission, or a dynamic rerender. Re-run `snapshot -i` before the next action instead of assuming an old ref still identifies the same element.
 
