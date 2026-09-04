@@ -17,6 +17,14 @@ The command daemon may stop while idle without closing the browser target, so a 
 
 Profile-backed data can survive target recreation. The page, navigation history, refs, and `sessionStorage` are live-target state and should not be assumed to survive it.
 
+## When the site refuses this browser
+
+A human-verification screen or an access-denied page is the site's judgment about this client, so reissuing the command repeats it and the refusal usually covers the origin rather than the page that tripped it.
+
+Two moves are open, and stopping after the first is the usual mistake. The managed browser is one the user is watching and can drive, so asking them to clear the challenge there is the obvious one. The second is a different client: a browser the user already uses carries standing this one does not, and where the environment offers another target, offering to switch belongs in the same reply as the refusal rather than in a later one after the user asks. Which targets exist is the environment's to say -- `agent-browser --help` lists what it allows.
+
+Neither is a guarantee. These sites refuse real browsers too, so say plainly that the site blocked you rather than reporting a thinner answer as the whole one.
+
 ## Unsupported upstream controls
 
 Do not use these upstream surfaces in Instrument:

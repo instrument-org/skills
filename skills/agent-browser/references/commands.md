@@ -63,6 +63,25 @@ agent-browser drag @e1 @e2        # Drag and drop
 agent-browser upload @e1 file.pdf # Upload files
 ```
 
+### Entering text
+
+`fill` and `type` take a ref and get the text in with one command, which is why they are the reflex. Both write the field's value from script and send no key events, and that costs twice.
+
+A field whose framework tracks its own value can swallow the write and re-render what it had. `fill` then has nothing to clear, so the next one appends rather than replaces, and a field filled twice submits its contents twice over. And a page that watches for typing sees nothing arrive: validation that runs per keystroke, a search box that opens suggestions, a form that enables its submit button once a field looks touched.
+
+Click the field and type instead. `keyboard type` sends real key events at whatever holds focus:
+
+```bash
+agent-browser click @e2
+agent-browser keyboard type "jane@example.com"
+```
+
+`keyboard inserttext` sends none either, so keep it for text long enough that typing it is the bottleneck. Neither clears the field, so select the existing value and delete it before typing over one that already has content.
+
+### What `open` reports
+
+`open` reports the navigation, not the page. A block page, a consent wall, an error page, and a redirect to a sign-in are all successful navigations, so the checkmark it prints can sit in front of a title like `Access to this page has been denied`. Read the title on the line it returns, and treat one that does not name the page you asked for as a refusal rather than continuing: what follows otherwise is an answer assembled from somewhere else and reported as though the page had been read.
+
 ## Uploads and downloads
 
 ```bash

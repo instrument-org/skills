@@ -38,8 +38,6 @@ agent-browser snapshot -i
 # Read the returned refs before continuing.
 
 agent-browser click @e1
-agent-browser keyboard type "Jane Doe"
-agent-browser click @e2
 agent-browser keyboard type "jane@example.com"
 agent-browser click @e3
 agent-browser wait --url "https://example.com/success**"
@@ -47,7 +45,7 @@ agent-browser get url
 agent-browser get text body
 ```
 
-`open` reports the navigation, not the page. A block page, a consent wall, and an error page are all successful navigations, so the line it prints can carry a title like `Access to this page has been denied` behind its checkmark. Read that title: when it does not name the page you asked for, you have been refused, and continuing as though the page loaded produces an answer assembled from somewhere else and reported as though you had read it.
+`open` reports the navigation, not the page: its checkmark can front a title like `Access to this page has been denied`, which is a refusal rather than a load.
 
 Refs can change after navigation, submission, or a dynamic rerender. Re-run `snapshot -i` before the next action instead of assuming an old ref still identifies the same element.
 
@@ -102,9 +100,8 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - **Ref not found or wrong element:** re-run a scoped `snapshot -i`; refs are invalid after navigation and may change after any major DOM update.
 - **Unexpected timeout:** inspect the URL and visible text, then run `agent-browser dialog status`. A pending `confirm` or `prompt` blocks other commands until accepted or dismissed.
 - **Element missing or not clickable:** check visibility, scroll it into view, and inspect the newest screenshot for overlays. Interact with a covering dialog or banner before retrying the target.
-- **Text input ignores `fill` or `type`:** focus the field, then use `keyboard inserttext` or `keyboard type` as the fallback.
 - **Iframe control absent:** a fresh snapshot includes one level of accessible iframe content and its refs work directly. Use `frame @ref` for a scoped snapshot; inaccessible cross-origin frames may require a different workflow.
-- **Human-verification or access-denied interstitial:** the judgment is the site's, so reissuing the command only repeats it, and the block usually covers the whole origin rather than the page you were on. Do not automate the challenge itself (see [authentication.md](references/authentication.md)). Two moves are open, and stopping after the first is the usual mistake. The managed browser is one the user is watching and can drive, so ask them to clear the challenge there. Separately, a browser the user already uses is a different client with standing this one does not have, so if the environment offers another target, offer to switch rather than closing on the block. Neither is a guaranteed way through, since a real browser gets refused by these sites too, so say plainly that the site blocked you rather than reporting a thinner answer as the whole one. Read [session-management.md](references/session-management.md) for what not to try instead.
+- **Human-verification or access-denied interstitial:** the judgment is the site's, so reissuing the command only repeats it, and the block usually covers the whole origin rather than the page you were on. Do not automate the challenge itself (see [authentication.md](references/authentication.md)). The managed browser is one the user is watching and can drive, so the first move is to ask them to clear the challenge there. That is not a guaranteed way through, since a real browser gets refused by these sites too, so say plainly that the site blocked you rather than reporting a thinner answer as the whole one. Read [session-management.md](references/session-management.md) for what not to try instead.
 
 ## The browser you get
 
@@ -150,15 +147,6 @@ agent-browser get text body
 ```
 
 For a toggle or checkbox, use `is checked`. For submission, check the resulting URL and confirmation copy. For destructive or externally visible actions, confirm that the user authorized the action before performing it.
-
-`fill` writes the field's value from script and emits no key events, which is the fast path and the wrong one twice over. A field whose framework tracks its own value can swallow the write, re-render what it had, and leave the next `fill` appending rather than replacing, so a field filled twice submits its contents twice. And a page that watches for typing -- validation as you go, a search box that opens suggestions, anything scoring how the input arrived -- sees nothing happen. Click the field and type when either could be true:
-
-```bash
-agent-browser click @e2
-agent-browser keyboard type "user@example.com"
-```
-
-That produces real key events at the focused element. `keyboard inserttext` does not, so reach for it only when the text is long enough that typing it is the bottleneck. Neither clears the field first: select the existing value and delete it before typing over it.
 
 ## Escalate element targeting carefully
 
@@ -221,7 +209,7 @@ Selecting a color, size, or thumbnail usually swaps the gallery through a script
 
 ## Recipe: authenticated work
 
-Commands in the current task and agent session reuse its managed browser target. Cookies and durable site storage use the workspace's persistent browser profile. Open the login page, let the user enter credentials or complete same-target OAuth redirects and two-factor steps in the visible browser, then wait for and verify the authenticated state. When the sign-in cannot finish there, because the site refuses this browser or a step needs an authenticator or device it cannot reach, the way through is a browser the user is already signed in to: offer that if the environment has one, rather than leaving them at the wall. Do not ask for secrets in chat or pass them through commands. See [`references/authentication.md`](references/authentication.md).
+Commands in the current task and agent session reuse its managed browser target. Cookies and durable site storage use the workspace's persistent browser profile. Open the login page, let the user enter credentials or complete same-target OAuth redirects and two-factor steps in the visible browser, then wait for and verify the authenticated state. Do not ask for secrets in chat or pass them through commands. See [`references/authentication.md`](references/authentication.md).
 
 ## Recipe: downloads and captured files
 
