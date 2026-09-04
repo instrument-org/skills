@@ -45,6 +45,8 @@ agent-browser get url
 agent-browser get text body
 ```
 
+Click and type rather than `fill`, which writes the value from script and sends no key events; [commands.md](references/commands.md) says when that matters.
+
 `open` reports the navigation, not the page: its checkmark can front a title like `Access to this page has been denied`, which is a refusal rather than a load.
 
 Refs can change after navigation, submission, or a dynamic rerender. Re-run `snapshot -i` before the next action instead of assuming an old ref still identifies the same element.
@@ -92,7 +94,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - Use element, text, URL, function, or load waits when possible. Fixed sleeps are a fallback, not a readiness check.
 - Do not treat command success as task success. Verify visible text, URL, control state, downloaded content, or rendered appearance as appropriate.
 - Do not place passwords, tokens, cookies, or saved browser state in project files or command arguments.
-- Instrument manages the browser's connection, profile, state, and lifecycle. The `auth`, `batch`, `chat`, `close`, `connect`, `dashboard`, `doctor`, `inspect`, `install`, `launch`, `mcp`, `plugin`, `session`, `skills`, `state`, `stream`, and `upgrade` subcommands and the session, config, namespace, and plugin flags are blocked; issue each command on its own rather than batching them, and diagnose with `console`, `errors`, `network`, and `screenshot` rather than reaching for `doctor` or `inspect`.
+- Instrument manages the browser's connection, profile, state, and lifecycle, so a set of upstream subcommands and flags is blocked and [session-management.md](references/session-management.md) lists them. Issue each command on its own rather than batching, and diagnose with `console`, `errors`, `network`, and `screenshot` rather than `doctor` or `inspect`.
 - The browser exposes one page target. Additional pages and popup-based workflows are unavailable. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target.
 
 ## Recover from common failures
@@ -198,18 +200,9 @@ Prefer scoped text when prose is enough. Use `eval` only when repeated fields mu
 
 To collect image URLs, note that `read` and `get text` return prose, not `<img>` sources; enumerate `document.images` (`src`, `currentSrc`, `srcset`) with `eval`. Lazy images may expose placeholders until scrolled into view. Read `srcset`, `data-*` attributes, or the URL the detail page actually serves. Do not invent a higher-resolution URL by editing path segments or query parameters.
 
-## Recipe: product variants and galleries
-
-Selecting a color, size, or thumbnail usually swaps the gallery through a script or network fetch, not by mutating `img.src` on click. Confirm the change before reading, and capture each variant before moving to the next.
-
-- If the same asset URLs repeat across every variant, you are reading a stale gallery, not proof the variants share images. Selection often changes a URL parameter (`?color=`, `?variant=`); open that per-variant URL directly, or read the variation endpoint from `network requests`, instead of clicking swatches.
-- After selecting a variant, wait for the specific image to change with `wait --fn` on the `src` rather than a fixed sleep or a network wait, then extract that variant's URLs.
-- Handle one variant fully, then the next. Do not click through every variant and screenshot afterward -- every capture then shows only the final state. Distinct variants that yield byte-identical outputs are a bug, not a result.
-- Consent, newsletter, and region overlays (OneTrust, marketing popups) intercept clicks. Dismiss the overlay via its own button, then re-snapshot; refs shift once it closes.
-
 ## Recipe: authenticated work
 
-Commands in the current task and agent session reuse its managed browser target. Cookies and durable site storage use the workspace's persistent browser profile. Open the login page, let the user enter credentials or complete same-target OAuth redirects and two-factor steps in the visible browser, then wait for and verify the authenticated state. Do not ask for secrets in chat or pass them through commands. See [`references/authentication.md`](references/authentication.md).
+Commands in the current task and agent session reuse its managed browser target. Cookies and durable site storage use the workspace's persistent browser profile. Open the login page, let the user enter credentials or complete same-target OAuth redirects and two-factor steps in the visible browser, then wait for and verify the authenticated state. When it cannot finish there, because the site refuses this browser or a step needs a device or authenticator it cannot reach, offer a browser the user is already signed in to if this environment has one. Do not ask for secrets in chat or pass them through commands. See [`references/authentication.md`](references/authentication.md).
 
 ## Recipe: downloads and captured files
 
@@ -252,5 +245,6 @@ Save an explicit baseline before using `diff snapshot --baseline` or `diff scree
 | Connectivity or proxy behavior differs from expectations                 | [`references/proxy-support.md`](references/proxy-support.md)           |
 | Diagnosing loading or interaction performance                            | [`references/profiling.md`](references/profiling.md)                   |
 | Capturing a reproducible browser walkthrough                             | [`references/video-recording.md`](references/video-recording.md)       |
+| Reading product variants, swatches, or a gallery                         | [`references/product-galleries.md`](references/product-galleries.md)   |
 
 The optional `templates/capture-workflow.sh` starting point captures readable text, interaction structure, a viewport image, and a full-page PDF. Inspect and customize it before use.
