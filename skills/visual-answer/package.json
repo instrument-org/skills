@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
+    "@phosphor-icons/web": "^2.1.2",
     "@tailwindcss/browser": "^4.2.2",
     "cac": "^6.7.14"
   },

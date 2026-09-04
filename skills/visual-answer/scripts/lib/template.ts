@@ -14,6 +14,14 @@ const HLJS_BUNDLE = fileURLToPath(
     import.meta.url,
   ),
 );
+/** Phosphor's regular and fill weights, the two Studio uses. Each stylesheet
+ *  names its font files relative to itself, so linking the CSS is enough. */
+const PHOSPHOR_REGULAR = fileURLToPath(
+  new URL("../../node_modules/@phosphor-icons/web/src/regular/style.css", import.meta.url),
+);
+const PHOSPHOR_FILL = fileURLToPath(
+  new URL("../../node_modules/@phosphor-icons/web/src/fill/style.css", import.meta.url),
+);
 
 /**
  * Reference the bundles relative to the page rather than by absolute path, so
@@ -27,6 +35,12 @@ export function tailwindScriptSrc(outputDir: string) {
 
 export function hljsScriptSrc(outputDir: string) {
   return relative(outputDir, HLJS_BUNDLE).replaceAll("\\", "/");
+}
+
+export function phosphorStylesheetHrefs(outputDir: string) {
+  return [PHOSPHOR_REGULAR, PHOSPHOR_FILL].map((file) =>
+    relative(outputDir, file).replaceAll("\\", "/"),
+  );
 }
 
 const DEFAULT_BODY = `      <header class="max-w-3xl">
@@ -52,6 +66,9 @@ export function buildHtml({
   const bodyContent = body ?? DEFAULT_BODY;
   const tailwindSrc = tailwindScriptSrc(outputDir);
   const hljsSrc = hljsScriptSrc(outputDir);
+  const phosphorLinks = phosphorStylesheetHrefs(outputDir)
+    .map((href) => `    <link rel="stylesheet" href="${escapeHtml(href)}" />`)
+    .join("\n");
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -70,6 +87,8 @@ export function buildHtml({
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap"
       rel="stylesheet"
     />
+    <!-- Icons, as landmarks on lists and chips. Regular and fill only. -->
+${phosphorLinks}
     <style type="text/tailwindcss">
       @import "tailwindcss";
 

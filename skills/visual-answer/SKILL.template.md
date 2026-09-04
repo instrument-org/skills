@@ -38,6 +38,8 @@ There are no required sections, length, navigation, number of panels, or interac
 
 If three consecutive sections are coming out as prose lists, stop and reshape them into a diagram, sequence, table, or ledger. Long runs of text-shaped content are the single most common reader complaint with these pages.
 
+Give the reader landmarks. A Phosphor regular icon at the head of each row turns a list into something the eye can jump around in, and a field of icon chips does the same for a set of things with no order; both beat a bare bullet and both beat an emoji. One icon per row, never two, and the same tone across a group so the tone carries the grouping. The spellings are in `references/patterns.md`.
+
 Vary the volume. The bordered card is the focal layer, not the default wrapper: sections that support rather than decide can sit directly on the page background with tighter type and no chrome. Reserve toned fills, colored borders, and status color for the few elements carrying the verdict; when every panel is a card and every card is loud, nothing reads as important.
 
 Respect the column. `main` is deliberately modest (`max-w-4xl`): these pages are read on laptops, and long lines defeat scanning. Structural elements (cards, grids, tables, figures) span the column; prose paragraphs cap near `max-w-3xl` for measure; wide tables and diagrams scroll inside their own overflow container rather than widening the page.
@@ -59,10 +61,10 @@ The `references/` directory holds canonical spellings and recipes. They are voca
 
 Four rules that apply even without reading the references:
 
-- **What the shell provides.** Trust this roster instead of inspecting the generated page: color scales `gray` and `brand` (25 through 950) and `error`/`warning`/`success`/`yellow`/`brown` (50/100/300/500/700/900); semantic tokens `background`, `foreground`, `card`, `popover`, `muted`, `muted-foreground`, `accent`, `primary`, `secondary`, `destructive`, `border`, `input`, `ring`; font stacks that fall back to the system UI faces; automatic local syntax highlighting for `pre > code` blocks. No icon font ships: use the text marks in `references/patterns.md`. Light theme only, by design.
+- **What the shell provides.** Trust this roster instead of inspecting the generated page: color scales `gray` and `brand` (25 through 950) and `error`/`warning`/`success`/`yellow`/`brown` (50/100/300/500/700/900); semantic tokens `background`, `foreground`, `card`, `popover`, `muted`, `muted-foreground`, `accent`, `primary`, `secondary`, `destructive`, `border`, `input`, `ring`; font stacks that fall back to the system UI faces; Phosphor icons in `ph` (regular) and `ph-fill`, served locally; automatic local syntax highlighting for `pre > code` blocks. Light theme only, by design.
 - **Color.** Status is always the theme's `success`/`error`/`warning`/`brand` tokens, never raw Tailwind emerald/rose/red/amber. In SVG, use `fill-*`/`stroke-*` utility classes or `style="fill: var(--color-...)"`; presentation attributes cannot resolve `var()`, and hardcoded hex drifts from the theme.
 - **Generated markup.** Small local JavaScript is welcome both for interaction that materially helps and for generating repeated structure from a data array (matrices, waffles, chart marks, rings). Never hand-repeat markup a ten-line loop can emit; conversely, hand-write elements whose instances carry heterogeneous content (decision cards, verdict cards). Place page scripts at the end of your body content; they share one global scope with the shell's trailing script (which owns `heading`, `tocSections`, `tocStrip`, `markSpy`, and `spy`), so name bindings something else.
-- **Micro-lint.** The recurring authoring bugs: an unclosed bracket in an arbitrary value (`tracking-[-0.02em]`), and template-literal syntax leaking into plain HTML.
+- **Micro-lint.** The recurring authoring bugs: an unclosed bracket in an arbitrary value (`tracking-[-0.02em]`), template-literal syntax leaking into plain HTML, and Phosphor weights other than `ph` (regular) and `ph-fill`, the only two the shell loads.
 
 ## When the page is one of a series
 

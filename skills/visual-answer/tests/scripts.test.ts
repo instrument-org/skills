@@ -6,12 +6,17 @@ import { createVisualAnswer } from "../scripts/create-visual-answer.ts";
 import {
   buildHtml,
   hljsScriptSrc,
+  phosphorStylesheetHrefs,
   tailwindScriptSrc,
 } from "../scripts/lib/template.ts";
 
 const TAILWIND_BUNDLE =
   "node_modules/@tailwindcss/browser/dist/index.global.js";
 const HLJS_BUNDLE = "node_modules/@highlightjs/cdn-assets/highlight.min.js";
+const PHOSPHOR_CSS = [
+  "node_modules/@phosphor-icons/web/src/regular/style.css",
+  "node_modules/@phosphor-icons/web/src/fill/style.css",
+];
 
 const SKILL_DIR = path.resolve(import.meta.dirname, "..");
 
@@ -44,12 +49,13 @@ describe("buildHtml", () => {
     expect(html).toContain("Visual answer");
   });
 
-  it("references both bundles relative to the output directory", () => {
+  it("references every bundle relative to the output directory", () => {
     const outputDir = path.join(SKILL_DIR, "..", "..", "some-task", "output");
     const html = buildHtml({ outputDir });
     for (const src of [
       tailwindScriptSrc(outputDir),
       hljsScriptSrc(outputDir),
+      ...phosphorStylesheetHrefs(outputDir),
     ]) {
       expect(html).toContain(`"${src}"`);
       expect(src.startsWith("..")).toBe(true);
@@ -60,6 +66,11 @@ describe("buildHtml", () => {
     expect(path.resolve(outputDir, hljsScriptSrc(outputDir))).toBe(
       path.join(SKILL_DIR, ...HLJS_BUNDLE.split("/")),
     );
+    expect(
+      phosphorStylesheetHrefs(outputDir).map((href) =>
+        path.resolve(outputDir, href),
+      ),
+    ).toEqual(PHOSPHOR_CSS.map((css) => path.join(SKILL_DIR, ...css.split("/"))));
   });
 
   it("substitutes a provided body inside main", () => {
