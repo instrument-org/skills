@@ -71,3 +71,12 @@ A format hook runs oxfmt on every file you Edit/Write, then oxfmt over all chang
 - Run one file or a whole skill with `cd skills/<name> && pnpm test [path/to/file.test.ts]`.
 - Prefer `toMatchInlineSnapshot` so expected output stays visible in the test file. Generate it empty and let the run fill it in.
 - Use `it.each` for repetitive cases.
+
+## Ideas
+
+An idea is a skill that makes a kind of document, and the website's Discover section is built from them. It is an ordinary skill folder with three additions: an `idea.json` sidecar (title, tagline, when to use it, tags, order, needs, and which example is the cover), a `starter.html` the agent copies, and an `examples/` folder holding at least three finished pages that differ on purpose, each with a `.json` design note saying what that example chose and why. Skills without a sidecar are not ideas and never appear on Discover.
+
+- Every starter and example carries the shared skin from `skin/theme.css` verbatim between `/* skin:start */` and `/* skin:end */`, and loads nothing but the fonts, the icon set, and the pinned Tailwind browser build. `pnpm check:ideas` enforces both, along with the three-example minimum and a tighter description budget: ideas share the agent's skill index with every other skill, so their descriptions stay short and read as a routing rule.
+- Iterate with `pnpm preview`, a grid of every example as a live frame that reloads on save. Do not iterate on the website; it renders whatever this repo committed.
+- When an idea is done, run `pnpm capture <name>`. It writes `captures/<name>/<example>.png` for the website's tiles and records each example's hash in its sidecar; CI fails when a capture is older than its HTML. Captures live outside `skills/` so nothing bundles or installs them.
+- Examples are illustrative. Their research is invented to be plausible and each says so in its footer; a real run of the skill that turns out better than an example should replace it.

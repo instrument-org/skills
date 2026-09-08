@@ -6,6 +6,8 @@ const config: KnipConfig = {
       entry: ["scripts/**/*.ts"],
     },
   },
+  // Read by scripts/ideas.ts as a file, not imported.
+  ignore: ["skin/theme.css"],
   ignoreBinaries: ["uv", "python3", "powershell.exe"],
   ignoreDependencies: [
     "@instrument-org/agent-hooks", // Used in .codex/hooks.json and .claude/settings.json hook commands

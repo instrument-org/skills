@@ -97,6 +97,20 @@
     "//#check:types": {
       "inputs": ["scripts/**/*.ts", "*.ts", "tsconfig.json", "package.json"],
       "outputs": []
+    },
+    "//#check:ideas": {
+      "inputs": [
+        "skills/*/SKILL.md",
+        "skills/*/idea.json",
+        "skills/*/starter.html",
+        "skills/*/examples/**",
+        "captures/**",
+        "skin/theme.css",
+        "scripts/check-ideas.ts",
+        "scripts/ideas.ts",
+        "scripts/check-skill.ts"
+      ],
+      "outputs": []
     }
   }
 }
