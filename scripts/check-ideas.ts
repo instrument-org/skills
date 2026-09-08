@@ -163,7 +163,13 @@ function checkIdea(idea: Idea): string[] {
 }
 
 function main() {
-  const ideas = listIdeas();
+  // `node scripts/check-ideas.ts <name>` checks one idea while others are in flight.
+  const only = process.argv[2];
+  const ideas = listIdeas().filter((idea) => !only || idea.name === only);
+  if (only && ideas.length === 0) {
+    console.log(`No idea named "${only}"`);
+    process.exit(1);
+  }
   let failed = false;
   for (const idea of ideas) {
     const errors = checkIdea(idea);
