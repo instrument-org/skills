@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Standing desks under $600 for a two-monitor home office</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="recommendation-guide@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Recommendation guide
+        </p>
+        <h1
+          class="mt-3 font-serif text-3xl font-medium tracking-[-0.02em] sm:text-4xl"
+        >
+          Standing desks under $600 for a two-monitor home office
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          You are 5'10", you move between sitting and standing a few times a
+          day, and you run two monitors. That rules out the narrow frames and
+          the single-motor bargains, and it leaves one desk that fits the top,
+          the range, and the budget at once.
+        </p>
+      </header>
+
+      <section id="verdict" class="mt-8">
+        <div class="rounded-xl bg-brand-600 p-6 text-white shadow-sm sm:p-7">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-white/70 uppercase"
+          >
+            Our pick
+          </p>
+          <p class="mt-1 text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
+            FlexiSpot E7 Pro, 60 by 30 inch top
+          </p>
+          <p class="mt-1 text-sm text-white/80">
+            About $500 with the top included · seen this week
+          </p>
+          <p class="mt-4 max-w-xl text-sm leading-6 text-white/90">
+            Two motors, a 25 to 50 inch range that covers you seated and
+            standing with margin to spare, and a top wide enough for two 27 inch
+            monitors without a monitor arm. It is the only desk on the shortlist
+            that does all three under the cap.
+          </p>
+        </div>
+      </section>
+
+      <section id="who" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Who this is for
+        </p>
+        <div class="mt-3 grid gap-6 sm:grid-cols-2">
+          <ul class="space-y-2 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-lg text-brand-700"></i
+              ><span
+                >Two monitors on the desk, side by side, 24 to 27 inches
+                each.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-lg text-brand-700"></i
+              ><span
+                >Anyone between about 5'6" and 6'2" who changes position several
+                times a day.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-lg text-brand-700"></i
+              ><span
+                >A room where 60 inches of width fits, with a few inches to
+                spare for the frame.</span
+              >
+            </li>
+          </ul>
+          <ul class="space-y-2 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+              ><span>A firm $300 ceiling. Skip to the budget pick.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+              ><span
+                >A 72 inch top or an L shape. Nothing under $600 does that
+                well.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+              ><span
+                >You rarely stand. A fixed desk and a good monitor arm is the
+                better spend.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="picks" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          The picks
+        </p>
+        <div class="mt-3 grid gap-4 sm:grid-cols-2">
+          <div
+            class="rounded-xl border-2 border-brand-300 bg-card p-5 shadow-sm"
+          >
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              Top pick
+            </p>
+            <p class="mt-1 text-lg font-semibold">FlexiSpot E7 Pro, 60 by 30</p>
+            <p class="text-sm text-muted-foreground">About $500</p>
+            <p class="mt-3 text-sm leading-6">
+              <strong>Wins when</strong> you want the widest top and the biggest
+              height range that fit under the cap, with dual motors and a 15
+              year frame warranty.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Runner-up
+            </p>
+            <p class="mt-1 text-lg font-semibold">Uplift V2, 48 by 30 bamboo</p>
+            <p class="text-sm text-muted-foreground">About $599</p>
+            <p class="mt-3 text-sm leading-6">
+              <strong>Wins when</strong> stability at full standing height
+              matters more than width, and your two monitors are 24 inches. The
+              60 inch top pushes it over budget.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Budget
+            </p>
+            <p class="mt-1 text-lg font-semibold">FlexiSpot E5, 55 by 28</p>
+            <p class="text-sm text-muted-foreground">About $330</p>
+            <p class="mt-3 text-sm leading-6">
+              <strong>Wins when</strong> you change position once or twice a day
+              and can live with a slower lift and a little sway above 44 inches.
+              Two 27s still fit.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Upgrade
+            </p>
+            <p class="mt-1 text-lg font-semibold">
+              Uplift V2 Commercial, 60 by 30
+            </p>
+            <p class="text-sm text-muted-foreground">
+              About $720, over the cap
+            </p>
+            <p class="mt-3 text-sm leading-6">
+              <strong>Wins when</strong> the budget moves. A lower minimum
+              height, the steadiest frame tested, and the widest range of tops
+              and accessories.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="flaws" class="mt-12">
+        <div
+          class="rounded-xl border-l-4 border-warning-500 bg-card p-5 shadow-sm"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+          >
+            Flaws, not dealbreakers
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                >The stock top is laminate over particleboard. It resists coffee
+                rings, but a dropped monitor arm clamp will chip the edge.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                >The control panel's child lock engages after a long press, and
+                it is easy to trigger by leaning on it. Expect to unlock it once
+                a week until you learn where it is.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                >No cable tray in the box. The matching tray is about $35 more,
+                and with two monitors you will want it.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                >Assembly takes two people and about 90 minutes. The frame
+                arrives in one 90 pound box.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="criteria" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          What mattered, in order
+        </p>
+        <table class="mt-3 w-full text-sm">
+          <thead>
+            <tr
+              class="border-b border-border text-left text-xs text-muted-foreground"
+            >
+              <th class="pb-2 pr-4 font-medium">Criterion</th>
+              <th class="pb-2 font-medium">Why it is here</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border align-top">
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">Height range with margin</td>
+              <td class="py-2.5 text-muted-foreground">
+                At 5'10" you want about 28 inches seated and 43 inches standing.
+                A range of 25 to 50 leaves room for a keyboard tray or thick
+                shoes.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">
+                Width of at least 55 inches
+              </td>
+              <td class="py-2.5 text-muted-foreground">
+                Two 27 inch monitors are 48 inches wide together. Anything
+                narrower forces a monitor arm on day one.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">
+                Stability at standing height
+              </td>
+              <td class="py-2.5 text-muted-foreground">
+                Sway at 44 inches is what makes people stop standing. Frames
+                with a crossbar or thicker columns won here.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">Dual motors</td>
+              <td class="py-2.5 text-muted-foreground">
+                Several changes a day means the lift runs often. Single-motor
+                frames are slower and load one column unevenly.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">Price with a top included</td>
+              <td class="py-2.5 text-muted-foreground">
+                Frame-only prices hide a $100 to $200 top. Every price on this
+                page includes one.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">Warranty</td>
+              <td class="py-2.5 text-muted-foreground">
+                Motors fail before tops do. Ten years or more on the frame was
+                the bar.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="how" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          How we chose
+        </p>
+        <p class="mt-3 max-w-2xl text-sm leading-6">
+          Eleven desks made the first list, every model with a top under $600
+          from the six makers that sell direct in the United States. Width and
+          height range cut that to five. The last cut came from stability, read
+          from long-form reviews that load the desk at full height and from
+          owner reports of wobble at 44 inches and above. Nothing was tested by
+          hand; the ranking rests on published measurements and on agreement
+          between independent reviews.
+        </p>
+      </section>
+
+      <section id="skipped" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          What we skipped
+        </p>
+        <ul class="mt-3 space-y-2 text-sm leading-6">
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong>IKEA Trotten.</strong> Hand crank. Fine once a day,
+              tiresome several times a day.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong>IKEA Bekant sit/stand.</strong> Single motor, slow, and
+              the most wobble reports of anything on the list.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong>Vari Essential.</strong> Solid, but 48 inches is the only
+              width under the cap.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong>Branch Duo.</strong> Handsome and stable, and also 48
+              inches wide.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong>Autonomous SmartDesk Core.</strong> The price is right;
+              the reliability reports are not.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong>Secretlab Magnus Pro.</strong> A fine desk that is $800
+              before a top.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Read in full: two
+        long-form standing desk roundups, each maker's spec and warranty pages,
+        and owner reports on wobble and motor failures. Prices are as configured
+        with a top and were seen this week. Nothing was assembled or measured by
+        hand; height ranges and weights are the makers' figures. Illustrative:
+        specs and prices are representative, not verified.
+      </footer>
+    </main>
+
+    <div
+      id="pick-bar"
+      hidden
+      class="fixed inset-x-0 bottom-4 z-10 flex justify-center px-4"
+    >
+      <div
+        class="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-2.5 text-sm shadow-xl"
+      >
+        <span class="font-semibold">Our pick</span
+        ><span class="text-muted-foreground"
+          >FlexiSpot E7 Pro, 60 by 30 · about $500</span
+        ><a href="#verdict" class="font-medium text-brand-700"
+          >Back to the verdict</a
+        >
+      </div>
+    </div>
+    <script>
+      // The pick bar appears only once the verdict has scrolled away; with
+      // scripts off it never appears, and the page reads the same.
+      const bar = document.getElementById("pick-bar");
+      const verdict = document.getElementById("verdict");
+      if (bar && verdict && "IntersectionObserver" in window) {
+        new IntersectionObserver(([entry]) => {
+          bar.hidden = entry.isIntersecting || entry.boundingClientRect.top > 0;
+        }).observe(verdict);
+      }
+    </script>
+  </body>
+</html>

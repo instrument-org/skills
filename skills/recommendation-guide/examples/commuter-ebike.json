@@ -1,0 +1,8 @@
+{
+  "title": "An e-bike for a hilly 14-mile-a-day commute under $2,000",
+  "prompt": "I want an e-bike for a 7-mile commute each way with a couple of real hills, budget under $2,000. I'd like to be able to get it serviced at a normal bike shop. Which one?",
+  "model": "claude-fable-5-1",
+  "note": "Goes dark and leads with one pick as a serif pull quote because the shop-serviceability condition made the decision lopsided and the reader wanted a confident answer, not a field guide. The three runners-up sit in one small row under it, and the upgrade slot is dropped with a sentence saying why rather than padded. Criteria carry weight bars so the reader sees that the first criterion outweighed the rest before reading a word.",
+  "illustrative": true,
+  "html_sha256": "95759c294b3b1e3d01d50d5a8dc2a80c950ff77f5c57c59d9b808f97b8b565ab"
+}

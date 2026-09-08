@@ -1,0 +1,8 @@
+{
+  "title": "Standing desks under $600 for a two-monitor home office",
+  "prompt": "Which standing desk under $600 should I buy for my home office? I'm 5'10\", I switch between sitting and standing a few times a day, and I have a two-monitor setup.",
+  "model": "claude-fable-5-1",
+  "note": "Airy and light: a serif title, a brand-green verdict strip first so the pick and its price are on screen before anything else, and the four picks as a two-by-two card grid with only the top pick bordered. Most sections sit directly on the background with a kicker and no chrome, because a reader deciding this week skims for the verdict and the flaws and reads the rest only if the pick surprises them. A pick bar appears once the verdict scrolls away, as progressive enhancement.",
+  "illustrative": true,
+  "html_sha256": "d128b10fd776da36954703a2eeafd65d1e4abddbdbcc4361b649cb4231f2773c"
+}
