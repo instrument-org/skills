@@ -5,5 +5,15 @@
   "tags": ["decide"],
   "order": 10,
   "needs": [],
-  "cover": "standing-desks"
+  "cover": "standing-desks",
+  "sections": [
+    "Verdict",
+    "Who this is for",
+    "Picks",
+    "Flaws, not dealbreakers",
+    "Criteria",
+    "How we chose",
+    "What we skipped",
+    "Sources"
+  ]
 }

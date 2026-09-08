@@ -20,6 +20,7 @@ export interface IdeaMeta {
   order: number;
   needs: string[];
   cover: string;
+  sections?: string[];
 }
 
 export interface ExampleMeta {
