@@ -48,11 +48,11 @@ The look is one light theme, on purpose. A page may choose a dark surface within
 
 ## Pictures of the picks
 
-A guide about things people buy carries a photo of each pick, embedded in the file as a data URI so it opens anywhere, sourced from the maker's product page, and sized so the file stays small. Read [`references/images.md`](references/images.md) for where a picture goes, how to fetch and inline one, and what to do when no picture of the actual product can be had. A software guide may leave pictures out.
+A guide about things people buy carries a photo of each pick, embedded in the file as a data URI so it opens anywhere, sourced from the maker's product page, and sized so the file stays small: one picture per pick, each under about 80 KB, and the whole file under about 1.5 MB, because a file that will not open in a mail client or a chat is not shareable. Read [`references/images.md`](references/images.md) for where a picture goes, how to fetch and inline one, and what to do when no picture of the actual product can be had. A software guide may leave pictures out.
 
 ## Refusals
 
-A page that could be any of the examples with the words swapped. A hero image and three feature cards. Every section a bordered card. A verdict that names no price. A criteria list with no order. Runners-up padded to four when two exist. Sources that are not sources. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a USB stick. A photo of a different product than the one named.
+A page that could be any of the examples with the words swapped. A hero image and three feature cards. Every section a bordered card. A verdict that names no price. A criteria list with no order. Runners-up padded to four when two exist. Sources that are not sources. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a USB stick. A photo of a different product than the one named. A file over about 1.5 MB, or an image left at its original size.
 
 ## Honesty about research
 

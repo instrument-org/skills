@@ -29,5 +29,7 @@ Next wave, unscheduled: `buyers-guide`, `faq`, `explainer`, `choice-advisor`, `h
 
 ## Open
 
+- Inlining images is guidance plus a recipe today (`references/images.md`). If real runs show agents fumbling it, a shared script that fetches, resizes, and inlines a list of image URLs is the next step; it would live outside the idea skills so they stay free of a `package.json` and an install step.
+
 - The app treats ideas like every other skill in its index today. A compact listing for ideas as a group, or a separate budget for them, is app-side work and lives in the instrument repo's plans.
 - The description eval (prompts that should and should not trigger each idea) is app-side too, since it needs the worker; the skills repo records the trigger phrases in each `SKILL.md` for it.

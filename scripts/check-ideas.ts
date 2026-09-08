@@ -20,6 +20,11 @@ import {
 // descriptions are budgeted tighter than the 1024 characters the spec allows.
 const IDEA_DESCRIPTION_MAX_LENGTH = 220;
 const MIN_EXAMPLES = 3;
+// A page travels as one file, so its size is its shareability. Inline images
+// are where it goes wrong: a handful at a few megabytes each and the file no
+// longer opens in a mail client or a chat.
+const EXAMPLE_MAX_BYTES = 1_500_000;
+const INLINE_IMAGE_MAX_BYTES = 200_000;
 const IDEA_KEYS = [
   "title",
   "tagline",
@@ -38,6 +43,26 @@ const ALLOWED_HOSTS = [
   "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@",
   "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@",
 ];
+
+function checkSize(file: string, html: string, errors: string[]) {
+  const bytes = Buffer.byteLength(html);
+  if (bytes > EXAMPLE_MAX_BYTES) {
+    errors.push(
+      `${file}: ${Math.round(bytes / 1000)} KB, over the ${EXAMPLE_MAX_BYTES / 1000} KB a page may weigh; shrink its images`,
+    );
+  }
+  for (const match of html.matchAll(
+    /src="data:image\/[^;]+;base64,([^"]+)"/g,
+  )) {
+    const encoded = match[1] ?? "";
+    const decoded = Math.floor((encoded.length * 3) / 4);
+    if (decoded > INLINE_IMAGE_MAX_BYTES) {
+      errors.push(
+        `${file}: an inline image is ${Math.round(decoded / 1000)} KB, over ${INLINE_IMAGE_MAX_BYTES / 1000} KB; resize it to about 720 pixels wide at JPEG quality 78`,
+      );
+    }
+  }
+}
 
 function checkSelfContained(file: string, html: string, errors: string[]) {
   for (const match of html.matchAll(
@@ -111,6 +136,7 @@ function checkIdea(idea: Idea): string[] {
     const label = `examples/${example.name}`;
     const html = readFileSync(example.htmlPath, "utf-8");
     checkSelfContained(`${label}.html`, html, errors);
+    checkSize(`${label}.html`, html, errors);
     if (skinBlockOf(html) !== normalizedSkin()) {
       errors.push(
         `${label}.html: skin block missing or differs from skin/theme.css`,
