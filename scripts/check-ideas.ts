@@ -54,7 +54,9 @@ function checkSelfContained(file: string, html: string, errors: string[]) {
   )) {
     const url = match[1] ?? "";
     if (!url.startsWith("data:")) {
-      errors.push(`${file}: embeds ${url}; media must be inline data`);
+      errors.push(
+        `${file}: embeds ${url.slice(0, 80)}; media must be inline data so the file opens anywhere`,
+      );
     }
   }
 }
