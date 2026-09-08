@@ -201,6 +201,7 @@ ${phosphorLinks}
       [data-strip] {
         scrollbar-width: none;
         -ms-overflow-style: none;
+        overflow-y: hidden;
       }
       [data-strip]::-webkit-scrollbar {
         display: none;
@@ -213,6 +214,111 @@ ${phosphorLinks}
       }
       [data-strip][data-overflow="start"] {
         mask-image: linear-gradient(90deg, transparent 0, #000 20px);
+      }
+    </style>
+    <style>
+      /* Two ways out of main's column, for the blocks that need more room
+         than a measure meant for sentences. \`wide\` is the everyday one: a
+         dense table, a matrix, a comparison whose columns are being squeezed.
+         \`full\` is for content that is the argument rather than illustrating
+         it. Both center on the column, so the prose around them keeps its
+         measure and the page still reads as one document.
+
+         92vw rather than 100vw keeps a margin and avoids the horizontal
+         scrollbar a full-viewport child causes on Windows. Both are capped:
+         past its cap a row stops reading as one thing. */
+      [data-width="wide"],
+      [data-width="full"] {
+        position: relative;
+        left: 50%;
+        translate: -50%;
+      }
+      [data-width="wide"] {
+        width: min(76rem, 92vw);
+      }
+      [data-width="full"] {
+        width: min(132rem, 92vw);
+      }
+    </style>
+    <style>
+      /* Code and terminal blocks wrap by default: these pages are read at
+         whatever width the window happens to be, and a line that runs off the
+         right edge is a line nobody reads. The script at the end of the body
+         attaches a Copy button and a Wrap toggle to every <pre>, so no page
+         has to build its own. The toggle returns one block to one line per
+         line, for output whose columns carry meaning; \`<pre data-wrap="off">\`
+         starts a block that way, which is what an ASCII diagram wants.
+
+         Never overflow-y: a horizontal scrollbar steals its own height from
+         the content box, which leaves the block scrollable down by exactly
+         that much, and a reader scrolling past it stops instead. */
+      main pre {
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+      main [data-wrap="off"] pre,
+      main pre[data-wrap="off"] {
+        white-space: pre;
+        overflow-wrap: normal;
+      }
+      [data-code-block] {
+        position: relative;
+      }
+      [data-code-tools] {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        display: flex;
+        gap: 0.25rem;
+        opacity: 0;
+        transition: opacity 120ms ease;
+      }
+      [data-code-block]:hover > [data-code-tools],
+      [data-code-block]:focus-within > [data-code-tools] {
+        opacity: 1;
+      }
+      @media (hover: none) {
+        [data-code-tools] {
+          opacity: 1;
+        }
+      }
+      [data-code-tools] button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
+        cursor: pointer;
+        border: 1px solid rgb(255 255 255 / 0.14);
+        border-radius: var(--radius-sm);
+        background: rgb(255 255 255 / 0.08);
+        padding: 0.2rem 0.45rem;
+        font-family: var(--font-sans);
+        font-size: 0.6875rem;
+        font-weight: 500;
+        line-height: 1.4;
+        color: var(--color-gray-300);
+        backdrop-filter: blur(4px);
+      }
+      [data-code-tools] button:hover,
+      [data-code-tools] button[aria-pressed="true"] {
+        background: rgb(255 255 255 / 0.18);
+        color: var(--color-gray-50);
+      }
+      [data-code-block][data-surface="light"] [data-code-tools] button {
+        border-color: var(--color-border);
+        background: rgb(255 255 255 / 0.85);
+        color: var(--color-gray-600);
+      }
+      [data-code-block][data-surface="light"] [data-code-tools] button:hover,
+      [data-code-block][data-surface="light"] [data-code-tools] button[aria-pressed="true"] {
+        background: var(--color-gray-100);
+        color: var(--color-gray-900);
+      }
+      @media print {
+        [data-code-tools] {
+          display: none;
+        }
       }
     </style>
     <style>
@@ -337,6 +443,76 @@ ${bodyContent}
         hl.src = "${escapeHtml(hljsSrc)}";
         hl.onload = () => window.hljs && window.hljs.highlightAll();
         document.head.appendChild(hl);
+      }
+
+      // A Copy button and a Wrap toggle on every <pre>. Block-scoped so the
+      // names cannot collide with a page script in the same global scope.
+      {
+        const surfaceLuma = (el) => {
+          const rgb = getComputedStyle(el).backgroundColor.match(/[\\d.]+/g);
+          if (!rgb || Number(rgb[3] ?? 1) === 0) return null;
+          return (Number(rgb[0]) * 299 + Number(rgb[1]) * 587 + Number(rgb[2]) * 114) / 1000;
+        };
+        const writeClipboard = async (text) => {
+          try {
+            await navigator.clipboard.writeText(text);
+            return true;
+          } catch {
+            // Not every engine grants the clipboard API on file://.
+            const ta = document.body.appendChild(document.createElement("textarea"));
+            ta.value = text;
+            ta.style.cssText = "position:fixed;top:0;opacity:0";
+            ta.select();
+            const ok = document.execCommand("copy");
+            ta.remove();
+            return ok;
+          }
+        };
+        for (const pre of document.querySelectorAll("main pre")) {
+          // The padded dark surface is a wrapping div in the terminal dialect
+          // and the pre itself in the code-excerpt one. Decorate whichever.
+          const parent = pre.parentElement;
+          const surface =
+            parent.tagName === "DIV" && parent.childElementCount === 1 && surfaceLuma(parent) !== null ? parent : pre;
+          const block = document.createElement("div");
+          block.setAttribute("data-code-block", "");
+          block.dataset.surface = (surfaceLuma(surface) ?? 255) < 128 ? "dark" : "light";
+          block.dataset.wrap = pre.dataset.wrap === "off" ? "off" : "on";
+          // Grid and flex placement is the outer box's job once there is one.
+          const placement = [...surface.classList].filter((c) => /(^|:)(col-|row-|self-|order-|shrink|grow|basis-)/.test(c));
+          surface.classList.remove(...placement);
+          block.classList.add(...placement);
+          surface.replaceWith(block);
+          block.append(surface);
+
+          const tools = document.createElement("div");
+          tools.setAttribute("data-code-tools", "");
+          tools.innerHTML =
+            "<button type='button' title='Wrap long lines'><i class='ph ph-arrow-u-down-left'></i>Wrap</button>" +
+            "<button type='button' title='Copy to clipboard'><i class='ph ph-copy'></i>Copy</button>";
+          block.append(tools);
+
+          const wrapBtn = tools.firstElementChild;
+          wrapBtn.setAttribute("aria-pressed", String(block.dataset.wrap === "on"));
+          wrapBtn.addEventListener("click", () => {
+            const on = block.dataset.wrap !== "on";
+            block.dataset.wrap = on ? "on" : "off";
+            wrapBtn.setAttribute("aria-pressed", String(on));
+          });
+
+          const copyBtn = tools.lastElementChild;
+          let settle;
+          copyBtn.addEventListener("click", async () => {
+            const ok = await writeClipboard(pre.textContent.replace(/\\s+$/, ""));
+            copyBtn.innerHTML = ok
+              ? "<i class='ph ph-check'></i>Copied"
+              : "<i class='ph ph-warning'></i>Failed";
+            clearTimeout(settle);
+            settle = setTimeout(() => {
+              copyBtn.innerHTML = "<i class='ph ph-copy'></i>Copy";
+            }, 1600);
+          });
+        }
       }
     </script>
   </body>
