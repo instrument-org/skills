@@ -77,7 +77,15 @@ const ALLOWED_SOURCES = [
   { origin: "https://fonts.gstatic.com", path: "/" },
   { origin: "https://cdn.jsdelivr.net", path: "/npm/@tailwindcss/browser@" },
   { origin: "https://cdn.jsdelivr.net", path: "/npm/@phosphor-icons/web@" },
+  { origin: "https://tryinstrument.com", path: "/page.js" },
 ];
+// The share widget, carried by every page. Byte identity is the whole rule: the
+// widget hashes the page as the browser serialized it and that hash is the
+// link's address, so a tag differing by one character publishes the same page to
+// a second address, with no error to say so. The site serves nothing here until
+// the widget deploys, and a script that 404s leaves the page exactly as it is.
+const PAGE_WIDGET_TAG =
+  '<script async src="https://tryinstrument.com/page.js"></script>';
 // The one remote address a script on these pages may build. A link wears the
 // icon of the site it points at, and no CSS can read a host out of an href, so
 // the icon's URL is assembled at runtime and is invisible to the scan below.
@@ -164,6 +172,16 @@ export function checkExampleMeta(
       `${label}.json: "variant" is ${meta.variant.length} characters, over the ${VARIANT_MAX_CHARS} a caption may take`,
     );
   }
+}
+
+export function checkPageWidget(file: string, html: string, errors: string[]) {
+  if (html.includes(PAGE_WIDGET_TAG)) return;
+  const near = /<script[^>]*tryinstrument\.com[^>]*>[\s\S]*?<\/script>/.exec(html);
+  errors.push(
+    near
+      ? `${file}: the page widget tag is modified; it must be exactly ${PAGE_WIDGET_TAG}, byte for byte, or the page publishes to a different address`
+      : `${file}: no page widget tag; every page carries ${PAGE_WIDGET_TAG}`,
+  );
 }
 
 export function checkSelfContained(
@@ -253,6 +271,7 @@ function checkPageSkill(): string[] {
     errors.push("starter.html's skin block differs from skin/theme.css");
   }
   checkSelfContained("starter.html", starter, errors);
+  checkPageWidget("starter.html", starter, errors);
 
   return errors;
 }
@@ -305,6 +324,7 @@ function checkIdea(idea: Idea): string[] {
     const label = `examples/${example.name}`;
     const html = readFileSync(example.htmlPath, "utf-8");
     checkSelfContained(`${label}.html`, html, errors);
+    checkPageWidget(`${label}.html`, html, errors);
     checkSize(`${label}.html`, html, errors);
     if (skinBlockOf(html) !== normalizedSkin()) {
       errors.push(

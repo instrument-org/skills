@@ -9,8 +9,16 @@
 // top of the page at a laptop's content width, portrait.
 
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { listIdeas, readIdea, sha256, type ExampleMeta } from "./ideas.ts";
 
@@ -37,8 +45,30 @@ function findChrome(): string {
   return found;
 }
 
+/**
+ * Shoot the page as a reader sees it, minus the share widget's own affordance.
+ *
+ * The widget draws nothing when it is told a viewer is already wrapping the
+ * page, and a capture is a tile on the website rather than a page someone is
+ * reading, so its pill has no business in one. Chrome takes a file and no
+ * injection point, so the flag rides in on a copy: the committed file keeps the
+ * bytes the widget hashes, and only the throwaway differs. These pages are
+ * self-contained by rule, so moving one to a temporary directory cannot break a
+ * relative path -- there are none to break.
+ */
 function capture(chrome: string, htmlPath: string, pngPath: string) {
   mkdirSync(dirname(pngPath), { recursive: true });
+  const scratch = mkdtempSync(join(tmpdir(), "capture-"));
+  // As early in the head as possible: the widget's tag is async and may run as
+  // soon as it lands, so a flag set after it is a flag set too late.
+  const shot = join(scratch, "page.html");
+  writeFileSync(
+    shot,
+    readFileSync(htmlPath, "utf-8").replace(
+      "<head>",
+      "<head>\n    <script>window.__instrumentViewer = true;</script>",
+    ),
+  );
   const result = spawnSync(
     chrome,
     [
@@ -48,10 +78,11 @@ function capture(chrome: string, htmlPath: string, pngPath: string) {
       `--window-size=${WIDTH},${HEIGHT}`,
       "--virtual-time-budget=15000",
       `--screenshot=${pngPath}`,
-      `file://${htmlPath}`,
+      `file://${shot}`,
     ],
     { stdio: ["ignore", "ignore", "pipe"] },
   );
+  rmSync(scratch, { force: true, recursive: true });
   if (result.status !== 0 || !existsSync(pngPath)) {
     throw new Error(
       `Chrome failed on ${htmlPath}: ${result.stderr?.toString() ?? "no output"}`,

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { checkExampleMeta, checkSelfContained } from "./check-ideas.ts";
+import {
+  checkExampleMeta,
+  checkPageWidget,
+  checkSelfContained,
+} from "./check-ideas.ts";
 import type { ExampleMeta } from "./ideas.ts";
 
 function errorsFor(html: string): string[] {
@@ -140,5 +144,53 @@ describe("checkExampleMeta", () => {
     expect(
       errorsForMeta({ ...complete, variant: "x".repeat(81) }),
     ).toHaveLength(1);
+  });
+});
+
+describe("checkPageWidget", () => {
+  function widgetErrors(html: string): string[] {
+    const errors: string[] = [];
+    checkPageWidget("page.html", html, errors);
+    return errors;
+  }
+
+  it("passes the tag every page carries", () => {
+    expect(
+      widgetErrors(`<head><script async src="https://tryinstrument.com/page.js"></script></head>`),
+    ).toEqual([]);
+  });
+
+  it("reports a page that has no tag at all", () => {
+    expect(widgetErrors("<head></head>")).toMatchInlineSnapshot(`
+      [
+        "page.html: no page widget tag; every page carries <script async src="https://tryinstrument.com/page.js"></script>",
+      ]
+    `);
+  });
+
+  // The failure this rule exists for: the page still works and still shares,
+  // but to a second address, because the tag is inside what gets hashed.
+  it("reports a tag that differs by a character", () => {
+    expect(
+      widgetErrors(
+        `<head><script async src="https://tryinstrument.com/page.js" ></script></head>`,
+      ),
+    ).toMatchInlineSnapshot(`
+      [
+        "page.html: the page widget tag is modified; it must be exactly <script async src="https://tryinstrument.com/page.js"></script>, byte for byte, or the page publishes to a different address",
+      ]
+    `);
+  });
+
+  it("reports a tag that dropped async", () => {
+    expect(
+      widgetErrors(
+        `<head><script src="https://tryinstrument.com/page.js"></script></head>`,
+      ),
+    ).toMatchInlineSnapshot(`
+      [
+        "page.html: the page widget tag is modified; it must be exactly <script async src="https://tryinstrument.com/page.js"></script>, byte for byte, or the page publishes to a different address",
+      ]
+    `);
   });
 });
