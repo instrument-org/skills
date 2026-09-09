@@ -1,0 +1,16 @@
+{
+  "title": "Timeline",
+  "tagline": "The timeline page history sites publish, drawn for your story.",
+  "when": "You need to show change over time, when the order of events explains why things are the way they are or what happens next.",
+  "tags": ["learn"],
+  "order": 130,
+  "needs": [],
+  "cover": "pricing-history",
+  "sections": [
+    "Scope",
+    "Events",
+    "Turning points",
+    "Where we are now",
+    "Sources"
+  ]
+}

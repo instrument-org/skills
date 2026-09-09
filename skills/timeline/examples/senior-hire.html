@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      From opening the role to day one: a senior engineer hire, week by week
+    </title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="timeline@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-7xl px-6 py-14 sm:px-10 sm:py-20">
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Timeline
+        </p>
+        <h1
+          class="mt-4 font-serif text-4xl font-medium tracking-[-0.02em] sm:text-5xl"
+        >
+          From opening the role to day one: a senior engineer hire, week by week
+        </h1>
+        <p class="mt-6 text-base leading-7 text-muted-foreground">
+          Ten weeks, read left to right. The top row is what we do and who does
+          it; the row under it is the same week as the candidate sees it,
+          because every delay on our side is a silence on theirs.
+        </p>
+      </header>
+
+      <section id="scope" class="mt-10 max-w-3xl">
+        <dl class="grid gap-x-8 gap-y-4 text-sm sm:grid-cols-3">
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Span
+            </dt>
+            <dd class="mt-1 leading-6">
+              August 31 to November 2, 2026: five weeks to an accepted offer,
+              four weeks of notice, then day one.
+            </dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Whose story
+            </dt>
+            <dd class="mt-1 leading-6">
+              One senior engineer role on the platform team, and the person who
+              takes it.
+            </dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Why now
+            </dt>
+            <dd class="mt-1 leading-6">
+              The role opened last Monday. Screens are this week, and the
+              shortlist is due Friday.
+            </dd>
+          </div>
+        </dl>
+        <p
+          class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground"
+        >
+          <span class="font-medium text-foreground">Owners</span>
+          <span
+            ><span
+              class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+              >HM</span
+            >
+            hiring manager</span
+          >
+          <span
+            ><span
+              class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+              >Rec</span
+            >
+            recruiter</span
+          >
+          <span
+            ><span
+              class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+              >Panel</span
+            >
+            four engineers</span
+          >
+          <span
+            ><span
+              class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+              >Fin</span
+            >
+            finance</span
+          >
+          <span
+            ><span
+              class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+              >IT</span
+            >
+            IT team</span
+          >
+          <span
+            ><span
+              class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+              >Buddy</span
+            >
+            onboarding buddy</span
+          >
+        </p>
+      </section>
+
+      <section id="events" class="mt-12">
+        <div
+          class="grid gap-x-5 gap-y-8 lg:grid-cols-[5rem_repeat(7,minmax(0,1fr))] lg:gap-y-0"
+        >
+          <p
+            class="hidden text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:col-start-1 lg:row-start-2 lg:block lg:pt-5"
+          >
+            Our side
+          </p>
+          <p
+            class="hidden text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:col-start-1 lg:row-start-3 lg:block lg:pt-4"
+          >
+            The candidate
+          </p>
+
+          <div class="lg:contents">
+            <div
+              class="border-t-2 border-gray-800 pt-3 lg:col-start-2 lg:row-start-1"
+            >
+              <p class="font-mono text-xs text-muted-foreground">
+                Week 1 · Aug 31
+              </p>
+              <h3 class="mt-1 font-serif text-xl font-medium">Open the role</h3>
+            </div>
+            <ul
+              class="space-y-2 text-[13px] leading-5 lg:col-start-2 lg:row-start-2 mt-3 lg:mt-0 lg:pt-5 lg:pb-5 lg:border-b lg:border-border"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:hidden"
+              >
+                Our side
+              </li>
+              <li>
+                Role doc and scorecard written: what the first year has to
+                produce, and what we will ask in each session.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >HM</span
+                >
+              </li>
+              <li>
+                Posted, and the first thirty sourced names sent a personal note.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Rec</span
+                >
+              </li>
+              <li>
+                Panel of four confirmed and calibrated on the scorecard in one
+                hour.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >HM</span
+                >
+              </li>
+            </ul>
+            <ul
+              class="space-y-2 text-[13px] leading-5 text-muted-foreground lg:col-start-2 lg:row-start-3 mt-3 lg:mt-0 lg:pt-4"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] uppercase lg:hidden"
+              >
+                The candidate
+              </li>
+              <li>
+                Sees the posting, or gets a note that names the team and the
+                problem, not a template.
+              </li>
+              <li>
+                Applies. Hears back within three business days either way.
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:contents">
+            <div
+              class="-mx-2 rounded-t-md border-t-2 border-brand-500 bg-brand-25 px-2 pt-3 lg:col-start-3 lg:row-start-1"
+            >
+              <p class="font-mono text-xs text-muted-foreground">
+                Week 2 · Sep 7
+              </p>
+              <h3
+                class="mt-1 flex items-center gap-2 font-serif text-xl font-medium"
+              >
+                Screen
+                <span
+                  class="rounded-full bg-brand-600 px-2 py-0.5 font-sans text-[10px] font-semibold tracking-wide text-white uppercase"
+                  >Now</span
+                >
+              </h3>
+            </div>
+            <ul
+              class="-mx-2 space-y-2 bg-brand-25 px-2 text-[13px] leading-5 lg:col-start-3 lg:row-start-2 mt-3 lg:mt-0 lg:pt-5 lg:pb-5 lg:border-b lg:border-border"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:hidden"
+              >
+                Our side
+              </li>
+              <li>
+                Thirty-minute screens, Monday to Thursday.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Rec</span
+                >
+              </li>
+              <li>
+                Shortlist reviewed Friday morning; passes and declines sent the
+                same day.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >HM</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-1.5 border-t border-brand-300 pt-2 text-xs leading-5 text-brand-800"
+              >
+                <i class="ph-fill ph-flag mt-0.5 text-brand-600"></i
+                ><span
+                  ><strong>Decision.</strong> Who goes to the technical
+                  round.</span
+                >
+              </li>
+            </ul>
+            <ul
+              class="-mx-2 space-y-2 rounded-b-md bg-brand-25 px-2 pb-3 text-[13px] leading-5 text-muted-foreground lg:col-start-3 lg:row-start-3 mt-3 lg:mt-0 lg:pt-4"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] uppercase lg:hidden"
+              >
+                The candidate
+              </li>
+              <li>
+                One thirty-minute call: the role, the compensation band, and the
+                process with its dates.
+              </li>
+              <li>
+                Told yes or no by Friday. Nobody is left waiting over a weekend.
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:contents">
+            <div
+              class="border-t-2 border-gray-300 pt-3 lg:col-start-4 lg:row-start-1"
+            >
+              <p class="font-mono text-xs text-muted-foreground">
+                Week 3 · Sep 14
+              </p>
+              <h3 class="mt-1 font-serif text-xl font-medium">Technical</h3>
+            </div>
+            <ul
+              class="space-y-2 text-[13px] leading-5 lg:col-start-4 lg:row-start-2 mt-3 lg:mt-0 lg:pt-5 lg:pb-5 lg:border-b lg:border-border"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:hidden"
+              >
+                Our side
+              </li>
+              <li>
+                One hour pairing on a real problem from our codebase with a
+                senior engineer. No take-home.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Panel</span
+                >
+              </li>
+              <li>
+                Written feedback against the scorecard the same day.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Panel</span
+                >
+              </li>
+            </ul>
+            <ul
+              class="space-y-2 text-[13px] leading-5 text-muted-foreground lg:col-start-4 lg:row-start-3 mt-3 lg:mt-0 lg:pt-4"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] uppercase lg:hidden"
+              >
+                The candidate
+              </li>
+              <li>
+                A prep note the week before: the problem area, the language, and
+                what we look for.
+              </li>
+              <li>Hears within two business days.</li>
+            </ul>
+          </div>
+
+          <div class="lg:contents">
+            <div
+              class="border-t-2 border-gray-300 pt-3 lg:col-start-5 lg:row-start-1"
+            >
+              <p class="font-mono text-xs text-muted-foreground">
+                Week 4 · Sep 21
+              </p>
+              <h3 class="mt-1 font-serif text-xl font-medium">The loop</h3>
+            </div>
+            <ul
+              class="space-y-2 text-[13px] leading-5 lg:col-start-5 lg:row-start-2 mt-3 lg:mt-0 lg:pt-5 lg:pb-5 lg:border-b lg:border-border"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:hidden"
+              >
+                Our side
+              </li>
+              <li>
+                Four sessions in one day: architecture, a past project in depth,
+                working with others, product sense.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Panel</span
+                >
+              </li>
+              <li>
+                Debrief the same afternoon, scorecards in before anyone talks.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >HM</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-1.5 border-t border-brand-300 pt-2 text-xs leading-5 text-brand-800"
+              >
+                <i class="ph-fill ph-flag mt-0.5 text-brand-600"></i
+                ><span><strong>Decision.</strong> Hire or not, that day.</span>
+              </li>
+            </ul>
+            <ul
+              class="space-y-2 text-[13px] leading-5 text-muted-foreground lg:col-start-5 lg:row-start-3 mt-3 lg:mt-0 lg:pt-4"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] uppercase lg:hidden"
+              >
+                The candidate
+              </li>
+              <li>
+                Half a day, remote, with a real break. Meets the manager and two
+                future teammates.
+              </li>
+              <li>
+                A decision within three business days, with reasons if it is a
+                no.
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:contents">
+            <div
+              class="border-t-2 border-gray-300 pt-3 lg:col-start-6 lg:row-start-1"
+            >
+              <p class="font-mono text-xs text-muted-foreground">
+                Week 5 · Sep 28
+              </p>
+              <h3 class="mt-1 font-serif text-xl font-medium">Offer</h3>
+            </div>
+            <ul
+              class="space-y-2 text-[13px] leading-5 lg:col-start-6 lg:row-start-2 mt-3 lg:mt-0 lg:pt-5 lg:pb-5 lg:border-b lg:border-border"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:hidden"
+              >
+                Our side
+              </li>
+              <li>
+                Number set from the band, not negotiated up from a guess.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Fin</span
+                >
+              </li>
+              <li>
+                Two references, with the candidate's consent.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Rec</span
+                >
+              </li>
+              <li>
+                Offer call, then the letter the same day.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >HM</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-1.5 border-t border-brand-300 pt-2 text-xs leading-5 text-brand-800"
+              >
+                <i class="ph-fill ph-flag mt-0.5 text-brand-600"></i
+                ><span
+                  ><strong>Decision.</strong> Theirs. Accepted sets the start
+                  date.</span
+                >
+              </li>
+            </ul>
+            <ul
+              class="space-y-2 text-[13px] leading-5 text-muted-foreground lg:col-start-6 lg:row-start-3 mt-3 lg:mt-0 lg:pt-4"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] uppercase lg:hidden"
+              >
+                The candidate
+              </li>
+              <li>Hears the number on a call before it arrives in writing.</li>
+              <li>
+                A week to decide. Questions go to the manager, not the
+                recruiter.
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:contents">
+            <div
+              class="border-t-2 border-gray-300 pt-3 lg:col-start-7 lg:row-start-1"
+            >
+              <p class="font-mono text-xs text-muted-foreground">
+                Weeks 6-9 · Oct 5
+              </p>
+              <h3 class="mt-1 font-serif text-xl font-medium">Notice</h3>
+            </div>
+            <ul
+              class="space-y-2 text-[13px] leading-5 lg:col-start-7 lg:row-start-2 mt-3 lg:mt-0 lg:pt-5 lg:pb-5 lg:border-b lg:border-border"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:hidden"
+              >
+                Our side
+              </li>
+              <li>
+                Laptop ordered and accounts created in the first week, not the
+                last.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >IT</span
+                >
+              </li>
+              <li>
+                Buddy assigned; the first-week plan written with a first task in
+                it.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Buddy</span
+                >
+              </li>
+              <li>
+                A short reading list and one hello from the team.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >HM</span
+                >
+              </li>
+            </ul>
+            <ul
+              class="space-y-2 text-[13px] leading-5 text-muted-foreground lg:col-start-7 lg:row-start-3 mt-3 lg:mt-0 lg:pt-4"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] uppercase lg:hidden"
+              >
+                The candidate
+              </li>
+              <li>
+                Gives notice. Gets the welcome note, the reading list, and the
+                buddy's name.
+              </li>
+              <li>
+                Nothing is required of them. The list is there if they want it.
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:contents">
+            <div
+              class="border-t-2 border-gray-300 pt-3 lg:col-start-8 lg:row-start-1"
+            >
+              <p class="font-mono text-xs text-muted-foreground">
+                Week 10 · Nov 2
+              </p>
+              <h3 class="mt-1 font-serif text-xl font-medium">Day one</h3>
+            </div>
+            <ul
+              class="space-y-2 text-[13px] leading-5 lg:col-start-8 lg:row-start-2 mt-3 lg:mt-0 lg:pt-5 lg:pb-5 lg:border-b lg:border-border"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase lg:hidden"
+              >
+                Our side
+              </li>
+              <li>
+                Buddy meets them at nine. Setup done by lunch because IT did it
+                in week six.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >Buddy</span
+                >
+              </li>
+              <li>
+                A first small change shipped inside the first week, chosen in
+                advance.
+                <span
+                  class="rounded-full bg-muted px-1.5 py-px text-[10px] font-medium tracking-wide text-gray-600 uppercase"
+                  >HM</span
+                >
+              </li>
+            </ul>
+            <ul
+              class="space-y-2 text-[13px] leading-5 text-muted-foreground lg:col-start-8 lg:row-start-3 mt-3 lg:mt-0 lg:pt-4"
+            >
+              <li
+                class="text-xs font-medium tracking-[0.12em] uppercase lg:hidden"
+              >
+                The candidate
+              </li>
+              <li>
+                A schedule for the day, one meeting with the manager, and a
+                first task with a clear finish line.
+              </li>
+              <li>Knows who to ask, and that asking is expected.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="turning-points" class="mt-16 max-w-5xl">
+        <h2 class="font-serif text-2xl font-medium tracking-[-0.01em]">
+          Three decisions set the pace
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+          Everything else in the plan is work that can slip a day without anyone
+          noticing. These three are the moments the candidate is waiting on, and
+          where the last hires lost time.
+        </p>
+        <ol class="mt-6 grid gap-6 text-sm leading-6 sm:grid-cols-3">
+          <li class="border-l-2 border-brand-500 pl-4">
+            <p class="font-mono text-xs text-brand-700">Friday, week 2</p>
+            <p class="mt-1 font-serif text-lg font-medium">The shortlist</p>
+            <p class="mt-1 text-muted-foreground">
+              Hiring manager decides who goes to the technical round. Every day
+              this waits is a week lost, because the panel's calendars are
+              booked from it.
+            </p>
+          </li>
+          <li class="border-l-2 border-brand-500 pl-4">
+            <p class="font-mono text-xs text-brand-700">Loop day, week 4</p>
+            <p class="mt-1 font-serif text-lg font-medium">Hire or not</p>
+            <p class="mt-1 text-muted-foreground">
+              The panel scores, the hiring manager decides, the same afternoon.
+              A debrief that slides to the next week is where two of the last
+              three senior hires nearly went elsewhere.
+            </p>
+          </li>
+          <li class="border-l-2 border-brand-500 pl-4">
+            <p class="font-mono text-xs text-brand-700">Week 5, theirs</p>
+            <p class="mt-1 font-serif text-lg font-medium">Accepted</p>
+            <p class="mt-1 text-muted-foreground">
+              The candidate's decision, and the only date on this page we do not
+              control. It sets day one, and with it IT's clock and the buddy's.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="now" class="mt-16 max-w-5xl">
+        <div class="rounded-xl border border-brand-200 bg-brand-25 p-6">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            This week: week 2 of 10
+          </p>
+          <div
+            class="mt-3 grid gap-x-8 gap-y-4 text-sm leading-6 sm:grid-cols-3"
+          >
+            <div>
+              <p class="font-medium">In flight</p>
+              <p class="mt-1 text-muted-foreground">
+                Screens run through Thursday. Everyone who applied by last
+                Friday has a slot or a decline.
+              </p>
+            </div>
+            <div>
+              <p class="font-medium">Due Friday</p>
+              <p class="mt-1 text-muted-foreground">
+                The shortlist, to the hiring manager, with the recruiter's
+                one-line read on each name.
+              </p>
+            </div>
+            <div>
+              <p class="font-medium">Next Monday</p>
+              <p class="mt-1 text-muted-foreground">
+                Technical sessions booked. Two panel members are out the week of
+                the 21st, so the loop day is Thursday the 24th.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer
+        class="mt-16 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The hiring process
+        document, the applicant-tracking timings for the last three senior
+        hires, and the notice period in the offer template. Weeks are plan
+        weeks: the loop and the notice period are where the last hires
+        stretched, and this plan assumes neither does. Written September 9,
+        2026, in week 2. Illustrative: details are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>
