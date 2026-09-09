@@ -13,7 +13,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-export const SKILLS_DIR = join(REPO_ROOT, "skills");
+const SKILLS_DIR = join(REPO_ROOT, "skills");
 /** The skill the templates live in. One starter serves all of them. */
 export const PAGE_SKILL_DIR = join(SKILLS_DIR, "create-page");
 const TEMPLATES_DIR = join(PAGE_SKILL_DIR, "templates");

@@ -1,10 +1,10 @@
 # Discover ideas
 
-Status: In progress. The framework and sixteen ideas exist with three examples each; the third wave is unscheduled.
+Status: In progress. Sixteen templates exist with three examples each, now inside the `create-page` skill; the third wave is unscheduled. See [`docs/decisions/2026-09-09-one-page-skill-many-templates.md`](../../decisions/2026-09-09-one-page-skill-many-templates.md) for why they are one skill.
 
 ## What this is
 
-Ideas are skills that make a kind of document. The website's Discover section (`apps/web` in the internal repo) is built from this repo at build time: it reads every skill carrying an `idea.json`, shows the captures on tiles and idea pages, serves the skill's files and a well-known skills index, and offers a button that opens the idea in the app. The app ships the same skills through its registry submodule, so the agent can reach for an idea unprompted. See the `Ideas` section of `AGENTS.md` for the rules and the harness.
+Ideas are the templates the `create-page` skill can fill, and the website's word for them. The Discover section (`apps/web` in the internal repo) is built from this repo at build time: it reads every template carrying an `idea.json`, shows the captures on tiles and idea pages, serves the files and a well-known skills index, and offers a button that opens the idea in the app. The app ships the same skill through its registry submodule, so the agent can reach for a template unprompted. See the `Templates` section of `AGENTS.md` for the rules and the harness.
 
 ## The first eight
 
@@ -19,13 +19,14 @@ Each is a page shape from the research catalog. Sections are intents to answer, 
 7. `scorecard`: one entity graded across dimensions with a glanceable summary. Overall grade; dimension scores; evidence per dimension; strengths and weaknesses; comparables; sources.
 8. `pro-con`: a balanced two-sided view of one option or two alternatives. Context; pros; cons; who it is good and bad for; bottom line; sources.
 
-Second wave, done: `explainer`, `how-to`, `checklist`, `itinerary`, `timeline`, `faq`, `case-study`, `one-pager`. Later: `buyers-guide`, `choice-advisor`, `glossary`, `post-mortem`, `status-report`, and `visual-answer`, which becomes an idea by gaining examples and a sidecar.
+Second wave, done: `explainer`, `how-to`, `checklist`, `itinerary`, `timeline`, `faq`, `case-study`, `one-pager`. Later: `buyers-guide`, `choice-advisor`, `glossary`, `post-mortem`, `status-report`. `visual-answer` was removed rather than made into a template; its vocabulary became `create-page/references`.
 
 ## Making one
 
-1. Copy `skills/recommendation-guide/` as the template: `SKILL.md` (keep the process and the fixed-versus-free rules, rewrite the shape and the refusals for the new intents), `idea.json`, `starter.html` (one empty section per intent), `references/patterns.md` (only the pieces this shape reaches for).
-2. Write three examples from three different prompts, each with a design brief that names what it does differently from the other two, and a `.json` note saying so. Keep them under about 320 lines and honest in their footers.
-3. `pnpm preview` while iterating; `pnpm capture <name>` when done; `pnpm check:ideas` before committing.
+1. Copy `skills/create-page/templates/recommendation-guide/` as the model: `template.md` (what this document is, when to reach for it and when not, its slots, what varies, its own refusals), `main.html` (one empty section per intent), `idea.json`, and `patterns.md` (only the pieces this kind reaches for). The method, the shared refusals and the starter are the skill's and are not copied.
+2. Add a row to the router table in `skills/create-page/SKILL.md` linking `templates/<name>/template.md` by its exact path. A template the router does not name cannot be found.
+3. Write three examples from three different prompts, each with a design brief that names what it does differently from the other two, and a `.json` note saying so. Keep them under about 320 lines and honest in their footers.
+4. `pnpm preview` while iterating; `pnpm capture <name>` when done; `pnpm check:ideas` before committing.
 
 ## Open
 
