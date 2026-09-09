@@ -47,7 +47,7 @@ The look is one light theme, on purpose. A page may choose a toned surface withi
 
 ## Refusals
 
-A page that could be any of the examples with the words swapped. A bottom line that hedges, or that names no option and no date. One option, or four. Options whose fields differ so they cannot be compared. Key facts that are adjectives rather than numbers. A recommendation with no first step and no owner. Open questions that are rhetorical. Every section a bordered card. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a USB stick, which a hyperlink does nothing to prevent. A file over about 1.5 MB.
+A page that could be any of the examples with the words swapped. A bottom line that hedges, or that names no option and no date. One option, or four. Options whose fields differ so they cannot be compared. Key facts that are adjectives rather than numbers. A recommendation with no first step and no owner. Open questions that are rhetorical. Every section a bordered card. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` that fetches from the network beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a USB stick, which a hyperlink does nothing to prevent. A file over about 1.5 MB. A small inline script is fine where the page reads without it, and a refusal where the page does not.
 
 ## Honesty about research
 
