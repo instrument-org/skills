@@ -1,5 +1,6 @@
 {
   "title": "Responding to Harbor's 20 percent price cut",
+  "variant": "Urgent: warning strip on top, stat tiles, a compact option table",
   "prompt": "Brief the leadership team on how to respond to our main competitor cutting prices 20% last week.",
   "model": "claude-fable-5-1",
   "note": "Urgent by design: the bottom line is a warning-toned strip across the top of the page before the title, the key facts are four stat tiles in a row so the money is visible before a word of context, and the options are a compact table with the recommended row highlighted rather than cards, because the reader is a leadership team deciding by Friday. All sans and tighter, with the open questions as a checklist carrying an owner and a day each so the page doubles as the meeting's action list.",

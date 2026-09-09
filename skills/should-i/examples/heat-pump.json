@@ -1,5 +1,6 @@
 {
   "title": "Should I replace my oil furnace with a heat pump?",
+  "variant": "Long-read article in a narrow column with one badge",
   "prompt": "Should I put a heat pump in my 1970s house in Vermont, replacing an oil furnace?",
   "model": "claude-fable-5-1",
   "note": "A long read in a narrow column with a centered serif title and a success-toned pill badge, because the reader is a homeowner who will read the whole page once and wants it to feel like an article rather than a memo; the body sits at 16 pixels with generous leading and section spacing. The factors are a branching list, each row an \"if your house is… then…\" pair with the second branch in muted type, the situations are stacked rows with a chip in the heading instead of cards, and the FAQ uses native details and summary so the page ends compact and opens where the reader taps.",

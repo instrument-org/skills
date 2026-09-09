@@ -1,5 +1,6 @@
 {
   "title": "Ten days in Japan by rail: Tokyo, a night in Hakone, Kyoto, Osaka",
+  "variant": "One vertical spine with a node per day and train legs as rows",
   "prompt": "Ten days in Japan by rail, first time, Tokyo, Kyoto, Osaka, with one onsen night.",
   "model": "claude-fable-5-1",
   "note": "One vertical spine down the page with a node per day, a larger brand-colored marker at each city change, and the four train legs as thin mono rows carrying the operator, the duration, and a reserve-the-seat tag, because a rail trip is a sequence and the reader wants to see where the legs fall before reading any day. Dense on purpose, with a label column for morning, afternoon, and evening inside each day, no photos, and the places list in two columns so ten days fit in a page a traveler can scroll on a platform.",

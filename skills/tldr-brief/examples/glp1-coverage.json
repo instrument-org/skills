@@ -1,5 +1,6 @@
 {
   "title": "How employer plans are changing GLP-1 coverage, for next year's plan design",
+  "variant": "Newspaper register with a boxed do-and-don't sidebar",
   "prompt": "TLDR on how employer health plans are changing GLP-1 coverage, for an HR lead planning next year's plan.",
   "model": "claude-fable-5-1",
   "note": "Newspaper register on purpose: a serif headline under a nameplate rule, a serif body, and a two-column layout with a hairline between the story and a boxed do and do not sidebar, because the reader will forward this to a CFO and a front-page look reads as settled rather than as a memo in progress. The bullets are short paragraphs with small-caps run-in heads instead of a list, and the one figure is a cost table under three plan designs, since the decision is a budget line.",

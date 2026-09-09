@@ -55,7 +55,9 @@ const IDEA_KEYS = [
   "needs",
   "cover",
 ];
-const EXAMPLE_KEYS = ["title", "prompt", "model", "note"];
+const EXAMPLE_KEYS = ["title", "variant", "prompt", "model", "note"];
+/** A variant line is a card caption, so it has to fit on one. */
+const VARIANT_MAX_CHARS = 80;
 
 // Hosts a page may load from. Everything else has to be inlined.
 const ALLOWED_HOSTS = [
@@ -184,6 +186,14 @@ function checkIdea(idea: Idea): string[] {
     for (const key of EXAMPLE_KEYS) {
       if (!(key in example.meta))
         errors.push(`${label}.json is missing "${key}"`);
+    }
+    if (
+      typeof example.meta.variant === "string" &&
+      example.meta.variant.length > VARIANT_MAX_CHARS
+    ) {
+      errors.push(
+        `${label}.json: "variant" is ${example.meta.variant.length} characters, over the ${VARIANT_MAX_CHARS} a caption may take`,
+      );
     }
     if (!existsSync(example.capturePath)) {
       errors.push(`${label}: no capture; run \`pnpm capture ${idea.name}\``);

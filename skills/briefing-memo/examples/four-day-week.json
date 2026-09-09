@@ -1,5 +1,6 @@
 {
   "title": "Piloting a four-day week for one quarter",
+  "variant": "Serif body with a sticky sidebar of facts and the recommendation",
   "prompt": "Brief me on piloting a four-day work week for our 25-person team for one quarter.",
   "model": "claude-fable-5-1",
   "note": "Two columns at laptop width: the memo body on the left in a generous serif at a comfortable measure, and a sticky sidebar on the right holding the key facts and a brand recommendation card, so the numbers and the answer stay in view while the reader works through the argument. The options are a run of short headed sections with one compact Cost, Risk, and Forecloses row each rather than cards, because the reasoning about each option matters more here than a line-for-line comparison.",

@@ -1,5 +1,6 @@
 {
   "title": "E-bike battery safety rules and certification for a US bike shop",
+  "variant": "Bullets as a two-column grid of cards, one warning catch",
   "prompt": "TLDR on e-bike battery safety rules and certification in the US for a bike shop owner.",
   "model": "claude-fable-5-1",
   "note": "The bullets are a two-column grid of small cards rather than a list, because a shop owner will scan for the one that touches their floor (insurance, storage, shipping) rather than read in order, and the catch is the only warning-toned card and spans the row so it cannot be skimmed past. The one figure is a six-bar inline SVG beside the headline, since the fire count is the argument for everything below it and photographs better than a table would.",

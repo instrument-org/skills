@@ -1,5 +1,6 @@
 {
   "title": "A customer advisory board for Meridian",
+  "variant": "Internal: problem, proposal, and outcome as a three-column band",
   "prompt": "A one-pager proposing a customer advisory board for our B2B product, for the exec team.",
   "model": "claude-fable-5-1",
   "note": "Internal register, all sans and tight, with the problem, proposal, and outcome as a three-column band under the headline so an exec sees the argument's shape before reading a word, and the outcome column the only toned cell. Costs and returns are two short lists side by side, the ask is the one heavy-bordered box and carries a date and the three parts of a yes, and the risks are a four-cell strip so the whole page fits one laptop screen.",

@@ -26,6 +26,7 @@ export interface IdeaMeta {
 
 export interface ExampleMeta {
   title: string;
+  variant: string;
   prompt: string;
   model: string;
   note: string;

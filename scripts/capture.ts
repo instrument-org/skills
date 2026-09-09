@@ -68,6 +68,7 @@ function main() {
       const html = readFileSync(example.htmlPath, "utf-8");
       const meta: ExampleMeta = example.meta ?? {
         title: example.name,
+        variant: "",
         prompt: "",
         model: "",
         note: "",

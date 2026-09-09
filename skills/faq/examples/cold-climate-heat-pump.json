@@ -1,5 +1,6 @@
 {
   "title": "Switching to a heat pump in a cold climate",
+  "variant": "Compact: closed items in groups under pill links",
   "prompt": "An FAQ about switching to a heat pump in a cold climate.",
   "model": "claude-fable-5-1",
   "note": "Compact and sans on purpose: sixteen closed details/summary items in four groups under a row of pill links, so the whole list of questions fits on a laptop screen and the reader scans for theirs before reading a word. Sources sit under every answer as small links into a numbered footer, because the running-cost answers depend on which source you trust and the page says which it followed; a few lines of script open a question when a link lands on it, and the page reads the same without them.",
