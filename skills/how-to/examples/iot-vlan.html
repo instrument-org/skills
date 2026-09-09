@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Put your smart home devices on their own network in UniFi</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="how-to@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-8 sm:px-8 sm:py-10">
+      <header class="lg:pl-[3.5rem]">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          How-to guide
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em]">
+          Put your smart home devices on their own network in UniFi
+        </h1>
+        <p class="mt-3 text-sm leading-6 text-muted-foreground">
+          A second network, called a VLAN, that the plugs, bulbs, cameras, and
+          speakers live on, which can reach the internet but not your laptops.
+          Your laptops can still reach them, so the apps keep working. Written
+          against the UniFi Network application 8.x on a UniFi gateway; menu
+          names move between versions, and the shape of the steps does not.
+        </p>
+      </header>
+
+      <section id="goal" class="mt-6 lg:pl-[3.5rem]">
+        <dl
+          class="grid grid-cols-2 gap-x-6 gap-y-4 border-y border-border py-4 text-sm sm:grid-cols-4"
+        >
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Time
+            </dt>
+            <dd class="mt-0.5 font-semibold">About 90 minutes</dd>
+            <dd class="text-xs text-muted-foreground">
+              most of it moving devices
+            </dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Cost
+            </dt>
+            <dd class="mt-0.5 font-semibold">$0</dd>
+            <dd class="text-xs text-muted-foreground">
+              with the gear you have
+            </dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Difficulty
+            </dt>
+            <dd class="mt-0.5 font-semibold">Intermediate</dd>
+            <dd class="text-xs text-muted-foreground">
+              one step can lock you out
+            </dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Undo
+            </dt>
+            <dd class="mt-0.5 font-semibold">Delete the network</dd>
+            <dd class="text-xs text-muted-foreground">
+              devices fall back to the old Wi-Fi
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="before" class="mt-8 lg:pl-[3.5rem]">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Before you start
+        </p>
+        <div class="mt-3 grid gap-6 text-sm leading-6 sm:grid-cols-3">
+          <div>
+            <p class="font-semibold">Hardware</p>
+            <ul class="mt-1.5 space-y-1.5">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-hard-drives mt-1 text-lg text-brand-700"></i
+                ><span
+                  >A UniFi gateway (Dream Machine, Dream Router, or Cloud
+                  Gateway) running the Network app, version 8 or later.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-wifi-high mt-1 text-lg text-brand-700"></i
+                ><span
+                  >UniFi access points. Third-party APs will not carry the new
+                  network.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-plugs-connected mt-1 text-lg text-brand-700"></i
+                ><span
+                  >A UniFi switch only if some devices are wired, for step
+                  4.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p class="font-semibold">Access</p>
+            <ul class="mt-1.5 space-y-1.5">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-key mt-1 text-lg text-brand-700"></i
+                ><span
+                  >An owner or admin login to the Network app, from a laptop on
+                  a wire or on the main Wi-Fi.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-device-mobile mt-1 text-lg text-brand-700"></i
+                ><span
+                  >A phone with every vendor app installed and signed in, for
+                  step 4.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p class="font-semibold">Know</p>
+            <ul class="mt-1.5 space-y-1.5">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-list-numbers mt-1 text-lg text-brand-700"></i
+                ><span
+                  >Your main network's subnet. The default is
+                  <code class="font-mono text-[13px]">192.168.1.0/24</code>;
+                  check under Settings, Networks.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-list-checks mt-1 text-lg text-brand-700"></i
+                ><span
+                  >A list of the devices to move, and which ones you cast or
+                  AirPlay to. Those need step 5.</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="steps" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase lg:pl-[3.5rem]"
+        >
+          Steps
+        </p>
+        <ol
+          class="relative mt-3 space-y-6 lg:before:absolute lg:before:top-3 lg:before:bottom-3 lg:before:left-[1.1rem] lg:before:w-px lg:before:bg-border"
+        >
+          <li class="lg:grid lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-0">
+            <span
+              class="relative z-10 flex size-9 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+              >1</span
+            >
+            <div
+              class="mt-3 rounded-xl border border-border bg-card p-5 shadow-sm lg:mt-0"
+            >
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h3 class="text-base font-semibold">Create the IoT network</h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>10 min</span
+                >
+              </div>
+              <p class="mt-2 text-sm leading-6">
+                Settings, Networks, New Virtual Network. Give it a name, a VLAN
+                ID, and a subnet of its own. Leave everything else at the
+                default except the two lines marked. Save, and nothing changes
+                yet: no device is on it until step 4.
+              </p>
+              <pre
+                class="mt-3 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-[13px] leading-6 text-gray-100"
+              ><code>Name              <span class="text-brand-300">IoT</span>
+VLAN ID           <span class="text-brand-300">20</span>                 <span class="text-gray-500"># any unused number 2 to 4094</span>
+Gateway / Subnet  <span class="text-brand-300">192.168.20.1/24</span>    <span class="text-gray-500"># must differ from the main network</span>
+DHCP Mode         DHCP Server
+DHCP Range        192.168.20.6 to 192.168.20.254
+Isolate Network   <span class="text-warning-300">off</span>                <span class="text-gray-500"># step 3 does this properly</span>
+Multicast DNS     <span class="text-warning-300">off</span>                <span class="text-gray-500"># step 5 turns it on</span></code></pre>
+            </div>
+          </li>
+
+          <li class="lg:grid lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-0">
+            <span
+              class="relative z-10 flex size-9 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+              >2</span
+            >
+            <div
+              class="mt-3 rounded-xl border border-border bg-card p-5 shadow-sm lg:mt-0"
+            >
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h3 class="text-base font-semibold">
+                  Make a Wi-Fi network that lands on it
+                </h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>5 min</span
+                >
+              </div>
+              <p class="mt-2 text-sm leading-6">
+                Settings, WiFi, Create New. The only choice that matters is the
+                Network field: point it at IoT. Keep it on 2.4 GHz and WPA2,
+                because a surprising number of plugs and bulbs speak nothing
+                else, and use a password you will type into a dozen apps.
+              </p>
+              <pre
+                class="mt-3 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-[13px] leading-6 text-gray-100"
+              ><code>Name              <span class="text-brand-300">home-iot</span>
+Network           <span class="text-brand-300">IoT</span>
+Band              2.4 GHz only
+Security          WPA2 Personal       <span class="text-gray-500"># not WPA3, not WPA2/WPA3</span>
+Client Isolation  off                 <span class="text-gray-500"># breaks app setup; revisit in Variations</span></code></pre>
+            </div>
+          </li>
+
+          <li class="lg:grid lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-0">
+            <span
+              class="relative z-10 flex size-9 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+              >3</span
+            >
+            <div
+              class="mt-3 rounded-xl border border-border bg-card p-5 shadow-sm lg:mt-0"
+            >
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h3 class="text-base font-semibold">
+                  Block IoT from reaching the rest of the house
+                </h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>20 min</span
+                >
+              </div>
+              <p class="mt-2 text-sm leading-6">
+                Settings, Security, Traffic and Firewall Rules, Create Entry, on
+                the LAN In ruleset. Two rules, in this order. The first lets
+                replies through so your laptop can open a camera stream; the
+                second stops anything on IoT from starting a conversation with a
+                private address. Traffic from your main network into IoT stays
+                allowed, which is the default and is what the apps need.
+              </p>
+              <pre
+                class="mt-3 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-[13px] leading-6 text-gray-100"
+              ><code><span class="text-gray-500"># Rule 1, above rule 2</span>
+Name          Allow established and related
+Action        Allow
+Source        Network: <span class="text-brand-300">IoT</span>
+Destination   Any
+States        Established, Related
+
+<span class="text-gray-500"># Rule 2</span>
+Name          Block IoT to private networks
+Action        Drop
+Source        Network: <span class="text-brand-300">IoT</span>          <span class="text-warning-300"># not "Any", see below</span>
+Destination   IP Group: RFC1918    <span class="text-gray-500"># 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16</span></code></pre>
+              <div
+                class="mt-4 rounded-lg border-l-4 border-warning-500 bg-warning-50 p-4"
+              >
+                <p
+                  class="flex items-center gap-1.5 text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+                >
+                  <i class="ph ph-warning text-base"></i>Where people get locked
+                  out
+                </p>
+                <p class="mt-1.5 text-sm leading-6 text-warning-900">
+                  Rule 2 with Source set to Any, or placed above rule 1, cuts
+                  the main network off from the gateway the moment it saves, and
+                  the console tab stops responding. Do this step from a laptop
+                  on the main network, keep a second tab open and logged in
+                  before you save, and check the source field twice. If it
+                  happens anyway: the second tab can delete the rule; failing
+                  that, hold the reset button on the gateway for 10 seconds to
+                  restart it, which keeps the config, then remove the rule.
+                </p>
+              </div>
+            </div>
+          </li>
+
+          <li class="lg:grid lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-0">
+            <span
+              class="relative z-10 flex size-9 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+              >4</span
+            >
+            <div
+              class="mt-3 rounded-xl border border-border bg-card p-5 shadow-sm lg:mt-0"
+            >
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h3 class="text-base font-semibold">
+                  Move the devices, one app at a time
+                </h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>30 to 45 min</span
+                >
+              </div>
+              <p class="mt-2 text-sm leading-6">
+                Each device has to forget the old Wi-Fi and join home-iot, and
+                almost none of them let you change networks in place: you remove
+                the device in its app and set it up again. Put your phone on
+                home-iot first, because most setup flows require the phone and
+                the device to share a network, then work through the apps. Wired
+                devices move by changing the port's network on the switch:
+                Devices, the switch, Ports, pick the port, Primary Network: IoT.
+              </p>
+              <p class="mt-2 text-sm leading-6 text-muted-foreground">
+                Order that saves grief: the hub first if you have one (Hue
+                bridge, SmartThings), then the things paired to it stay paired.
+                Cameras last; they are the slowest to re-add. Automations that
+                reference a removed device usually need to be re-linked, so
+                screenshot them before you start.
+              </p>
+            </div>
+          </li>
+
+          <li class="lg:grid lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-0">
+            <span
+              class="relative z-10 flex size-9 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+              >5</span
+            >
+            <div
+              class="mt-3 rounded-xl border border-border bg-card p-5 shadow-sm lg:mt-0"
+            >
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h3 class="text-base font-semibold">
+                  Let casting and AirPlay find their way across
+                </h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>10 min</span
+                >
+              </div>
+              <p class="mt-2 text-sm leading-6">
+                A speaker or a TV on IoT is invisible to a laptop on the main
+                network until the gateway repeats discovery announcements
+                between them. Turn on Multicast DNS on both networks: Settings,
+                Networks, open each, tick Multicast DNS, save. Discovery works
+                from the main network into IoT; rule 2 stops the reverse, which
+                is the point.
+              </p>
+              <pre
+                class="mt-3 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-[13px] leading-6 text-gray-100"
+              ><code>Settings &gt; Networks &gt; Default   Multicast DNS  <span class="text-brand-300">on</span>
+Settings &gt; Networks &gt; IoT       Multicast DNS  <span class="text-brand-300">on</span>
+                                IGMP Snooping  on   <span class="text-gray-500"># keeps casting from flooding Wi-Fi</span></code></pre>
+            </div>
+          </li>
+
+          <li class="lg:grid lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-0">
+            <span
+              class="relative z-10 flex size-9 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+              >6</span
+            >
+            <div
+              class="mt-3 rounded-xl border border-border bg-card p-5 shadow-sm lg:mt-0"
+            >
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h3 class="text-base font-semibold">Prove the wall is there</h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>10 min</span
+                >
+              </div>
+              <p class="mt-2 text-sm leading-6">
+                Three checks from a terminal. The first two run from a laptop on
+                the main network; the third runs from the phone, still on
+                home-iot, using any terminal app or a browser. Pick a device
+                address from the client list under Clients, filtered to the IoT
+                network.
+              </p>
+              <pre
+                class="mt-3 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-[13px] leading-6 text-gray-100"
+              ><code><span class="text-gray-500"># from the main network: replies</span>
+$ ping -c 3 <span class="text-brand-300">192.168.20.14</span>
+
+<span class="text-gray-500"># from the main network: the camera's web page opens</span>
+$ curl -m 3 -I http://<span class="text-brand-300">192.168.20.14</span>
+
+<span class="text-gray-500"># from a phone on home-iot: times out, which is success</span>
+$ curl -m 3 -I http://192.168.1.1</code></pre>
+              <p class="mt-2 text-sm leading-6 text-muted-foreground">
+                Then move the phone back to the main Wi-Fi and open two vendor
+                apps and one cast target. If an app spins, it is usually a
+                device that cached the old network; power-cycle it once before
+                touching any rule.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="variations" class="mt-10 lg:pl-[3.5rem]">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Variations
+        </p>
+        <ul class="mt-2 divide-y divide-border text-sm leading-6">
+          <li class="grid gap-1 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <span class="font-medium">Network app 9, zone-based firewall</span>
+            <span class="text-muted-foreground"
+              >Step 3 becomes one policy instead of two rules: Settings, Policy
+              Engine, from zone Internal (IoT) to zone Internal (Default),
+              action Block, with Allow Return Traffic on. Everything else is the
+              same.</span
+            >
+          </li>
+          <li class="grid gap-1 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <span class="font-medium">A hub on the main network</span>
+            <span class="text-muted-foreground"
+              >Home Assistant or a Hubitat that has to reach every device stays
+              on the main network; rule 1 already lets replies back. If the hub
+              must receive unsolicited traffic from a device, add one Allow rule
+              above rule 2 for that device's address to the hub's address, and
+              nothing wider.</span
+            >
+          </li>
+          <li class="grid gap-1 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <span class="font-medium">Client isolation</span>
+            <span class="text-muted-foreground"
+              >Turning it on for home-iot in step 2 also stops devices from
+              seeing each other, which breaks anything that pairs over Wi-Fi
+              (speaker groups, camera base stations). Leave it off unless every
+              device talks only to the cloud.</span
+            >
+          </li>
+          <li class="grid gap-1 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <span class="font-medium">No terminal on the phone</span>
+            <span class="text-muted-foreground"
+              >For the third check in step 6, open the browser on home-iot and
+              try the gateway's address. A page that never loads is the
+              pass.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section id="done" class="mt-10 lg:pl-[3.5rem]">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          You are done when
+        </p>
+        <ul class="mt-3 space-y-2">
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >A phone on home-iot gets a 192.168.20.x address and can load a
+                public website.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >From home-iot, the gateway's page at 192.168.1.1 never
+                loads.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >From the main network, ping to an IoT device gets
+                replies.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >Under Clients, every smart device shows IoT in the Network
+                column and none shows Default.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >A laptop on the main network can cast or AirPlay to a speaker
+                on IoT.</span
+              ></label
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-12 border-t border-border pt-5 text-xs leading-6 text-muted-foreground lg:pl-[3.5rem]"
+      >
+        <strong class="text-foreground">Sources.</strong> The UniFi help center
+        articles on virtual networks, firewall rules, and multicast DNS, two
+        long community threads on isolating smart home devices, and one
+        walkthrough video. Settings names follow Network app 8.x; the zone-based
+        variation follows the 9.0 release notes. Not run on the reader's
+        hardware. Illustrative: steps are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "title": "Run a 30-minute weekly retro for a team of eight",
+  "prompt": "How do I run a 30-minute weekly retro for a team of eight that has never done one?",
+  "model": "claude-fable-5-1",
+  "note": "A playbook rather than a tutorial: tight sans, the goal as a small card beside the title, and the steps as a timeline with monospace minute marks in a left column and the script on the right, with the words to say out loud in italic quotation blocks so stage directions and lines are told apart at a glance. The three pitfalls sit at the minute where a first retro goes wrong, variations are three parallel columns for remote, in person, and later weeks, and the done checklist carries a small progressive tally.",
+  "illustrative": true,
+  "html_sha256": "0f0992ce0d2178848eec168392695982de3817a5d1080bf56a266aaf3afaa8bb"
+}

@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Run a 30-minute weekly retro for a team of eight</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="how-to@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-8 sm:px-8 sm:py-10">
+      <header
+        class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-end"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+          >
+            How-to guide
+          </p>
+          <h1
+            class="mt-2 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl"
+          >
+            Run a 30-minute weekly retro for a team of eight that has never done
+            one
+          </h1>
+          <p class="mt-3 text-sm leading-6 text-muted-foreground">
+            A playbook you can run from the page: what to have ready, what to
+            say at each minute mark, and the one rule that keeps a first retro
+            from turning into a complaint session. The team leaves with a single
+            change to try, and next week's retro opens by checking whether it
+            happened.
+          </p>
+        </div>
+        <dl
+          id="goal"
+          class="grid grid-cols-2 gap-x-4 gap-y-3 rounded-xl border border-border bg-card p-4 text-sm shadow-sm lg:grid-cols-1"
+        >
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              In the room
+            </dt>
+            <dd class="mt-0.5 font-semibold">30 minutes, weekly</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Prep, first time
+            </dt>
+            <dd class="mt-0.5 font-semibold">20 minutes</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Cost
+            </dt>
+            <dd class="mt-0.5 font-semibold">$0, a board and sticky notes</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              People
+            </dt>
+            <dd class="mt-0.5 font-semibold">8, plus you facilitating</dd>
+          </div>
+        </dl>
+      </header>
+
+      <section
+        id="before"
+        class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_16rem]"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Before the first one
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-calendar-check mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong>A fixed slot</strong> on everyone's calendar, 30
+                minutes, the same time every week. Not the last slot on Friday,
+                because people leave, and not right before a demo, because
+                people prepare.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-columns mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong>A board with three columns</strong>: Went well, Did
+                not, Try. A whiteboard in the room, or a shared doc or board
+                with those three headings for a remote team.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-note mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong>Sticky notes and markers</strong>, one pad per person,
+                or the digital equivalent. One thought per note is the whole
+                format.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-timer mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong>A timer everyone can see.</strong> A phone propped on
+                the table or a timer tab shared on screen. The minute marks
+                below only work if they are visible.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-envelope-simple mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong>The message on the right, sent the day before.</strong>
+                A team that has never done a retro assumes it is a performance
+                review. One paragraph fixes that.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="self-start rounded-xl bg-muted p-4">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Send the day before
+          </p>
+          <blockquote class="mt-2 text-sm leading-6 text-gray-700 italic">
+            "Starting Thursday at 2, we'll spend 30 minutes a week looking at
+            how the week went, not what we shipped. Three columns: went well,
+            didn't, try. Everyone writes, I read, we pick one thing to try the
+            following week. Nobody is being evaluated. Bring nothing."
+          </blockquote>
+        </div>
+      </section>
+
+      <section id="steps" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          The 30 minutes
+        </p>
+        <ol class="mt-2">
+          <li
+            class="grid gap-2 border-t border-border py-5 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6"
+          >
+            <p class="font-mono text-sm text-brand-700 sm:pt-0.5">0:00</p>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h3 class="text-base font-semibold">Set the frame</h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>3 min</span
+                >
+              </div>
+              <p class="mt-1.5 text-sm leading-6">
+                Start the timer on the minute, whoever is missing. Point at the
+                three columns, say the rule about one thought per note, and say
+                out loud that you will read every note without discussion first.
+                The last sentence is the one that lets quiet people write.
+              </p>
+              <blockquote
+                class="mt-2 border-l-2 border-brand-500 pl-4 text-sm leading-6 text-gray-700 italic"
+              >
+                "This is thirty minutes to look at how the week went, not what
+                we shipped, and nobody's in trouble. You'll write for seven
+                minutes in silence, one thought per note. I'll read every note
+                out loud before we discuss anything. We leave with exactly one
+                thing to try next week."
+              </blockquote>
+            </div>
+          </li>
+
+          <li
+            class="grid gap-2 border-t border-border py-5 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6"
+          >
+            <p class="font-mono text-sm text-brand-700 sm:pt-0.5">0:03</p>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h3 class="text-base font-semibold">Silent writing</h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>7 min</span
+                >
+              </div>
+              <p class="mt-1.5 text-sm leading-6">
+                Everyone writes, including you. Notes go straight onto the board
+                as they are written, into whichever column fits. Silence is the
+                feature: the first person to talk sets the topic for everyone
+                else, and the point of writing is that eight people set eight
+                topics. If someone starts talking, smile and point at the timer.
+              </p>
+              <blockquote
+                class="mt-2 border-l-2 border-brand-500 pl-4 text-sm leading-6 text-gray-700 italic"
+              >
+                "Seven minutes, silent. As many notes as you want, one idea
+                each. Stick them up as you go. Write what you'd say if nobody
+                was listening."
+              </blockquote>
+              <div
+                class="mt-3 rounded-lg border-l-4 border-warning-500 bg-warning-50 p-3.5"
+              >
+                <p
+                  class="flex items-center gap-1.5 text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+                >
+                  <i class="ph ph-warning text-base"></i>The empty-board minute
+                </p>
+                <p class="mt-1 text-sm leading-6 text-warning-900">
+                  Around minute two the board is still bare and someone jokes
+                  that nothing happened this week. Do not fill the silence and
+                  do not shorten the timer. Notes arrive in the last three
+                  minutes, once people see that others are writing.
+                </p>
+              </div>
+            </div>
+          </li>
+
+          <li
+            class="grid gap-2 border-t border-border py-5 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6"
+          >
+            <p class="font-mono text-sm text-brand-700 sm:pt-0.5">0:10</p>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h3 class="text-base font-semibold">
+                  Read every note and cluster
+                </h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>8 min</span
+                >
+              </div>
+              <p class="mt-1.5 text-sm leading-6">
+                Read each note aloud, in board order, in a flat voice, and move
+                duplicates together as you go. No commentary, no "great point",
+                no asking who wrote it. Eight people produce about twenty-five
+                notes; at fifteen seconds each that is six minutes, with two
+                spare for clustering. Name each cluster with two words on a
+                fresh note.
+              </p>
+              <blockquote
+                class="mt-2 border-l-2 border-brand-500 pl-4 text-sm leading-6 text-gray-700 italic"
+              >
+                "I'll read everything. If you hear yours, you don't need to say
+                so. We're not solving anything yet, just seeing what's here."
+              </blockquote>
+              <div
+                class="mt-3 rounded-lg border-l-4 border-warning-500 bg-warning-50 p-3.5"
+              >
+                <p
+                  class="flex items-center gap-1.5 text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+                >
+                  <i class="ph ph-warning text-base"></i>Where a first retro
+                  dies
+                </p>
+                <p class="mt-1 text-sm leading-6 text-warning-900">
+                  The manager reacts to the third note, everyone watches the
+                  reaction, and the remaining notes get read to a room that is
+                  now managing the manager. If you are the manager, your job for
+                  these eight minutes is to be a text-to-speech engine. If you
+                  cannot, hand the reading to someone else before you start.
+                </p>
+              </div>
+            </div>
+          </li>
+
+          <li
+            class="grid gap-2 border-t border-border py-5 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6"
+          >
+            <p class="font-mono text-sm text-brand-700 sm:pt-0.5">0:18</p>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h3 class="text-base font-semibold">
+                  Vote, then discuss only the winner
+                </h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>7 min</span
+                >
+              </div>
+              <p class="mt-1.5 text-sm leading-6">
+                Two dots each, placed at the same time so nobody votes second.
+                One minute to vote, then six minutes on the top cluster and
+                nothing else. Ask what is underneath it before anyone proposes a
+                fix; the first fix proposed in a first retro is almost always
+                for the wrong problem. Ties go to the one in the Did not column.
+              </p>
+              <blockquote
+                class="mt-2 border-l-2 border-brand-500 pl-4 text-sm leading-6 text-gray-700 italic"
+              >
+                "Two dots each, on what you most want to talk about, not on your
+                own note. Everyone up at once." Then: "Top one is code review
+                wait times. Before anyone fixes it: what does that actually look
+                like on a Tuesday?"
+              </blockquote>
+            </div>
+          </li>
+
+          <li
+            class="grid gap-2 border-t border-border py-5 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6"
+          >
+            <p class="font-mono text-sm text-brand-700 sm:pt-0.5">0:25</p>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h3 class="text-base font-semibold">Decide the one change</h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>4 min</span
+                >
+              </div>
+              <p class="mt-1.5 text-sm leading-6">
+                One action, small enough to happen by next Thursday, with one
+                name on it and a way to tell whether it happened. Write it on a
+                note in the Try column and read it back. If the room proposes
+                three, ask which one they would keep if they could keep only
+                one; that question ends the meeting on time more reliably than
+                the timer does.
+              </p>
+              <blockquote
+                class="mt-2 border-l-2 border-brand-500 pl-4 text-sm leading-6 text-gray-700 italic"
+              >
+                "What's the smallest thing we could try next week that would
+                move this? Who owns it? How will we know on Thursday whether it
+                happened?"
+              </blockquote>
+              <div
+                class="mt-3 rounded-lg border-l-4 border-warning-500 bg-warning-50 p-3.5"
+              >
+                <p
+                  class="flex items-center gap-1.5 text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+                >
+                  <i class="ph ph-warning text-base"></i>Five actions is zero
+                  actions
+                </p>
+                <p class="mt-1 text-sm leading-6 text-warning-900">
+                  A retro that ends with a list ends with nothing done, and the
+                  team learns by week three that retros produce lists. One
+                  action, every week, checked the next week, is what makes the
+                  meeting real.
+                </p>
+              </div>
+            </div>
+          </li>
+
+          <li
+            class="grid gap-2 border-t border-b border-border py-5 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6"
+          >
+            <p class="font-mono text-sm text-brand-700 sm:pt-0.5">0:29</p>
+            <div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h3 class="text-base font-semibold">Close on the minute</h3>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                  ><i class="ph ph-clock"></i>1 min</span
+                >
+              </div>
+              <p class="mt-1.5 text-sm leading-6">
+                Photograph the board, say where the action will be written, and
+                end at 0:30 even mid-sentence. Ending on time the first week is
+                the promise that makes people come back the second.
+              </p>
+              <blockquote
+                class="mt-2 border-l-2 border-brand-500 pl-4 text-sm leading-6 text-gray-700 italic"
+              >
+                "That's time. Thanks. Same slot next week, and the first thing
+                on the board will be whether Sam's change happened."
+              </blockquote>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="variations" class="mt-10 grid gap-6 sm:grid-cols-3">
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Remote
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-video-camera mt-1 text-base text-brand-700"></i
+              ><span
+                >The board is a shared doc or whiteboard with the three columns;
+                everyone has it open before 0:00.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i
+                class="ph ph-microphone-slash mt-1 text-base text-brand-700"
+              ></i
+              ><span
+                >Everyone mutes for the 0:03 writing block. Cameras optional; a
+                blank grid of muted faces is fine.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-cursor-click mt-1 text-base text-brand-700"></i
+              ><span
+                >Voting is the board's own reactions or a plus-two typed by each
+                person into chat at the same moment.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            In person
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-chalkboard mt-1 text-base text-brand-700"></i
+              ><span
+                >Draw the columns before anyone arrives; the room reads an empty
+                drawn board as "this is happening."</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-user-focus mt-1 text-base text-brand-700"></i
+              ><span
+                >Stand at the board for 0:10; people talk to whoever is
+                standing, so standing keeps the reading yours.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-camera mt-1 text-base text-brand-700"></i
+              ><span
+                >The photo at 0:29 is the record. Post it where the team already
+                looks.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            From week four
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i
+                class="ph ph-arrows-clockwise mt-1 text-base text-brand-700"
+              ></i
+              ><span
+                >Rotate the facilitator. The 0:00 script goes to whoever runs
+                it, and the manager writes notes like everyone else.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check-square mt-1 text-base text-brand-700"></i
+              ><span
+                >Open 0:00 with last week's action: did it happen, did it help,
+                keep or drop. One minute, no debate.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-hourglass mt-1 text-base text-brand-700"></i
+              ><span
+                >Every fourth week, take 45 minutes and let the discussion cover
+                the top two clusters.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="done" class="mt-10">
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            The first retro worked when
+          </p>
+          <p id="tally" class="text-xs text-muted-foreground">
+            Tick what was true afterward.
+          </p>
+        </div>
+        <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >It started at 0:00 and ended at 0:30, by the timer.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >All eight people put at least one note on the board.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >Every note was read aloud before anyone discussed one.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >Someone other than the manager spoke first in the
+                discussion.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >Exactly one action left the room, with a name and a way to
+                check it.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-sm leading-6"
+                >The action and the board photo are posted where the team
+                already looks, and next week's slot is on the calendar.</span
+              ></label
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-12 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Three facilitation
+        guides on retrospectives, two team-lead write-ups of running a first
+        retro, and the note count and timings from the format above at the team
+        size stated. The scripts are written to be said as printed and shortened
+        once the team knows the shape. Not run with the reader's team.
+        Illustrative: steps are representative, not verified.
+      </footer>
+    </main>
+
+    <script>
+      // Counts the ticked results and rewrites the tally. With scripts off the
+      // boxes still tick and the line reads as written.
+      const boxes = [
+        ...document.querySelectorAll("#done input[type=checkbox]"),
+      ];
+      const tally = document.getElementById("tally");
+      for (const box of boxes) {
+        box.addEventListener("change", () => {
+          const n = boxes.filter((b) => b.checked).length;
+          tally.textContent =
+            n === boxes.length
+              ? `${n} of ${boxes.length}. It worked; run it again next week without changing anything.`
+              : `${n} of ${boxes.length} true. Whatever is unticked is next week's only fix.`;
+        });
+      }
+    </script>
+  </body>
+</html>

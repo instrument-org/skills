@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Replace a kitchen faucet yourself</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="how-to@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-brown-50 font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          How-to guide
+        </p>
+        <h1
+          class="mt-4 font-serif text-4xl leading-tight font-medium tracking-[-0.02em] sm:text-5xl sm:leading-tight"
+        >
+          Replace a kitchen faucet yourself
+        </h1>
+        <p class="mt-5 max-w-xl text-base leading-7 text-muted-foreground">
+          An afternoon on your back under the sink, and the only specialty tool
+          costs less than lunch. The old faucet comes off harder than the new
+          one goes on, so the middle of this guide is slow and the end is quick.
+          Written for a sink with shutoff valves under it and a faucet that
+          mounts from below, which is nearly every kitchen faucet sold in the
+          last thirty years.
+        </p>
+      </header>
+
+      <section id="goal" class="mt-10">
+        <dl
+          class="grid grid-cols-2 gap-x-6 gap-y-5 border-y border-brown-300 py-6 text-sm sm:grid-cols-4"
+        >
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Time
+            </dt>
+            <dd class="mt-1 font-serif text-xl">1.5 to 2 hours</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Cost
+            </dt>
+            <dd class="mt-1 font-serif text-xl">$140 to $270</dd>
+            <dd class="text-xs text-muted-foreground">
+              faucet plus about $20 of extras
+            </dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Difficulty
+            </dt>
+            <dd class="mt-1 font-serif text-xl">Moderate</dd>
+            <dd class="text-xs text-muted-foreground">awkward, not hard</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Saves
+            </dt>
+            <dd class="mt-1 font-serif text-xl">$150 to $300</dd>
+            <dd class="text-xs text-muted-foreground">
+              a plumber's typical charge
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="before" class="mt-12">
+        <h2 class="font-serif text-2xl font-medium">
+          What to have on the floor before you start
+        </h2>
+        <div class="mt-6 grid gap-8 text-sm leading-6 sm:grid-cols-2">
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Tools
+            </p>
+            <ul class="mt-3 space-y-2.5">
+              <li class="flex items-start gap-3">
+                <i class="ph ph-wrench mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Basin wrench.</strong> Long shaft, swiveling jaw,
+                  about $15. It is the only tool that reaches the nuts behind
+                  the sink bowl.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-wrench mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Adjustable wrench</strong>, medium, for the supply
+                  line nuts.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-flashlight mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Headlamp.</strong> Both hands will be busy.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-drop mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Bucket, old towels, a small bowl</strong> for the
+                  parts you take off.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-scissors mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Plastic putty knife</strong> and a scouring pad, for
+                  the ring the old faucet leaves.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-camera mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Your phone</strong>, to photograph the connections
+                  before you undo them.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Materials
+            </p>
+            <ul class="mt-3 space-y-2.5">
+              <li class="flex items-start gap-3">
+                <i class="ph ph-package mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>The new faucet</strong>, with the supply lines and
+                  gasket in its box. Most include them; check the box before you
+                  leave the store.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-circle-dashed mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Two new supply lines</strong>, braided stainless,
+                  only if the faucet came without them. Match the valve end,
+                  usually 3/8 inch compression.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-spiral mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Plumber's tape</strong>, one roll. You will use a few
+                  inches of it, or none.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="ph ph-spray-bottle mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  ><strong>Penetrating oil</strong>, for the nuts that have been
+                  wet for a decade.</span
+                >
+              </li>
+            </ul>
+            <p
+              class="mt-6 text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Check before buying
+            </p>
+            <ul class="mt-3 space-y-2.5">
+              <li class="flex items-start gap-3">
+                <i class="ph ph-ruler mt-0.5 text-xl text-brand-700"></i
+                ><span
+                  >Count the holes in the sink: one, three, or four. A one-hole
+                  faucet fits a three-hole sink with the deck plate in its box;
+                  the reverse does not work.</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <i
+                  class="ph ph-arrows-out-line-horizontal mt-0.5 text-xl text-brand-700"
+                ></i
+                ><span
+                  >Measure the space above the sink. A tall gooseneck under a
+                  low window is the most common return to the store.</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-xl border border-error-300 bg-error-50 p-5">
+          <p
+            class="flex items-center gap-1.5 text-xs font-medium tracking-[0.12em] text-error-700 uppercase"
+          >
+            <i class="ph ph-hand-palm text-base"></i>Stop and call a plumber if
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6 text-error-900">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x-circle mt-1 text-base text-error-700"></i
+              ><span
+                >There are no shutoff valves under the sink, only pipe. You
+                would have to shut off the whole house and the job becomes a
+                different job.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x-circle mt-1 text-base text-error-700"></i
+              ><span
+                >A valve will not turn, or keeps dripping from its stem once it
+                is closed. Forcing it snaps the stem, and then the water is on
+                until someone with a torch arrives.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x-circle mt-1 text-base text-error-700"></i
+              ><span
+                >The pipes coming out of the wall are gray galvanized steel and
+                flake when touched, or anything is already wet before you
+                start.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="steps" class="mt-12">
+        <h2 class="font-serif text-2xl font-medium">The steps</h2>
+        <ol class="mt-6 space-y-5">
+          <li class="rounded-xl border border-brown-300 bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+                >1</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-clock"></i>10 min</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-gauge"></i>easy</span
+              >
+            </div>
+            <h3 class="mt-4 font-serif text-xl font-medium">
+              Empty the cabinet, shut both valves, and open the old faucet.
+            </h3>
+            <p class="mt-2 text-base leading-7">
+              Everything under the sink comes out, the towels go in, and the
+              bucket goes under the valves. Turn each valve clockwise until it
+              stops, without forcing the last quarter turn. Then lift the old
+              faucet's handle to full hot and full cold: what drains out is what
+              was in the lines, and it should slow to nothing within a few
+              seconds. If it keeps running, a valve is not holding, and that is
+              the first item in the red box above.
+            </p>
+          </li>
+
+          <li class="rounded-xl border border-brown-300 bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+                >2</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-clock"></i>10 min</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-gauge"></i>easy</span
+              >
+            </div>
+            <h3 class="mt-4 font-serif text-xl font-medium">
+              Photograph everything, then disconnect the supply lines at the
+              valves.
+            </h3>
+            <p class="mt-2 text-base leading-7">
+              Take the photos before touching anything: which line goes to which
+              valve, where the sprayer hose runs, where the weight hangs. Then
+              hold each valve still with one hand and turn the supply nut
+              counterclockwise with the wrench. A cup of water comes out of each
+              line; that is the bucket's job. Leave the lines attached at the
+              faucet end, since they come out with it.
+            </p>
+          </li>
+
+          <li class="rounded-xl border border-brown-300 bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+                >3</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-clock"></i>20 to 40 min</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-gauge"></i>hard</span
+              >
+            </div>
+            <h3 class="mt-4 font-serif text-xl font-medium">
+              Free the old faucet from underneath. This is the slow part.
+            </h3>
+            <p class="mt-2 text-base leading-7">
+              Lying on your back with the headlamp on, find the mounting nuts on
+              the faucet's threaded shanks, up behind the bowl where a normal
+              wrench cannot go. The basin wrench's jaw hooks onto a nut and the
+              long handle gives you the leverage from down by your chest. Turn
+              counterclockwise. Once the nuts are off, go up top and lift the
+              faucet out, feeding the old lines up through the holes.
+            </p>
+            <div
+              class="mt-4 rounded-lg border-l-4 border-warning-500 bg-warning-50 p-4"
+            >
+              <p
+                class="flex items-center gap-1.5 text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+              >
+                <i class="ph ph-warning text-base"></i>When a nut will not move
+              </p>
+              <p class="mt-1.5 text-sm leading-6 text-warning-900">
+                Soak it with penetrating oil, go make coffee, and try again in
+                fifteen minutes; it works far more often than it seems it
+                should. Plastic mounting nuts on a cheap old faucet can be cut
+                with a hacksaw blade wrapped in tape, carefully, since the sink
+                is right there. Never heat anything under a sink.
+              </p>
+            </div>
+          </li>
+
+          <li class="rounded-xl border border-brown-300 bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+                >4</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-clock"></i>10 min</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-gauge"></i>easy</span
+              >
+            </div>
+            <h3 class="mt-4 font-serif text-xl font-medium">
+              Scrape the deck clean and dry it.
+            </h3>
+            <p class="mt-2 text-base leading-7">
+              The old faucet leaves a ring of hardened putty or a gasket's
+              ghost. The plastic putty knife lifts it without scratching
+              stainless or enamel; the scouring pad takes the rest. Dry the deck
+              completely, because the new gasket seals against a clean flat
+              surface and nothing else.
+            </p>
+          </li>
+
+          <li class="rounded-xl border border-brown-300 bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+                >5</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-clock"></i>15 min</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-gauge"></i>moderate</span
+              >
+            </div>
+            <h3 class="mt-4 font-serif text-xl font-medium">
+              Set the new faucet, then tighten it from below by hand.
+            </h3>
+            <p class="mt-2 text-base leading-7">
+              Fit the rubber gasket to the base (or the deck plate, if you are
+              covering three holes), feed the new lines and the sprayer hose
+              down through the hole, and have someone hold it straight from
+              above while you thread the mounting nut up from below. Hand tight,
+              then a quarter turn with the basin wrench. Check from above that
+              the spout is centered on the sink before that quarter turn,
+              because it does not move afterward.
+            </p>
+          </li>
+
+          <li class="rounded-xl border border-brown-300 bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+                >6</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-clock"></i>10 min</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-gauge"></i>easy</span
+              >
+            </div>
+            <h3 class="mt-4 font-serif text-xl font-medium">
+              Connect the supply lines: hot on the left, hand tight plus a
+              quarter turn.
+            </h3>
+            <p class="mt-2 text-base leading-7">
+              Hot is the left valve as you face the cabinet, and the faucet's
+              hot line is usually marked red or sits on the left as you look at
+              the spout. Thread each nut on by hand until it stops, then a
+              quarter turn with the wrench while the other hand holds the valve
+              still. Then hang the sprayer weight on the hose where your photo
+              shows the old one sat.
+            </p>
+            <div
+              class="mt-4 rounded-lg border-l-4 border-warning-500 bg-warning-50 p-4"
+            >
+              <p
+                class="flex items-center gap-1.5 text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+              >
+                <i class="ph ph-warning text-base"></i>Where the tape goes, and
+                does not
+              </p>
+              <p class="mt-1.5 text-sm leading-6 text-warning-900">
+                The nuts on braided supply lines seal with a rubber washer
+                inside; tape on those threads keeps the washer from seating and
+                makes the leak you were trying to prevent. Tape belongs only on
+                a bare tapered pipe thread, which on this job is usually
+                nowhere. If a joint weeps after a quarter turn, another eighth
+                turn is the fix, not tape.
+              </p>
+            </div>
+          </li>
+
+          <li class="rounded-xl border border-brown-300 bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+                >7</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-clock"></i>15 min</span
+              >
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                ><i class="ph ph-gauge"></i>easy</span
+              >
+            </div>
+            <h3 class="mt-4 font-serif text-xl font-medium">
+              Unscrew the aerator, open the valves slowly, and run it for a full
+              minute.
+            </h3>
+            <p class="mt-2 text-base leading-7">
+              Take the aerator off the spout tip first, so the grit from the new
+              lines flushes out instead of lodging in it. Open each valve a
+              little, then all the way, watching the joints. Run hot and cold
+              for a minute each, then screw the aerator back on. Dry every joint
+              with a paper towel and look again after ten minutes; a leak shows
+              as a bead, not a drip, at first.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="variations" class="mt-12">
+        <h2 class="font-serif text-2xl font-medium">
+          If your sink is different
+        </h2>
+        <ul class="mt-4 divide-y divide-brown-300 text-base leading-7">
+          <li class="py-4">
+            <strong>A garbage disposal is in the way.</strong> Unplug it at the
+            outlet before step 1 and work around it; taking it off is a separate
+            job with its own surprises, and it rarely has to come off for a
+            faucet.
+          </li>
+          <li class="py-4">
+            <strong>A pull-down sprayer.</strong> In step 5, the hose has to
+            hang free below the deck for its whole travel; a P-trap or the
+            disposal's cord in its path makes the sprayer stick halfway. Route
+            the hose before you tighten the mount.
+          </li>
+          <li class="py-4">
+            <strong>Three holes, one-hole faucet.</strong> The deck plate goes
+            on in step 5 with its own gasket underneath, and the two spare holes
+            end up under it. Some deck plates ask for a bead of silicone
+            instead; the sheet in the box wins.
+          </li>
+          <li class="py-4">
+            <strong>Old-style rigid supply tubes</strong> (chrome, bent by hand)
+            instead of braided lines. Replace them with braided lines in step 6
+            rather than reusing them; they are the $10 that saves a second
+            afternoon.
+          </li>
+        </ul>
+      </section>
+
+      <section id="done" class="mt-12">
+        <h2 class="font-serif text-2xl font-medium">You are done when</h2>
+        <ul class="mt-4 space-y-2">
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-brown-300 bg-card p-3.5"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-base leading-7"
+                >Hot is hot and cold is cold, and the lever moves the way the
+                box shows.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-brown-300 bg-card p-3.5"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-base leading-7"
+                >All four joints (two at the valves, two at the faucet) are dry
+                to a paper towel after ten minutes of running.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-brown-300 bg-card p-3.5"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-base leading-7"
+                >The towel on the cabinet floor is still dry an hour
+                later.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-brown-300 bg-card p-3.5"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-base leading-7"
+                >The faucet does not rock when you push the spout
+                sideways.</span
+              ></label
+            >
+          </li>
+          <li>
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-lg border border-brown-300 bg-card p-3.5"
+              ><input
+                type="checkbox"
+                class="mt-1 size-4 shrink-0 accent-brand-600"
+              /><span class="text-base leading-7"
+                >The sprayer pulls out its full length and returns on its
+                own.</span
+              ></label
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-brown-300 pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The installation
+        sheets packed with three current single-handle faucets, two
+        home-improvement retailers' project guides, and a plumber's walkthrough
+        video. Times are for a first-timer with clear access under the sink; the
+        $150 to $300 plumber's charge is the range those guides quote. Not
+        performed on the reader's sink. Illustrative: steps are representative,
+        not verified.
+      </footer>
+    </main>
+  </body>
+</html>
