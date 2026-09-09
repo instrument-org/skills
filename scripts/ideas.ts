@@ -21,6 +21,7 @@ export interface IdeaMeta {
   needs: string[];
   cover: string;
   sections?: string[];
+  sketch?: string[];
 }
 
 export interface ExampleMeta {

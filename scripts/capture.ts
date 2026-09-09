@@ -6,15 +6,17 @@
 //   pnpm capture recommendation-guide
 //
 // Chrome is found at CHROME_PATH, then the usual locations. Captures are the
-// top of the page at laptop width; the site crops them further.
+// top of the page at a laptop's content width, portrait.
 
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { listIdeas, readIdea, sha256, type ExampleMeta } from "./ideas.ts";
 
-const WIDTH = 1280;
-const HEIGHT = 1000;
+// Portrait, two by three: the pages read at a narrow measure and carry their
+// interest down the fold, so a tall crop shows more of them than a wide one.
+const WIDTH = 1024;
+const HEIGHT = 1536;
 
 const CHROME_CANDIDATES = [
   process.env.CHROME_PATH,

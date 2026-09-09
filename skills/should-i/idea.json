@@ -1,5 +1,5 @@
 {
-  "title": "Should I…?",
+  "title": "Should I\u2026?",
   "tagline": "The yes-or-no explainer advice columns publish, written for your decision.",
   "when": "You have a should-I, is-it-worth-it, or do-I-need question and want a plain answer that shows what it turns on.",
   "tags": ["decide"],
@@ -14,5 +14,6 @@
     "Risks",
     "Next step",
     "Questions people ask"
-  ]
+  ],
+  "sketch": ["k", "T", "g", "2", "x"]
 }
