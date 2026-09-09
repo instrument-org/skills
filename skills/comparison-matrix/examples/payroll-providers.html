@@ -148,6 +148,56 @@
       /* skin:end */
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <style>
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      @media print {
+        /* A matrix is wider than a portrait page, and the scroll container that
+           saves it on screen is what clips it on paper. Give it the sheet's
+           long edge, let the type shrink, and keep a block off a fold. */
+        @page {
+          size: landscape;
+          margin: 12mm;
+        }
+
+        /* The width that earns a scrollbar on screen is the width that runs
+           off the sheet, so let the table fall back to the page. */
+        .matrix {
+          min-width: 0;
+          font-size: 9px;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer,
+        .note > div {
+          break-inside: avoid;
+        }
+      }
+
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+    </style>
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
@@ -272,7 +322,7 @@
 
       <section id="matrix" class="mt-6">
         <div
-          class="overflow-x-auto rounded-xl border border-border bg-card shadow-sm xl:overflow-visible"
+          class="overflow-x-auto rounded-xl border border-border bg-card shadow-sm print:overflow-visible xl:overflow-visible"
         >
           <!-- prettier-ignore -->
           <table class="matrix min-w-[63rem] text-xs leading-5">
@@ -291,13 +341,21 @@
               </tr>
             </thead>
             <tbody>
-              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://gusto.com/product/pricing">Gusto</a></span><span class="block font-normal text-muted-foreground">Plus plan</span></th><td>$320<sup>1</sup></td><td class="good">Included on Plus<sup>2</sup></td><td class="good best">Broker built in, no fee</td><td class="good">Unlimited, included</td><td class="good">Built in on Plus</td><td class="good">QuickBooks and Xero, native</td><td>Chat and phone, business hours</td><td class="sum">The comfortable middle: two states and benefits are handled, at twice OnPay's price, with the health broker inside the product.</td></tr>
-              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://onpay.com/payroll/software/costs-pricing/">OnPay</a></span><span class="block font-normal text-muted-foreground">One plan</span></th><td class="good best">$160<sup>3</sup></td><td class="good best">Included, every state, no add-on</td><td class="good">Through OnPay's broker, no fee</td><td class="good">Unlimited, included</td><td class="weak">Via QuickBooks Time<sup>4</sup></td><td class="good">QuickBooks and Xero, native</td><td>Phone and chat, weekday hours</td><td class="sum">Cheapest and simplest, with every state filing included; you give up the HR layer and the employee app.</td></tr>
-              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://www.rippling.com/pricing">Rippling</a></span><span class="block font-normal text-muted-foreground">Payroll module</span></th><td>About $195, quoted<sup>5</sup></td><td class="good">Included; registration for a fee</td><td>Partner brokers, module fee</td><td class="weak">Per active contractor<sup>6</sup></td><td class="good best">Built in, with approvals and accruals</td><td class="good best">GL mapping to QuickBooks, Xero, NetSuite</td><td class="weak">Chat first; phone costs extra</td><td class="sum">The one to pick if payroll is the start of an HR and IT system; overkill and quote-priced if it is not.</td></tr>
-              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://www.adp.com/what-we-offer/payroll/payroll-for-1-49-employees/payroll-packages.aspx">ADP RUN</a></span><span class="block font-normal text-muted-foreground">Essential</span></th><td>About $230, quoted<sup>7</sup></td><td class="good">Included; registration via ADP</td><td>ADP's broker, add-on fee</td><td class="weak">Add-on</td><td class="weak">Add-on</td><td>QuickBooks and Xero, via marketplace</td><td class="good best">24/7 phone; named rep on Complete<sup>8</sup></td><td class="sum">The known name with the best phone support and the most add-on fees; get the all-in quote in writing.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://gusto.com/product/pricing">Gusto</a></span><span class="block font-normal text-muted-foreground">Plus plan</span></th><td>$320<sup id="fnref-1"><a href="#fn-1">1</a></sup></td><td class="good">Included on Plus<sup id="fnref-2"><a href="#fn-2">2</a></sup></td><td class="good best">Broker built in, no fee</td><td class="good">Unlimited, included</td><td class="good">Built in on Plus</td><td class="good">QuickBooks and Xero, native</td><td>Chat and phone, business hours</td><td class="sum">The comfortable middle: two states and benefits are handled, at twice OnPay's price, with the health broker inside the product.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://onpay.com/payroll/software/costs-pricing/">OnPay</a></span><span class="block font-normal text-muted-foreground">One plan</span></th><td class="good best">$160<sup id="fnref-3"><a href="#fn-3">3</a></sup></td><td class="good best">Included, every state, no add-on</td><td class="good">Through OnPay's broker, no fee</td><td class="good">Unlimited, included</td><td class="weak">Via QuickBooks Time<sup id="fnref-4"><a href="#fn-4">4</a></sup></td><td class="good">QuickBooks and Xero, native</td><td>Phone and chat, weekday hours</td><td class="sum">Cheapest and simplest, with every state filing included; you give up the HR layer and the employee app.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://www.rippling.com/pricing">Rippling</a></span><span class="block font-normal text-muted-foreground">Payroll module</span></th><td>About $195, quoted<sup id="fnref-5"><a href="#fn-5">5</a></sup></td><td class="good">Included; registration for a fee</td><td>Partner brokers, module fee</td><td class="weak">Per active contractor<sup id="fnref-6"><a href="#fn-6">6</a></sup></td><td class="good best">Built in, with approvals and accruals</td><td class="good best">GL mapping to QuickBooks, Xero, NetSuite</td><td class="weak">Chat first; phone costs extra</td><td class="sum">The one to pick if payroll is the start of an HR and IT system; overkill and quote-priced if it is not.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://www.adp.com/what-we-offer/payroll/payroll-for-1-49-employees/payroll-packages.aspx">ADP RUN</a></span><span class="block font-normal text-muted-foreground">Essential</span></th><td>About $230, quoted<sup id="fnref-7"><a href="#fn-7">7</a></sup></td><td class="good">Included; registration via ADP</td><td>ADP's broker, add-on fee</td><td class="weak">Add-on</td><td class="weak">Add-on</td><td>QuickBooks and Xero, via marketplace</td><td class="good best">24/7 phone; named rep on Complete<sup id="fnref-8"><a href="#fn-8">8</a></sup></td><td class="sum">The known name with the best phone support and the most add-on fees; get the all-in quote in writing.</td></tr>
             </tbody>
           </table>
         </div>
+
+        <p class="mt-3 max-w-3xl text-xs leading-5 text-muted-foreground">
+          Read down the last column first: it is each row read for you in one
+          sentence, and the seven columns to its left are the evidence. Then
+          read the two that hurt if they are wrong, two-state filing and
+          support; the rest can be fixed after go-live, and a missed state
+          filing cannot.
+        </p>
       </section>
 
       <section id="footnotes" class="mt-14">
@@ -310,80 +368,81 @@
         <div class="note mt-4 grid gap-x-10 gap-y-6 text-sm leading-6 sm:grid-cols-2">
           <div>
             <p class="font-semibold">Gusto</p>
-            <p class="mt-1 text-muted-foreground"><sup>1</sup> Plus is $80 a month plus $12 per person. Simple, at $40 plus $6, files in one state only, so the second state forces Plus.</p>
-            <p class="mt-1 text-muted-foreground"><sup>2</sup> Registering the company in a new state runs about $150 per state through Gusto's partner, or an afternoon on the state's site yourself.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-1"><a href="#fnref-1"><sup>1</sup></a> Plus is $80 a month plus $12 per person. Simple, at $40 plus $6, files in one state only, so the second state forces Plus.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-2"><a href="#fnref-2"><sup>2</sup></a> Registering the company in a new state runs about $150 per state through Gusto's partner, or an afternoon on the state's site yourself.</p>
           </div>
           <div>
             <p class="font-semibold">OnPay</p>
-            <p class="mt-1 text-muted-foreground"><sup>3</sup> One plan, $40 a month plus $6 per person, with multi-state filing, contractors, and year-end forms included.</p>
-            <p class="mt-1 text-muted-foreground"><sup>4</sup> No native time tracking; hours come in from QuickBooks Time or When I Work, each with its own per-user fee.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-3"><a href="#fnref-3"><sup>3</sup></a> One plan, $40 a month plus $6 per person, with multi-state filing, contractors, and year-end forms included.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-4"><a href="#fnref-4"><sup>4</sup></a> No native time tracking; hours come in from QuickBooks Time or When I Work, each with its own per-user fee.</p>
           </div>
           <div>
             <p class="font-semibold">Rippling</p>
-            <p class="mt-1 text-muted-foreground"><sup>5</sup> Quote-based. The figure is the usual range for 20 people on payroll alone with the platform fee, and it climbs quickly with the HR and IT modules.</p>
-            <p class="mt-1 text-muted-foreground"><sup>6</sup> Contractors are billed per active contractor per month, so a seasonal roster of ten adds real money.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-5"><a href="#fnref-5"><sup>5</sup></a> Quote-based. The figure is the usual range for 20 people on payroll alone with the platform fee, and it climbs quickly with the HR and IT modules.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-6"><a href="#fnref-6"><sup>6</sup></a> Contractors are billed per active contractor per month, so a seasonal roster of ten adds real money.</p>
           </div>
           <div>
             <p class="font-semibold">ADP RUN</p>
-            <p class="mt-1 text-muted-foreground"><sup>7</sup> Quote-based and negotiable; the figure is a representative Essential quote for 20 people. Year-end W-2 and 1099 delivery is a separate per-form fee.</p>
-            <p class="mt-1 text-muted-foreground"><sup>8</sup> A named representative comes with the Complete tier, which also adds the HR help desk.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-7"><a href="#fnref-7"><sup>7</sup></a> Quote-based and negotiable; the figure is a representative Essential quote for 20 people. Year-end W-2 and 1099 delivery is a separate per-form fee.</p>
+            <p class="mt-1 text-muted-foreground" id="fn-8"><a href="#fnref-8"><sup>8</sup></a> A named representative comes with the Complete tier, which also adds the HR help desk.</p>
           </div>
         </div>
-      </section>
-
-      <section id="reading" class="mt-14 max-w-3xl">
-        <p
-          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-        >
-          How to read this
-        </p>
-        <ul class="mt-4 space-y-3 text-sm leading-6">
-          <li class="flex items-start gap-2.5">
-            <i class="ph ph-arrow-down mt-1 text-lg text-brand-700"></i
-            ><span
-              >Read down the last column first. It is each row read for you in
-              one sentence; the seven columns to its left are the
-              evidence.</span
-            >
-          </li>
-          <li class="flex items-start gap-2.5">
-            <i class="ph ph-columns mt-1 text-lg text-brand-700"></i
-            ><span
-              >Then read the two columns that hurt if they are wrong: Two-state
-              filing and Support. The rest can be fixed after go-live; a missed
-              state filing cannot.</span
-            >
-          </li>
-          <li class="flex items-start gap-2.5">
-            <i class="ph ph-warning mt-1 text-lg text-brand-700"></i
-            ><span
-              >The tones are relative to a 20-person, two-state company. OnPay's
-              missing time tracking is a weakness only if hours are not already
-              tracked somewhere else.</span
-            >
-          </li>
-          <li class="flex items-start gap-2.5">
-            <i class="ph ph-receipt mt-1 text-lg text-brand-700"></i
-            ><span
-              >Two of the four prices are quotes. Treat those cells as a range,
-              and get the all-in number in writing before setting it beside the
-              two list prices.</span
-            >
-          </li>
-        </ul>
       </section>
 
       <footer
         class="mt-20 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
       >
-        <strong class="text-foreground">Sources.</strong> Each provider's
-        pricing and feature pages, seen the week of writing, and the
-        state-filing and contractor pages in their help centers; two current
-        roundups of payroll software for small companies; and, for the two
-        quote-based providers, representative quotes reported by reviewers for
-        companies of this size. No provider was trialed. Illustrative: figures
-        are representative, not verified.
+        <p class="font-medium tracking-[0.12em] text-foreground uppercase">
+          Sources
+        </p>
+        <ul class="mt-3 space-y-1.5">
+          <li>
+            <a href="https://gusto.com/product/pricing">Gusto pricing</a>, the
+            plan tiers and the per-person rate.
+          </li>
+          <li>
+            <a href="https://onpay.com/payroll/software/costs-pricing/"
+              >OnPay pricing</a
+            >, the base fee and what the one plan includes.
+          </li>
+          <li>
+            <a href="https://www.rippling.com/pricing">Rippling pricing</a>, the
+            module structure behind the quoted figure.
+          </li>
+          <li>
+            <a
+              href="https://www.adp.com/what-we-offer/payroll/payroll-for-1-49-employees/payroll-packages.aspx"
+              >RUN Powered by ADP packages</a
+            >, the four tiers and what separates them.
+          </li>
+        </ul>
+        <p class="mt-4 max-w-3xl">
+          Also read, without a page worth linking: each provider's help center,
+          for the state-filing and contractor rows, and two current roundups of
+          payroll software for small companies, for the support and onboarding
+          observations. No provider was trialed. Illustrative: figures are
+          representative, not verified.
+        </p>
       </footer>
     </main>
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+        icon.onerror = () => icon.remove();
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) icon.remove();
+        };
+        link.prepend(icon);
+      }
+    </script>
   </body>
 </html>
