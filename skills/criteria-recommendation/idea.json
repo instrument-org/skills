@@ -1,0 +1,17 @@
+{
+  "title": "Recommendation with criteria",
+  "tagline": "The scoring matrix procurement teams use, filled in for your decision.",
+  "when": "You want the winner and the arithmetic behind it: named criteria, stated weights, scored options, and what would change the answer.",
+  "tags": ["decide"],
+  "order": 40,
+  "needs": [],
+  "cover": "student-video-laptop",
+  "sections": [
+    "Goal",
+    "Criteria and weights",
+    "Scores",
+    "Winner",
+    "Sensitivity",
+    "Sources"
+  ]
+}
