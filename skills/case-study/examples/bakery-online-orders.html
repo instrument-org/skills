@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The bakery that stopped taking Thanksgiving on paper</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="case-study@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-brown-50 font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-20">
+      <header class="mx-auto max-w-2xl text-center">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Case study
+        </p>
+        <h1
+          class="mt-5 font-serif text-4xl leading-tight font-medium tracking-[-0.02em] text-balance sm:text-5xl"
+        >
+          The bakery that stopped taking Thanksgiving on paper
+        </h1>
+        <p
+          class="mt-6 font-serif text-xl leading-9 text-muted-foreground text-balance"
+        >
+          Marigold Bakehouse sold pies for two holiday weeks a year out of one
+          notebook and a dry-erase board. Then the owner put a single ordering
+          page on the counter, cut the menu, took the money up front, and got
+          her November back.
+        </p>
+        <p
+          class="mt-6 text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          A neighborhood bakery
+          <span class="mx-2 text-brown-500">&middot;</span> six people
+          <span class="mx-2 text-brown-500">&middot;</span> two holiday rounds
+        </p>
+      </header>
+
+      <section id="context" class="mt-16">
+        <h2 class="font-serif text-2xl font-medium tracking-[-0.01em]">
+          The shop
+        </h2>
+        <div
+          class="mt-4 font-serif text-[17px] leading-8 sm:columns-2 sm:gap-x-10"
+        >
+          <p>
+            Marigold Bakehouse has been on the same corner since 2014. Six
+            people work there: the owner, who also does the books and the
+            counter on weekends; a head baker; two bakers who start at four; and
+            two counter staff, one part-time. The daily trade is bread, morning
+            pastries, and cakes to order, and it runs on habit and a good
+            espresso machine.
+          </p>
+          <p class="mt-4">
+            Twice a year the shop becomes a different business. In the week
+            before Thanksgiving it bakes pies almost exclusively, and in the two
+            weeks before Christmas it bakes pies, stollen, and cookie boxes.
+            Those three weeks are the best of the year for takings and the worst
+            for everyone's sleep. Two deck ovens can turn out about 140 pies a
+            day if the regular bread is cut back to almost nothing, and the shop
+            had never once planned to that number.
+          </p>
+        </div>
+      </section>
+
+      <figure class="mx-auto mt-14 max-w-3xl">
+        <blockquote
+          class="font-serif text-2xl leading-10 tracking-[-0.01em] sm:text-3xl sm:leading-[1.35]"
+        >
+          &ldquo;The order book was the business for two weeks a year. It was
+          also one notebook, in one handwriting, next to a sink.&rdquo;
+        </blockquote>
+        <figcaption
+          class="mt-4 border-t border-brand-500 pt-3 text-sm text-muted-foreground"
+        >
+          <span class="text-brand-700">Owner,</span> Marigold Bakehouse
+        </figcaption>
+      </figure>
+
+      <section id="challenge" class="mt-14">
+        <h2 class="font-serif text-2xl font-medium tracking-[-0.01em]">
+          The problem with the book
+        </h2>
+        <div
+          class="mt-4 font-serif text-[17px] leading-8 sm:columns-2 sm:gap-x-10"
+        >
+          <p>
+            Holiday orders came in three ways: written into a paper book by the
+            register, taken over the phone and written into the same book by
+            whoever answered, or added by the owner from messages on the shop's
+            social accounts. A dry-erase board in the back tracked the count per
+            day, updated when someone remembered. Deposits were taken in cash,
+            sometimes.
+          </p>
+          <p class="mt-4">
+            The failures were the same every year. Twice the year before, a
+            day's count had crept past what the ovens could bake and the bakers
+            stayed until midnight. About thirty pies went unclaimed on the
+            Wednesday before Thanksgiving, prepaid by nobody, and were given
+            away or thrown out. In the final week the counter staff spent most
+            of each morning on the phone, and on Wednesday the pickup line
+            reached the door and stayed there.
+          </p>
+          <p class="mt-4">
+            The owner had looked at building a shop website twice and stopped
+            both times. She did not want to sell bread online, did not want to
+            learn a platform, and did not want to give a percentage of a pie to
+            anyone. What she wanted was narrower: for the two weeks to stop
+            depending on one notebook.
+          </p>
+        </div>
+      </section>
+
+      <section id="approach" class="mt-14">
+        <h2 class="font-serif text-2xl font-medium tracking-[-0.01em]">
+          What they did, in order
+        </h2>
+        <div class="mt-4 max-w-2xl font-serif text-[17px] leading-8">
+          <p>
+            <span
+              class="font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >September.</span
+            >
+            The point-of-sale system the shop already used offered a pre-order
+            page as an add-on. The owner turned it on one afternoon with the
+            part-time counter person, who was the least patient with software in
+            the building and therefore the right tester. They agreed that if it
+            took more than an afternoon to understand, they would turn it off.
+          </p>
+          <p class="mt-4">
+            <span
+              class="font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >October.</span
+            >
+            The holiday menu went from sixteen items to nine. Everything that
+            needed a conversation, a custom size, or a second oven setting was
+            cut. Each remaining item got a daily cap, and the daily caps added
+            up to what the ovens could do: 120 pies for the Tuesday, 140 for the
+            Wednesday, none on the holiday itself, when the shop is closed.
+            Orders would be prepaid in full, with pickup in thirty-minute
+            windows of no more than 24 orders each.
+          </p>
+          <p class="mt-4">
+            <span
+              class="font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >November 1.</span
+            >
+            Orders opened with a sign on the counter, a line on the bag stamp,
+            and one post. The phone stayed on for regulars, with one rule: every
+            phone order was entered into the same page by whoever took it, so
+            the counts were true. The head baker started printing a pick list by
+            window each morning, and a folding table went by the door for
+            pickups, with bags labeled by name and window.
+          </p>
+          <p class="mt-4">
+            <span
+              class="font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >The week of.</span
+            >
+            Wednesday's windows sold out four days before the holiday, which had
+            never happened. The week also showed what was wrong. People arrived
+            at the start of each window, so twice the line still reached the
+            door. The page did not say a day was sold out, so people phoned to
+            ask. And three orders went home with the wrong pie because two
+            customers shared a surname.
+          </p>
+          <p class="mt-4">
+            <span
+              class="font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >The Monday after.</span
+            >
+            The owner, the head baker, and the counter staff sat down for an
+            hour. Windows went to twenty minutes with sixteen orders each. A
+            sold-out day would show as sold out. Labels would carry a first name
+            and the last four digits of a phone number. Christmas orders opened
+            December 1 with those three changes and nothing else, and the round
+            ran with the same six people and no extra hours on the phone.
+          </p>
+        </div>
+      </section>
+
+      <figure class="mx-auto mt-14 max-w-3xl">
+        <blockquote
+          class="font-serif text-2xl leading-10 tracking-[-0.01em] sm:text-3xl sm:leading-[1.35]"
+        >
+          &ldquo;I did not want a website. I wanted Thanksgiving to stop being
+          the week I dreaded.&rdquo;
+        </blockquote>
+        <figcaption
+          class="mt-4 border-t border-brand-500 pt-3 text-sm text-muted-foreground"
+        >
+          <span class="text-brand-700">Owner,</span> Marigold Bakehouse
+        </figcaption>
+      </figure>
+
+      <section id="before-after" class="mt-14">
+        <div
+          class="grid gap-8 rounded-xl border border-brown-300 bg-card p-6 sm:grid-cols-2 sm:p-8"
+        >
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Before
+            </p>
+            <ul class="mt-3 space-y-2 font-serif text-[15px] leading-7">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1.5 text-base text-muted-foreground"></i
+                ><span>Orders in a paper book, by phone, and in messages.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1.5 text-base text-muted-foreground"></i
+                ><span
+                  >Counts on a dry-erase board, updated when remembered.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1.5 text-base text-muted-foreground"></i
+                ><span
+                  >Sixteen holiday items, several needing a conversation.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1.5 text-base text-muted-foreground"></i
+                ><span
+                  >Cash deposits, sometimes. About thirty pies unclaimed.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1.5 text-base text-muted-foreground"></i
+                ><span>Everyone picks up on Wednesday afternoon.</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              After
+            </p>
+            <ul class="mt-3 space-y-2 font-serif text-[15px] leading-7">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1.5 text-base text-brand-700"></i
+                ><span
+                  >One ordering page; phone orders typed into the same
+                  list.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1.5 text-base text-brand-700"></i
+                ><span>Daily caps set at what the ovens can bake.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1.5 text-base text-brand-700"></i
+                ><span>Nine items, none needing a phone call.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1.5 text-base text-brand-700"></i
+                ><span>Prepaid in full. Fewer than ten pies unclaimed.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1.5 text-base text-brand-700"></i
+                ><span
+                  >Twenty-minute pickup windows and a pick list by window.</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="mt-14">
+        <h2 class="font-serif text-2xl font-medium tracking-[-0.01em]">
+          How it went
+        </h2>
+        <div
+          class="mt-4 font-serif text-[17px] leading-8 sm:columns-2 sm:gap-x-10"
+        >
+          <p>
+            The shop sold out of Thanksgiving pies four days early for the first
+            time anyone there could remember, and sold out of Christmas pies a
+            week early. Unclaimed pies went from about thirty to fewer than ten
+            across both rounds, which the owner puts down entirely to
+            prepayment. The ovens were never overbooked, because the caps would
+            not let them be. The pickup line moved, once the windows were
+            shortened.
+          </p>
+          <p class="mt-4">
+            Holiday-week takings were higher than the year before, but the owner
+            is careful about what that means: the caps were set at what the
+            ovens could do, so the ceiling had not moved. What changed was
+            baking to a paid list instead of a guess, and not throwing thirty
+            pies away. Phone time in the final week fell to a few calls a day by
+            her estimate; nobody measured it before, so there is no figure to
+            compare. A few older regulars still phoned, and always will, and the
+            counter staff typed their orders in for them.
+          </p>
+          <p class="mt-4">
+            Two seasons at one shop is thin evidence, and holiday demand was
+            strong that year everywhere. The claim this story supports is
+            narrower and firmer: a small shop can move its peak onto a single
+            list without building a store, and the parts that matter are the
+            caps, the prepayment, and the menu, not the software.
+          </p>
+        </div>
+      </section>
+
+      <figure class="mx-auto mt-14 max-w-3xl">
+        <blockquote
+          class="font-serif text-2xl leading-10 tracking-[-0.01em] sm:text-3xl sm:leading-[1.35]"
+        >
+          &ldquo;The pick list is the first time I have known on Monday what I
+          am baking on Wednesday.&rdquo;
+        </blockquote>
+        <figcaption
+          class="mt-4 border-t border-brand-500 pt-3 text-sm text-muted-foreground"
+        >
+          <span class="text-brand-700">Head baker,</span> Marigold Bakehouse
+        </figcaption>
+      </figure>
+
+      <section id="lessons" class="mt-14">
+        <h2 class="font-serif text-2xl font-medium tracking-[-0.01em]">
+          What they would tell another shop
+        </h2>
+        <ul
+          class="mt-5 grid gap-x-10 gap-y-4 font-serif text-[17px] leading-8 sm:grid-cols-2"
+        >
+          <li class="border-t border-brown-300 pt-3">
+            <strong class="font-medium"
+              >Cut the menu before you cap the orders.</strong
+            >
+            Nine items made everything else possible.
+          </li>
+          <li class="border-t border-brown-300 pt-3">
+            <strong class="font-medium"
+              >Set the caps at what the ovens can do,</strong
+            >
+            not at what you sold last year.
+          </li>
+          <li class="border-t border-brown-300 pt-3">
+            <strong class="font-medium">Take the money up front.</strong>
+            Unclaimed pies were a deposit problem, not a customer problem.
+          </li>
+          <li class="border-t border-brown-300 pt-3">
+            <strong class="font-medium"
+              >Keep the phone, but keep one list.</strong
+            >
+            The counts are only true if every order lands in the same place.
+          </li>
+          <li class="border-t border-brown-300 pt-3">
+            <strong class="font-medium">Short windows beat long ones.</strong>
+            People arrive at the start of whatever window you give them.
+          </li>
+          <li class="border-t border-brown-300 pt-3">
+            <strong class="font-medium"
+              >Run the first round on the smaller holiday if you have
+              one.</strong
+            >
+            They did not, and every setback landed on the biggest week of the
+            year.
+          </li>
+        </ul>
+      </section>
+
+      <section id="apply" class="mt-14">
+        <div class="rounded-xl border border-brown-300 bg-brown-100 p-6 sm:p-8">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Apply this
+          </p>
+          <div class="mt-4 grid gap-6 text-sm leading-6 sm:grid-cols-2">
+            <div>
+              <p class="font-semibold">This transfers when</p>
+              <ul class="mt-2 space-y-1.5">
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >Your peak is short and predictable: holidays, graduations,
+                    game days.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >Your capacity is a hard number you can write down: ovens,
+                    hours, seats, hands.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >You are willing to cut the peak menu to what needs no
+                    conversation.</span
+                  >
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold">It does not when</p>
+              <ul class="mt-2 space-y-1.5">
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >The peak is every day. A cafe queue is a staffing problem,
+                    not a pre-order one.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >Orders need a conversation: wedding cakes, custom work,
+                    anything sized on the phone.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >Your customers will not prepay, as with wholesale and
+                    invoiced accounts.</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p
+            class="mt-5 border-t border-brown-300 pt-4 font-serif text-[17px] leading-8"
+          >
+            <strong class="font-medium">First step.</strong> Write down two
+            numbers: how many things you can make on your busiest day, and how
+            many items are on the peak menu. If the second is over ten, cut it
+            before you touch any software.
+          </p>
+        </div>
+      </section>
+
+      <footer
+        class="mt-16 border-t border-brown-300 pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Two conversations with
+        the owner and one with the head baker, the shop's order exports for both
+        holiday rounds, and the previous year's order book. Quotes are from the
+        conversations. Phone time and the number of pies unclaimed the year
+        before are the owner's estimates, which is why they appear as words.
+        Illustrative: this story and its figures are representative, not
+        verified.
+      </footer>
+    </main>
+  </body>
+</html>

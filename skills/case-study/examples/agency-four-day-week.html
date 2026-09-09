@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      How a 12-person design studio moved to a four-day week, and what the first
+      year showed
+    </title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="case-study@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Case study
+        </p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          How a 12-person design studio moved to a four-day week, and what the
+          first year showed
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          Wren &amp; Field, a brand and product design studio in Denver, closed
+          on Fridays in January and kept pay whole. A year later revenue was
+          level, nobody had left, and the founders had learned that the week was
+          a pricing decision before it was a scheduling one.
+        </p>
+        <dl
+          class="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-y border-border py-4 text-sm sm:grid-cols-4"
+        >
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Organization
+            </dt>
+            <dd class="mt-0.5 font-medium">Wren &amp; Field</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Sector
+            </dt>
+            <dd class="mt-0.5 font-medium">Design services</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Size
+            </dt>
+            <dd class="mt-0.5 font-medium">12 people, $2.1M revenue</dd>
+          </div>
+          <div>
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Period
+            </dt>
+            <dd class="mt-0.5 font-medium">Twelve months from January</dd>
+          </div>
+        </dl>
+      </header>
+
+      <section id="results" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          The first year, in three figures
+        </p>
+        <dl class="mt-3 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Revenue
+            </dt>
+            <dd
+              class="mt-1 text-2xl font-semibold tracking-[-0.03em] whitespace-nowrap tabular-nums"
+            >
+              $2.1M
+              <span class="text-base font-normal text-muted-foreground"
+                >to</span
+              >
+              $2.2M
+            </dd>
+            <dd class="mt-2 text-xs leading-5 text-muted-foreground">
+              Calendar year against the prior one. Two new retainers signed in
+              the spring, so the shorter week and the move to fixed fees cannot
+              be separated.
+            </dd>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Departures
+            </dt>
+            <dd
+              class="mt-1 text-2xl font-semibold tracking-[-0.03em] whitespace-nowrap tabular-nums"
+            >
+              3
+              <span class="text-base font-normal text-muted-foreground"
+                >to</span
+              >
+              0
+            </dd>
+            <dd class="mt-2 text-xs leading-5 text-muted-foreground">
+              The 18 months before the trial against the 12 months of it. Twelve
+              people is too few to call a trend; one resignation would change
+              this figure.
+            </dd>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Applicants, one role
+            </dt>
+            <dd
+              class="mt-1 text-2xl font-semibold tracking-[-0.03em] whitespace-nowrap tabular-nums"
+            >
+              14
+              <span class="text-base font-normal text-muted-foreground"
+                >to</span
+              >
+              61
+            </dd>
+            <dd class="mt-2 text-xs leading-5 text-muted-foreground">
+              The same senior designer posting, two years apart. The new posting
+              named the four-day week in its title, and the hiring market moved
+              in between.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="context" class="mt-12">
+        <h2
+          class="flex items-baseline gap-3 text-xl font-semibold tracking-[-0.02em]"
+        >
+          <span class="font-mono text-sm font-normal text-muted-foreground"
+            >01</span
+          >Context
+        </h2>
+        <p class="mt-3 text-sm leading-7">
+          Wren &amp; Field was founded in 2016 by two designers and had grown to
+          twelve: the two founders, seven designers, a strategist, a producer
+          who ran every schedule, and an operations lead who ran everything
+          else. Revenue the year before the change was $2.1 million, from six
+          monthly retainers and about twenty projects a year across fourteen
+          active clients. Most work was brand systems and product design for
+          funded startups and two regional consumer brands.
+        </p>
+        <p class="mt-3 text-sm leading-7">
+          The studio billed a mix: retainers were priced as a block of hours a
+          month, and roughly half of project work was estimated and invoiced
+          hourly. That detail mattered more than anyone expected.
+        </p>
+      </section>
+
+      <section id="challenge" class="mt-10">
+        <h2
+          class="flex items-baseline gap-3 text-xl font-semibold tracking-[-0.02em]"
+        >
+          <span class="font-mono text-sm font-normal text-muted-foreground"
+            >02</span
+          >Challenge
+        </h2>
+        <p class="mt-3 text-sm leading-7">
+          In the eighteen months before the trial, three designers left, two of
+          them for in-house roles that paid about the same and promised better
+          hours. Replacing each took about four months and pulled a founder off
+          client work for most of it. The founders wanted a retention edge that
+          did not mean raising pay across the board, which the margin could not
+          carry.
+        </p>
+        <p class="mt-3 text-sm leading-7">
+          Three things stood in the way. Clients expected a reply the same day,
+          five days a week, and two of the retainers were with marketing teams
+          that shipped campaigns on Fridays. Hourly billing meant that a 20
+          percent shorter week was, on paper, a 20 percent pay cut for the
+          studio. And nobody knew where the current forty hours went, so nobody
+          could say which eight could go.
+        </p>
+      </section>
+
+      <section id="approach" class="mt-10">
+        <h2
+          class="flex items-baseline gap-3 text-xl font-semibold tracking-[-0.02em]"
+        >
+          <span class="font-mono text-sm font-normal text-muted-foreground"
+            >03</span
+          >Approach, in the order it happened
+        </h2>
+        <ol
+          class="mt-4 space-y-5 border-l border-border pl-5 text-sm leading-7"
+        >
+          <li>
+            <p class="font-mono text-xs text-muted-foreground">
+              October to November
+            </p>
+            <p class="mt-1">
+              <strong>Measured first.</strong> Everyone tracked time for eight
+              weeks in the tool the studio already invoiced from. Internal
+              meetings, status updates, and time spent on estimates that never
+              became work averaged eleven hours per person per week. That was
+              the number the trial was paid for with.
+            </p>
+          </li>
+          <li>
+            <p class="font-mono text-xs text-muted-foreground">December</p>
+            <p class="mt-1">
+              <strong>Announced a six-month trial</strong> starting the second
+              week of January: 32 hours, Fridays off for the whole studio, pay
+              unchanged, with three written measures for a go or no-go in July:
+              revenue against the prior year, milestones delivered on time, and
+              departures. The calendar was rewritten in the same week. The
+              Monday all-hands hour went; daily standups became a written note;
+              each client account got one thirty-minute check-in a week instead
+              of one per project.
+            </p>
+          </li>
+          <li>
+            <p class="font-mono text-xs text-muted-foreground">December</p>
+            <p class="mt-1">
+              <strong>Repriced the work.</strong> Every new project from January
+              was quoted as a fixed fee. Retainers were restated at renewal as
+              deliverables per month rather than hours per month. Two legacy
+              hourly clients were left as they were until their contracts ended
+              in the spring, and the founders accepted the smaller invoices on
+              those two accounts for one quarter.
+            </p>
+          </li>
+          <li>
+            <p class="font-mono text-xs text-muted-foreground">January</p>
+            <p class="mt-1">
+              <strong>Set up Friday coverage.</strong> One person a week took
+              the Friday rotation: check every client channel at ten and at
+              three, spend no more than thirty minutes each time, escalate to a
+              founder only for a live production problem, and take a half day
+              back the following week. Each of the fourteen clients got a
+              two-paragraph email the week before. Two asked questions. None
+              asked for a discount, and none left during the year.
+            </p>
+          </li>
+          <li>
+            <p class="font-mono text-xs text-muted-foreground">March</p>
+            <p class="mt-1">
+              <strong>Hit the first setback.</strong> A website launch slipped
+              by a week because its kickoff landed on a Thursday before a Friday
+              off and a Monday holiday, and the client's feedback sat for four
+              days. The producer added two rules: no kickoffs on Thursdays, and
+              launch windows on Tuesdays and Wednesdays only. Milestone dates
+              began to be logged formally that month, which is why there is no
+              clean before figure for delivery.
+            </p>
+          </li>
+          <li>
+            <p class="font-mono text-xs text-muted-foreground">July</p>
+            <p class="mt-1">
+              <strong>Made it permanent.</strong> Revenue for the half year was
+              slightly ahead of the prior year's, no milestone had been missed
+              since March, and nobody had left. The founders wrote the four-day
+              week into offer letters and posted the first open role with it in
+              the title.
+            </p>
+          </li>
+        </ol>
+        <figure class="mt-8 border-l-4 border-brand-500 pl-5">
+          <blockquote class="text-lg leading-8 font-medium tracking-[-0.01em]">
+            The first month I was terrified of Fridays. By the third, Friday was
+            the day clients stopped expecting an answer and started sending
+            better briefs.
+          </blockquote>
+          <figcaption class="mt-2 text-sm text-muted-foreground">
+            Producer, Wren &amp; Field
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="results-detail" class="mt-10">
+        <h2
+          class="flex items-baseline gap-3 text-xl font-semibold tracking-[-0.02em]"
+        >
+          <span class="font-mono text-sm font-normal text-muted-foreground"
+            >04</span
+          >What the figures leave out
+        </h2>
+        <p class="mt-3 text-sm leading-7">
+          Billable hours per person fell, from about 26 a week to about 24 by
+          the studio's own tracking, which the founders expected; fixed fees are
+          what kept revenue level while hours fell. The client count went from
+          fourteen to fifteen. Delivery improved by the producer's account, but
+          the studio only began logging milestone dates in March, so the year
+          before exists as memory rather than a record, and this page does not
+          turn that memory into a percentage.
+        </p>
+        <p class="mt-3 text-sm leading-7">
+          Two things did not go as hoped. The two hourly legacy accounts
+          invoiced about a fifth less for the quarter before they were repriced,
+          which the founders absorbed. And the Friday rotation was unpopular
+          with the two most junior designers, who felt the half day back did not
+          match the interruption; the studio changed it in the autumn so a
+          founder always took the rotation in a week with a launch.
+        </p>
+      </section>
+
+      <section id="lessons" class="mt-10">
+        <h2
+          class="flex items-baseline gap-3 text-xl font-semibold tracking-[-0.02em]"
+        >
+          <span class="font-mono text-sm font-normal text-muted-foreground"
+            >05</span
+          >Lessons
+        </h2>
+        <ol class="mt-4 space-y-3 text-sm leading-6">
+          <li class="flex items-start gap-3">
+            <span
+              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+              >1</span
+            ><span
+              ><strong>Measure before you change anything.</strong> Eight weeks
+              of tracking found the eleven hours a week the four-day week was
+              paid for with. Without that figure the trial would have been an
+              act of faith.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <span
+              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+              >2</span
+            ><span
+              ><strong>A shorter week is a pricing decision.</strong> On hourly
+              billing it is a pay cut for the business. Reprice first, or accept
+              a quarter of smaller invoices on the accounts you cannot.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <span
+              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+              >3</span
+            ><span
+              ><strong>Coverage beats availability.</strong> One person checking
+              twice for thirty minutes was enough. Nobody needed to be reachable
+              all Friday, and clients adjusted within a month.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <span
+              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+              >4</span
+            ><span
+              ><strong>Tell clients once, plainly, before they notice.</strong>
+              Two questions out of fourteen, and no departures. The fear of the
+              email was larger than the email.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <span
+              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+              >5</span
+            ><span
+              ><strong>Write the go or no-go before day one.</strong> Three
+              measures on a page kept a trial from drifting into a habit nobody
+              chose, and made July a decision rather than a mood.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <span
+              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+              >6</span
+            ><span
+              ><strong>Kickoffs and launches are the fragile days.</strong> Put
+              them mid-week. The one slipped project of the year came from a
+              Thursday kickoff.</span
+            >
+          </li>
+        </ol>
+      </section>
+
+      <section id="apply" class="mt-10">
+        <div class="rounded-xl border-2 border-brand-300 bg-brand-25 p-5">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Apply this
+          </p>
+          <div class="mt-3 grid gap-5 text-sm leading-6 sm:grid-cols-2">
+            <div>
+              <p class="font-semibold">This transfers when</p>
+              <ul class="mt-1 space-y-1">
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >You bill fixed fees or retainers, or can move to them
+                    within a quarter.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >Client contact is weekly by nature: reviews, check-ins,
+                    milestones, not a live queue.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >You are small enough to rewrite the calendar in a week and
+                    to know where the hours go.</span
+                  >
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold">It does not when</p>
+              <ul class="mt-1 space-y-1">
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >You sell hours and cannot reprice: staffing, hourly
+                    consulting, most legal work.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >Clients need same-day action five days a week, as with live
+                    campaigns or support contracts.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >You cannot absorb one quarter of smaller invoices while
+                    pricing catches up.</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-4 border-t border-brand-100 pt-3 text-sm leading-6">
+            <strong>First step.</strong> Track time for eight weeks, in whatever
+            tool you already invoice from, and count the hours no client asked
+            for. If it is under six a week, the four-day week will come out of
+            client work, and this case does not apply.
+          </p>
+        </div>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Two interviews with
+        the founders and one with the producer, the studio's time-tracking
+        export for the eight weeks before the trial and the twelve months of it,
+        revenue by month for both years, and applicant counts from the two
+        postings. Quotes are from the interviews. The pre-trial delivery record
+        is the producer's recollection, not a log, and is left as words for that
+        reason. Illustrative: this story and its figures are representative, not
+        verified.
+      </footer>
+    </main>
+  </body>
+</html>

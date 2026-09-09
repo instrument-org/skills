@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Moving a Rails app's search from Elasticsearch to Postgres full-text
+      search
+    </title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="case-study@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-8 sm:px-8 sm:py-12">
+      <header>
+        <p class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
+          Case study / engineering
+        </p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em]">
+          Moving a Rails app's search from Elasticsearch to Postgres full-text
+          search
+        </h1>
+        <p class="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+          Ledgerline is a B2B invoicing product with about nine million
+          invoices. Its search ran on a managed Elasticsearch cluster that was
+          one engineer's part-time job to keep in sync. Over eight weeks a team
+          of five replaced it with a generated
+          <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+            >tsvector</code
+          >
+          column and a GIN index, and turned the cluster off.
+        </p>
+        <dl
+          class="mt-5 flex flex-wrap gap-x-6 gap-y-1.5 border-y border-border py-3 font-mono text-xs text-muted-foreground"
+        >
+          <div>
+            <dt class="inline text-foreground">stack</dt>
+            <dd class="inline">Rails 7.1, Postgres 15, Sidekiq</dd>
+          </div>
+          <div>
+            <dt class="inline text-foreground">team</dt>
+            <dd class="inline">5 engineers</dd>
+          </div>
+          <div>
+            <dt class="inline text-foreground">duration</dt>
+            <dd class="inline">8 weeks</dd>
+          </div>
+          <div>
+            <dt class="inline text-foreground">rows</dt>
+            <dd class="inline">
+              9.1M invoices, 31M line items, 410k customers
+            </dd>
+          </div>
+        </dl>
+      </header>
+
+      <section id="context" class="mt-10">
+        <h2
+          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
+        >
+          01 &middot; Context
+        </h2>
+        <p class="mt-2 text-sm leading-6">
+          Search in Ledgerline is one box in the header. Customers type an
+          invoice number, a customer name, or an email and expect the matching
+          invoice on the first line. The original implementation, from four
+          years earlier, indexed invoices, customers, and line items into
+          Elasticsearch 7 on a managed three-node cluster costing about $1,100 a
+          month. A Sidekiq job enqueued on every
+          <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+            >after_commit</code
+          >
+          kept the index current, and the app queried the cluster for IDs, then
+          loaded rows from Postgres.
+        </p>
+        <p class="mt-2 text-sm leading-6">
+          The team was five engineers with no dedicated operations role. The
+          database was a single Postgres 15 primary with one read replica, on a
+          managed host, with headroom.
+        </p>
+      </section>
+
+      <section id="challenge" class="mt-8">
+        <h2
+          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
+        >
+          02 &middot; Challenge
+        </h2>
+        <p class="mt-2 text-sm leading-6">
+          Three pressures arrived together. Elasticsearch 7 was approaching the
+          end of the host's support window, and the upgrade to 8 meant a full
+          reindex, which had last taken about six hours with writes paused to
+          the sync worker. The sync itself was the source of a recurring bug:
+          when the queue backed up, voided invoices stayed visible in search for
+          minutes, and one customer had filed it three times. And the cluster
+          was a second system to be paged for. In the six months before the
+          project, four of the team's pages were search-related: a queue backlog
+          after a deploy, a mapping conflict from a renamed field, a node at
+          yellow, and a disk alert.
+        </p>
+        <p class="mt-2 text-sm leading-6">
+          Nobody on the team had operated Elasticsearch by choice. The question
+          was whether Postgres could carry the query load without making search
+          worse, and nobody knew, because nobody had looked at what people
+          actually searched for.
+        </p>
+      </section>
+
+      <section id="approach" class="mt-8">
+        <h2
+          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
+        >
+          03 &middot; Approach, in order
+        </h2>
+        <ol class="mt-3 space-y-4 text-sm leading-6">
+          <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
+              >week 1</span
+            >
+            <div>
+              <strong>Audited the queries.</strong> One week of search logs,
+              about 140,000 searches, classified by shape. 94 percent were an
+              exact or prefix match on an invoice number, a customer name, or an
+              email. Six percent were free text that could only be matching line
+              item descriptions. The faceted filters in the search UI had been
+              clicked 31 times in the week. The audit settled in an afternoon an
+              argument the team had been having for a quarter.
+            </div>
+          </li>
+          <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
+              >weeks 2 to 3</span
+            >
+            <div>
+              <strong>Prototyped on a replica snapshot.</strong> A generated
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >tsvector</code
+              >
+              column on
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >invoices</code
+              >, weighted so the number and customer name outrank the memo, with
+              a GIN index built concurrently. Line items got their own column
+              and index, queried through an
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >EXISTS</code
+              >
+              subquery for the six percent. Invoice number prefixes were handled
+              by appending
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >:*</code
+              >
+              to the last term when the input matched the number format.
+            </div>
+          </li>
+          <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
+              >weeks 4 to 5</span
+            >
+            <div>
+              <strong>Ran both in shadow.</strong> Every production search hit
+              Elasticsearch for the response and Postgres in the background, and
+              the job logged the overlap of the two top-ten lists. Overlap was
+              97 percent across the two weeks. The three percent were mostly
+              multi-word customer names, which Postgres ranked lower than a
+              partial match on the invoice memo; adding a phrase-match boost
+              from
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >phraseto_tsquery</code
+              >
+              closed most of the gap.
+            </div>
+          </li>
+          <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
+              >week 6</span
+            >
+            <div>
+              <strong>Cut over behind a flag per account.</strong> Ten percent
+              of accounts for five days, then all. One regression came in on day
+              two: searching for the local part of an email returned nothing,
+              because the
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >simple</code
+              >
+              parser treats an address as one token. The fix was a
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >pg_trgm</code
+              >
+              index on
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
+                >customer_email</code
+              >
+              and a second clause in the scope. The same week, autovacuum fell
+              behind on the invoices table and the GIN index bloated; raising
+              the table's vacuum scale factor and running one manual vacuum took
+              a Saturday.
+            </div>
+          </li>
+          <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
+              >weeks 7 to 8</span
+            >
+            <div>
+              <strong>Deleted the old path.</strong> The sync worker, the
+              mapping files, the client wrapper, and their tests: about 1,400
+              lines net, by the PR diff. The primary was moved up one tier for
+              headroom. The cluster was turned off at the end of week 8, one
+              week after the flag reached 100 percent.
+            </div>
+          </li>
+        </ol>
+
+        <div class="mt-6 grid gap-4">
+          <figure>
+            <figcaption class="font-mono text-xs text-muted-foreground">
+              The column and its index. The index is built outside the migration
+              transaction.
+            </figcaption>
+            <pre
+              class="mt-2 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-xs leading-5 text-gray-100"
+            ><code>ALTER TABLE invoices
+  ADD COLUMN search_document tsvector
+  GENERATED ALWAYS AS (
+    setweight(to_tsvector('simple', coalesce(number, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(customer_name, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(customer_email, '')), 'B') ||
+    setweight(to_tsvector('english', coalesce(memo, '')), 'C')
+  ) STORED;
+
+CREATE INDEX CONCURRENTLY invoices_search_document_idx
+  ON invoices USING GIN (search_document);</code></pre>
+          </figure>
+          <figure>
+            <figcaption class="font-mono text-xs text-muted-foreground">
+              The scope that replaced the client. Prefix and email handling are
+              omitted.
+            </figcaption>
+            <pre
+              class="mt-2 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-xs leading-5 text-gray-100"
+            ><code>class Invoice &lt; ApplicationRecord
+  scope :search, -&gt;(term) {
+    query = sanitize_sql_array(
+      ["websearch_to_tsquery('simple', ?)", term]
+    )
+    where("search_document @@ #{query}")
+      .order(Arel.sql("ts_rank_cd(search_document, #{query}) DESC"))
+      .order(issued_at: :desc)
+  }
+end</code></pre>
+          </figure>
+        </div>
+
+        <figure class="mt-6 border-l-2 border-brand-500 pl-4">
+          <blockquote class="text-base leading-7 font-medium">
+            The audit was the whole project. Once we knew 94 percent of searches
+            were an invoice number or a name, we were not replacing a search
+            engine. We were replacing an index.
+          </blockquote>
+          <figcaption class="mt-1.5 font-mono text-xs text-muted-foreground">
+            Staff engineer, Ledgerline
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="before-after" class="mt-8">
+        <h2
+          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
+        >
+          04 &middot; Architecture, before and after
+        </h2>
+        <div class="mt-3 overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr
+                class="border-b border-border text-left font-mono text-xs text-muted-foreground"
+              >
+                <th class="pb-2 pr-4 font-normal"></th>
+                <th class="pb-2 pr-4 font-normal">before</th>
+                <th class="pb-2 font-normal text-brand-700">after</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border align-top">
+              <tr>
+                <td class="py-2 pr-4 font-medium whitespace-nowrap">Store</td>
+                <td class="py-2 pr-4 text-muted-foreground">
+                  Elasticsearch 7, three managed nodes
+                </td>
+                <td class="py-2">The existing Postgres 15 primary</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium whitespace-nowrap">
+                  Indexing
+                </td>
+                <td class="py-2 pr-4 text-muted-foreground">
+                  Sidekiq job per commit, about 1,400 lines
+                </td>
+                <td class="py-2">A generated column; no code path</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium whitespace-nowrap">
+                  Query path
+                </td>
+                <td class="py-2 pr-4 text-muted-foreground">
+                  App to cluster for IDs, then Postgres for rows
+                </td>
+                <td class="py-2">One SQL query</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium whitespace-nowrap">
+                  Consistency
+                </td>
+                <td class="py-2 pr-4 text-muted-foreground">
+                  Eventual; minutes behind when the queue backed up
+                </td>
+                <td class="py-2">Transactional</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium whitespace-nowrap">
+                  Failure modes
+                </td>
+                <td class="py-2 pr-4 text-muted-foreground">
+                  Queue backlog, mapping conflicts, cluster health, disk
+                </td>
+                <td class="py-2">
+                  GIN index bloat when autovacuum falls behind
+                </td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium whitespace-nowrap">
+                  On-call surface
+                </td>
+                <td class="py-2 pr-4 text-muted-foreground">
+                  A second system; four pages in six months
+                </td>
+                <td class="py-2">Nothing new beyond the database</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium whitespace-nowrap">
+                  Monthly cost
+                </td>
+                <td class="py-2 pr-4 font-mono text-xs text-muted-foreground">
+                  $1,100 for the cluster
+                </td>
+                <td class="py-2 font-mono text-xs">
+                  about $150 for one database tier
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="results" class="mt-8">
+        <h2
+          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
+        >
+          05 &middot; Results, as measured
+        </h2>
+        <div
+          class="mt-3 overflow-x-auto rounded-xl border border-border bg-card shadow-sm"
+        >
+          <table class="w-full text-sm">
+            <thead>
+              <tr
+                class="border-b border-border text-left font-mono text-xs text-muted-foreground"
+              >
+                <th class="px-4 py-2.5 font-normal">metric</th>
+                <th class="px-4 py-2.5 font-normal">before</th>
+                <th class="px-4 py-2.5 font-normal">after</th>
+                <th class="px-4 py-2.5 font-normal">caveat</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border align-top">
+              <tr>
+                <td class="px-4 py-3 font-medium">Search p95, server side</td>
+                <td class="px-4 py-3 font-mono tabular-nums">180 ms</td>
+                <td class="px-4 py-3 font-mono tabular-nums text-brand-700">
+                  95 ms
+                </td>
+                <td class="px-4 py-3 text-xs leading-5 text-muted-foreground">
+                  Four weeks either side of cutover, from APM. The old figure
+                  includes a network hop to the managed cluster, so this is not
+                  a like-for-like engine comparison.
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium">Search-related pages</td>
+                <td class="px-4 py-3 font-mono tabular-nums">4</td>
+                <td class="px-4 py-3 font-mono tabular-nums text-brand-700">
+                  0
+                </td>
+                <td class="px-4 py-3 text-xs leading-5 text-muted-foreground">
+                  Six months before against six months after. Small numbers; the
+                  vacuum bloat in week 6 was caught by a dashboard, not a page,
+                  and would count if it had paged.
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium">Monthly spend on search</td>
+                <td class="px-4 py-3 font-mono tabular-nums">$1,100</td>
+                <td class="px-4 py-3 font-mono tabular-nums text-brand-700">
+                  about $150
+                </td>
+                <td class="px-4 py-3 text-xs leading-5 text-muted-foreground">
+                  The after figure is the database tier increase, which may have
+                  been needed within the year regardless. Excludes about six
+                  engineer-weeks of project time.
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium">Invoices table size</td>
+                <td class="px-4 py-3 font-mono tabular-nums">41 GB</td>
+                <td class="px-4 py-3 font-mono tabular-nums text-brand-700">
+                  48 GB
+                </td>
+                <td class="px-4 py-3 text-xs leading-5 text-muted-foreground">
+                  From <code class="font-mono">pg_total_relation_size</code>,
+                  table plus indexes, after the first full vacuum. A real cost
+                  that the cluster used to carry elsewhere.
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium">
+                  Top-ten overlap with the old results
+                </td>
+                <td class="px-4 py-3 font-mono tabular-nums"></td>
+                <td class="px-4 py-3 font-mono tabular-nums text-brand-700">
+                  97%
+                </td>
+                <td class="px-4 py-3 text-xs leading-5 text-muted-foreground">
+                  Two weeks of shadow traffic. Overlap measures sameness, not
+                  quality; nobody measured whether the old results were the
+                  right ones.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-3 text-sm leading-6 text-muted-foreground">
+          Not measured, and worth saying: relevance as users experience it,
+          beyond the overlap figure. Support tickets mentioning search did not
+          rise in the quarter after cutover, which is the only signal the team
+          has, and it is a weak one.
+        </p>
+      </section>
+
+      <section id="lessons" class="mt-8">
+        <h2
+          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
+        >
+          06 &middot; What we would do differently
+        </h2>
+        <ul class="mt-3 space-y-2 text-sm leading-6">
+          <li class="flex items-start gap-2.5">
+            <i
+              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
+            ></i
+            ><span
+              ><strong
+                >Build a labeled relevance set before the shadow run.</strong
+              >
+              Fifty real queries with the expected first result would have
+              turned overlap into a quality measure. Overlap only proved the two
+              systems agreed.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i
+              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
+            ></i
+            ><span
+              ><strong>Shadow through a month-end.</strong> Search volume
+              triples in the last three days of a month, and the two-week window
+              missed one. It went fine, but that was luck.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i
+              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
+            ></i
+            ><span
+              ><strong>Index emails as trigrams from day one.</strong> The
+              parser treats an address as one token; the regression was
+              predictable and cost a customer-facing day.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i
+              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
+            ></i
+            ><span
+              ><strong>Tune autovacuum in the same PR as the GIN index.</strong>
+              A large table gaining a GIN index changes its vacuum needs. The
+              Saturday was avoidable.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i
+              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
+            ></i
+            ><span
+              ><strong>Keep the cluster on for a month, not a week.</strong> It
+              was not needed, but a month of $1,100 was cheap insurance against
+              being wrong about the six percent.</span
+            >
+          </li>
+        </ul>
+        <p class="mt-4 text-sm leading-6">
+          <strong>What held up:</strong> doing the query audit first, the
+          generated column over a trigger, the flag per account, and deleting
+          the old path in one PR so nobody could quietly keep it alive.
+        </p>
+      </section>
+
+      <section id="apply" class="mt-8">
+        <div class="rounded-xl border-2 border-brand-300 bg-brand-25 p-5">
+          <p
+            class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
+          >
+            Apply this
+          </p>
+          <div class="mt-3 grid gap-5 text-sm leading-6 sm:grid-cols-2">
+            <div>
+              <p class="font-semibold">This transfers when</p>
+              <ul class="mt-1 space-y-1">
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >Most searches are exact or prefix matches on a few known
+                    fields. Check the logs, not the UI.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >The corpus lives in one Postgres primary and is in the tens
+                    of millions of rows, not billions.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >Nobody uses facets, aggregations, or typo tolerance,
+                    whatever the UI offers.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                  ><span
+                    >You can run both paths in shadow and log the
+                    difference.</span
+                  >
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold">It does not when</p>
+              <ul class="mt-1 space-y-1">
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >Faceted navigation or aggregations are the product, as in a
+                    catalog or an analytics view.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >You need fuzzy matching across many languages, or ranking
+                    tuned by a search team.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >The searchable data is spread across several databases or
+                    services.</span
+                  >
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                  ><span
+                    >The primary has no headroom; the column and index cost real
+                    disk and vacuum time.</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-4 border-t border-brand-100 pt-3 text-sm leading-6">
+            <strong>First step.</strong> Pull one week of search logs and
+            classify each query by shape. If fewer than 80 percent are
+            structured matches on known fields, this case does not apply, and
+            you have learned that in an afternoon.
+          </p>
+        </div>
+      </section>
+
+      <footer
+        class="mt-12 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The team's pull
+        requests and their diffs, the one-week query log audit, the shadow-run
+        overlap log, the APM dashboards for four weeks either side of cutover,
+        the pager history for the twelve months around the project, and the
+        host's billing pages. Quotes are from a conversation with the staff
+        engineer. The six engineer-weeks is the team's estimate, not a
+        timesheet. Illustrative: this story and its figures are representative,
+        not verified.
+      </footer>
+    </main>
+  </body>
+</html>
