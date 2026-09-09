@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Switching to a heat pump in a cold climate</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="faq@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          FAQ
+        </p>
+        <h1
+          class="mt-3 text-3xl font-semibold tracking-[-0.03em] text-balance sm:text-4xl"
+        >
+          Switching to a heat pump in a cold climate
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          For homeowners where winter reaches zero, heating with oil, propane,
+          or baseboard electric, who have heard both that heat pumps fail in the
+          cold and that they do not. Sixteen questions in four groups; each
+          opens on its own, and the sources sit under every answer.
+        </p>
+      </header>
+
+      <nav aria-label="On this page" class="mt-6 flex flex-wrap gap-2">
+        <a
+          href="#works"
+          class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-brand-300"
+          >Does it work</a
+        >
+        <a
+          href="#cost"
+          class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-brand-300"
+          >Cost and incentives</a
+        >
+        <a
+          href="#install"
+          class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-brand-300"
+          >Installation</a
+        >
+        <a
+          href="#living"
+          class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-brand-300"
+          >Living with it</a
+        >
+      </nav>
+
+      <section id="works" class="mt-10 scroll-mt-6">
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          Does it work
+        </h2>
+        <div class="mt-1">
+          <details
+            id="q-below-zero"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Does a heat pump work below zero?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Yes, if it is a cold-climate model. Units on the NEEP cold-climate
+              list are rated to deliver most of their heat at 5 below and keep
+              running to 15 or 20 below; the ordinary models sold in warmer
+              states are not, and they are where the reputation comes from.
+              Field studies in Maine and Minnesota show homes heated through the
+              whole winter with no backup.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-1"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >NEEP list</a
+              >
+              ·
+              <a
+                href="#src-2"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Field studies</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-capacity-loss"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              How much heat does it lose in the cold?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Some, and the amount is printed on the spec sheet for every model:
+              typically a quarter to a third of the rated output is gone by 15
+              below. A good installer sizes the unit to its output at your
+              design temperature, not to the nameplate number, so the drop is
+              planned for rather than discovered.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-1"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >NEEP list</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-keep-furnace"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Do I need to keep my furnace?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Not if the unit is sized for your design temperature and the house
+              is reasonably tight. Keeping the old furnace through the first
+              winter as a backup costs nothing and is common; owners in the
+              field studies fired it a handful of nights, or never, and most
+              removed it within two years.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-2"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Field studies</a
+              >
+              ·
+              <a
+                href="#src-5"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Installer guidance</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-whole-house"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Will it heat the whole house or just one room?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Either, depending on what you install. A ducted unit replaces a
+              furnace and heats through the existing ducts. A ductless system
+              puts one wall head in each zone, and three or four heads heat a
+              typical house. One head in the main room is a partial system that
+              leaves the bedrooms on whatever heated them before.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-6"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DOE guide</a
+              >
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section id="cost" class="mt-10 scroll-mt-6">
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Cost and incentives
+        </h2>
+        <div class="mt-1">
+          <details
+            id="q-cost"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              What does it cost?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Ductless: about $4,000 to $6,000 per head installed, so $12,000 to
+              $20,000 for a whole house. Ducted: about $15,000 to $25,000 to
+              replace a furnace, more if the ducts need work. Quotes for the
+              same job vary by a third between installers, so get three.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-5"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Program cost reports</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-incentives"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              What incentives are there?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              A federal tax credit of 30 percent of the cost, capped at $2,000,
+              for a qualifying unit, claimed on your return. State and utility
+              rebates come on top and range from a few hundred dollars to
+              several thousand; the installer usually files the utility one for
+              you. Check the rebate's own list of qualifying models before you
+              buy, since it is narrower than the federal one.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-3"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >IRS credit page</a
+              >
+              ·
+              <a
+                href="#src-4"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DSIRE</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-bill"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Will my heating bill go down?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Against oil, propane, or baseboard electric, yes, usually by a
+              third or more. Against natural gas it turns on your electricity
+              rate: at about 15 cents a kilowatt-hour the two cost the same to
+              run, and above that gas wins on bills. Run the numbers with the
+              fuel prices on your own last two bills, not a calculator's
+              defaults.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-7"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >State calculators</a
+              >, which disagree; see the note in the footer
+            </p>
+          </details>
+          <details
+            id="q-electric-bill"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Does it raise my electric bill a lot?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Yes, in winter. A whole-house system adds roughly the heat the old
+              fuel supplied, delivered at two to three times the efficiency, so
+              the electric bill climbs and the oil or propane bill goes to zero.
+              The net is the saving above. Some utilities offer a heat pump rate
+              that lowers the winter price; ask before the first bill.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-7"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >State calculators</a
+              >
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section id="install" class="mt-10 scroll-mt-6">
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Installation
+        </h2>
+        <div class="mt-1">
+          <details
+            id="q-installer"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              How do I choose an installer?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Ask for a load calculation at your design temperature, and for the
+              model's output at that temperature, in writing. An installer who
+              sizes by square footage or by the old furnace is guessing. Get two
+              or three quotes and prefer the one that asked about your
+              insulation.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-5"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Installer guidance</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-panel"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Does my electrical panel need an upgrade?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Usually not for ductless, which needs one modest circuit per
+              outdoor unit. A ducted whole-house unit with electric backup
+              strips can need a large circuit of its own, which is where a 100
+              amp panel with an electric range and dryer already on it runs out.
+              The installer's electrician checks this before quoting.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-5"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Installer guidance</a
+              >
+              ·
+              <a
+                href="#src-6"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DOE guide</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-insulate"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Should I insulate first?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              If the attic has less than about ten inches, yes. It is cheaper
+              per unit of heat saved than the heat pump, it lets the installer
+              size a smaller unit, and most state programs rebate it too. A
+              drafty house with a heat pump is a warm house with a high bill.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-6"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DOE guide</a
+              >
+              ·
+              <a
+                href="#src-4"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DSIRE</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-how-long"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              How long does installation take?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              One to two days for ductless, two to four for ducted. The wait for
+              the installer is the longer part: six to ten weeks in the fall,
+              shorter in spring, which is the better season to buy.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-5"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Installer guidance</a
+              >
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section id="living" class="mt-10 scroll-mt-6">
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Living with it
+        </h2>
+        <div class="mt-1">
+          <details
+            id="q-loud"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Is it loud?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              No. The outdoor unit is about as loud as a refrigerator from a few
+              feet away and quieter than an oil burner; the indoor heads are
+              near silent on low. Placement matters more than the model, so keep
+              the outdoor unit away from a bedroom window.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-1"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >NEEP list</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-defrost"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              What is the defrost cycle?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              A few minutes every hour or two in cold, damp weather when the
+              outdoor unit runs in reverse to melt frost off its coil, and the
+              indoor air goes lukewarm. It is normal and nothing is wrong. You
+              will notice it most in the weeks around freezing, less in the deep
+              cold when the air is dry.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-6"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DOE guide</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-setback"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              Should I turn it down at night?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              No, or by a degree or two at most. A heat pump runs most
+              efficiently holding a steady temperature; a large setback makes it
+              run hard in the coldest hours of the morning to recover. Set it
+              and leave it, which is the opposite of the furnace habit.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-2"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >Field studies</a
+              >
+              ·
+              <a
+                href="#src-6"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DOE guide</a
+              >
+            </p>
+          </details>
+          <details
+            id="q-lifespan"
+            class="group scroll-mt-6 border-b border-border py-3"
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-medium"
+            >
+              How long does it last, and what maintenance does it need?
+              <i
+                class="ph ph-caret-down mt-0.5 shrink-0 text-base text-muted-foreground transition-transform group-open:rotate-180"
+              ></i>
+            </summary>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              15 to 20 years, about the same as a furnace. Rinse or vacuum the
+              indoor filters monthly in winter, keep snow and ice off the
+              outdoor unit, and have a technician check the refrigerant every
+              couple of years.
+            </p>
+            <p class="mt-2 text-xs text-muted-foreground">
+              Sources:
+              <a
+                href="#src-6"
+                class="text-brand-700 underline decoration-brand-200 underline-offset-2"
+                >DOE guide</a
+              >
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section id="stuck" class="mt-10 scroll-mt-6">
+        <div
+          class="rounded-xl border border-border bg-card p-5 shadow-sm sm:flex sm:items-start sm:gap-4"
+        >
+          <i
+            class="ph ph-chat-circle-text shrink-0 text-2xl text-brand-700"
+          ></i>
+          <div>
+            <p class="text-base font-semibold">Still stuck?</p>
+            <p class="mt-1 text-sm leading-6 text-muted-foreground">
+              Get two quotes from installers on your state program's list and
+              compare their output at your design temperature. If they disagree
+              by more than a ton, the load calculation is the thing to argue
+              about, not the price. Most utility efficiency programs have a free
+              phone line that will read both quotes with you; the number is on
+              the program's rebate page.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer
+        class="mt-12 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong>
+        <ol class="mt-2 list-decimal space-y-1 pl-5">
+          <li id="src-1" class="scroll-mt-6">
+            NEEP's cold-climate air-source heat pump product list, for which
+            models qualify and their output by outdoor temperature.
+          </li>
+          <li id="src-2" class="scroll-mt-6">
+            Field studies of whole-house heat pumps through winter, run by the
+            state efficiency programs in Maine and Minnesota.
+          </li>
+          <li id="src-3" class="scroll-mt-6">
+            The IRS page on the energy efficient home improvement credit.
+          </li>
+          <li id="src-4" class="scroll-mt-6">
+            The DSIRE database of state and utility incentives.
+          </li>
+          <li id="src-5" class="scroll-mt-6">
+            Installed cost ranges and sizing guidance from state program reports
+            and installer trade guidance.
+          </li>
+          <li id="src-6" class="scroll-mt-6">
+            The Department of Energy's homeowner guide to heat pumps.
+          </li>
+          <li id="src-7" class="scroll-mt-6">
+            Running-cost calculators published by state efficiency programs.
+          </li>
+        </ol>
+        <p class="mt-3">
+          <strong class="text-foreground">Where they differ.</strong> The
+          running-cost answers disagree most: the state calculators assume last
+          winter's average fuel prices while installer quotes assume this
+          winter's, and the comparison with gas flips with the electricity rate.
+          This page follows the calculators and says where the rate matters.
+          Prices and incentives were read this month and change yearly.
+          Illustrative: details are representative, not verified.
+        </p>
+      </footer>
+    </main>
+    <script>
+      // A link to a question opens it; with scripts off the reader clicks once more.
+      const openTarget = () => {
+        const target = document.getElementById(location.hash.slice(1));
+        if (target instanceof HTMLDetailsElement) target.open = true;
+      };
+      openTarget();
+      addEventListener("hashchange", openTarget);
+    </script>
+  </body>
+</html>

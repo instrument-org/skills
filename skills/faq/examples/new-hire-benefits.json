@@ -1,0 +1,8 @@
+{
+  "title": "Benefits questions from your first 90 days",
+  "prompt": "An FAQ for new hires about our benefits: health, 401(k), PTO, parental leave, equipment.",
+  "model": "claude-fable-5-1",
+  "note": "Calm and open: one column of answers beside a jump list that stays put on a wide screen, because a new hire reads this once with the enrollment form open and needs to find one answer and trust it, so nothing is hidden behind a click. Question headings are sans at medium weight with a link icon on hover, the first sentence of every answer carries the foreground color with the rest muted so the answer is visible before the reader decides to read on, and the still-stuck box names a channel and a person, the only card on the page.",
+  "illustrative": true,
+  "html_sha256": "d538d990a1e55c5ba3f28c8b5bc1d32afc4dc59beb9509c2967d52e520e22ebd"
+}

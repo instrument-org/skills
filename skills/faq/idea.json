@@ -1,0 +1,16 @@
+{
+  "title": "FAQ",
+  "tagline": "The FAQ page every help center has, written for your topic.",
+  "when": "The same questions keep arriving about one topic and the reader wants each answered once, in a block they can find, skim, or send.",
+  "tags": ["learn"],
+  "order": 140,
+  "needs": [],
+  "cover": "pricing-change",
+  "sections": [
+    "Who asks",
+    "Jump list",
+    "Questions and answers",
+    "Still stuck",
+    "Sources"
+  ]
+}

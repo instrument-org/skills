@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What the January pricing change means for your bill</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="faq@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Pricing FAQ · Halyard
+        </p>
+        <h1
+          class="mt-3 font-serif text-4xl font-medium tracking-[-0.02em] text-balance sm:text-5xl"
+        >
+          What the January pricing change means for your bill
+        </h1>
+        <p class="mt-5 text-base leading-7 text-muted-foreground">
+          For account owners and billing contacts on Starter and Team who
+          received our email this week. Free accounts and Enterprise contracts
+          are not affected. Nothing changes before your first bill dated January
+          1 or later, and the three questions we are asked most are answered
+          first.
+        </p>
+      </header>
+
+      <nav
+        aria-label="On this page"
+        class="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-y border-border py-3 text-sm"
+      >
+        <a href="#big" class="font-medium text-foreground"
+          >The three big ones</a
+        >
+        <a href="#bill" class="text-muted-foreground hover:text-foreground"
+          >Your bill</a
+        >
+        <a href="#plans" class="text-muted-foreground hover:text-foreground"
+          >Plans and features</a
+        >
+        <a href="#timing" class="text-muted-foreground hover:text-foreground"
+          >Timing and options</a
+        >
+        <a href="#stuck" class="text-muted-foreground hover:text-foreground"
+          >Still stuck</a
+        >
+      </nav>
+
+      <section
+        id="big"
+        class="mt-10 scroll-mt-6 rounded-2xl border border-brand-100 bg-brand-25 p-5 sm:p-7"
+      >
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          The three questions everyone asks
+        </h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-3">
+          <article
+            id="q-why"
+            class="scroll-mt-6 rounded-xl border border-brand-100 bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Why is the price going up?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Because the product is not the one the prices were set for four
+              years ago. Unlimited guests, audit logs, and the API moved from
+              paid add-ons into every plan, and what it costs to run them is the
+              difference. This is the first increase since launch.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> nothing. Read
+                on if you want your exact new amount.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-how-much"
+            class="scroll-mt-6 rounded-xl border border-brand-100 bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              How much more will I pay?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Starter goes from $10 to $12 per seat per month, Team from $20 to
+              $24. A ten-seat Team account on monthly billing pays $40 more a
+              month. Annual prices rise by the same fraction, at your next
+              renewal.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> open Billing,
+                then Plan, to see your account's new amount and the date it
+                applies.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-keep-price"
+            class="scroll-mt-6 rounded-xl border border-brand-100 bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Can I keep my current price?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Yes, for a year. Switch to annual billing before December 31 and
+              today's price holds for the twelve months of that term. After it,
+              renewals are at the new price. Monthly accounts move on the first
+              bill dated January 1 or later.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> Billing, then
+                Plan, then Switch to annual. One click, and it prorates what you
+                have already paid.</span
+              >
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="bill" class="mt-12 scroll-mt-6">
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Your bill
+        </h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <article
+            id="q-when"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              When will I see the new price?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              On the first invoice dated January 1 or later. A monthly account
+              billed on the 15th sees it on January 15. An annual account sees
+              it at its next renewal, whenever in the year that falls.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> check your
+                billing date under Billing, then Invoices.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-retroactive"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Will I be charged retroactively?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              No. Usage before your first bill at the new price is charged at
+              the old one, including seats you add in December.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> nothing.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-seats"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Do seat counts or overage rules change?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              No. You still pay for active seats only, and a seat removed
+              mid-cycle is credited the same way it is today.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> nothing,
+                unless you want to remove unused seats before January; the
+                Members page sorts by last active.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-invoice"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Will my invoice look different?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Only the unit price line changes. Purchase order numbers, tax
+              handling, and payment methods stay as they are.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> if finance
+                needs the new price on paper, download the updated order form
+                under Billing, then Documents.</span
+              >
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="plans" class="mt-12 scroll-mt-6">
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Plans and features
+        </h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <article
+            id="q-what-for"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              What do I get for the increase?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Everything that moved from add-on to included over the last two
+              years: unlimited guest seats, twelve months of audit log, the API
+              and webhooks on every plan, and SSO on Team. If you pay for any of
+              these as add-ons today, those lines drop off your bill in January.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> compare your
+                add-on lines with the plan page; for many Team accounts the net
+                change is smaller than the headline.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-free"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Is the Free plan changing?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              No. Free stays free, with the same limits.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> nothing.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-downgrade"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Should I move from Team to Starter?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Only if you are not using SSO, audit logs older than 30 days, or
+              more than three integrations. Downgrading is instant and
+              reversible; anything above Starter's limits becomes read-only
+              until you upgrade again, and nothing is deleted.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> the Plan page
+                lists which Team features your account used in the last 90
+                days.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-enterprise"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              What about Enterprise contracts?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Unchanged until the contract's renewal date, when your account
+              manager proposes new terms. Nothing on this page applies to you
+              before then.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> nothing.</span
+              >
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="timing" class="mt-12 scroll-mt-6">
+        <h2
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Timing and options
+        </h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <article
+            id="q-cancel"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Can I cancel without a penalty?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Yes, at any time, with no cancellation fee. A monthly account
+              stops at the end of the current period; an annual account runs to
+              the end of its term and is not renewed. Your data stays exportable
+              for 90 days after.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> Billing, then
+                Plan, then Cancel. We would rather hear why first: reply to the
+                pricing email.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-discount"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Is there a discount for nonprofits or schools?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Yes: 30 percent off any plan for registered nonprofits and
+              accredited schools, unchanged by the increase and applied on top
+              of the new prices.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> apply under
+                Billing, then Discounts, with a registration document. Approval
+                takes about two business days.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-again"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Will prices go up again next year?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              There is no planned increase. Any future change comes with at
+              least 60 days' notice, as this one did.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> nothing.</span
+              >
+            </p>
+          </article>
+          <article
+            id="q-lock-longer"
+            class="scroll-mt-6 rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <h3 class="text-base leading-6 font-semibold">
+              Can I lock the old price for longer than a year?
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Not on Starter or Team. Accounts with 50 or more seats can ask for
+              a two-year term at today's price, which is the Enterprise
+              contract's shape without its minimum.
+            </p>
+            <p class="mt-3 flex items-start gap-2 text-sm leading-6">
+              <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+              ><span
+                ><strong class="font-medium">What to do:</strong> reply to the
+                pricing email with your seat count and we will send the
+                term.</span
+              >
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="stuck" class="mt-12 scroll-mt-6">
+        <div
+          class="rounded-xl border border-border bg-card p-5 shadow-sm sm:flex sm:items-start sm:gap-4"
+        >
+          <i
+            class="ph ph-chat-circle-text shrink-0 text-2xl text-brand-700"
+          ></i>
+          <div>
+            <p class="text-base font-semibold">Still stuck?</p>
+            <p class="mt-1 text-sm leading-6 text-muted-foreground">
+              Reply to the pricing email, or write to billing@halyard.example
+              with your account name, and a person on the billing team answers
+              within one business day. If you would rather talk it through, the
+              same email books a 15-minute call. Have your last invoice open;
+              most questions are answered by the two of us reading it together.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The pricing
+        announcement email, the updated pricing page, and the billing terms,
+        read this week. Where they differ: the pricing page shows list prices
+        and your invoice shows what you pay after any discount or add-on credit,
+        and when the two disagree the invoice is right and the page is behind.
+        The terms of service govern over this page. Illustrative: details are
+        representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>
