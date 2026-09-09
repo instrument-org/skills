@@ -1,16 +1,14 @@
 # Patterns: the recurring vocabulary
 
-Canonical spellings for the elements nearly every explanation uses. Each is a starting point, not a uniform: restyle freely, and let form follow the question. What these end is respelling, not variety.
+Canonical spellings for the elements pages of every template reach for. Each is a starting point, not a uniform: restyle freely, and let form follow the material. What these end is respelling, not variety.
 
 ## Section heading
 
 ```html
-<h2 class="text-xl font-semibold tracking-[-0.02em]" data-short="Short label">
-  What the section answers
-</h2>
+<h2 class="text-xl font-semibold tracking-[-0.02em]">What the section answers</h2>
 ```
 
-`data-short` feeds the orientation strip when the full heading runs long; omit it otherwise. The heading states the section's finding rather than naming its topic, since it is the line most likely to be the only one read.
+Give every section an `id`, so a heading can be linked to and sent on its own. The heading states what the section says rather than naming its topic, since it is the line most likely to be the only one read.
 
 To mark the sections, put a Phosphor icon first inside the `h2`. The strip mirrors it automatically, so this is the only place it is written:
 
@@ -193,7 +191,7 @@ wire-format  <span class="text-warning-300">folder</span> · ready
 
 ## Code excerpt
 
-Terminal output is a bare `<pre>` with hand-placed spans (above). Real code is `<pre><code class="language-x">` on the same dark surface; the template loads highlight.js automatically when such a block exists, so never hand-color code:
+Terminal output is a bare `<pre>` with hand-placed spans (above). Real code is `<pre><code class="language-x">` on the same dark surface; nothing highlights it for you, so keep the spans few and structural rather than trying to color a whole language:
 
 ```html
 <pre
@@ -201,35 +199,28 @@ Terminal output is a bare `<pre>` with hand-placed spans (above). Real code is `
 ><code class="language-ts">const spy = new IntersectionObserver(onSee, { rootMargin: "-15% 0px -75% 0px" });</code></pre>
 ```
 
-Name the language; auto-detection is a fallback, not a plan.
+Name the language even though nothing reads it: it tells the next person what they are looking at.
 
-## What both blocks get for free
+## A block wider than the column
 
-Every `<pre>` on the page, in either dialect, is given a Copy button and a Wrap toggle in its top-right corner, revealed on hover. Never build your own; never leave a long line to run off the right edge on the theory that the reader will scroll.
-
-Blocks wrap by default, and the toggle returns one block to one line per line. Wrapping is right for the prose-shaped lines these pages mostly carry, and wrong for anything whose columns line up, so start those unwrapped with `data-wrap="off"` on the `<pre>`: an ASCII diagram, a box drawing, a table of aligned output. That is the only case where the author decides; everything else takes the default.
-
-## Leaving the column
-
-Two steps out, both supplied by the shell and both centered on the column. The attribute is the whole spelling; nothing else on the element positions it.
+The starter's `<main>` is a reading column, which is right for prose and wrong for a matrix. Widen the block, not the column: raise `main`'s own `max-w-3xl` where a template is a wide one by nature, or give the single block that needs the room its own width and let the prose keep its measure.
 
 ```html
-<!-- wide, ~76rem: the everyday step. Dense tables, matrices, comparisons. -->
-<div data-width="wide" class="mt-6 overflow-x-auto overflow-y-hidden">
-  <table class="w-full text-left text-sm">
+<!-- The everyday case: a table wider than the page, in a scroll container. -->
+<div
+  class="overflow-x-auto overflow-y-hidden rounded-xl border border-border bg-card shadow-sm print:overflow-visible xl:overflow-visible"
+>
+  <table class="min-w-[63rem] text-xs leading-5">
     …
   </table>
 </div>
-
-<!-- full, up to 132rem: content that is the argument rather than illustrating it. -->
-<div data-width="full">
-  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">…</div>
-</div>
 ```
 
-Put it on the block that needs the room, never on the `<section>`, or the heading and intro drift out of line with every other heading on the page. Both steps cap at `92vw` rather than `100vw`, which keeps a margin and avoids the horizontal scrollbar a full-viewport child causes on Windows. Use them for a handful of blocks on a page, never as the default wrapper -- a page where everything is wide has no column left to break out of.
+Three things earn their place in that one element. `xl:overflow-visible` drops the scroller once the viewport is wide enough to hold the table outright, so a large screen gets the whole thing at once. `print:overflow-visible` does the same on paper, because the container that saves the block on screen is exactly what clips it in a print, and a template whose content is wider than a portrait sheet should also set `@page { size: landscape }` in its own style block.
 
-Prefer either step over a horizontal scroller, and where one is unavoidable, always pair the classes as above. `overflow-x-auto` alone computes `overflow-y` to `auto` as well. A horizontal scrollbar then steals its own height from the content box, which leaves the block scrollable downward by exactly that much, and a reader scrolling past it spends the gesture there and thinks the page is stuck. It only bites with a mouse attached, because overlay scrollbars take no space, which is why it survives every check made on a trackpad. The shell already pins this down for `<pre>` and the orientation strip; a table wrapper is yours to spell.
+The third is a trap worth knowing: `overflow-x-auto` alone computes `overflow-y` to `auto` as well. A horizontal scrollbar then steals its own height from the content box, which leaves the block scrollable downward by exactly that much, and a reader scrolling past it spends the gesture there and thinks the page is stuck. It only bites with a mouse attached, because overlay scrollbars take no space, which is why it survives every check made on a trackpad. Always pair the two classes.
+
+Use this for the handful of blocks that need it, never as the default wrapper: a page where everything is wide has no column left to break out of.
 
 ## Quoting someone
 
@@ -249,51 +240,6 @@ The distillation is the line, the quote is the support under it. Never the other
 ```
 
 Clip the quote to the fragment that carries the point and mark the clip with an ellipsis; a paragraph of someone's own words pasted whole is the least-read element on the page, however well it argues. Where many of these stack, they are a table, and the distillation is the first column.
-
-## Ledger opener (series rounds only)
-
-Sits first, wrapped like any titled section so the orientation strip picks it up. The middle column's label flexes with the round: "Changed this round" after a reversal, "Deciding this round" when the round exists to make a call.
-
-```html
-<section id="ledger" class="mt-10">
-  <h2
-    class="text-xl font-semibold tracking-[-0.02em]"
-    data-short="Where this stands"
-  >
-    Where this round stands
-  </h2>
-  <div class="mt-4 grid gap-5 md:grid-cols-3">
-    <div>
-      <p
-        class="text-xs font-medium tracking-[0.12em] text-success-700 uppercase"
-      >
-        Settled
-      </p>
-      <ul class="mt-3 space-y-2 text-sm leading-6">
-        …
-      </ul>
-    </div>
-    <div>
-      <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-        Deciding this round
-      </p>
-      <ul class="mt-3 space-y-2 text-sm leading-6">
-        …
-      </ul>
-    </div>
-    <div>
-      <p
-        class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-      >
-        Cut
-      </p>
-      <ul class="mt-3 space-y-2 text-sm leading-6">
-        …
-      </ul>
-    </div>
-  </div>
-</section>
-```
 
 ## Decision ending
 

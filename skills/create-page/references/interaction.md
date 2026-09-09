@@ -1,12 +1,8 @@
-# Interaction: orient, never gate
+# Interaction: help, never gate
 
 The governing principle: vertical scroll is how the reader discovers what a page contains. Interaction that helps them orient (a sidebar that tracks position) or tuck away supporting depth (a labeled collapsible) earns its place; interaction that gates load-bearing content behind a click is a liability, because content the reader never clicks is content they never see.
 
 The second test, which killed two candidates in review: an interaction must give the reader something scrolling cannot. A reply assembled, state remembered, pixels compared, a figure enlarged: those earn their click. A stepper that narrates a diagram already visible, or a filter that dims a list short enough to scan, only re-presents information the reader has; cut those.
-
-## Section orientation: automatic
-
-Orientation exists so the reader knows which document they are in, where they are, and what is coming; scrolling stays the interaction, so it must be visible, never tucked behind a button. The template builds one strip at every width from every `main > section[id]` that has an `h2` (fewer than four sections: nothing): the document title on the left, then the section names, the current one marked by darker weight and a quiet underline, the strip scrolling itself to keep the mark in view; when the page is scrolled to its end, the last section takes the mark even if a taller neighbor is still on screen. It occupies the very top of the page from the moment it loads, so sticking never moves or resizes it. Links work; visibility is the point. `data-short="Label"` on an `h2` shortens labels. Do not build a second navigation on top of it.
 
 ## Answer form
 

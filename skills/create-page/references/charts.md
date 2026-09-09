@@ -110,6 +110,8 @@ Label at least the endpoints and the peak with small `<text>` marks, or the line
 
 Rows sharing one time axis: a relative container per row, absolutely positioned bars with `left`/`width` percentages computed from the shared span, and the span named in the caption. Ticks are a top row of mono labels absolutely positioned at the same percentage offsets. Same honesty rule.
 
-## No remote libraries
+## No charting library
 
-This shell serves everything locally and never loads a CDN, so there is no charting library: the recipes above are the charting story. For axis-heavy needs, generate labeled SVG (ticks as a text row at computed offsets, gridlines as low-opacity lines); the sparkline recipe extends naturally.
+A page loads the fonts, the icon set, and the pinned Tailwind build, and nothing else; `check:ideas` fails a page that reaches anywhere further. So there is no Chart.js here and the recipes above are the whole charting story. For axis-heavy needs, generate labeled SVG -- ticks as a text row at computed offsets, gridlines as low-opacity lines -- which the sparkline recipe extends to naturally.
+
+A chart is also the easiest place to imply precision the research does not have. Draw a value at its own size or not at all, name the base beside the marks, and prefer a coarse scale to a decimal that was never measured.
