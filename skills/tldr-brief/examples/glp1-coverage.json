@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Newspaper register on purpose: a serif headline under a nameplate rule, a serif body, and a two-column layout with a hairline between the story and a boxed do and do not sidebar, because the reader will forward this to a CFO and a front-page look reads as settled rather than as a memo in progress. The bullets are short paragraphs with small-caps run-in heads instead of a list, and the one figure is a cost table under three plan designs, since the decision is a budget line.",
   "illustrative": true,
-  "html_sha256": "4b068658cbf710bfaf80f220c086bb6770abc72ed42fa9e3bcd28ba336d56219"
+  "html_sha256": "134f6dd8e2d5fe448e708fce5b264e37e0c3e9a3c3198812be0a6e859627cc36"
 }

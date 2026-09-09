@@ -10,18 +10,9 @@
     <meta name="instrument:idea" content="comparison-matrix@1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
@@ -220,9 +211,7 @@
     </style>
     <main class="mx-auto max-w-6xl px-6 py-14 sm:px-10 sm:py-20">
       <header class="max-w-3xl">
-        <p
-          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
-        >
+        <p class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase">
           Comparison matrix
         </p>
         <h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
@@ -238,38 +227,15 @@
       </header>
 
       <section id="legend" class="mt-10">
-        <div
-          class="flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-muted-foreground"
-        >
-          <span class="inline-flex items-center gap-2"
-            ><span
-              class="size-3.5 rounded-sm bg-brand-100 ring-1 ring-brand-300"
-            ></span
-            >Strong for hourly agency work</span
-          >
-          <span class="inline-flex items-center gap-2"
-            ><span
-              class="size-3.5 rounded-sm bg-card ring-1 ring-gray-300"
-            ></span
-            >Fine, nothing that decides anything</span
-          >
-          <span class="inline-flex items-center gap-2"
-            ><span
-              class="size-3.5 rounded-sm bg-warning-100 ring-1 ring-warning-300"
-            ></span
-            >A real weakness for this brief</span
-          >
-          <span class="inline-flex items-center gap-2"
-            ><sup class="font-mono text-[10px] text-brand-700">1</sup>Footnote,
-            keyed per tool below</span
-          >
-          <span
-            >Prices: 12 seats, billed annually, seen the week of writing</span
-          >
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-muted-foreground">
+          <span class="inline-flex items-center gap-2"><span class="size-3.5 rounded-sm bg-brand-100 ring-1 ring-brand-300"></span>Strong for hourly agency work</span>
+          <span class="inline-flex items-center gap-2"><span class="size-3.5 rounded-sm bg-card ring-1 ring-gray-300"></span>Fine, nothing that decides anything</span>
+          <span class="inline-flex items-center gap-2"><span class="size-3.5 rounded-sm bg-warning-100 ring-1 ring-warning-300"></span>A real weakness for this brief</span>
+          <span class="inline-flex items-center gap-2"><sup class="font-mono text-[10px] text-brand-700">1</sup>Footnote,
+            keyed per tool below</span>
+          <span>Prices: 12 seats, billed annually, seen the week of writing</span>
         </div>
-        <dl
-          class="mt-5 grid gap-x-8 gap-y-2 text-sm leading-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
+        <dl class="mt-5 grid gap-x-8 gap-y-2 text-sm leading-6 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <dt class="font-medium">Cost</dt>
             <dd class="text-muted-foreground">
@@ -302,9 +268,7 @@
       </section>
 
       <section id="matrix" class="mt-6">
-        <div
-          class="overflow-x-auto rounded-xl border border-border bg-card shadow-sm lg:overflow-visible"
-        >
+        <div class="overflow-x-auto rounded-xl border border-border bg-card shadow-sm lg:overflow-visible">
           <!-- prettier-ignore -->
           <table class="matrix min-w-[60rem] text-xs leading-5">
             <colgroup><col style="width: 11.5rem" /><col /><col /><col /><col /><col /><col /></colgroup>
@@ -343,9 +307,7 @@
       </section>
 
       <section id="footnotes" class="mt-10">
-        <p
-          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-        >
+        <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
           Footnotes, by tool
         </p>
         <!-- prettier-ignore -->
@@ -382,50 +344,34 @@
       </section>
 
       <section id="reading" class="mt-10 max-w-3xl">
-        <p
-          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-        >
+        <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
           How to read this
         </p>
         <ul class="mt-3 space-y-2 text-sm leading-6">
           <li class="flex items-start gap-2.5">
-            <i class="ph ph-rows mt-1 text-lg text-brand-700"></i
-            ><span
-              >Read the Billing hourly band first. It is the only band where the
+            <i class="ph ph-rows mt-1 text-lg text-brand-700"></i><span>Read the Billing hourly band first. It is the only band where the
               six tools genuinely differ, and it is the reason the agency
-              asked.</span
-            >
+              asked.</span>
           </li>
           <li class="flex items-start gap-2.5">
-            <i class="ph ph-columns mt-1 text-lg text-brand-700"></i
-            ><span
-              >Count tones, not features. No column is all green: Teamwork and
+            <i class="ph ph-columns mt-1 text-lg text-brand-700"></i><span>Count tones, not features. No column is all green: Teamwork and
               Productive win the billing rows and lose setup, ClickUp wins price
               and loses invoicing, Basecamp wins simplicity and loses
-              hours.</span
-            >
+              hours.</span>
           </li>
           <li class="flex items-start gap-2.5">
-            <i class="ph ph-warning mt-1 text-lg text-brand-700"></i
-            ><span
-              >A warning tone means weak for this brief, not a bad product.
+            <i class="ph ph-warning mt-1 text-lg text-brand-700"></i><span>A warning tone means weak for this brief, not a bad product.
               Asana's missing invoicing is a flaw for an agency that bills
-              hourly and irrelevant for one on retainer.</span
-            >
+              hourly and irrelevant for one on retainer.</span>
           </li>
           <li class="flex items-start gap-2.5">
-            <i class="ph ph-hash mt-1 text-lg text-brand-700"></i
-            ><span
-              >A footnote number points at the catch behind a cell: a seat pack,
-              a tier boundary, an add-on with its own price.</span
-            >
+            <i class="ph ph-hash mt-1 text-lg text-brand-700"></i><span>A footnote number points at the catch behind a cell: a seat pack,
+              a tier boundary, an add-on with its own price.</span>
           </li>
         </ul>
       </section>
 
-      <footer
-        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
-      >
+      <footer class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground">
         <strong class="text-foreground">Sources.</strong> Vendor pricing and
         feature pages for all six tools at the annual rate, seen the week of
         writing; each vendor's help center for the time-tracking and invoicing

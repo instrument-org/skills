@@ -11,18 +11,9 @@
     <meta name="instrument:idea" content="case-study@1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
@@ -168,14 +159,10 @@
           invoices. Its search ran on a managed Elasticsearch cluster that was
           one engineer's part-time job to keep in sync. Over eight weeks a team
           of five replaced it with a generated
-          <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-            >tsvector</code
-          >
+          <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">tsvector</code>
           column and a GIN index, and turned the cluster off.
         </p>
-        <dl
-          class="mt-5 flex flex-wrap gap-x-6 gap-y-1.5 border-y border-border py-3 font-mono text-xs text-muted-foreground"
-        >
+        <dl class="mt-5 flex flex-wrap gap-x-6 gap-y-1.5 border-y border-border py-3 font-mono text-xs text-muted-foreground">
           <div>
             <dt class="inline text-foreground">stack</dt>
             <dd class="inline">Rails 7.1, Postgres 15, Sidekiq</dd>
@@ -198,9 +185,7 @@
       </header>
 
       <section id="context" class="mt-10">
-        <h2
-          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
-        >
+        <h2 class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
           01 &middot; Context
         </h2>
         <p class="mt-2 text-sm leading-6">
@@ -210,9 +195,7 @@
           years earlier, indexed invoices, customers, and line items into
           Elasticsearch 7 on a managed three-node cluster costing about $1,100 a
           month. A Sidekiq job enqueued on every
-          <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-            >after_commit</code
-          >
+          <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">after_commit</code>
           kept the index current, and the app queried the cluster for IDs, then
           loaded rows from Postgres.
         </p>
@@ -224,9 +207,7 @@
       </section>
 
       <section id="challenge" class="mt-8">
-        <h2
-          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
-        >
+        <h2 class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
           02 &middot; Challenge
         </h2>
         <p class="mt-2 text-sm leading-6">
@@ -250,16 +231,12 @@
       </section>
 
       <section id="approach" class="mt-8">
-        <h2
-          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
-        >
+        <h2 class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
           03 &middot; Approach, in order
         </h2>
         <ol class="mt-3 space-y-4 text-sm leading-6">
           <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
-            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
-              >week 1</span
-            >
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1">week 1</span>
             <div>
               <strong>Audited the queries.</strong> One week of search logs,
               about 140,000 searches, classified by shape. 94 percent were an
@@ -271,35 +248,23 @@
             </div>
           </li>
           <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
-            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
-              >weeks 2 to 3</span
-            >
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1">weeks 2 to 3</span>
             <div>
               <strong>Prototyped on a replica snapshot.</strong> A generated
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >tsvector</code
-              >
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">tsvector</code>
               column on
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >invoices</code
-              >, weighted so the number and customer name outrank the memo, with
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">invoices</code>, weighted so the number and customer name outrank the memo, with
               a GIN index built concurrently. Line items got their own column
               and index, queried through an
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >EXISTS</code
-              >
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">EXISTS</code>
               subquery for the six percent. Invoice number prefixes were handled
               by appending
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >:*</code
-              >
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">:*</code>
               to the last term when the input matched the number format.
             </div>
           </li>
           <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
-            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
-              >weeks 4 to 5</span
-            >
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1">weeks 4 to 5</span>
             <div>
               <strong>Ran both in shadow.</strong> Every production search hit
               Elasticsearch for the response and Postgres in the background, and
@@ -308,32 +273,22 @@
               multi-word customer names, which Postgres ranked lower than a
               partial match on the invoice memo; adding a phrase-match boost
               from
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >phraseto_tsquery</code
-              >
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">phraseto_tsquery</code>
               closed most of the gap.
             </div>
           </li>
           <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
-            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
-              >week 6</span
-            >
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1">week 6</span>
             <div>
               <strong>Cut over behind a flag per account.</strong> Ten percent
               of accounts for five days, then all. One regression came in on day
               two: searching for the local part of an email returned nothing,
               because the
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >simple</code
-              >
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">simple</code>
               parser treats an address as one token. The fix was a
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >pg_trgm</code
-              >
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">pg_trgm</code>
               index on
-              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs"
-                >customer_email</code
-              >
+              <code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">customer_email</code>
               and a second clause in the scope. The same week, autovacuum fell
               behind on the invoices table and the GIN index bloated; raising
               the table's vacuum scale factor and running one manual vacuum took
@@ -341,9 +296,7 @@
             </div>
           </li>
           <li class="grid gap-1 sm:grid-cols-[6rem_1fr] sm:gap-4">
-            <span class="font-mono text-xs text-muted-foreground sm:pt-1"
-              >weeks 7 to 8</span
-            >
+            <span class="font-mono text-xs text-muted-foreground sm:pt-1">weeks 7 to 8</span>
             <div>
               <strong>Deleted the old path.</strong> The sync worker, the
               mapping files, the client wrapper, and their tests: about 1,400
@@ -360,9 +313,7 @@
               The column and its index. The index is built outside the migration
               transaction.
             </figcaption>
-            <pre
-              class="mt-2 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-xs leading-5 text-gray-100"
-            ><code>ALTER TABLE invoices
+            <pre class="mt-2 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-xs leading-5 text-gray-100"><code>ALTER TABLE invoices
   ADD COLUMN search_document tsvector
   GENERATED ALWAYS AS (
     setweight(to_tsvector('simple', coalesce(number, '')), 'A') ||
@@ -379,9 +330,7 @@ CREATE INDEX CONCURRENTLY invoices_search_document_idx
               The scope that replaced the client. Prefix and email handling are
               omitted.
             </figcaption>
-            <pre
-              class="mt-2 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-xs leading-5 text-gray-100"
-            ><code>class Invoice &lt; ApplicationRecord
+            <pre class="mt-2 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-xs leading-5 text-gray-100"><code>class Invoice &lt; ApplicationRecord
   scope :search, -&gt;(term) {
     query = sanitize_sql_array(
       ["websearch_to_tsquery('simple', ?)", term]
@@ -407,17 +356,13 @@ end</code></pre>
       </section>
 
       <section id="before-after" class="mt-8">
-        <h2
-          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
-        >
+        <h2 class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
           04 &middot; Architecture, before and after
         </h2>
         <div class="mt-3 overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
-              <tr
-                class="border-b border-border text-left font-mono text-xs text-muted-foreground"
-              >
+              <tr class="border-b border-border text-left font-mono text-xs text-muted-foreground">
                 <th class="pb-2 pr-4 font-normal"></th>
                 <th class="pb-2 pr-4 font-normal">before</th>
                 <th class="pb-2 font-normal text-brand-700">after</th>
@@ -495,19 +440,13 @@ end</code></pre>
       </section>
 
       <section id="results" class="mt-8">
-        <h2
-          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
-        >
+        <h2 class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
           05 &middot; Results, as measured
         </h2>
-        <div
-          class="mt-3 overflow-x-auto rounded-xl border border-border bg-card shadow-sm"
-        >
+        <div class="mt-3 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
           <table class="w-full text-sm">
             <thead>
-              <tr
-                class="border-b border-border text-left font-mono text-xs text-muted-foreground"
-              >
+              <tr class="border-b border-border text-left font-mono text-xs text-muted-foreground">
                 <th class="px-4 py-2.5 font-normal">metric</th>
                 <th class="px-4 py-2.5 font-normal">before</th>
                 <th class="px-4 py-2.5 font-normal">after</th>
@@ -589,64 +528,35 @@ end</code></pre>
       </section>
 
       <section id="lessons" class="mt-8">
-        <h2
-          class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
-        >
+        <h2 class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
           06 &middot; What we would do differently
         </h2>
         <ul class="mt-3 space-y-2 text-sm leading-6">
           <li class="flex items-start gap-2.5">
-            <i
-              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
-            ></i
-            ><span
-              ><strong
-                >Build a labeled relevance set before the shadow run.</strong
-              >
+            <i class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"></i><span><strong>Build a labeled relevance set before the shadow run.</strong>
               Fifty real queries with the expected first result would have
               turned overlap into a quality measure. Overlap only proved the two
-              systems agreed.</span
-            >
+              systems agreed.</span>
           </li>
           <li class="flex items-start gap-2.5">
-            <i
-              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
-            ></i
-            ><span
-              ><strong>Shadow through a month-end.</strong> Search volume
+            <i class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"></i><span><strong>Shadow through a month-end.</strong> Search volume
               triples in the last three days of a month, and the two-week window
-              missed one. It went fine, but that was luck.</span
-            >
+              missed one. It went fine, but that was luck.</span>
           </li>
           <li class="flex items-start gap-2.5">
-            <i
-              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
-            ></i
-            ><span
-              ><strong>Index emails as trigrams from day one.</strong> The
+            <i class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"></i><span><strong>Index emails as trigrams from day one.</strong> The
               parser treats an address as one token; the regression was
-              predictable and cost a customer-facing day.</span
-            >
+              predictable and cost a customer-facing day.</span>
           </li>
           <li class="flex items-start gap-2.5">
-            <i
-              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
-            ></i
-            ><span
-              ><strong>Tune autovacuum in the same PR as the GIN index.</strong>
+            <i class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"></i><span><strong>Tune autovacuum in the same PR as the GIN index.</strong>
               A large table gaining a GIN index changes its vacuum needs. The
-              Saturday was avoidable.</span
-            >
+              Saturday was avoidable.</span>
           </li>
           <li class="flex items-start gap-2.5">
-            <i
-              class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"
-            ></i
-            ><span
-              ><strong>Keep the cluster on for a month, not a week.</strong> It
+            <i class="ph ph-arrow-bend-down-right mt-1 text-base text-brand-700"></i><span><strong>Keep the cluster on for a month, not a week.</strong> It
               was not needed, but a month of $1,100 was cheap insurance against
-              being wrong about the six percent.</span
-            >
+              being wrong about the six percent.</span>
           </li>
         </ul>
         <p class="mt-4 text-sm leading-6">
@@ -658,9 +568,7 @@ end</code></pre>
 
       <section id="apply" class="mt-8">
         <div class="rounded-xl border-2 border-brand-300 bg-brand-25 p-5">
-          <p
-            class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase"
-          >
+          <p class="font-mono text-xs tracking-[0.08em] text-brand-700 uppercase">
             Apply this
           </p>
           <div class="mt-3 grid gap-5 text-sm leading-6 sm:grid-cols-2">
@@ -668,32 +576,20 @@ end</code></pre>
               <p class="font-semibold">This transfers when</p>
               <ul class="mt-1 space-y-1">
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
-                  ><span
-                    >Most searches are exact or prefix matches on a few known
-                    fields. Check the logs, not the UI.</span
-                  >
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i><span>Most searches are exact or prefix matches on a few known
+                    fields. Check the logs, not the UI.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
-                  ><span
-                    >The corpus lives in one Postgres primary and is in the tens
-                    of millions of rows, not billions.</span
-                  >
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i><span>The corpus lives in one Postgres primary and is in the tens
+                    of millions of rows, not billions.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
-                  ><span
-                    >Nobody uses facets, aggregations, or typo tolerance,
-                    whatever the UI offers.</span
-                  >
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i><span>Nobody uses facets, aggregations, or typo tolerance,
+                    whatever the UI offers.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-check mt-1 text-base text-brand-700"></i
-                  ><span
-                    >You can run both paths in shadow and log the
-                    difference.</span
-                  >
+                  <i class="ph ph-check mt-1 text-base text-brand-700"></i><span>You can run both paths in shadow and log the
+                    difference.</span>
                 </li>
               </ul>
             </div>
@@ -701,32 +597,20 @@ end</code></pre>
               <p class="font-semibold">It does not when</p>
               <ul class="mt-1 space-y-1">
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
-                  ><span
-                    >Faceted navigation or aggregations are the product, as in a
-                    catalog or an analytics view.</span
-                  >
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i><span>Faceted navigation or aggregations are the product, as in a
+                    catalog or an analytics view.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
-                  ><span
-                    >You need fuzzy matching across many languages, or ranking
-                    tuned by a search team.</span
-                  >
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i><span>You need fuzzy matching across many languages, or ranking
+                    tuned by a search team.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
-                  ><span
-                    >The searchable data is spread across several databases or
-                    services.</span
-                  >
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i><span>The searchable data is spread across several databases or
+                    services.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
-                  ><span
-                    >The primary has no headroom; the column and index cost real
-                    disk and vacuum time.</span
-                  >
+                  <i class="ph ph-x mt-1 text-base text-muted-foreground"></i><span>The primary has no headroom; the column and index cost real
+                    disk and vacuum time.</span>
                 </li>
               </ul>
             </div>
@@ -740,9 +624,7 @@ end</code></pre>
         </div>
       </section>
 
-      <footer
-        class="mt-12 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
-      >
+      <footer class="mt-12 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
         <strong class="text-foreground">Sources.</strong> The team's pull
         requests and their diffs, the one-week query log audit, the shadow-run
         overlap log, the APM dashboards for four weeks either side of cutover,

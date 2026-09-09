@@ -8,18 +8,9 @@
     <meta name="instrument:idea" content="one-pager@1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
@@ -153,12 +144,8 @@
   <body class="bg-background font-sans text-foreground antialiased">
     <main class="mx-auto max-w-5xl px-5 py-7 sm:px-8 sm:py-8">
       <header class="border-b border-border pb-4">
-        <div
-          class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"
-        >
-          <p
-            class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
-          >
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <p class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase">
             One-pager · For the CTO
           </p>
           <p class="font-mono text-[11px] text-muted-foreground">
@@ -175,13 +162,9 @@
         </p>
       </header>
 
-      <div
-        class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
-      >
+      <div class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
         <section id="problem">
-          <p
-            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-          >
+          <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
             Problem
           </p>
           <p class="mt-2 text-sm leading-6">
@@ -197,99 +180,62 @@
           </p>
         </section>
 
-        <section
-          id="proposal"
-          class="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2"
-        >
+        <section id="proposal" class="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2">
           <div class="bg-card p-4">
-            <p
-              class="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase"
-            >
+            <p class="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
               before
             </p>
             <ul class="mt-2 space-y-1 text-[13px] leading-5">
               <li class="flex items-start gap-2">
-                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i
-                ><span>Admin pages inside the production Rails app.</span>
+                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i><span>Admin pages inside the production Rails app.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i
-                ><span>Aggregates run against the primary database.</span>
+                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i><span>Aggregates run against the primary database.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i
-                ><span
-                  >About 40 s for the orders view at peak; on-call paged on slow
-                  queries.</span
-                >
+                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i><span>About 40 s for the orders view at peak; on-call paged on slow
+                  queries.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i
-                ><span
-                  >CSV export, then a spreadsheet, for anything past the
-                  built-in views.</span
-                >
+                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i><span>CSV export, then a spreadsheet, for anything past the
+                  built-in views.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i
-                ><span
-                  >Numbers differ from finance until reconciled by hand.</span
-                >
+                <i class="ph ph-minus mt-0.5 text-sm text-muted-foreground"></i><span>Numbers differ from finance until reconciled by hand.</span>
               </li>
             </ul>
           </div>
           <div class="bg-brand-25 p-4">
-            <p
-              class="font-mono text-[11px] tracking-[0.08em] text-brand-700 uppercase"
-            >
+            <p class="font-mono text-[11px] tracking-[0.08em] text-brand-700 uppercase">
               after
             </p>
             <ul class="mt-2 space-y-1 text-[13px] leading-5">
               <li class="flex items-start gap-2">
-                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i
-                ><span
-                  >A standalone read-only console with its own deploy.</span
-                >
+                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i><span>A standalone read-only console with its own deploy.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i
-                ><span
-                  >Reads the warehouse; three live views read a replica. Nothing
-                  touches the primary.</span
-                >
+                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i><span>Reads the warehouse; three live views read a replica. Nothing
+                  touches the primary.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i
-                ><span
-                  >Views load in a second or two; each shows its data's
-                  freshness.</span
-                >
+                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i><span>Views load in a second or two; each shows its data's
+                  freshness.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i
-                ><span
-                  >Saved filters and column pickers replace the exports.</span
-                >
+                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i><span>Saved filters and column pickers replace the exports.</span>
               </li>
               <li class="flex items-start gap-2">
-                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i
-                ><span
-                  >Same tables finance reads, so the numbers match by
-                  construction.</span
-                >
+                <i class="ph ph-plus mt-0.5 text-sm text-brand-700"></i><span>Same tables finance reads, so the numbers match by
+                  construction.</span>
               </li>
             </ul>
           </div>
         </section>
       </div>
 
-      <div
-        class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
-      >
+      <div class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
         <section id="why-now">
-          <p
-            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-          >
+          <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
             Why now
           </p>
           <p class="mt-2 text-sm leading-6">
@@ -304,66 +250,44 @@
 
         <section id="costs-returns" class="grid gap-6 sm:grid-cols-2">
           <div>
-            <p
-              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-            >
+            <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
               Costs, in engineer-weeks
             </p>
             <ul class="mt-2 space-y-1.5 text-sm leading-6">
               <li class="flex items-start gap-2.5">
-                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
-                ><span
-                  ><span class="font-mono text-[13px]">8 engineer-weeks</span>
+                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i><span><span class="font-mono text-[13px]">8 engineer-weeks</span>
                   to build: two engineers, four weeks, on the console and its
-                  views.</span
-                >
+                  views.</span>
               </li>
               <li class="flex items-start gap-2.5">
-                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
-                ><span
-                  ><span class="font-mono text-[13px]">2 engineer-weeks</span>
+                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i><span><span class="font-mono text-[13px]">2 engineer-weeks</span>
                   to cut over: a parallel run, the view sign-off with ops,
-                  removal of the old pages.</span
-                >
+                  removal of the old pages.</span>
               </li>
               <li class="flex items-start gap-2.5">
-                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
-                ><span
-                  >About a day a month to keep, since the warehouse team owns
-                  the pipelines and the console owns only its views.</span
-                >
+                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i><span>About a day a month to keep, since the warehouse team owns
+                  the pipelines and the console owns only its views.</span>
               </li>
             </ul>
           </div>
           <div>
-            <p
-              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
-            >
+            <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
               Returns, in hours a week
             </p>
             <ul class="mt-2 space-y-1.5 text-sm leading-6">
               <li class="flex items-start gap-2.5">
-                <i class="ph ph-plus mt-1 text-base text-brand-700"></i
-                ><span
-                  >About
+                <i class="ph ph-plus mt-1 text-base text-brand-700"></i><span>About
                   <span class="font-mono text-[13px]">25 hours a week</span>
                   back to ops: five people at roughly five hours each of exports
-                  and spreadsheet rebuilds, by their own tally.</span
-                >
+                  and spreadsheet rebuilds, by their own tally.</span>
               </li>
               <li class="flex items-start gap-2.5">
-                <i class="ph ph-plus mt-1 text-base text-brand-700"></i
-                ><span
-                  >Slow-query pages from the admin pages go to zero, since
-                  nothing reads the primary.</span
-                >
+                <i class="ph ph-plus mt-1 text-base text-brand-700"></i><span>Slow-query pages from the admin pages go to zero, since
+                  nothing reads the primary.</span>
               </li>
               <li class="flex items-start gap-2.5">
-                <i class="ph ph-plus mt-1 text-base text-brand-700"></i
-                ><span
-                  >The month-end reconciliation between ops and finance goes
-                  away; both read the same tables.</span
-                >
+                <i class="ph ph-plus mt-1 text-base text-brand-700"></i><span>The month-end reconciliation between ops and finance goes
+                  away; both read the same tables.</span>
               </li>
             </ul>
           </div>
@@ -371,13 +295,9 @@
       </div>
 
       <section id="ask" class="mt-5">
-        <div
-          class="grid gap-4 rounded-lg border-2 border-brand-300 bg-card p-5 shadow-sm sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:gap-6"
-        >
+        <div class="grid gap-4 rounded-lg border-2 border-brand-300 bg-card p-5 shadow-sm sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:gap-6">
           <div>
-            <p
-              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
-            >
+            <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
               The ask
             </p>
             <p class="mt-1 text-lg font-semibold tracking-[-0.02em]">
@@ -389,41 +309,28 @@
               the next quarter's roadmap.
             </p>
           </div>
-          <ul
-            class="space-y-1.5 text-sm leading-6 sm:border-l sm:border-border sm:pl-6"
-          >
+          <ul class="space-y-1.5 text-sm leading-6 sm:border-l sm:border-border sm:pl-6">
             <li class="flex items-start gap-2.5">
-              <i class="ph ph-check mt-1 text-base text-brand-700"></i
-              ><span>The two engineers, the platform team's pick.</span>
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i><span>The two engineers, the platform team's pick.</span>
             </li>
             <li class="flex items-start gap-2.5">
-              <i class="ph ph-check mt-1 text-base text-brand-700"></i
-              ><span
-                >Read access to the warehouse's
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i><span>Read access to the warehouse's
                 <span class="font-mono text-[13px]">ops</span> schema for the
-                console's service account.</span
-              >
+                console's service account.</span>
             </li>
             <li class="flex items-start gap-2.5">
-              <i class="ph ph-check mt-1 text-base text-brand-700"></i
-              ><span
-                >The ops lead's sign-off on the view list, which she has already
-                drafted.</span
-              >
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i><span>The ops lead's sign-off on the view list, which she has already
+                drafted.</span>
             </li>
           </ul>
         </div>
       </section>
 
       <section id="risks" class="mt-5">
-        <p
-          class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
-        >
+        <p class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase">
           Risks, with a mitigation each
         </p>
-        <ul
-          class="mt-2 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-4"
-        >
+        <ul class="mt-2 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
           <li class="bg-card p-3.5">
             <p class="text-[13px] font-semibold leading-5">
               The warehouse lags production by up to fifteen minutes.
@@ -470,20 +377,15 @@
 
       <section id="next-step" class="mt-5">
         <p class="flex items-start gap-2.5 text-sm leading-6">
-          <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
-          ><span
-            ><strong>Next step.</strong> If yes: kickoff the Monday after the
+          <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i><span><strong>Next step.</strong> If yes: kickoff the Monday after the
             freeze lifts, the first three views to ops at the end of
             <span class="font-mono text-[13px]">week 2</span>, parallel run in
             <span class="font-mono text-[13px]">week 4</span>, old pages
-            read-only the Monday after.</span
-          >
+            read-only the Monday after.</span>
         </p>
       </section>
 
-      <footer
-        class="mt-8 border-t border-border pt-4 text-xs leading-6 text-muted-foreground"
-      >
+      <footer class="mt-8 border-t border-border pt-4 text-xs leading-6 text-muted-foreground">
         <strong class="text-foreground">Provenance.</strong> Prepared by the
         platform team for the CTO. The hours-per-week figure is the ops team's
         own estimate of their export and spreadsheet time; the engineer-week

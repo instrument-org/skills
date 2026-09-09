@@ -8,18 +8,9 @@
     <meta name="instrument:idea" content="criteria-recommendation@1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
@@ -187,14 +178,10 @@
   <body class="bg-background font-sans text-foreground antialiased">
     <main class="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
       <header class="max-w-3xl">
-        <p
-          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
-        >
+        <p class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase">
           Recommendation with criteria
         </p>
-        <h1
-          class="mt-3 font-serif text-4xl font-medium tracking-[-0.02em] sm:text-5xl sm:leading-[1.1]"
-        >
+        <h1 class="mt-3 font-serif text-4xl font-medium tracking-[-0.02em] sm:text-5xl sm:leading-[1.1]">
           A second office for a sixty-person software company
         </h1>
         <p class="mt-5 text-base leading-7 text-muted-foreground">
@@ -207,13 +194,8 @@
         </p>
       </header>
 
-      <section
-        id="winner"
-        class="mt-8 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-xl bg-brand-700 px-6 py-4 text-white"
-      >
-        <p
-          class="text-xs font-medium tracking-[0.12em] text-white/70 uppercase"
-        >
+      <section id="winner" class="mt-8 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-xl bg-brand-700 px-6 py-4 text-white">
+        <p class="text-xs font-medium tracking-[0.12em] text-white/70 uppercase">
           Winner
         </p>
         <p class="font-serif text-2xl">Raleigh, North Carolina</p>
@@ -228,9 +210,7 @@
 
       <section id="goal" class="mt-12">
         <div class="max-w-3xl">
-          <p
-            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-          >
+          <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
             The goal
           </p>
           <p class="mt-3 text-sm leading-6">
@@ -243,14 +223,10 @@
           </p>
         </div>
         <div id="criteria" class="mt-8">
-          <p
-            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-          >
+          <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
             Why these weights
           </p>
-          <ul
-            class="mt-3 grid gap-x-8 gap-y-3 text-sm leading-6 sm:grid-cols-2 lg:grid-cols-3"
-          >
+          <ul class="mt-3 grid gap-x-8 gap-y-3 text-sm leading-6 sm:grid-cols-2 lg:grid-cols-3">
             <li>
               <strong>Engineering talent, 30.</strong> The office exists to hire
               twenty-five engineers. Nothing else matters if that fails.
@@ -285,9 +261,7 @@
       <section id="scores" class="mt-12">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p
-              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-            >
+            <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
               Scores
             </p>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -297,34 +271,14 @@
               weighting.
             </p>
           </div>
-          <div
-            id="presets"
-            class="flex flex-wrap gap-2"
-            role="group"
-            aria-label="Weighting presets"
-          >
-            <button
-              type="button"
-              data-w="30,25,15,15,10,5"
-              aria-pressed="true"
-              class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-gray-400 aria-pressed:border-brand-500 aria-pressed:bg-brand-50 aria-pressed:text-brand-700"
-            >
+          <div id="presets" class="flex flex-wrap gap-2" role="group" aria-label="Weighting presets">
+            <button type="button" data-w="30,25,15,15,10,5" aria-pressed="true" class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-gray-400 aria-pressed:border-brand-500 aria-pressed:bg-brand-50 aria-pressed:text-brand-700">
               Balanced
             </button>
-            <button
-              type="button"
-              data-w="45,10,10,10,20,5"
-              aria-pressed="false"
-              class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-gray-400 aria-pressed:border-brand-500 aria-pressed:bg-brand-50 aria-pressed:text-brand-700"
-            >
+            <button type="button" data-w="45,10,10,10,20,5" aria-pressed="false" class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-gray-400 aria-pressed:border-brand-500 aria-pressed:bg-brand-50 aria-pressed:text-brand-700">
               Growth mode
             </button>
-            <button
-              type="button"
-              data-w="20,40,10,15,10,5"
-              aria-pressed="false"
-              class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-gray-400 aria-pressed:border-brand-500 aria-pressed:bg-brand-50 aria-pressed:text-brand-700"
-            >
+            <button type="button" data-w="20,40,10,15,10,5" aria-pressed="false" class="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium hover:border-gray-400 aria-pressed:border-brand-500 aria-pressed:bg-brand-50 aria-pressed:text-brand-700">
               Lean year
             </button>
           </div>
@@ -333,9 +287,7 @@
           <div class="overflow-x-auto">
             <table id="matrix" class="w-full min-w-[34rem] text-sm">
               <thead>
-                <tr
-                  class="border-b border-border text-left text-xs text-muted-foreground"
-                >
+                <tr class="border-b border-border text-left text-xs text-muted-foreground">
                   <th class="pb-2 pr-3 font-medium">Criterion</th>
                   <th class="pb-2 pr-3 text-right font-medium">Weight</th>
                   <th class="pb-2 text-center font-medium">Denver</th>
@@ -347,10 +299,7 @@
               <tbody class="divide-y divide-border">
                 <tr>
                   <td class="py-2 pr-3 font-medium">Engineering talent</td>
-                  <td
-                    class="py-2 pr-3 text-right font-mono tabular-nums"
-                    data-w
-                  >
+                  <td class="py-2 pr-3 text-right font-mono tabular-nums" data-w>
                     30
                   </td>
                   <td data-s="7">7</td>
@@ -360,10 +309,7 @@
                 </tr>
                 <tr>
                   <td class="py-2 pr-3 font-medium">Cost</td>
-                  <td
-                    class="py-2 pr-3 text-right font-mono tabular-nums"
-                    data-w
-                  >
+                  <td class="py-2 pr-3 text-right font-mono tabular-nums" data-w>
                     25
                   </td>
                   <td data-s="6">6</td>
@@ -373,10 +319,7 @@
                 </tr>
                 <tr>
                   <td class="py-2 pr-3 font-medium">Travel to HQ</td>
-                  <td
-                    class="py-2 pr-3 text-right font-mono tabular-nums"
-                    data-w
-                  >
+                  <td class="py-2 pr-3 text-right font-mono tabular-nums" data-w>
                     15
                   </td>
                   <td data-s="7">7</td>
@@ -386,10 +329,7 @@
                 </tr>
                 <tr>
                   <td class="py-2 pr-3 font-medium">Livability</td>
-                  <td
-                    class="py-2 pr-3 text-right font-mono tabular-nums"
-                    data-w
-                  >
+                  <td class="py-2 pr-3 text-right font-mono tabular-nums" data-w>
                     15
                   </td>
                   <td data-s="8">8</td>
@@ -399,10 +339,7 @@
                 </tr>
                 <tr>
                   <td class="py-2 pr-3 font-medium">Business climate</td>
-                  <td
-                    class="py-2 pr-3 text-right font-mono tabular-nums"
-                    data-w
-                  >
+                  <td class="py-2 pr-3 text-right font-mono tabular-nums" data-w>
                     10
                   </td>
                   <td data-s="6">6</td>
@@ -412,10 +349,7 @@
                 </tr>
                 <tr>
                   <td class="py-2 pr-3 font-medium">Time zone</td>
-                  <td
-                    class="py-2 pr-3 text-right font-mono tabular-nums"
-                    data-w
-                  >
+                  <td class="py-2 pr-3 text-right font-mono tabular-nums" data-w>
                     5
                   </td>
                   <td data-s="6">6</td>
@@ -427,33 +361,19 @@
               <tfoot>
                 <tr class="border-t-2 border-gray-900">
                   <td class="py-2.5 pr-3 font-semibold">Weighted total</td>
-                  <td
-                    class="py-2.5 pr-3 text-right font-mono text-xs text-muted-foreground"
-                  >
+                  <td class="py-2.5 pr-3 text-right font-mono text-xs text-muted-foreground">
                     of 100
                   </td>
-                  <td
-                    class="py-2.5 text-center font-mono text-base font-bold tabular-nums"
-                    data-total
-                  >
+                  <td class="py-2.5 text-center font-mono text-base font-bold tabular-nums" data-total>
                     67.5
                   </td>
-                  <td
-                    class="py-2.5 text-center font-mono text-base font-bold tabular-nums"
-                    data-total
-                  >
+                  <td class="py-2.5 text-center font-mono text-base font-bold tabular-nums" data-total>
                     80.0
                   </td>
-                  <td
-                    class="py-2.5 text-center font-mono text-base font-bold tabular-nums"
-                    data-total
-                  >
+                  <td class="py-2.5 text-center font-mono text-base font-bold tabular-nums" data-total>
                     72.0
                   </td>
-                  <td
-                    class="py-2.5 text-center font-mono text-base font-bold tabular-nums"
-                    data-total
-                  >
+                  <td class="py-2.5 text-center font-mono text-base font-bold tabular-nums" data-total>
                     70.0
                   </td>
                 </tr>
@@ -461,63 +381,35 @@
             </table>
           </div>
           <div>
-            <p
-              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-            >
+            <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
               Ranked
             </p>
             <ol id="ranking" class="mt-3 flex flex-col gap-2.5 text-sm">
-              <li
-                class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3"
-                style="order: 3"
-              >
+              <li class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3" style="order: 3">
                 <span class="font-medium">Denver</span>
                 <div class="h-2.5 overflow-hidden rounded-full bg-gray-200">
-                  <div
-                    class="h-full rounded-full bg-gray-400"
-                    style="width: 67.5%"
-                  ></div>
+                  <div class="h-full rounded-full bg-gray-400" style="width: 67.5%"></div>
                 </div>
                 <span class="text-right font-mono tabular-nums">67.5</span>
               </li>
-              <li
-                class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3"
-                style="order: 0"
-              >
+              <li class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3" style="order: 0">
                 <span class="font-medium">Raleigh</span>
                 <div class="h-2.5 overflow-hidden rounded-full bg-gray-200">
-                  <div
-                    class="h-full rounded-full bg-brand-500"
-                    style="width: 80%"
-                  ></div>
+                  <div class="h-full rounded-full bg-brand-500" style="width: 80%"></div>
                 </div>
-                <span class="text-right font-mono font-semibold tabular-nums"
-                  >80.0</span
-                >
+                <span class="text-right font-mono font-semibold tabular-nums">80.0</span>
               </li>
-              <li
-                class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3"
-                style="order: 1"
-              >
+              <li class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3" style="order: 1">
                 <span class="font-medium">Austin</span>
                 <div class="h-2.5 overflow-hidden rounded-full bg-gray-200">
-                  <div
-                    class="h-full rounded-full bg-gray-400"
-                    style="width: 72%"
-                  ></div>
+                  <div class="h-full rounded-full bg-gray-400" style="width: 72%"></div>
                 </div>
                 <span class="text-right font-mono tabular-nums">72.0</span>
               </li>
-              <li
-                class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3"
-                style="order: 2"
-              >
+              <li class="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-3" style="order: 2">
                 <span class="font-medium">Salt Lake City</span>
                 <div class="h-2.5 overflow-hidden rounded-full bg-gray-200">
-                  <div
-                    class="h-full rounded-full bg-gray-400"
-                    style="width: 70%"
-                  ></div>
+                  <div class="h-full rounded-full bg-gray-400" style="width: 70%"></div>
                 </div>
                 <span class="text-right font-mono tabular-nums">70.0</span>
               </li>
@@ -556,24 +448,18 @@
       </section>
 
       <section id="sensitivity" class="mt-12 max-w-3xl">
-        <p
-          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
-        >
+        <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
           What changes if the weights move
         </p>
         <div class="mt-3 divide-y divide-border text-sm leading-6">
           <div class="grid gap-1 py-3 sm:grid-cols-[9rem_1fr] sm:gap-6">
             <p class="font-semibold">Growth mode</p>
             <p>
-              <span class="font-mono text-xs text-muted-foreground"
-                >Talent 45 · Cost 10 · Travel 10 · Livability 10 · Business 20 ·
-                Time zone 5</span
-              ><br />The weighting for a company that has just raised and wants
+              <span class="font-mono text-xs text-muted-foreground">Talent 45 · Cost 10 · Travel 10 · Livability 10 · Business 20 ·
+                Time zone 5</span><br />The weighting for a company that has just raised and wants
               the deepest pool and the friendliest tax code. Austin takes it:
-              <span class="font-mono"
-                >Austin 80.5, Raleigh 79.0, Salt Lake City 68.0, Denver
-                67.5</span
-              >. The margin is a point and a half, which is inside the honest
+              <span class="font-mono">Austin 80.5, Raleigh 79.0, Salt Lake City 68.0, Denver
+                67.5</span>. The margin is a point and a half, which is inside the honest
               error of a 1 to 10 score, so under this weighting the two are a
               coin flip.
             </p>
@@ -581,15 +467,11 @@
           <div class="grid gap-1 py-3 sm:grid-cols-[9rem_1fr] sm:gap-6">
             <p class="font-semibold">Lean year</p>
             <p>
-              <span class="font-mono text-xs text-muted-foreground"
-                >Talent 20 · Cost 40 · Travel 10 · Livability 15 · Business 10 ·
-                Time zone 5</span
-              ><br />Cost above everything, as it would be if the next round
+              <span class="font-mono text-xs text-muted-foreground">Talent 20 · Cost 40 · Travel 10 · Livability 15 · Business 10 ·
+                Time zone 5</span><br />Cost above everything, as it would be if the next round
               slips. Raleigh holds:
-              <span class="font-mono"
-                >Raleigh 79.5, Salt Lake City 73.5, Austin 67.0, Denver
-                66.0</span
-              >. Salt Lake City moves to second and Austin drops to third, so a
+              <span class="font-mono">Raleigh 79.5, Salt Lake City 73.5, Austin 67.0, Denver
+                66.0</span>. Salt Lake City moves to second and Austin drops to third, so a
               cost-first board would still land on Raleigh.
             </p>
           </div>
@@ -606,9 +488,7 @@
         </div>
       </section>
 
-      <footer
-        class="mt-14 max-w-3xl border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
-      >
+      <footer class="mt-14 max-w-3xl border-t border-border pt-6 text-xs leading-6 text-muted-foreground">
         <strong class="text-foreground">Sources.</strong> Metro-level salary
         surveys for senior software engineers, brokers' quarterly office reports
         for class A rent in each downtown, airline schedules from New York for
