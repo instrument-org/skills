@@ -16,6 +16,7 @@ import {
   normalizedSkin,
   sha256,
   skinBlockOf,
+  SKILLS_DIR,
 } from "./ideas.ts";
 
 // Ideas share the agent's skill index with every other skill, so their
@@ -301,6 +302,15 @@ function main() {
   const ideas = listIdeas().filter((idea) => !only || idea.name === only);
   if (only && ideas.length === 0) {
     console.log(`No idea named "${only}"`);
+    process.exit(1);
+  }
+  // Finding nothing is the one result that must not read as success: move the
+  // ideas and this passes every check by checking no file, which is worse than
+  // failing because nothing says so.
+  if (!only && ideas.length === 0) {
+    console.log(
+      `No ideas found under ${SKILLS_DIR}. Either none carry an idea.json, or they moved and listIdeas() in ideas.ts has not followed.`,
+    );
     process.exit(1);
   }
   let failed = false;
