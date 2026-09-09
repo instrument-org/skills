@@ -1,0 +1,8 @@
+{
+  "title": "A Roth conversion this year, at 52, in the 24 percent bracket",
+  "prompt": "Pros and cons of doing a Roth conversion this year; I'm 52, in the 24% bracket, with $400k in a traditional IRA.",
+  "model": "claude-fable-5-1",
+  "note": "Stacked rather than side by side, with serif headings, because every point needs a full sentence of arithmetic and two narrow columns would have squeezed them: pros as a numbered list, then cons, each point carrying its weight as a phrase beneath it that also says why. A three-row table of the numbers that decide it sits between the lists and the bottom line, and the bottom line is a bordered box with a serif sentence rather than a dark strip, so the page stays quiet and paper-like for a reader who will hand it to an accountant.",
+  "illustrative": true,
+  "html_sha256": "17830f896e8f94c901d13a1592049726c9f01053cbb6a429090fa59d6c2af680"
+}

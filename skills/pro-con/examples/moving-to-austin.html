@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moving from Chicago to Austin: pros and cons</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="pro-con@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Pros and cons
+        </p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Moving from Chicago to Austin, for a remote engineer with a partner
+          and a dog
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          Both of you work from home, you rent, and the dog is sixty pounds and
+          walks twice a day. The case for is money and winter; the case against
+          is summer and a car. On the weights below it leans Austin, by less
+          than the tax savings suggest.
+        </p>
+      </header>
+
+      <section id="context" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          What is being weighed
+        </p>
+        <dl class="mt-3 grid gap-x-8 gap-y-4 text-sm leading-6 sm:grid-cols-3">
+          <div>
+            <dt class="font-medium">Now</dt>
+            <dd class="text-muted-foreground">
+              A two-bedroom in Logan Square at about $2,400 a month, no car, the
+              Blue Line two blocks away.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">Considering</dt>
+            <dd class="text-muted-foreground">
+              A two-bedroom with a yard in East Austin or Mueller at about
+              $1,900 a month, seen this month.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">Assumed</dt>
+            <dd class="text-muted-foreground">
+              A $180,000 salary, both jobs fully remote, and family within a
+              short flight of Chicago. Change these and the weights move.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <div
+        class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-border pb-3 text-xs text-muted-foreground"
+      >
+        <span class="font-medium text-foreground"
+          >Weight, set for your situation</span
+        >
+        <span class="flex items-center gap-2"
+          ><span class="flex items-center gap-1"
+            ><span class="size-1.5 rounded-full bg-foreground"></span
+            ><span class="size-1.5 rounded-full bg-foreground"></span
+            ><span class="size-1.5 rounded-full bg-foreground"></span></span
+          >decides it</span
+        >
+        <span class="flex items-center gap-2"
+          ><span class="flex items-center gap-1"
+            ><span class="size-1.5 rounded-full bg-foreground"></span
+            ><span class="size-1.5 rounded-full bg-foreground"></span
+            ><span class="size-1.5 rounded-full bg-gray-300"></span></span
+          >matters</span
+        >
+        <span class="flex items-center gap-2"
+          ><span class="flex items-center gap-1"
+            ><span class="size-1.5 rounded-full bg-foreground"></span
+            ><span class="size-1.5 rounded-full bg-gray-300"></span
+            ><span class="size-1.5 rounded-full bg-gray-300"></span></span
+          >minor</span
+        >
+      </div>
+
+      <div class="mt-6 grid gap-10 sm:grid-cols-2 sm:gap-10">
+        <section id="pros">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-success-700 uppercase"
+          >
+            The case for Austin
+          </p>
+          <ul class="mt-2 divide-y divide-border">
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-plus-circle mt-0.5 text-lg text-success-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">No state income tax</p>
+                <p class="text-muted-foreground">
+                  Illinois takes a flat 4.95 percent. On $180,000 that is about
+                  $8,900 a year, and it is the only line on this page that is
+                  pure arithmetic.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Decides it"
+                aria-label="Weight: decides it"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-plus-circle mt-0.5 text-lg text-success-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">Rent is lower, for now</p>
+                <p class="text-muted-foreground">
+                  About $500 a month less for a comparable two-bedroom, roughly
+                  $6,000 a year. Austin rents fell from their 2022 peak as new
+                  buildings opened; the discount narrows as they fill.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Matters"
+                aria-label="Weight: matters"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-plus-circle mt-0.5 text-lg text-success-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">Winter mostly goes away</p>
+                <p class="text-muted-foreground">
+                  January lows average about 18 degrees in Chicago and about 41
+                  in Austin. The 6 a.m. dog walk stops being the worst part of
+                  the day for four months of the year.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Matters"
+                aria-label="Weight: matters"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-plus-circle mt-0.5 text-lg text-success-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">A dog city with yards at your rent</p>
+                <p class="text-muted-foreground">
+                  Off-leash at Red Bud Isle and Auditorium Shores, dogs on most
+                  patios, the Barton Creek trails inside the city, and a fenced
+                  yard is normal at $1,900 rather than a $600 upgrade.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Matters"
+                aria-label="Weight: matters"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-plus-circle mt-0.5 text-lg text-success-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">A large remote-tech crowd</p>
+                <p class="text-muted-foreground">
+                  Coworking within a bike ride, weekly meetups, and a lot of
+                  people in your exact situation. Worth something only if you
+                  will use it; remote work is remote in both cities.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Minor"
+                aria-label="Weight: minor"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+          </ul>
+        </section>
+
+        <section id="cons">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-error-700 uppercase"
+          >
+            The case against
+          </p>
+          <ul class="mt-2 divide-y divide-border">
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-minus-circle mt-0.5 text-lg text-error-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">Summer, with a dog</p>
+                <p class="text-muted-foreground">
+                  Austin logged about 80 days at or above 100 degrees in 2023.
+                  From July through September the walks happen before 7 a.m. and
+                  after 8 p.m., and pavement burns paws by mid-morning.
+                  Chicago's worst week is Austin's average July.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Decides it"
+                aria-label="Weight: decides it"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-minus-circle mt-0.5 text-lg text-error-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">You will need a car</p>
+                <p class="text-muted-foreground">
+                  Cap Metro does not replace the Blue Line; most errands are a
+                  drive. One mid-priced used car, insured and parked, runs about
+                  $550 a month, which takes back about $6,600 of the tax saving.
+                  A second car takes back the rest.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Decides it"
+                aria-label="Weight: decides it"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-minus-circle mt-0.5 text-lg text-error-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">Leaving a life on foot</p>
+                <p class="text-muted-foreground">
+                  Groceries, friends, and the L within a ten-minute walk. Austin
+                  has a few neighborhoods like that, and they are small and
+                  priced like it. Hard to put a number on, so the weight is
+                  yours to move.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Matters"
+                aria-label="Weight: matters"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-minus-circle mt-0.5 text-lg text-error-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">A smaller airport</p>
+                <p class="text-muted-foreground">
+                  O'Hare flies nonstop to well over 200 cities; Austin to around
+                  90. Family visits become a $350 fare with one connection
+                  instead of a Friday-afternoon nonstop.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Matters"
+                aria-label="Weight: matters"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-minus-circle mt-0.5 text-lg text-error-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">Property tax, if you ever buy</p>
+                <p class="text-muted-foreground">
+                  Texas has no income tax and about a 1.8 percent property tax.
+                  On a $550,000 house that is around $10,000 a year, which hands
+                  the income-tax saving straight back. As renters it is already
+                  in the rent.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Matters"
+                aria-label="Weight: matters"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+            <li class="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-3 py-3">
+              <i class="ph ph-minus-circle mt-0.5 text-lg text-error-700"></i>
+              <div class="text-sm leading-6">
+                <p class="font-medium">Cedar fever</p>
+                <p class="text-muted-foreground">
+                  Mountain cedar pollen from December to February hits many
+                  newcomers within a few years, and it is a real cold, not a
+                  sniffle. Antihistamines handle most cases.
+                </p>
+              </div>
+              <span
+                class="flex items-center gap-1 pt-2"
+                title="Minor"
+                aria-label="Weight: minor"
+                ><span class="size-1.5 rounded-full bg-foreground"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+                ><span class="size-1.5 rounded-full bg-gray-300"></span
+              ></span>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <section id="who" class="mt-12 grid gap-8 sm:grid-cols-2 sm:gap-10">
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-success-700 uppercase"
+          >
+            Good for
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            A couple whose life happens at home and outdoors: two remote jobs, a
+            dog that wants a yard and a creek, no objection to driving, and a
+            plan to bank the difference rather than spend it. If you were
+            already pricing cars and eyeing a house with a fence, Austin gives
+            you both at a discount.
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-error-700 uppercase"
+          >
+            Bad for
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            Anyone whose Chicago is on foot: the L, the bar three doors down, a
+            friend group within a mile. Austin sells that in two or three
+            neighborhoods at Chicago prices. Also anyone who wilts above 95
+            degrees, or whose family trips have to stay a nonstop flight away.
+          </p>
+        </div>
+      </section>
+
+      <section id="bottom-line" class="mt-12">
+        <div class="rounded-xl bg-gray-900 p-6 text-white sm:p-7">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-300 uppercase"
+          >
+            Bottom line
+          </p>
+          <p
+            class="mt-2 max-w-2xl text-lg leading-7 font-semibold sm:text-xl sm:leading-8"
+          >
+            Move if the yard, the winter, and about $8,000 a year after one car
+            are what you are after. Stay if what you would miss is the walk to
+            everything, because Austin does not sell that at any rent.
+          </p>
+          <p class="mt-3 max-w-2xl text-sm leading-6 text-gray-300">
+            Before you sign anything: spend a week there in August with the dog,
+            price the car, and check whether either employer has a rule about
+            the state you work from.
+          </p>
+        </div>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Read: current listings
+        for two-bedroom rentals in Logan Square and in East Austin and Mueller,
+        the Illinois Department of Revenue's rate page, climate normals for both
+        cities from the National Weather Service, local reporting on Austin's
+        2023 heat, Travis County's published tax rates, and the nonstop route
+        maps for O'Hare and Austin-Bergstrom. Rents seen this month. The car
+        figure is an estimate for one used car with insurance and parking, not a
+        quote. The salary, the second remote job, and the family's location are
+        assumptions taken from the prompt. Illustrative: figures are
+        representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

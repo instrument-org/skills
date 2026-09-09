@@ -1,0 +1,17 @@
+{
+  "title": "Pros and cons",
+  "tagline": "The pros-and-cons explainer the web publishes, made for your decision.",
+  "when": "You are torn on one option or between two and want the strongest case for each side, weighted for your situation, on one page.",
+  "tags": ["decide"],
+  "order": 80,
+  "needs": [],
+  "cover": "shopify-switch",
+  "sections": [
+    "Context",
+    "Pros",
+    "Cons",
+    "Good for, bad for",
+    "Bottom line",
+    "Sources"
+  ]
+}

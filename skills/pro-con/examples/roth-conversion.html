@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Roth conversion this year: pros and cons</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="pro-con@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Pros and cons
+        </p>
+        <h1
+          class="mt-3 font-serif text-3xl font-medium tracking-[-0.02em] sm:text-4xl"
+        >
+          A Roth conversion this year, at 52, in the 24 percent bracket
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          You have $400,000 in a traditional IRA, you file jointly, and after
+          deductions your taxable income lands near $250,000. The question is
+          not whether to convert but how much and when, and both sides below
+          come down to one comparison: the rate you pay now against the rate you
+          would pay later.
+        </p>
+      </header>
+
+      <section id="context" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          What is being weighed
+        </p>
+        <dl class="mt-3 grid gap-x-6 gap-y-4 text-sm leading-6 sm:grid-cols-3">
+          <div class="flex flex-col-reverse justify-end">
+            <dt class="text-muted-foreground">Taxable income, assumed</dt>
+            <dd class="font-medium">About $250,000, married filing jointly</dd>
+          </div>
+          <div class="flex flex-col-reverse justify-end">
+            <dt class="text-muted-foreground">
+              Room in the 24 percent bracket
+            </dt>
+            <dd class="font-medium">About $145,000 this year</dd>
+          </div>
+          <div class="flex flex-col-reverse justify-end">
+            <dt class="text-muted-foreground">
+              Years until required distributions
+            </dt>
+            <dd class="font-medium">23, at age 75 under current law</dd>
+          </div>
+        </dl>
+        <p class="mt-3 text-xs leading-5 text-muted-foreground">
+          Each point below ends with how much it matters, on a three-step scale:
+          decides it, matters, minor. The weights are set for these three facts;
+          change the facts and they move.
+        </p>
+      </section>
+
+      <section id="pros" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-success-700 uppercase"
+        >
+          The case for converting
+        </p>
+        <h2 class="mt-2 font-serif text-2xl font-medium tracking-[-0.02em]">
+          What you gain by paying now
+        </h2>
+        <ol class="mt-4 space-y-5">
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-success-700 font-mono text-xs text-white"
+              >1</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">
+                Two decades of growth that is never taxed again.
+              </p>
+              <p class="text-muted-foreground">
+                $145,000 converted this year and growing at 6 percent is about
+                $550,000 at 75. Left in the traditional IRA the same money
+                reaches the same figure, but every dollar that comes out is
+                ordinary income.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                decides it. The longer the runway, the more the conversion
+                earns, and 23 years is a long runway.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-success-700 font-mono text-xs text-white"
+              >2</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">Smaller required distributions at 75.</p>
+              <p class="text-muted-foreground">
+                $400,000 untouched at 6 percent is about $1.5 million at 75, and
+                the first required withdrawal is near $62,000, on top of Social
+                Security and anything else. Every dollar converted now is a
+                dollar that never has to come out on a schedule.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                matters, and more the larger the balance gets.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-success-700 font-mono text-xs text-white"
+              >3</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">A known price for the tax.</p>
+              <p class="text-muted-foreground">
+                Today's brackets are permanent in law, so no sunset is forcing
+                your hand, but permanent means until Congress changes it. Paying
+                24 percent now is a certainty; the rate in 2049 is a guess.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                matters, as a hedge. Do not let it choose the amount.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-success-700 font-mono text-xs text-white"
+              >4</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">Access before 59 and a half.</p>
+              <p class="text-muted-foreground">
+                Converted principal can be withdrawn without penalty five years
+                after each conversion. This year's conversion is reachable at
+                57, which is useful if you retire early and irrelevant
+                otherwise.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                minor, unless early retirement is the plan.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-success-700 font-mono text-xs text-white"
+              >5</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">Cleaner for whoever inherits it.</p>
+              <p class="text-muted-foreground">
+                A child inheriting a Roth has ten years to empty it tax-free.
+                Inheriting a traditional IRA means ten years of taxable
+                withdrawals, usually during their own peak earning years.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                minor for you, meaningful for them. Weigh it by whether the
+                money is likely to outlive you.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="cons" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-error-700 uppercase"
+        >
+          The case against converting
+        </p>
+        <h2 class="mt-2 font-serif text-2xl font-medium tracking-[-0.02em]">
+          What paying now costs you
+        </h2>
+        <ol class="mt-4 space-y-5">
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-error-700 font-mono text-xs text-white"
+              >1</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">
+                About $35,000 due in April, from savings.
+              </p>
+              <p class="text-muted-foreground">
+                Converting to the top of the bracket costs roughly 24 percent of
+                $145,000 in federal tax, plus state. Pay it out of the IRA and
+                you convert less and owe a 10 percent penalty on the withheld
+                part, because you are under 59 and a half.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                decides it. No cash outside the IRA, no conversion this year.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-error-700 font-mono text-xs text-white"
+              >2</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">You will probably be cheaper later.</p>
+              <p class="text-muted-foreground">
+                Between retiring and 75 there can be a decade of low-income
+                years. A couple living on $110,000 of taxable income sits in the
+                12 and 22 percent brackets, and a conversion in those years
+                costs less than one now. At 52 those years are most likely ahead
+                of you.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                decides it, in the other direction. This is the whole argument
+                for converting some now and most later.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-error-700 font-mono text-xs text-white"
+              >3</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">
+                It raises this year's income for everything that looks at
+                income.
+              </p>
+              <p class="text-muted-foreground">
+                Federal student aid looks back two tax years, Medicare premiums
+                look back two years once you reach 63, and marketplace health
+                subsidies use the current year. At 52 the Medicare one is not
+                live yet; the college one may be.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                matters if a child files for aid in the next two years; minor
+                otherwise.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-error-700 font-mono text-xs text-white"
+              >4</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">State tax now rather than later.</p>
+              <p class="text-muted-foreground">
+                Most states tax a conversion as ordinary income in the year it
+                happens. If you might retire to a state with no income tax, or
+                to one that exempts retirement income, the conversion pays a
+                state tax that waiting would avoid.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                matters in a high-tax state; nothing in Texas or Florida.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span
+              class="flex size-7 shrink-0 items-center justify-center rounded-full bg-error-700 font-mono text-xs text-white"
+              >5</span
+            >
+            <div class="text-sm leading-6">
+              <p class="font-medium">It cannot be undone.</p>
+              <p class="text-muted-foreground">
+                Undoing a conversion ended in 2018. Convert in January, watch
+                the market fall 20 percent by June, and you have paid tax on
+                value that is gone.
+              </p>
+              <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <span class="font-medium text-foreground"
+                  >How much it matters:</span
+                >
+                minor. Converting during a dip is the fix, and the risk shrinks
+                with the amount.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="numbers" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          The three numbers that decide it
+        </p>
+        <table class="mt-3 w-full text-sm">
+          <thead>
+            <tr
+              class="border-b border-border text-left text-xs text-muted-foreground"
+            >
+              <th class="pb-2 pr-4 font-medium">Number</th>
+              <th class="pb-2 pr-4 font-medium whitespace-nowrap">This year</th>
+              <th class="pb-2 font-medium">Why it decides</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border align-top">
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">
+                Room left in the 24 percent bracket
+              </td>
+              <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">
+                $145,000
+              </td>
+              <td class="py-2.5 text-muted-foreground">
+                The most you can convert without the excess being taxed at 32
+                percent, which is more than you are likely to pay at any point
+                later.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">
+                Federal tax on converting that much
+              </td>
+              <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">
+                $34,800
+              </td>
+              <td class="py-2.5 text-muted-foreground">
+                Has to come from a taxable account. If it would come from the
+                IRA itself, the answer is no.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-medium">
+                Rate you expect in retirement
+              </td>
+              <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">
+                22%, likely
+              </td>
+              <td class="py-2.5 text-muted-foreground">
+                Below 24 and a conversion within the bracket is close to even on
+                rate and ahead on the growth it shelters. Above 24, because of
+                pensions, a rental, or a large balance, it wins outright.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="who" class="mt-12 grid gap-6 sm:grid-cols-2">
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-success-700 uppercase"
+          >
+            Good for
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            A couple with the tax money already in a brokerage account, no
+            student aid forms due in the next two years, and a retirement that
+            looks like the 24 percent bracket or higher because a pension, a
+            rental, or a large balance keeps the income coming.
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-error-700 uppercase"
+          >
+            Bad for
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            Anyone who would pay the tax out of the IRA, anyone with a child
+            filing for aid, and anyone planning to retire at 58 into a decade of
+            near-zero income, where the same conversions cost 12 to 22 percent
+            instead of 24.
+          </p>
+        </div>
+      </section>
+
+      <section id="bottom-line" class="mt-12">
+        <div
+          class="rounded-xl border-2 border-brand-300 bg-card p-6 shadow-sm sm:p-7"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Bottom line
+          </p>
+          <p
+            class="mt-3 font-serif text-xl leading-8 font-medium tracking-[-0.01em] sm:text-2xl sm:leading-9"
+          >
+            Convert about $145,000 this year, to the top of the 24 percent
+            bracket, and only if the $35,000 comes from a taxable account.
+          </p>
+          <p class="mt-3 text-sm leading-6 text-muted-foreground">
+            Do not convert the whole $400,000: the top $255,000 would be taxed
+            at 32 and 35 percent, more than you are likely to pay later at any
+            point. Revisit every December, and convert in a down month if one
+            comes. The years between retiring and 75 are where the rest gets
+            converted cheaply.
+          </p>
+        </div>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The IRS bracket tables
+        for the current tax year, the IRS pages on conversions, the five-year
+        rule, and required minimum distributions under SECURE 2.0, and two
+        long-form explainers on partial conversions. The taxable income, joint
+        filing, and cash on hand are assumptions from the prompt; your room in
+        the bracket is whatever your return says it is. Growth figures use a
+        flat 6 percent with no further contributions. Not tax advice; take this
+        page to whoever files your return. Illustrative: figures are
+        representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>
