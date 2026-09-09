@@ -5,17 +5,19 @@ Canonical spellings for the elements pages of every template reach for. Each is 
 ## Section heading
 
 ```html
-<h2 class="text-xl font-semibold tracking-[-0.02em]">What the section answers</h2>
+<h2 class="text-xl font-semibold tracking-[-0.02em]">
+  What the section answers
+</h2>
 ```
 
 Give every section an `id`, so a heading can be linked to and sent on its own. The heading states what the section says rather than naming its topic, since it is the line most likely to be the only one read.
 
-To mark the sections, put a Phosphor icon first inside the `h2`. The strip mirrors it automatically, so this is the only place it is written:
+To mark the sections, put a Phosphor icon first inside the `h2`:
 
 ```html
 <h2
+  id="the-pattern"
   class="flex items-baseline gap-2 text-xl font-semibold tracking-[-0.02em]"
-  data-short="The pattern"
 >
   <i class="ph ph-repeat shrink-0 text-lg text-gray-400"></i>Eleven reactions
   that keep coming back

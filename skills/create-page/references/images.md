@@ -51,11 +51,33 @@ This is the common case, and the usual answers are both wrong: leaving a hole wh
 Draw a stand-in instead, as **inline SVG**. A few flat shapes in the page's own palette read as deliberate rather than missing, cost one to three kilobytes, need no encoding at all, and stay sharp at any size.
 
 ```html
-<svg viewBox="0 0 480 360" class="w-full rounded-md" role="img" aria-label="Upright commuter bicycle, shown as a diagram">
+<svg
+  viewBox="0 0 480 360"
+  class="w-full rounded-md"
+  role="img"
+  aria-label="Upright commuter bicycle, shown as a diagram"
+>
   <rect width="480" height="360" class="fill-gray-100" />
-  <circle cx="140" cy="250" r="62" class="fill-none stroke-gray-400" stroke-width="8" />
-  <circle cx="340" cy="250" r="62" class="fill-none stroke-gray-400" stroke-width="8" />
-  <path d="M140 250 L215 160 L300 160 L340 250 M215 160 L250 250" class="fill-none stroke-brand-600" stroke-width="8" stroke-linejoin="round" />
+  <circle
+    cx="140"
+    cy="250"
+    r="62"
+    class="fill-none stroke-gray-400"
+    stroke-width="8"
+  />
+  <circle
+    cx="340"
+    cy="250"
+    r="62"
+    class="fill-none stroke-gray-400"
+    stroke-width="8"
+  />
+  <path
+    d="M140 250 L215 160 L300 160 L340 250 M215 160 L250 250"
+    class="fill-none stroke-brand-600"
+    stroke-width="8"
+    stroke-linejoin="round"
+  />
 </svg>
 ```
 
