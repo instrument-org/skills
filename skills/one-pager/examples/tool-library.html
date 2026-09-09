@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Fairmount Tool Library</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="one-pager@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          One-pager · For the community center board
+        </p>
+        <h1
+          class="mt-4 font-serif text-4xl leading-[1.1] font-medium tracking-[-0.02em] sm:text-5xl"
+        >
+          The Fairmount Tool Library
+        </h1>
+        <p
+          class="mt-5 max-w-2xl font-serif text-lg leading-8 text-muted-foreground"
+        >
+          A lending shelf of hand and power tools in the center's east room,
+          open two afternoons a week and run by neighbors, so a household can
+          borrow a drill for a weekend instead of buying one for a lifetime.
+        </p>
+      </header>
+
+      <div class="mt-10 grid gap-8 sm:grid-cols-2 sm:gap-10">
+        <section id="problem" class="flex gap-4">
+          <span
+            class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brown-100 text-brand-700"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="size-5"
+              aria-hidden="true"
+            >
+              <path d="M7 3v18M17 3v18M7 7.5h10M7 12h10M7 16.5h10" />
+            </svg>
+          </span>
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              The problem
+            </p>
+            <p class="mt-2 text-sm leading-6">
+              Most houses on these blocks own one tool they use twice a year and
+              lack the one they need this weekend. A porch repair waits on a
+              ladder, a garden waits on a tiller, and the nearest hardware store
+              is a bus ride away. Renting a tiller for a Saturday costs more
+              than the seedlings, so the garden does not happen. Neighbors
+              already lend to each other; they just have no way to know who has
+              what.
+            </p>
+          </div>
+        </section>
+
+        <section id="proposal" class="flex gap-4">
+          <span
+            class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brown-100 text-brand-700"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="size-5"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 9.5h18M3 16.5h18M7 5.5v4M11 6.5v3M15 5v4.5M8 13v3.5M13 12.5v4"
+              />
+            </svg>
+          </span>
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              The proposal
+            </p>
+            <p class="mt-2 text-sm leading-6">
+              A tool library in the center's east storage room: shelving, a
+              lockable cabinet, a sign-out sheet, and a small annual membership.
+              Open Tuesday and Saturday afternoons, staffed by two volunteers a
+              shift from a crew of eight. Tools come from donations first, then
+              a starter purchase with the neighborhood association's seed money.
+              Hand tools go out for a week, power tools for a weekend, with a
+              deposit on the expensive ones.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <section id="why-now" class="mt-10 border-l-2 border-brown-300 pl-5">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Why now
+        </p>
+        <p class="mt-2 text-sm leading-6">
+          The east room has been empty since the after-school program moved
+          upstairs. The association's seed money has to be spent by the end of
+          its fiscal year in June. And spring is when people fix things: a March
+          opening catches the first porch and garden season, and a fall opening
+          waits a year for the same neighbors.
+        </p>
+      </section>
+
+      <section
+        id="costs-returns"
+        class="mt-10 grid gap-8 sm:grid-cols-2 sm:gap-10"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            What it costs the center
+          </p>
+          <ul class="mt-3 space-y-2 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+              ><span
+                >The east room, two afternoons a week, for a one-year
+                trial.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+              ><span
+                >A rider on the center's insurance, to be quoted before the
+                first loan.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Shelving and a lockable cabinet, one time, paid from the seed
+                money rather than the center's budget.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+              ><span>A place on the center's website and bulletin board.</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            What it gives back
+          </p>
+          <ul class="mt-3 space-y-2 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+              ><span
+                >Households borrow the ladder, the drill, the tiller, and the
+                wet vac instead of buying or going without.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+              ><span
+                >Foot traffic on the center's quietest afternoons, from people
+                who have never come in.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+              ><span
+                >Membership fees cover repairs and replacements after the first
+                year, so keeping it costs the center nothing.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+              ><span
+                >A volunteer crew of eight that knows the building and shows up
+                twice a week.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="ask" class="mt-10">
+        <div
+          class="rounded-xl border-2 border-brand-300 bg-card p-6 shadow-sm sm:p-7"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            The ask
+          </p>
+          <h2
+            class="mt-2 font-serif text-2xl leading-tight font-medium tracking-[-0.01em]"
+          >
+            Three things the board can say yes to at its November meeting
+          </h2>
+          <ol class="mt-5 space-y-4 text-sm leading-6">
+            <li class="flex items-start gap-4">
+              <span
+                class="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+                >1</span
+              >
+              <span
+                ><strong>The room.</strong> The east storage room on Tuesday and
+                Saturday afternoons, for a one-year trial starting in
+                March.</span
+              >
+            </li>
+            <li class="flex items-start gap-4">
+              <span
+                class="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+                >2</span
+              >
+              <span
+                ><strong>The paperwork.</strong> Add the library to the center's
+                insurance, and let members sign up on the center's own
+                membership form so there is one list, not two.</span
+              >
+            </li>
+            <li class="flex items-start gap-4">
+              <span
+                class="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+                >3</span
+              >
+              <span
+                ><strong>The name.</strong> Let us call it the Fairmount
+                Community Center Tool Library, so a neighbor trusts it on the
+                first day.</span
+              >
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="risks" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+        >
+          What could go wrong, honestly
+        </p>
+        <ul class="mt-3 divide-y divide-border text-sm leading-6">
+          <li class="py-2.5">
+            <strong>Someone gets hurt with a borrowed tool.</strong> Members
+            sign a waiver, every power tool goes out with a one-page safety
+            sheet, and nothing lends until the insurance rider is in place.
+          </li>
+          <li class="py-2.5">
+            <strong>Tools do not come back.</strong> A deposit on anything
+            expensive, a reminder call at the due date, and a replacement line
+            in the budget, because a few will walk and we would rather plan for
+            it than pretend.
+          </li>
+          <li class="py-2.5">
+            <strong>The volunteers get tired.</strong> Two shifts a week, a
+            rotation of eight, and a trial year that ends with a review in front
+            of this board instead of a quiet fade.
+          </li>
+          <li class="py-2.5">
+            <strong>Nobody comes.</strong> If fewer than a few dozen households
+            have joined by the end of summer, we hand the room back and the
+            tools become the center's.
+          </li>
+        </ul>
+      </section>
+
+      <section id="next-step" class="mt-10">
+        <p class="flex items-start gap-2.5 text-sm leading-6">
+          <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+          ><span
+            ><strong>Next step.</strong> If the board says yes in November, we
+            hold a donation day in January, get the insurance quote in February,
+            and open on the first Saturday in March with whatever the
+            neighborhood has given by then.</span
+          >
+        </p>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Provenance.</strong> Prepared by the
+        Fairmount neighborhood association's tool library committee for the
+        community center board. Costs are what the committee expects, not
+        quotes; the insurance rider and the shelving are to be priced before the
+        trial starts. Illustrative: figures are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

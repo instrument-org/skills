@@ -1,0 +1,19 @@
+{
+  "title": "One-pager",
+  "tagline": "The one-pager founders hand investors, written for your proposal.",
+  "when": "You are proposing a project, a program, or a change and need one page that earns the reader's next meeting.",
+  "tags": ["persuade"],
+  "order": 160,
+  "needs": [],
+  "cover": "customer-advisory-board",
+  "sections": [
+    "What it is",
+    "Problem",
+    "Proposal",
+    "Why now",
+    "Costs and returns",
+    "The ask",
+    "Risks",
+    "Next step"
+  ]
+}

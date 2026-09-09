@@ -1,0 +1,8 @@
+{
+  "title": "The Fairmount Tool Library",
+  "prompt": "A one-pager for a neighborhood tool library we want to start, to hand to the community center board.",
+  "model": "claude-fable-5-1",
+  "note": "Community register: a serif headline and subhead, a narrow measure, and warm spacing, because a board of volunteers reads this on paper and a dense grid would feel like a vendor pitch. The problem and the proposal are two paragraphs with a small inline SVG landmark each rather than a band, the ask is one bordered card listing the three things the board can literally vote yes to, and the risks are a ruled list that says plainly what happens if nobody comes.",
+  "illustrative": true,
+  "html_sha256": "745c091e65652c88a916c32bd223396415371bb9516f76a0bb1ac6afda348aea"
+}

@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A customer advisory board for Meridian</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="one-pager@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
+      <header class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+        <div class="max-w-3xl">
+          <p
+            class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+          >
+            One-pager · For the exec team
+          </p>
+          <h1
+            class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl"
+          >
+            A customer advisory board for Meridian
+          </h1>
+          <p class="mt-3 text-base leading-7 text-muted-foreground">
+            Twelve paying customers, four sessions a year, one owner: a standing
+            group that sees the roadmap two quarters early and tells us what to
+            build before we commit engineers to it.
+          </p>
+        </div>
+        <dl
+          class="grid grid-cols-[auto_auto] gap-x-3 gap-y-0.5 text-xs leading-5 text-muted-foreground"
+        >
+          <dt class="font-medium tracking-[0.1em] uppercase">Owner</dt>
+          <dd class="text-foreground">Product, Priya Natarajan</dd>
+          <dt class="font-medium tracking-[0.1em] uppercase">Sponsor</dt>
+          <dd class="text-foreground">Named by this decision</dd>
+          <dt class="font-medium tracking-[0.1em] uppercase">Decision by</dt>
+          <dd class="text-foreground">October 9</dd>
+        </dl>
+      </header>
+
+      <section
+        id="band"
+        class="mt-5 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
+      >
+        <div id="problem" class="bg-card p-5">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Problem
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            Roadmap bets are made on the loudest signal in the room. Two of the
+            last four quarterly bets traced back to a single sales call, and we
+            learned what our largest accounts wanted at their renewal, after the
+            quarter was planned. Support tickets say what broke; nothing says
+            what customers plan to build next year.
+          </p>
+        </div>
+        <div id="proposal" class="bg-card p-5">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Proposal
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            Twelve customers, four seats per segment (mid-market, enterprise,
+            partners), meeting for ninety minutes each quarter on video and for
+            one day a year in person. Product runs it, an exec sponsors it.
+            Every session previews the roadmap two quarters out under NDA and
+            brings one open decision, with options, for the board to argue over.
+          </p>
+        </div>
+        <div id="outcome" class="bg-brand-25 p-5">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Outcome
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            Each quarterly bet is argued over by the accounts that pay for it
+            before an engineer is assigned. Launches ship with a named reference
+            customer. Renewal talks with twelve of our largest accounts start
+            from a relationship, not a QBR slide.
+          </p>
+        </div>
+      </section>
+
+      <div class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)]">
+        <section id="why-now">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Why now
+          </p>
+          <p class="mt-2 text-sm leading-6">
+            Annual planning opens in November and the roadmap locks in December.
+            A first session in late October is the only way to put customer
+            voices into next year's plan rather than the one after. Two
+            enterprise renewals this spring cited "no say in the roadmap" in the
+            account team's notes, and the team has been promising a board since
+            then with nothing to point to.
+          </p>
+        </section>
+
+        <section id="costs-returns" class="grid gap-6 sm:grid-cols-2">
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              What it costs
+            </p>
+            <ul class="mt-2 space-y-1.5 text-sm leading-6">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+                ><span
+                  >One product manager, about a day a week for the first
+                  quarter, less after.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+                ><span
+                  >The exec sponsor, two hours a quarter plus the in-person
+                  day.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+                ><span
+                  >The in-person day for twelve, from Marketing's events
+                  line.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-minus mt-1 text-base text-muted-foreground"></i
+                ><span
+                  >One NDA template from Legal, reused for every member.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              What it returns
+            </p>
+            <ul class="mt-2 space-y-1.5 text-sm leading-6">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+                ><span
+                  >Every quarterly bet read by paying customers before
+                  engineering commits.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+                ><span
+                  >A reference customer for each launch, from members who saw it
+                  early.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+                ><span
+                  >Earlier warning on renewals at risk, from people in the room
+                  every quarter.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-plus mt-1 text-base text-brand-700"></i
+                ><span
+                  >A design-partner pool for betas, without recruiting one each
+                  time.</span
+                >
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <section id="ask" class="mt-5">
+        <div
+          class="grid gap-4 rounded-xl border-2 border-brand-300 bg-card p-5 shadow-sm sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] sm:gap-6"
+        >
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              The ask
+            </p>
+            <p class="mt-1 text-lg font-semibold tracking-[-0.02em]">
+              Approve the board by October 9, before annual planning opens.
+            </p>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              One decision in three parts, so the first session lands in late
+              October.
+            </p>
+          </div>
+          <ul
+            class="space-y-1.5 text-sm leading-6 sm:border-l sm:border-border sm:pl-6"
+          >
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >A yes on the charter: twelve seats, four a segment, two-year
+                terms.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >An exec sponsor who commits to all four sessions a year.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span>The in-person day, funded from the events line.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="risks" class="mt-5">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+        >
+          Risks, and how each is handled
+        </p>
+        <ul
+          class="mt-2 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-4"
+        >
+          <li class="bg-card p-4">
+            <p class="text-sm font-semibold">
+              The loudest accounts steer the roadmap.
+            </p>
+            <p class="mt-1 text-xs leading-5 text-muted-foreground">
+              Seats are allocated by segment, not by revenue, and every session
+              brings one decision with options rather than an open floor.
+            </p>
+          </li>
+          <li class="bg-card p-4">
+            <p class="text-sm font-semibold">
+              Members hear a roadmap that then changes.
+            </p>
+            <p class="mt-1 text-xs leading-5 text-muted-foreground">
+              Every preview is labeled a direction, not a commitment, and
+              members hear about a change from us before they see it in a
+              release.
+            </p>
+          </li>
+          <li class="bg-card p-4">
+            <p class="text-sm font-semibold">It turns into a sales event.</p>
+            <p class="mt-1 text-xs leading-5 text-muted-foreground">
+              Sales attends as a guest, not a host. No pricing and no upsell in
+              session, written into the charter.
+            </p>
+          </li>
+          <li class="bg-card p-4">
+            <p class="text-sm font-semibold">It fades after two sessions.</p>
+            <p class="mt-1 text-xs leading-5 text-muted-foreground">
+              One named owner, four dates booked a year out, and a standing item
+              at the quarterly product review to report what the board said.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="next-step" class="mt-5">
+        <p class="flex items-start gap-2.5 text-sm leading-6">
+          <i class="ph ph-arrow-right mt-1 text-base text-brand-700"></i
+          ><span
+            ><strong>Next step.</strong> If yes on October 9: Product sends the
+            sponsor a shortlist of twenty candidate accounts the following week,
+            invitations go out with the NDA by mid-October, and the first
+            session is on the calendar before planning opens.</span
+          >
+        </p>
+      </section>
+
+      <footer
+        class="mt-8 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Provenance.</strong> Prepared by Product
+        for the exec team. Seat counts, cadence, and time estimates are
+        proposals to confirm with the sponsor; the renewal notes are from the
+        account team's QBR summaries. Illustrative: figures are representative,
+        not verified.
+      </footer>
+    </main>
+  </body>
+</html>
