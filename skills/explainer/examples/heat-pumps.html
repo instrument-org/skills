@@ -22,7 +22,8 @@
     />
     <style type="text/tailwindcss">
       /* skin:start */
-      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
          A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
          and scripts/check-ideas.ts fails when a starter's copy has drifted.
          `static` matters: without it Tailwind emits only the variables some utility
@@ -125,6 +126,24 @@
         --color-border: #e7e5e4;
         --color-input: #e7e5e4;
         --color-ring: #a9a29d;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: var(--color-brand-300);
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: var(--color-brand-600);
+        }
       }
       /* skin:end */
     </style>

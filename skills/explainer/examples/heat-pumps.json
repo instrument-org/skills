@@ -4,5 +4,5 @@
   "model": "claude-fable-5-1",
   "note": "Diagram-led and airy: a wide inline SVG of the refrigerant loop sits right under the short version, with the four numbered stops on the drawing matching the four steps in a row beneath it, because the mechanism is a cycle and a homeowner holds a cycle better as a picture than as prose. The definition comes after the diagram on purpose, since \"an air conditioner run in reverse\" lands only once the reader has seen the loop, and the misconceptions are a two-column you-might-think and in-fact grid so the corrections can be skimmed as a list.",
   "illustrative": true,
-  "html_sha256": "4716bd1e576c225e93fd01edb51c64395800904432523b10630bfff8232a4aba"
+  "html_sha256": "52092c54c0f5c56802378adfe52493d0ead01d7ae8041633bc7964942b34e0d0"
 }

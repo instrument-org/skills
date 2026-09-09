@@ -22,7 +22,8 @@
     />
     <style type="text/tailwindcss">
       /* skin:start */
-      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
          A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
          and scripts/check-ideas.ts fails when a starter's copy has drifted.
          `static` matters: without it Tailwind emits only the variables some utility
@@ -125,6 +126,24 @@
         --color-border: #e7e5e4;
         --color-input: #e7e5e4;
         --color-ring: #a9a29d;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: var(--color-brand-300);
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: var(--color-brand-600);
+        }
       }
       /* skin:end */
     </style>
@@ -272,10 +291,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr><th><span class="block text-sm font-semibold text-foreground">Gusto</span><span class="block font-normal text-muted-foreground">Plus plan</span></th><td>$320<sup>1</sup></td><td class="good">Included on Plus<sup>2</sup></td><td class="good best">Broker built in, no fee</td><td class="good">Unlimited, included</td><td class="good">Built in on Plus</td><td class="good">QuickBooks and Xero, native</td><td>Chat and phone, business hours</td><td class="sum">The comfortable middle: two states and benefits are handled, at twice OnPay's price, with the health broker inside the product.</td></tr>
-              <tr><th><span class="block text-sm font-semibold text-foreground">OnPay</span><span class="block font-normal text-muted-foreground">One plan</span></th><td class="good best">$160<sup>3</sup></td><td class="good best">Included, every state, no add-on</td><td class="good">Through OnPay's broker, no fee</td><td class="good">Unlimited, included</td><td class="weak">Via QuickBooks Time<sup>4</sup></td><td class="good">QuickBooks and Xero, native</td><td>Phone and chat, weekday hours</td><td class="sum">Cheapest and simplest, with every state filing included; you give up the HR layer and the employee app.</td></tr>
-              <tr><th><span class="block text-sm font-semibold text-foreground">Rippling</span><span class="block font-normal text-muted-foreground">Payroll module</span></th><td>About $195, quoted<sup>5</sup></td><td class="good">Included; registration for a fee</td><td>Partner brokers, module fee</td><td class="weak">Per active contractor<sup>6</sup></td><td class="good best">Built in, with approvals and accruals</td><td class="good best">GL mapping to QuickBooks, Xero, NetSuite</td><td class="weak">Chat first; phone costs extra</td><td class="sum">The one to pick if payroll is the start of an HR and IT system; overkill and quote-priced if it is not.</td></tr>
-              <tr><th><span class="block text-sm font-semibold text-foreground">ADP RUN</span><span class="block font-normal text-muted-foreground">Essential</span></th><td>About $230, quoted<sup>7</sup></td><td class="good">Included; registration via ADP</td><td>ADP's broker, add-on fee</td><td class="weak">Add-on</td><td class="weak">Add-on</td><td>QuickBooks and Xero, via marketplace</td><td class="good best">24/7 phone; named rep on Complete<sup>8</sup></td><td class="sum">The known name with the best phone support and the most add-on fees; get the all-in quote in writing.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://gusto.com/product/pricing">Gusto</a></span><span class="block font-normal text-muted-foreground">Plus plan</span></th><td>$320<sup>1</sup></td><td class="good">Included on Plus<sup>2</sup></td><td class="good best">Broker built in, no fee</td><td class="good">Unlimited, included</td><td class="good">Built in on Plus</td><td class="good">QuickBooks and Xero, native</td><td>Chat and phone, business hours</td><td class="sum">The comfortable middle: two states and benefits are handled, at twice OnPay's price, with the health broker inside the product.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://onpay.com/payroll/software/costs-pricing/">OnPay</a></span><span class="block font-normal text-muted-foreground">One plan</span></th><td class="good best">$160<sup>3</sup></td><td class="good best">Included, every state, no add-on</td><td class="good">Through OnPay's broker, no fee</td><td class="good">Unlimited, included</td><td class="weak">Via QuickBooks Time<sup>4</sup></td><td class="good">QuickBooks and Xero, native</td><td>Phone and chat, weekday hours</td><td class="sum">Cheapest and simplest, with every state filing included; you give up the HR layer and the employee app.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://www.rippling.com/pricing">Rippling</a></span><span class="block font-normal text-muted-foreground">Payroll module</span></th><td>About $195, quoted<sup>5</sup></td><td class="good">Included; registration for a fee</td><td>Partner brokers, module fee</td><td class="weak">Per active contractor<sup>6</sup></td><td class="good best">Built in, with approvals and accruals</td><td class="good best">GL mapping to QuickBooks, Xero, NetSuite</td><td class="weak">Chat first; phone costs extra</td><td class="sum">The one to pick if payroll is the start of an HR and IT system; overkill and quote-priced if it is not.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground"><a href="https://www.adp.com/what-we-offer/payroll/payroll-for-1-49-employees/payroll-packages.aspx">ADP RUN</a></span><span class="block font-normal text-muted-foreground">Essential</span></th><td>About $230, quoted<sup>7</sup></td><td class="good">Included; registration via ADP</td><td>ADP's broker, add-on fee</td><td class="weak">Add-on</td><td class="weak">Add-on</td><td>QuickBooks and Xero, via marketplace</td><td class="good best">24/7 phone; named rep on Complete<sup>8</sup></td><td class="sum">The known name with the best phone support and the most add-on fees; get the all-in quote in writing.</td></tr>
             </tbody>
           </table>
         </div>

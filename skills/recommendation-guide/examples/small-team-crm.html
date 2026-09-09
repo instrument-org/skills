@@ -22,7 +22,8 @@
     />
     <style type="text/tailwindcss">
       /* skin:start */
-      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
          A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
          and scripts/check-ideas.ts fails when a starter's copy has drifted.
          `static` matters: without it Tailwind emits only the variables some utility
@@ -126,6 +127,24 @@
         --color-input: #e7e5e4;
         --color-ring: #a9a29d;
       }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: var(--color-brand-300);
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: var(--color-brand-600);
+        }
+      }
       /* skin:end */
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
@@ -162,7 +181,7 @@
               Our pick
             </p>
             <p class="mt-1 text-xl font-semibold tracking-[-0.02em]">
-              Copper, Starter plan
+              <a href="https://www.copper.com/pricing">Copper</a>, Starter plan
             </p>
             <p class="mt-0.5 text-sm text-muted-foreground">
               $29 per seat per month, billed annually · four seats, about $1,400
@@ -250,7 +269,7 @@
                 Top pick
               </p>
               <p class="text-sm font-semibold">
-                Copper, Starter
+                <a href="https://www.copper.com/pricing">Copper</a>, Starter
                 <span class="ml-2 font-normal text-muted-foreground"
                   >$29 per seat per month</span
                 >
@@ -274,7 +293,8 @@
                 Runner-up
               </p>
               <p class="text-sm font-semibold">
-                Pipedrive, Essential
+                <a href="https://www.pipedrive.com/en/pricing">Pipedrive</a>,
+                Essential
                 <span class="ml-2 font-normal text-muted-foreground"
                   >$14 per seat per month</span
                 >
@@ -298,7 +318,7 @@
                 Budget
               </p>
               <p class="text-sm font-semibold">
-                Streak
+                <a href="https://www.streak.com/pricing">Streak</a>
                 <span class="ml-2 font-normal text-muted-foreground"
                   >$0 for basic, $49 per seat per month for Pro</span
                 >
@@ -323,7 +343,8 @@
                 Upgrade
               </p>
               <p class="text-sm font-semibold">
-                Copper, Professional
+                <a href="https://www.copper.com/pricing">Copper</a>,
+                Professional
                 <span class="ml-2 font-normal text-muted-foreground"
                   >$69 per seat per month, over the cap</span
                 >
@@ -485,32 +506,46 @@
             <li class="flex items-start gap-2.5">
               <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
               ><span
-                ><strong>HubSpot Starter.</strong> Best free tier on the list,
-                but the plan with real pipeline features lands above $50 per
-                seat once you add the sales hub.</span
+                ><strong
+                  ><a href="https://www.hubspot.com/products/crm"
+                    >HubSpot Starter</a
+                  >.</strong
+                >
+                Best free tier on the list, but the plan with real pipeline
+                features lands above $50 per seat once you add the sales
+                hub.</span
               >
             </li>
             <li class="flex items-start gap-2.5">
               <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
               ><span
-                ><strong>Zoho CRM.</strong> Under budget and capable, but the
-                Gmail integration is an add-on with its own settings, and the
-                interface assumes an administrator.</span
+                ><strong
+                  ><a href="https://www.zoho.com/crm/zohocrm-pricing.html"
+                    >Zoho CRM</a
+                  >.</strong
+                >
+                Under budget and capable, but the Gmail integration is an add-on
+                with its own settings, and the interface assumes an
+                administrator.</span
               >
             </li>
             <li class="flex items-start gap-2.5">
               <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
               ><span
-                ><strong>Folk.</strong> Lovely for personal networks, but four
-                people sharing one pipeline is where it thins out.</span
+                ><strong
+                  ><a href="https://www.folk.app/pricing">Folk</a>.</strong
+                >
+                Lovely for personal networks, but four people sharing one
+                pipeline is where it thins out.</span
               >
             </li>
             <li class="flex items-start gap-2.5">
               <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
               ><span
-                ><strong>Attio.</strong> The strongest product on the list, and
-                the wrong shape: built for teams modeling their data, which is a
-                hobby this firm does not have.</span
+                ><strong><a href="https://attio.com/pricing">Attio</a>.</strong>
+                The strongest product on the list, and the wrong shape: built
+                for teams modeling their data, which is a hobby this firm does
+                not have.</span
               >
             </li>
             <li class="flex items-start gap-2.5">
