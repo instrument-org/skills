@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How ocean container shipping rates are set</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="explainer@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Explainer
+        </p>
+        <h1
+          class="mt-4 font-serif text-4xl leading-[1.15] font-medium tracking-[-0.01em] sm:text-5xl sm:leading-[1.1]"
+        >
+          How ocean container shipping rates are set
+        </h1>
+        <p class="mt-5 font-serif text-lg leading-8 text-muted-foreground">
+          You asked three forwarders for a price on one 40-foot container from
+          Ningbo to Los Angeles and got three numbers that do not agree, one of
+          them valid only until the fifteenth, and one with a line called PSS
+          that nobody explained. The numbers are not wrong. They are answering
+          slightly different questions, and this page is about what those
+          questions are.
+        </p>
+      </header>
+
+      <section id="short-version" class="mt-10 border-y border-border py-6">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          The short version
+        </p>
+        <p class="mt-3 font-serif text-lg leading-8">
+          A container rate is the price of one box, one direction, one lane, in
+          a window of a few weeks. Underneath it is a base ocean freight figure
+          that moves with how full the ships are that week, and on top of it is
+          a stack of surcharges the carriers add for fuel, season, and ports.
+          Big shippers lock the base in yearly contracts; everyone else buys at
+          the spot price, and small importers buy it through a forwarder who has
+          bought space in bulk and resells it with a margin. Your three quotes
+          differ because each forwarder holds different space, itemizes
+          differently, and expires on a different date.
+        </p>
+      </section>
+
+      <section id="what-it-is" class="mt-12">
+        <h2
+          class="font-serif text-xl font-medium tracking-[0.06em] [font-variant-caps:small-caps]"
+        >
+          What a rate is
+        </h2>
+        <div class="mt-4 space-y-5 font-serif text-[17px] leading-8">
+          <p>
+            The nearest familiar thing is an airline fare. The seat costs
+            whatever the airline thinks it can get this week for this flight,
+            the base fare is only part of the ticket, and the person next to you
+            paid something else. A container slot works the same way, with two
+            differences. The ship sails whether or not your box is on it, so an
+            empty slot is worth nothing to the carrier after departure, which is
+            why the price moves so hard with demand. And almost nobody buys a
+            slot from the carrier directly, so the price you see has passed
+            through at least one reseller on the way to you.
+          </p>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="mt-12">
+        <h2
+          class="font-serif text-xl font-medium tracking-[0.06em] [font-variant-caps:small-caps]"
+        >
+          How the number gets built
+        </h2>
+        <ol class="mt-4 space-y-6 font-serif text-[17px] leading-8">
+          <li class="flex gap-5">
+            <span
+              class="mt-1.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+              >1</span
+            >
+            <p>
+              <strong class="font-medium"
+                >Capacity is fixed months ahead.</strong
+              >
+              Carriers run ships on weekly loops, called services, between a
+              fixed string of ports. The number of slots on a lane in a given
+              week was decided when the ships were assigned to the service, so
+              in the short run supply cannot move. Only the price can.
+            </p>
+          </li>
+          <li class="flex gap-5">
+            <span
+              class="mt-1.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+              >2</span
+            >
+            <p>
+              <strong class="font-medium"
+                >The base rate follows the balance of boxes to slots.</strong
+              >
+              When more cargo wants to move than the week's slots can carry, the
+              base rises; when ships sail light, it falls. Three published
+              indexes, the Freightos Baltic Index, Drewry's World Container
+              Index, and the Shanghai Containerized Freight Index, track the
+              going spot rate on the main lanes each week, and carriers and
+              forwarders both watch them. A quote that has moved since last
+              month has usually moved with the index.
+            </p>
+          </li>
+          <li class="flex gap-5">
+            <span
+              class="mt-1.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+              >3</span
+            >
+            <p>
+              <strong class="font-medium"
+                >Surcharges are stacked on the base.</strong
+              >
+              A fuel surcharge that resets with bunker prices. A peak season
+              surcharge, the PSS on your quote, in the months before the
+              holidays. Terminal handling charges at each end. A general rate
+              increase, which is a carrier announcing that the base goes up on
+              the first or the fifteenth of the month, and which sticks only if
+              the ships are full enough that shippers pay it. Some of these are
+              on every quote and some appear only on some lanes, and all of them
+              are why "ocean freight" and "the total" are different numbers.
+            </p>
+          </li>
+          <li class="flex gap-5">
+            <span
+              class="mt-1.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+              >4</span
+            >
+            <p>
+              <strong class="font-medium"
+                >Contracts fix the base for the big shippers.</strong
+              >
+              Large importers sign annual contracts, mostly in the spring for
+              the trans-Pacific, at a base rate that holds for a year in
+              exchange for a volume commitment. Surcharges still float. When the
+              spot market falls below the contract, they push to renegotiate;
+              when it rises above it, the carrier finds reasons to roll their
+              boxes to a later sailing.
+            </p>
+          </li>
+          <li class="flex gap-5">
+            <span
+              class="mt-1.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+              >5</span
+            >
+            <p>
+              <strong class="font-medium"
+                >Forwarders buy space and resell it.</strong
+              >
+              A forwarder, or an NVOCC, which is the licensed form of one, holds
+              its own contracts with carriers, buys spot space when it needs
+              more, adds its margin, and quotes you one price. This is where a
+              small importer's rate is actually decided: by which carriers this
+              forwarder has space with on your lane this month, and how much
+              margin it will give up for your business.
+            </p>
+          </li>
+          <li class="flex gap-5">
+            <span
+              class="mt-1.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+              >6</span
+            >
+            <p>
+              <strong class="font-medium"
+                >The quote has an expiry date for a reason.</strong
+              >
+              Because the base can reset on the first and the fifteenth, quotes
+              run to one of those dates. A quote is a price for a booking made
+              before it expires, on a sailing inside its window. A container
+              that misses its sailing is repriced at whatever the number is
+              then.
+            </p>
+          </li>
+          <li class="flex gap-5">
+            <span
+              class="mt-1.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-xs text-white"
+              >7</span
+            >
+            <p>
+              <strong class="font-medium"
+                >Ocean freight is not the whole bill.</strong
+              >
+              Trucking at origin, export clearance, the customs entry and duty
+              at destination, the chassis that moves the box off the terminal,
+              and the daily charges for keeping the box or the chassis past its
+              free days are all outside the ocean rate and inside what you pay.
+              Two forwarders quoting the same ocean rate can be far apart on the
+              door-to-door total.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="why-it-matters" class="mt-12">
+        <h2
+          class="font-serif text-xl font-medium tracking-[0.06em] [font-variant-caps:small-caps]"
+        >
+          What this means for your three quotes
+        </h2>
+        <ul class="mt-4 space-y-3 font-serif text-[17px] leading-8">
+          <li class="flex items-start gap-3">
+            <i
+              class="ph ph-arrows-out-line-horizontal mt-2 text-lg text-brand-700"
+            ></i>
+            <span
+              ><strong class="font-medium"
+                >Compare the total to the door, not the ocean line.</strong
+              >
+              Ask each forwarder for the same scope: pickup at the factory,
+              delivery to your warehouse, customs entry in or out.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="ph ph-list-checks mt-2 text-lg text-brand-700"></i>
+            <span
+              ><strong class="font-medium"
+                >Ask which lines are fixed and which float.</strong
+              >
+              Fuel and peak surcharges can change between the quote and the
+              sailing; a forwarder who says so unprompted is telling you
+              something about the others.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="ph ph-calendar-blank mt-2 text-lg text-brand-700"></i>
+            <span
+              ><strong class="font-medium">Match the validity dates.</strong> A
+              quote good to the fifteenth against one good to the thirtieth is
+              not a fair comparison in a month with an increase announced.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="ph ph-timer mt-2 text-lg text-brand-700"></i>
+            <span
+              ><strong class="font-medium">Know your free days.</strong>
+              Demurrage and detention are where a good rate becomes a bad
+              shipment. Ask how many free days at the destination terminal and
+              for the container itself, and what a day costs after that.</span
+            >
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="ph ph-handshake mt-2 text-lg text-brand-700"></i>
+            <span
+              ><strong class="font-medium"
+                >At your volume, the forwarder's contracts are your
+                contracts.</strong
+              >
+              Choose one who is strong on your lane rather than one who is cheap
+              this month.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section id="misconceptions" class="mt-12">
+        <h2
+          class="font-serif text-xl font-medium tracking-[0.06em] [font-variant-caps:small-caps]"
+        >
+          What people get wrong
+        </h2>
+        <div class="mt-6 space-y-10">
+          <div>
+            <blockquote
+              class="border-l-2 border-brand-300 pl-5 font-serif text-2xl leading-9 text-foreground"
+            >
+              "The cheapest quote is the cheapest shipment."
+            </blockquote>
+            <p class="mt-4 font-serif text-[17px] leading-8">
+              <span
+                class="mr-2 font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >In fact</span
+              >The three quotes almost certainly do not cover the same scope.
+              One includes terminal handling at both ends, one includes the
+              customs entry, and one includes neither and shows the lowest
+              number. Line them up on the same scope before comparing, and the
+              order often changes.
+            </p>
+          </div>
+          <div>
+            <blockquote
+              class="border-l-2 border-brand-300 pl-5 font-serif text-2xl leading-9 text-foreground"
+            >
+              "The shipping line sets the price."
+            </blockquote>
+            <p class="mt-4 font-serif text-[17px] leading-8">
+              <span
+                class="mr-2 font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >In fact</span
+              >The line publishes a tariff and announces increases, but the
+              market decides which increases hold, and the forwarder decides
+              what you pay. The line's price is the opening position in a
+              negotiation you are not in the room for.
+            </p>
+          </div>
+          <div>
+            <blockquote
+              class="border-l-2 border-brand-300 pl-5 font-serif text-2xl leading-9 text-foreground"
+            >
+              "A quote is good until the ship sails."
+            </blockquote>
+            <p class="mt-4 font-serif text-[17px] leading-8">
+              <span
+                class="mr-2 font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >In fact</span
+              >It is good until its validity date, for a booking made by then.
+              Book inside the window and the rate holds for that sailing; wait a
+              week past it and you are on next month's number, whatever that
+              turns out to be.
+            </p>
+          </div>
+          <div>
+            <blockquote
+              class="border-l-2 border-brand-300 pl-5 font-serif text-2xl leading-9 text-foreground"
+            >
+              "More volume is the only way to a better rate."
+            </blockquote>
+            <p class="mt-4 font-serif text-[17px] leading-8">
+              <span
+                class="mr-2 font-sans text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >In fact</span
+              >Consistency, flexibility on sailing dates, cargo that is easy to
+              handle, and paying on time all earn a forwarder's better space. A
+              small importer who ships every month on a predictable lane is
+              worth more to a forwarder than a large one who shows up twice a
+              year at peak.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="glossary" class="mt-12">
+        <h2
+          class="font-serif text-xl font-medium tracking-[0.06em] [font-variant-caps:small-caps]"
+        >
+          Five terms on your quotes
+        </h2>
+        <dl
+          class="mt-4 grid gap-x-8 gap-y-4 rounded-xl border border-border bg-card p-5 text-sm sm:grid-cols-2"
+        >
+          <div>
+            <dt class="font-semibold">FCL</dt>
+            <dd class="mt-0.5 leading-6 text-muted-foreground">
+              Full container load: you fill a whole box. The alternative, LCL,
+              shares a box with other shippers and is priced by volume.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold">NVOCC</dt>
+            <dd class="mt-0.5 leading-6 text-muted-foreground">
+              Non-vessel operating common carrier: a forwarder licensed to issue
+              its own bill of lading and hold its own contracts with carriers.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold">THC</dt>
+            <dd class="mt-0.5 leading-6 text-muted-foreground">
+              Terminal handling charge: what the port charges to lift the box on
+              or off the ship, billed at each end.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold">GRI</dt>
+            <dd class="mt-0.5 leading-6 text-muted-foreground">
+              General rate increase: a carrier's announced increase to the base
+              rate, usually dated the first or the fifteenth, and only real if
+              the market accepts it.
+            </dd>
+          </div>
+          <div class="sm:col-span-2">
+            <dt class="font-semibold">Demurrage and detention</dt>
+            <dd class="mt-0.5 leading-6 text-muted-foreground">
+              Daily charges for a box left at the terminal past its free days
+              (demurrage) or kept outside the terminal past its free days
+              (detention). The part of the bill nobody quotes.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="further-reading" class="mt-12">
+        <h2
+          class="font-serif text-xl font-medium tracking-[0.06em] [font-variant-caps:small-caps]"
+        >
+          Further reading
+        </h2>
+        <ul class="mt-4 space-y-2 text-sm leading-6">
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://fbx.freightos.com/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >Freightos Baltic Index</a
+              >, the weekly spot rate on the main lanes, so you can see whether
+              a quote moved with the market or with the forwarder.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://www.drewry.co.uk/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >Drewry World Container Index</a
+              >, the other widely quoted weekly index, with a methodology page
+              that explains what a spot rate does and does not include.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://www.fmc.gov/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >Federal Maritime Commission</a
+              >, for the rules on demurrage and detention and how to dispute a
+              charge that is unreasonable.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://www.maersk.com/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >A carrier's surcharge pages</a
+              >, Maersk's for instance, for what the surcharges on your lane are
+              called and how each is computed.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Read: the Federal
+        Maritime Commission's guidance for shippers, the methodology pages of
+        two spot indexes, and three forwarders' explanations of their own
+        quotes. The market is described as it usually works; a strike, a canal
+        closure, or a demand shock rearranges the steps for months at a time. No
+        rates are quoted because they change weekly. Illustrative: figures are
+        representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

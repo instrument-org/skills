@@ -1,0 +1,8 @@
+{
+  "title": "What a 401(k) match is, and how vesting works",
+  "prompt": "Explain what a 401(k) match is and how vesting works, for someone starting a new job.",
+  "model": "claude-fable-5-1",
+  "note": "A compact walk-through in two columns on a wide screen: each numbered step carries a worked example in a bordered row using the offer letter's own formula and one stated salary, because the reader's question is really \"what does this sentence cost me\" and arithmetic over shown inputs answers it without inventing a figure. The vesting schedule is a small table inside step three rather than a chart, and the sidebar holds why-it-matters, a what-to-do-this-week box, and the example's inputs, so the actions stay in view while the reader scrolls the mechanism.",
+  "illustrative": true,
+  "html_sha256": "640eba42e2caa7a723906352e9bebe255d38a2439355ef0668e658c75b31696d"
+}

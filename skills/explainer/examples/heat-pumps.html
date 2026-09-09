@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How a heat pump heats your house in winter</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="explainer@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-6 py-10 sm:px-10 sm:py-14">
+      <header class="max-w-2xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Explainer
+        </p>
+        <h1
+          class="mt-3 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl sm:leading-[1.05]"
+        >
+          How a heat pump heats your house in winter
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          The installer said it moves heat instead of making it, and that it
+          keeps working below zero. Both are true, neither explains anything,
+          and you are about to spend furnace money on a box that looks like an
+          air conditioner. Here is what that box is doing on a cold morning.
+        </p>
+      </header>
+
+      <section id="short-version" class="mt-8">
+        <div class="rounded-2xl border border-brand-100 bg-brand-25 p-5 sm:p-6">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            The short version
+          </p>
+          <p class="mt-2 text-base leading-7">
+            A heat pump is an air conditioner that can run in reverse. In winter
+            it pumps a refrigerant around a loop: the outdoor coil lets the
+            refrigerant soak up heat from the cold air, the compressor squeezes
+            it until it is hotter than your rooms, the indoor coil hands that
+            heat to the air your ducts carry, and a valve drops the pressure so
+            the refrigerant is cold again and ready for more. Because it moves
+            heat rather than burning fuel to make it, it delivers two to three
+            units of heat for every unit of electricity it uses, and that ratio
+            falls, but does not vanish, as the outside air gets colder.
+          </p>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          How it works
+        </p>
+        <h2 class="mt-2 text-2xl font-semibold tracking-[-0.02em]">
+          Four things happen, in a loop
+        </h2>
+        <figure class="mt-6">
+          <svg
+            viewBox="0 0 760 300"
+            class="w-full"
+            role="img"
+            aria-label="The heat pump loop: an outdoor unit and an indoor coil joined by a hot line through a compressor and a cold return through an expansion valve, with cold outside air entering the outdoor unit and warm air leaving the indoor coil"
+          >
+            <defs>
+              <marker
+                id="arrow-brand"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="10"
+                markerHeight="10"
+                markerUnits="userSpaceOnUse"
+                orient="auto"
+              >
+                <path d="M0 0L10 5L0 10z" class="fill-brand-500" />
+              </marker>
+              <marker
+                id="arrow-gray"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="10"
+                markerHeight="10"
+                markerUnits="userSpaceOnUse"
+                orient="auto"
+              >
+                <path d="M0 0L10 5L0 10z" class="fill-gray-400" />
+              </marker>
+            </defs>
+
+            <line
+              x1="470"
+              y1="18"
+              x2="470"
+              y2="282"
+              class="stroke-gray-300"
+              stroke-width="2"
+              stroke-dasharray="4 6"
+            />
+            <text
+              x="458"
+              y="32"
+              text-anchor="end"
+              class="fill-muted-foreground text-[11px] font-medium tracking-[0.12em]"
+            >
+              OUTSIDE
+            </text>
+            <text
+              x="482"
+              y="32"
+              class="fill-muted-foreground text-[11px] font-medium tracking-[0.12em]"
+            >
+              INSIDE
+            </text>
+
+            <g
+              class="stroke-gray-400"
+              stroke-width="2"
+              fill="none"
+              marker-end="url(#arrow-gray)"
+            >
+              <path d="M14 120H54" />
+              <path d="M14 150H54" />
+              <path d="M14 180H54" />
+              <path d="M200 78V44" />
+              <path d="M640 44V78" />
+            </g>
+            <text x="212" y="52" class="fill-muted-foreground text-[11px]">
+              air leaves colder
+            </text>
+            <text
+              x="628"
+              y="52"
+              text-anchor="end"
+              class="fill-muted-foreground text-[11px]"
+            >
+              room air in
+            </text>
+
+            <rect
+              x="60"
+              y="80"
+              width="200"
+              height="140"
+              rx="12"
+              class="fill-card stroke-border"
+              stroke-width="1.5"
+            />
+            <g class="stroke-gray-200" stroke-width="2">
+              <path d="M84 100H236" />
+              <path d="M84 110H236" />
+              <path d="M84 120H236" />
+            </g>
+            <text
+              x="160"
+              y="152"
+              text-anchor="middle"
+              class="fill-foreground text-[14px] font-semibold"
+            >
+              Outdoor unit
+            </text>
+            <text
+              x="160"
+              y="172"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              coil and fan
+            </text>
+            <text
+              x="160"
+              y="196"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              refrigerant boils, taking in heat
+            </text>
+
+            <rect
+              x="500"
+              y="80"
+              width="200"
+              height="140"
+              rx="12"
+              class="fill-card stroke-border"
+              stroke-width="1.5"
+            />
+            <g class="stroke-gray-200" stroke-width="2">
+              <path d="M524 100H676" />
+              <path d="M524 110H676" />
+              <path d="M524 120H676" />
+            </g>
+            <text
+              x="600"
+              y="152"
+              text-anchor="middle"
+              class="fill-foreground text-[14px] font-semibold"
+            >
+              Indoor coil
+            </text>
+            <text
+              x="600"
+              y="172"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              air handler and blower
+            </text>
+            <text
+              x="600"
+              y="196"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              refrigerant condenses, giving heat
+            </text>
+
+            <g
+              class="stroke-brand-500"
+              stroke-width="2"
+              fill="none"
+              marker-end="url(#arrow-brand)"
+            >
+              <path d="M706 120H746" />
+              <path d="M706 150H746" />
+              <path d="M706 180H746" />
+            </g>
+
+            <path
+              d="M260 112H330"
+              class="stroke-brand-500"
+              stroke-width="3"
+              fill="none"
+            />
+            <path
+              d="M430 112H498"
+              class="stroke-brand-500"
+              stroke-width="3"
+              fill="none"
+              marker-end="url(#arrow-brand)"
+            />
+            <text
+              x="295"
+              y="104"
+              text-anchor="middle"
+              class="fill-brand-700 text-[11px] font-medium"
+            >
+              warm vapor
+            </text>
+            <text
+              x="464"
+              y="104"
+              text-anchor="middle"
+              class="fill-brand-700 text-[11px] font-medium"
+            >
+              hot vapor
+            </text>
+            <rect
+              x="330"
+              y="92"
+              width="100"
+              height="40"
+              rx="8"
+              class="fill-brand-600"
+            />
+            <text
+              x="380"
+              y="112"
+              text-anchor="middle"
+              dominant-baseline="central"
+              class="fill-white text-[12px] font-semibold"
+            >
+              Compressor
+            </text>
+
+            <path
+              d="M500 188H420"
+              class="stroke-gray-400"
+              stroke-width="2"
+              stroke-dasharray="6 5"
+              fill="none"
+            />
+            <path
+              d="M340 188H262"
+              class="stroke-gray-400"
+              stroke-width="2"
+              stroke-dasharray="6 5"
+              fill="none"
+              marker-end="url(#arrow-gray)"
+            />
+            <text
+              x="460"
+              y="180"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              warm liquid
+            </text>
+            <text
+              x="300"
+              y="180"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              cold mist
+            </text>
+            <rect
+              x="340"
+              y="168"
+              width="80"
+              height="40"
+              rx="8"
+              class="fill-card stroke-gray-400"
+              stroke-width="1.5"
+            />
+            <text
+              x="380"
+              y="183"
+              text-anchor="middle"
+              class="fill-foreground text-[11px] font-medium"
+            >
+              Expansion
+            </text>
+            <text
+              x="380"
+              y="197"
+              text-anchor="middle"
+              class="fill-foreground text-[11px] font-medium"
+            >
+              valve
+            </text>
+
+            <g class="fill-brand-600">
+              <circle
+                cx="72"
+                cy="92"
+                r="11"
+                class="stroke-card"
+                stroke-width="2"
+              />
+              <circle
+                cx="380"
+                cy="76"
+                r="11"
+                class="stroke-card"
+                stroke-width="2"
+              />
+              <circle
+                cx="512"
+                cy="92"
+                r="11"
+                class="stroke-card"
+                stroke-width="2"
+              />
+              <circle
+                cx="380"
+                cy="224"
+                r="11"
+                class="stroke-card"
+                stroke-width="2"
+              />
+            </g>
+            <g
+              class="fill-white text-[11px] font-semibold"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              <text x="72" y="92">1</text>
+              <text x="380" y="76">2</text>
+              <text x="512" y="92">3</text>
+              <text x="380" y="224">4</text>
+            </g>
+
+            <text
+              x="160"
+              y="250"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              outside air in, sent back colder
+            </text>
+            <text
+              x="600"
+              y="250"
+              text-anchor="middle"
+              class="fill-muted-foreground text-[11px]"
+            >
+              room air in, warm air out to the ducts
+            </text>
+          </svg>
+          <figcaption class="mt-3 text-sm leading-6 text-muted-foreground">
+            Read it as a loop. The solid green line is the hot side; the dashed
+            gray line is the cold side on its way back out. The compressor and
+            the valve are the two places the refrigerant changes pressure; the
+            two coils are where heat moves in and out.
+          </figcaption>
+        </figure>
+
+        <ol class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <li class="flex gap-4 lg:block">
+            <span
+              class="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+              >1</span
+            >
+            <div class="lg:mt-3">
+              <p class="font-semibold">The outdoor coil soaks up heat</p>
+              <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                Cold air still holds heat: the refrigerant in the coil boils at
+                a temperature far below any winter morning. A fan pulls outside
+                air across the coil, the refrigerant inside boils into a vapor,
+                and the air leaves a few degrees colder than it arrived.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4 lg:block">
+            <span
+              class="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+              >2</span
+            >
+            <div class="lg:mt-3">
+              <p class="font-semibold">The compressor makes it hot</p>
+              <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                The vapor is warm, but not warmer than your living room, so it
+                cannot give heat to it yet. The compressor squeezes the vapor to
+                a much higher pressure, and squeezing a gas heats it, the way a
+                bicycle pump warms in your hand. This is where the electricity
+                goes.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4 lg:block">
+            <span
+              class="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+              >3</span
+            >
+            <div class="lg:mt-3">
+              <p class="font-semibold">The indoor coil gives it away</p>
+              <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                The hot vapor runs through the coil in your air handler. The
+                blower pushes room air over it, the air warms, and the
+                refrigerant, having given up its heat, condenses back to a
+                liquid. Your ducts carry the warm air to the rooms.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4 lg:block">
+            <span
+              class="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-600 font-mono text-sm text-white"
+              >4</span
+            >
+            <div class="lg:mt-3">
+              <p class="font-semibold">The valve makes it cold again</p>
+              <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                The liquid is still under high pressure. The expansion valve
+                lets it through a narrow opening into the low-pressure side, and
+                the sudden drop makes it very cold, colder than the outside air,
+                so it can soak up heat on the next pass. The loop begins again.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section
+        id="what-it-is"
+        class="mt-16 grid gap-6 sm:grid-cols-[12rem_1fr] sm:gap-10"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            What it is
+          </p>
+          <h2 class="mt-2 text-xl font-semibold tracking-[-0.02em]">
+            An air conditioner with one extra part
+          </h2>
+        </div>
+        <div class="space-y-4 text-base leading-7">
+          <p>
+            Your air conditioner already runs this loop every summer, taking
+            heat from the house and dumping it outside; the refrigerator in your
+            kitchen runs it too, taking heat from the food and dumping it into
+            the room. A heat pump adds a reversing valve that swaps which coil
+            does which job, so in winter the outdoor coil is the one absorbing
+            and the indoor coil is the one releasing. The same machine cools in
+            July and heats in January, which is why one replaces both a furnace
+            and an air conditioner.
+          </p>
+          <p>
+            The difference from a furnace is where the heat comes from. A
+            furnace makes heat by burning fuel, so one unit of fuel gives at
+            most one unit of heat. A heat pump moves heat that already exists in
+            the outside air, and the electricity only runs the compressor and
+            the fans. That is how it gives back more heat than the electricity
+            it draws.
+          </p>
+        </div>
+      </section>
+
+      <section id="why-it-matters" class="mt-16">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          Why it matters to you
+        </p>
+        <h2 class="mt-2 text-xl font-semibold tracking-[-0.02em]">
+          What the loop means for the quote on your table
+        </h2>
+        <ul class="mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2">
+          <li class="flex items-start gap-3">
+            <i class="ph ph-thermometer-cold mt-1 text-xl text-brand-700"></i>
+            <p class="text-sm leading-6">
+              <strong
+                >Ask for the capacity at your design temperature, not the
+                nominal size.</strong
+              >
+              Every heat pump is rated at 47°F. The number that matters is how
+              much heat it delivers on the coldest night your area plans for,
+              and the installer's load calculation should state both.
+            </p>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="ph ph-snowflake mt-1 text-xl text-brand-700"></i>
+            <p class="text-sm leading-6">
+              <strong>Look for a cold-climate model.</strong> Its compressor
+              runs at variable speed and it is rated for output at 5°F; a
+              standard unit loses much of its capacity well before then, because
+              step 1 has less heat to work with as the air gets colder.
+            </p>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="ph ph-fire mt-1 text-xl text-brand-700"></i>
+            <p class="text-sm leading-6">
+              <strong>Decide on backup before you decide on size.</strong> A
+              unit sized for the coldest night is oversized for the rest of the
+              winter. Many installers size for most nights and keep a small
+              electric strip or the old furnace for the few below that; ask
+              which the quote assumes.
+            </p>
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="ph ph-wind mt-1 text-xl text-brand-700"></i>
+            <p class="text-sm leading-6">
+              <strong>Expect the vents to feel different.</strong> The air is
+              warm rather than hot, and the unit runs for long stretches at a
+              low speed, which is how it is meant to work. A thermostat set back
+              at night and pushed up in the morning fights that and costs more.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="misconceptions" class="mt-16">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          What people get wrong
+        </p>
+        <div class="mt-4 divide-y divide-border">
+          <div class="grid gap-2 py-5 sm:grid-cols-2 sm:gap-10">
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+              >
+                You might think
+              </p>
+              <p class="mt-1 text-base leading-7 text-muted-foreground">
+                It stops working once it is below freezing outside.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >
+                In fact
+              </p>
+              <p class="mt-1 text-sm leading-6">
+                Air holds heat at any temperature you will ever see, and the
+                refrigerant boils far below freezing. What falls as it gets
+                colder is how much heat the unit can move per hour, which is why
+                the rating at 5°F, not the one at 47°F, is the number to
+                compare.
+              </p>
+            </div>
+          </div>
+          <div class="grid gap-2 py-5 sm:grid-cols-2 sm:gap-10">
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+              >
+                You might think
+              </p>
+              <p class="mt-1 text-base leading-7 text-muted-foreground">
+                Bigger is safer, so round the size up.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >
+                In fact
+              </p>
+              <p class="mt-1 text-sm leading-6">
+                An oversized unit reaches the thermostat's setting quickly,
+                shuts off, and starts again minutes later. Short cycles wear the
+                compressor, leave far rooms cold, and cost more than a
+                right-sized unit running steadily. The load calculation exists
+                to prevent exactly this.
+              </p>
+            </div>
+          </div>
+          <div class="grid gap-2 py-5 sm:grid-cols-2 sm:gap-10">
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+              >
+                You might think
+              </p>
+              <p class="mt-1 text-base leading-7 text-muted-foreground">
+                The outdoor unit steaming or dripping in winter means it is
+                broken.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >
+                In fact
+              </p>
+              <p class="mt-1 text-sm leading-6">
+                The outdoor coil is colder than the air, so frost forms on it in
+                damp cold. The unit briefly runs the loop backward to melt it,
+                which is the steam, and pauses the blower so it does not push
+                cold air into the house. A few minutes an hour in the right
+                weather is normal.
+              </p>
+            </div>
+          </div>
+          <div class="grid gap-2 py-5 sm:grid-cols-2 sm:gap-10">
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+              >
+                You might think
+              </p>
+              <p class="mt-1 text-base leading-7 text-muted-foreground">
+                It heats with electricity, so it costs what electric heat costs.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+              >
+                In fact
+              </p>
+              <p class="mt-1 text-sm leading-6">
+                Electric resistance heat gives one unit of heat per unit of
+                electricity. A heat pump gives two to three, because most of the
+                heat comes from the outside air and the electricity only runs
+                the compressor and the fans. Your bill depends on that ratio at
+                your temperatures and your electricity price, which is a
+                calculation worth doing before you sign.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="further-reading" class="mt-16">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Further reading
+        </p>
+        <ul class="mt-4 space-y-2 text-sm leading-6">
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://www.energy.gov/energysaver/heat-pump-systems"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >Energy Saver: heat pump systems</a
+              >, the Department of Energy's plain overview of the types and what
+              the efficiency ratings on the label mean.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://ashp.neep.org/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >NEEP cold-climate heat pump list</a
+              >, a searchable list of models with their capacity at 5°F, so you
+              can check the model in your quote against the number that
+              matters.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://www.acca.org/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >ACCA, on Manual J</a
+              >, for what a real load calculation involves, so you can ask
+              whether the installer did one rather than sizing by square
+              footage.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i>
+            <span
+              ><a
+                href="https://www.energystar.gov/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >ENERGY STAR</a
+              >, for the rating tiers and the criteria a unit has to meet for
+              the federal tax credit.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-16 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Read in full: the
+        Department of Energy's heat pump pages, the NEEP cold-climate
+        specification, and two engineering explainers of the vapor-compression
+        cycle. The loop is drawn simplified: the reversing valve, the
+        accumulator, and the defrost controls are described but not shown.
+        Temperatures named are the industry's rating points, not measurements of
+        any product. Illustrative: figures are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>
