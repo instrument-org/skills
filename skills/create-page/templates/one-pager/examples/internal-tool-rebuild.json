@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Technical register, dense and all sans with monospace touches on the figures, the before and after labels, and a mono meta line in the header, because a CTO reads this in a minute between meetings and wants the numbers to look like numbers. The proposal is a before-and-after pair instead of a three-column band, costs are in engineer-weeks and returns in hours a week with the arithmetic shown, and the risks strip carries a mono fix tag on each mitigation.",
   "illustrative": true,
-  "html_sha256": "342b7a305fe2473bf0187fbc96c2be264cf05e7d94d7b7555cce7196fbcce85c"
+  "html_sha256": "8b6d91fc7748489f05bedb50bf384296b6affea1c90e3cc339ef3315ccae8106"
 }

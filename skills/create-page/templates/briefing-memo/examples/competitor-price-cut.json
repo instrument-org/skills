@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Urgent by design: the bottom line is a warning-toned strip across the top of the page before the title, the key facts are four stat tiles in a row so the money is visible before a word of context, and the options are a compact table with the recommended row highlighted rather than cards, because the reader is a leadership team deciding by Friday. All sans and tighter, with the open questions as a checklist carrying an owner and a day each so the page doubles as the meeting's action list.",
   "illustrative": true,
-  "html_sha256": "a507aa8ae302b6be590e8648f46cb3b93c99c3c747e6fa6107fcaf2814e3567e"
+  "html_sha256": "fc8b37e04dee524f3a1c6c6d4417b870087f97e02905ed1cecd36a3012cf8107"
 }

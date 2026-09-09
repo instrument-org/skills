@@ -139,6 +139,52 @@
       /* skin:end */
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
@@ -491,5 +537,25 @@
         representative, not verified.
       </footer>
     </main>
+
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+        icon.onerror = () => icon.remove();
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) icon.remove();
+        };
+        link.prepend(icon);
+      }
+    </script>
   </body>
 </html>
