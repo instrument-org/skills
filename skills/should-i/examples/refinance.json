@@ -1,0 +1,8 @@
+{
+  "title": "Should I refinance my 30-year mortgage now?",
+  "prompt": "Should I refinance my 30-year mortgage now? I'm at 6.9%, current quotes are around 6.1%, and I plan to stay about five more years.",
+  "model": "claude-fable-5-1",
+  "note": "Leads with a warning-toned block badge beside the reasoning, because the honest answer is that the shape of the refinance matters more than whether, and the reader needs the two shapes named before anything else. The persona grid is three cards keyed to how long the reader stays, each with its own chip, and a month-by-month table under them carries the break-even and the crossover so the reader can find their own row; the FAQ is a two-column definition list rather than disclosures so every answer is visible on a laptop screen.",
+  "illustrative": true,
+  "html_sha256": "e795556ec36910dc94d10d2c38634efd10eaaefbba8b8630b90907172b4d6eb4"
+}

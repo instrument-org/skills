@@ -1,0 +1,18 @@
+{
+  "title": "Should I…?",
+  "tagline": "The yes-or-no explainer advice columns publish, written for your decision.",
+  "when": "You have a should-I, is-it-worth-it, or do-I-need question and want a plain answer that shows what it turns on.",
+  "tags": ["decide"],
+  "order": 30,
+  "needs": [],
+  "cover": "refinance",
+  "sections": [
+    "The question",
+    "Short answer",
+    "What it depends on",
+    "By situation",
+    "Risks",
+    "Next step",
+    "Questions people ask"
+  ]
+}

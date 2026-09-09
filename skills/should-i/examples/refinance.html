@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Should I refinance my 30-year mortgage now?</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="should-i@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Should I…?
+        </p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Should I refinance my 30-year mortgage now?
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          You are at 6.9 percent, lenders are quoting about 6.1, and you expect
+          to stay about five more years. That is a 0.8 point spread: enough to
+          pay off, not enough to pay off in every shape, and which shape wins
+          for you comes down to what you pay to close and how firm that five
+          years is.
+        </p>
+      </header>
+
+      <section
+        id="answer"
+        class="mt-8 grid gap-5 sm:grid-cols-[15rem_1fr] sm:items-start"
+      >
+        <div
+          class="rounded-xl border-2 border-warning-300 bg-warning-50 px-6 py-5"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+          >
+            Short answer
+          </p>
+          <p
+            class="mt-1 text-4xl font-semibold tracking-[-0.03em] text-warning-900"
+          >
+            It depends
+          </p>
+          <p class="mt-2 text-sm leading-6 text-warning-900/80">
+            On how long you really stay, and on whether you pay the closing
+            costs or let the lender bury them in the rate.
+          </p>
+        </div>
+        <div class="text-sm leading-6">
+          <p>
+            On a $385,000 balance, 6.1 percent cuts the payment by about
+            <strong>$258 a month</strong> and pays back roughly $7,500 in
+            closing costs by <strong>month 29</strong>. Stay five years and you
+            finish about $8,000 ahead. But a lender-paid refinance at about 6.5
+            percent, with nothing at closing, finishes the same five years about
+            $9,400 ahead, and the paid version only overtakes it in year seven.
+          </p>
+          <p class="mt-3 text-muted-foreground">
+            What makes it a clear yes: a real Loan Estimate at 6.1 with zero
+            points and under $8,000 to close, and a decade in the house. What
+            makes it a no: any real chance you sell before 2029 and a quote that
+            carries a point.
+          </p>
+        </div>
+      </section>
+
+      <section
+        id="question"
+        class="mt-10 grid gap-6 border-y border-border py-5 text-sm leading-6 sm:grid-cols-2"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            What you told us
+          </p>
+          <ul class="mt-2 space-y-1">
+            <li>A 30-year fixed at 6.9 percent, two years in</li>
+            <li>Quotes around 6.1 percent for a new 30-year</li>
+            <li>About five more years in the house</li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            What the math assumes
+          </p>
+          <ul class="mt-2 space-y-1 text-muted-foreground">
+            <li>
+              $385,000 left with 28 years to go: $2,591 a month in principal and
+              interest
+            </li>
+            <li>Closing costs of $7,500, about 2 percent of the loan</li>
+            <li>A lender-paid alternative priced at 6.5 percent</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="factors" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          What it depends on
+        </p>
+        <ol class="mt-2 divide-y divide-border">
+          <li class="flex gap-4 py-3">
+            <span
+              class="mt-1 w-6 shrink-0 font-mono text-xs text-muted-foreground"
+              >01</span
+            >
+            <p class="text-sm leading-6">
+              <strong>How firm "five years" is.</strong> The paid refinance
+              breaks even at month 29 and overtakes the lender-paid one at month
+              74. Under 29 months, do nothing that costs money; past 74, pay the
+              costs and take the lower rate.
+            </p>
+          </li>
+          <li class="flex gap-4 py-3">
+            <span
+              class="mt-1 w-6 shrink-0 font-mono text-xs text-muted-foreground"
+              >02</span
+            >
+            <p class="text-sm leading-6">
+              <strong>What you actually pay to close.</strong> $7,500 is the
+              assumption. Every $1,000 more pushes break-even out four months
+              and the crossover ten. Above $10,000, the five-year case for
+              paying is gone.
+            </p>
+          </li>
+          <li class="flex gap-4 py-3">
+            <span
+              class="mt-1 w-6 shrink-0 font-mono text-xs text-muted-foreground"
+              >03</span
+            >
+            <p class="text-sm leading-6">
+              <strong>Whether the 6.1 carries points.</strong> One discount
+              point is $3,850, and it is often how a 6.1 gets quoted when the
+              zero-point rate is 6.3. Ask for the zero-point rate by name.
+            </p>
+          </li>
+          <li class="flex gap-4 py-3">
+            <span
+              class="mt-1 w-6 shrink-0 font-mono text-xs text-muted-foreground"
+              >04</span
+            >
+            <p class="text-sm leading-6">
+              <strong>What the lender-paid rate is.</strong> At 6.5 percent it
+              saves $157 a month with no break-even to clear. At 6.6 the two
+              shapes tie at exactly five years; at 6.7 the paid one wins from
+              year four.
+            </p>
+          </li>
+          <li class="flex gap-4 py-3">
+            <span
+              class="mt-1 w-6 shrink-0 font-mono text-xs text-muted-foreground"
+              >05</span
+            >
+            <p class="text-sm leading-6">
+              <strong>Whether you want the payment or the payoff date.</strong>
+              About $60 of the $258 comes from restarting the clock at 30 years,
+              not from the rate. Judged at your current payoff date the saving
+              is $198, and the deal has to work on that number.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="situations" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+        >
+          By how long you stay
+        </p>
+        <div class="mt-3 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              If you stay 3 years
+            </p>
+            <p
+              class="mt-2 inline-flex rounded-full bg-error-50 px-2.5 py-0.5 text-xs font-semibold text-error-700"
+            >
+              Not this deal
+            </p>
+            <p class="mt-3 text-sm leading-6">
+              Paying $7,500 to close nets $1,800 at best and loses money at your
+              current payoff date, and then you pay a second set of closing
+              costs to sell. If you refinance at all, take the lender-paid rate:
+              about $5,600 ahead with nothing at risk.
+            </p>
+          </div>
+          <div
+            class="rounded-xl border-2 border-warning-300 bg-card p-5 shadow-sm"
+          >
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+            >
+              If you stay 5 years
+            </p>
+            <p
+              class="mt-2 inline-flex rounded-full bg-warning-50 px-2.5 py-0.5 text-xs font-semibold text-warning-700"
+            >
+              Yes, shop the shape
+            </p>
+            <p class="mt-3 text-sm leading-6">
+              Both versions pay. The lender-paid one pays more, about $9,400 to
+              $8,000, and risks nothing if five turns into three. Pay the
+              closing costs only if the zero-point 6.1 is real and you would bet
+              on staying past 2032.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              If you stay 10 years
+            </p>
+            <p
+              class="mt-2 inline-flex rounded-full bg-success-50 px-2.5 py-0.5 text-xs font-semibold text-success-700"
+            >
+              Yes, pay to close
+            </p>
+            <p class="mt-3 text-sm leading-6">
+              The 6.1 finishes about $23,000 ahead against $19,000 for the
+              lender-paid rate, and even a quote with a point baked in pays back
+              by year four. Do it, and ask to amortize over 28 years so the
+              clock does not restart.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="breakeven" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Where you stand, month by month
+        </p>
+        <table class="mt-3 w-full text-sm">
+          <thead>
+            <tr
+              class="border-b border-border text-left text-xs text-muted-foreground"
+            >
+              <th class="pb-2 pr-4 font-medium">After</th>
+              <th class="pb-2 pr-4 font-medium">
+                6.1 percent, $7,500 to close
+              </th>
+              <th class="pb-2 font-medium">6.5 percent, nothing to close</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border">
+            <tr>
+              <td class="py-2 pr-4">1 year</td>
+              <td class="py-2 pr-4 font-mono text-xs text-error-700">
+                −$4,404
+              </td>
+              <td class="py-2 font-mono text-xs">$1,884</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-4">29 months</td>
+              <td class="py-2 pr-4 font-mono text-xs">
+                $0
+                <span class="font-sans text-muted-foreground">break-even</span>
+              </td>
+              <td class="py-2 font-mono text-xs">$4,553</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-4">3 years</td>
+              <td class="py-2 pr-4 font-mono text-xs">$1,788</td>
+              <td class="py-2 font-mono text-xs">$5,652</td>
+            </tr>
+            <tr class="bg-warning-50">
+              <td class="py-2 pr-4 font-medium">5 years</td>
+              <td class="py-2 pr-4 font-mono text-xs">$7,980</td>
+              <td class="py-2 font-mono text-xs font-medium">$9,420</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-4">74 months</td>
+              <td class="py-2 pr-4 font-mono text-xs">
+                $11,592
+                <span class="font-sans text-muted-foreground">crossover</span>
+              </td>
+              <td class="py-2 font-mono text-xs">$11,618</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-4">10 years</td>
+              <td class="py-2 pr-4 font-mono text-xs font-medium">$23,460</td>
+              <td class="py-2 font-mono text-xs">$18,840</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="mt-2 text-xs leading-5 text-muted-foreground">
+          Net position against keeping the 6.9 loan, on a fresh 30-year term in
+          both cases: $258 a month saved at 6.1, $157 at 6.5.
+        </p>
+      </section>
+
+      <section id="risks" class="mt-10">
+        <div
+          class="rounded-xl border-l-4 border-warning-500 bg-card p-5 shadow-sm"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+          >
+            What goes wrong
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                ><strong>The point you did not see.</strong> A 6.1 that carries
+                one point costs $3,850 more at closing and moves break-even to
+                month 44. The five-year case is gone and you will not know until
+                the Loan Estimate.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                ><strong>A low appraisal.</strong> Under about $481,000 you
+                cross 80 percent loan-to-value and pick up mortgage insurance,
+                which eats most of the $258 for years.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                ><strong>The reset that flatters the number.</strong> Two extra
+                years of payments make the monthly saving look bigger than the
+                rate earned. If the deal only works at $258 and not at $198, it
+                does not work.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-warning mt-1 text-lg text-warning-700"></i
+              ><span
+                ><strong>A lock that expires.</strong> A 45-day rate lock in a
+                slow closing costs about a quarter point to extend, or the rate
+                you locked.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="next" class="mt-10">
+        <div
+          class="rounded-xl bg-brand-600 p-6 text-white shadow-sm sm:grid sm:grid-cols-[1fr_auto] sm:items-center sm:gap-6"
+        >
+          <div>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-white/70 uppercase"
+            >
+              Next step
+            </p>
+            <p class="mt-1 text-lg font-semibold">
+              Get three Loan Estimates on the same day, each priced both ways
+            </p>
+            <p class="mt-2 text-sm leading-6 text-white/90">
+              Ask each lender for the zero-point rate with costs and for the
+              lender-paid rate with none. It costs an hour and one credit pull;
+              every mortgage pull inside 45 days counts as one. Read the rate on
+              page 1 and line J, Total Closing Costs, on page 2. If the best
+              paid quote is 6.1 with under $8,000 to close and you would bet on
+              seven years, sign it. Otherwise sign the lender-paid one, or keep
+              6.9 and set a reminder for six months.
+            </p>
+          </div>
+          <i
+            class="ph ph-arrow-right hidden text-4xl text-white/60 sm:block"
+          ></i>
+        </div>
+      </section>
+
+      <section id="faq" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Questions people ask
+        </p>
+        <dl class="mt-3 grid gap-x-8 gap-y-5 text-sm leading-6 sm:grid-cols-2">
+          <div>
+            <dt class="font-medium">Should I take a 15-year instead?</dt>
+            <dd class="mt-1 text-muted-foreground">
+              At about 5.6 percent the payment is $3,170, roughly $580 more a
+              month than now, and the house is paid off in 2041. Only if that
+              payment leaves the budget calm.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">Do I have to restart at 30 years?</dt>
+            <dd class="mt-1 text-muted-foreground">
+              No. Ask for a 25-year, or to amortize to your current payoff date.
+              The monthly saving drops to $198 and the interest saving grows.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">Will it hurt my credit?</dt>
+            <dd class="mt-1 text-muted-foreground">
+              A few points for a few months. Mortgage inquiries inside a 45-day
+              window count as one, so shopping three lenders costs the same as
+              shopping one.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">
+              Should I wait for rates to fall further?
+            </dt>
+            <dd class="mt-1 text-muted-foreground">
+              Nobody times it. If they fall to 5.5 next year you can refinance
+              again, and the lender-paid shape makes that free; if they rise,
+              you kept 6.9. Decide on today's spread.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Payments computed from
+        the balance, rates, and terms above with a standard amortization
+        formula; the $385,000 balance and 28 years remaining are assumed from a
+        loan taken two years ago, since you did not give them. Closing costs at
+        2 percent and the lender-paid rate at 6.5 percent are typical spreads
+        seen in this week's rate sheets, not your quotes. Appraisal and mortgage
+        insurance figures assume an 80 percent loan-to-value line. Illustrative:
+        figures are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>
