@@ -64,15 +64,16 @@ function main() {
   const chrome = findChrome();
   for (const idea of ideas) {
     for (const example of idea.examples) {
+      // Writing a blank one here would hand the checker metadata that passes
+      // while saying nothing, so an example without a design note stops.
+      if (!example.meta) {
+        throw new Error(
+          `${idea.name}/${example.name}.json is missing or not valid JSON; write the design note before capturing`,
+        );
+      }
       capture(chrome, example.htmlPath, example.capturePath);
       const html = readFileSync(example.htmlPath, "utf-8");
-      const meta: ExampleMeta = example.meta ?? {
-        title: example.name,
-        variant: "",
-        prompt: "",
-        model: "",
-        note: "",
-      };
+      const meta: ExampleMeta = example.meta;
       meta.html_sha256 = sha256(html);
       writeFileSync(example.metaPath, `${JSON.stringify(meta, null, 2)}\n`);
       console.log(`captured ${idea.name}/${example.name}`);
