@@ -19,7 +19,7 @@ Each is a page shape from the research catalog. Sections are intents to answer, 
 7. `scorecard`: one entity graded across dimensions with a glanceable summary. Overall grade; dimension scores; evidence per dimension; strengths and weaknesses; comparables; sources.
 8. `pro-con`: a balanced two-sided view of one option or two alternatives. Context; pros; cons; who it is good and bad for; bottom line; sources.
 
-Next wave, unscheduled: `buyers-guide`, `faq`, `explainer`, `choice-advisor`, `how-to`, `checklist`, and `visual-answer`, which becomes an idea by gaining examples and a sidecar.
+Second wave, in progress: `explainer`, `how-to`, `checklist`, `itinerary`, `timeline`, `faq`, `case-study`, `one-pager`. Later: `buyers-guide`, `choice-advisor`, `glossary`, `post-mortem`, `status-report`, and `visual-answer`, which becomes an idea by gaining examples and a sidecar.
 
 ## Making one
 
