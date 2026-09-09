@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Six project tools for a 12-person agency that bills by the hour
+    </title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="comparison-matrix@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <style>
+      /* Matrix plumbing: the table's own rules live here so each cell in the
+         source stays one short tag. Everything resolves against the skin. */
+      .matrix {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+      .matrix th,
+      .matrix td {
+        padding: 0.625rem 0.75rem;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .matrix thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--color-card);
+        border-bottom: 2px solid var(--color-gray-300);
+      }
+      .matrix th:first-child,
+      .matrix td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 5;
+        background: var(--color-card);
+        border-right: 1px solid var(--color-border);
+      }
+      .matrix thead th:first-child {
+        z-index: 15;
+      }
+      .matrix tbody th {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--color-gray-800);
+      }
+      .matrix tr.band th {
+        padding-top: 0.375rem;
+        padding-bottom: 0.375rem;
+        background: var(--color-gray-100);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-gray-600);
+      }
+      .matrix td.good {
+        background: var(--color-brand-50);
+        color: var(--color-brand-900);
+      }
+      .matrix td.weak {
+        background: var(--color-warning-50);
+        color: var(--color-warning-900);
+      }
+      .matrix sup,
+      .note sup {
+        margin-left: 0.125rem;
+        font-family: var(--font-mono);
+        font-size: 0.625rem;
+        color: var(--color-brand-700);
+      }
+    </style>
+    <main class="mx-auto max-w-6xl px-6 py-14 sm:px-10 sm:py-20">
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Comparison matrix
+        </p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Six project tools for a 12-person agency that bills by the hour
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          Teamwork, Productive, Asana, monday.com, ClickUp, and Basecamp,
+          measured on the thirteen things that decide whether a tracked hour
+          turns into an invoice. No weights and no winner: the tones show where
+          each tool is strong and where it is not, so the team can argue about
+          what matters with the facts already on the table.
+        </p>
+      </header>
+
+      <section id="legend" class="mt-10">
+        <div
+          class="flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-muted-foreground"
+        >
+          <span class="inline-flex items-center gap-2"
+            ><span
+              class="size-3.5 rounded-sm bg-brand-100 ring-1 ring-brand-300"
+            ></span
+            >Strong for hourly agency work</span
+          >
+          <span class="inline-flex items-center gap-2"
+            ><span
+              class="size-3.5 rounded-sm bg-card ring-1 ring-gray-300"
+            ></span
+            >Fine, nothing that decides anything</span
+          >
+          <span class="inline-flex items-center gap-2"
+            ><span
+              class="size-3.5 rounded-sm bg-warning-100 ring-1 ring-warning-300"
+            ></span
+            >A real weakness for this brief</span
+          >
+          <span class="inline-flex items-center gap-2"
+            ><sup class="font-mono text-[10px] text-brand-700">1</sup>Footnote,
+            keyed per tool below</span
+          >
+          <span
+            >Prices: 12 seats, billed annually, seen the week of writing</span
+          >
+        </div>
+        <dl
+          class="mt-5 grid gap-x-8 gap-y-2 text-sm leading-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          <div>
+            <dt class="font-medium">Cost</dt>
+            <dd class="text-muted-foreground">
+              What 12 people pay per month, on the tier that has the hourly
+              features, and how the contract bends.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">Billing hourly</dt>
+            <dd class="text-muted-foreground">
+              Whether a tracked hour becomes an invoice without a spreadsheet in
+              between. The band that decides this brief.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">Creative work</dt>
+            <dd class="text-muted-foreground">
+              Proofing files, letting clients in, and the views a studio runs
+              on.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-medium">Running it</dt>
+            <dd class="text-muted-foreground">
+              Setup, the accounting and chat links, and reporting on who is
+              billable.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="matrix" class="mt-6">
+        <div
+          class="overflow-x-auto rounded-xl border border-border bg-card shadow-sm lg:overflow-visible"
+        >
+          <!-- prettier-ignore -->
+          <table class="matrix min-w-[60rem] text-xs leading-5">
+            <colgroup><col style="width: 11.5rem" /><col /><col /><col /><col /><col /><col /></colgroup>
+            <thead>
+              <tr>
+                <th class="text-sm font-semibold">Attribute</th>
+                <th><span class="block text-sm font-semibold">Teamwork</span><span class="block font-normal text-muted-foreground">Grow · $19.99 per user</span></th>
+                <th><span class="block text-sm font-semibold">Productive</span><span class="block font-normal text-muted-foreground">Professional · $24 per user</span></th>
+                <th><span class="block text-sm font-semibold">Asana</span><span class="block font-normal text-muted-foreground">Advanced · $24.99 per user</span></th>
+                <th><span class="block text-sm font-semibold">monday.com</span><span class="block font-normal text-muted-foreground">Pro · $19 per seat</span></th>
+                <th><span class="block text-sm font-semibold">ClickUp</span><span class="block font-normal text-muted-foreground">Business · $12 per user</span></th>
+                <th><span class="block text-sm font-semibold">Basecamp</span><span class="block font-normal text-muted-foreground">Pro Unlimited · $299 flat</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="band"><th colspan="7">Cost</th></tr>
+              <tr><th>Monthly cost, 12 seats</th><td class="good">$240</td><td>$288</td><td>$300</td><td>$285<sup>7</sup></td><td class="good">$144<sup>9</sup></td><td>$299, any headcount<sup>10</sup></td></tr>
+              <tr><th>Tier with time tracking</th><td>Grow<sup>1</sup></td><td>Professional<sup>3</sup></td><td>Advanced<sup>5</sup></td><td>Pro<sup>7</sup></td><td>Business<sup>8</sup></td><td class="weak">None built in<sup>10</sup></td></tr>
+              <tr><th>Billing term</th><td>Monthly or annual</td><td>Monthly costs 15% more</td><td>Monthly or annual</td><td>Monthly or annual</td><td>Monthly is $19 per user<sup>9</sup></td><td class="good">Month to month</td></tr>
+              <tr class="band"><th colspan="7">Billing hourly</th></tr>
+              <tr><th>Time tracking</th><td class="good">Timer and timesheets</td><td class="good">Timer, timesheets, approvals</td><td>Task timer, Advanced only</td><td>Time column, Pro only</td><td class="good">Timer and manual entries</td><td class="weak">None</td></tr>
+              <tr><th>Billable rates</th><td class="good">Per user and per project</td><td class="good">Rate cards per client</td><td class="weak">None; export and tag</td><td class="weak">Formula column workaround</td><td>Billable toggle, no rates</td><td class="weak">None</td></tr>
+              <tr><th>Invoicing from time</th><td class="good">Built in, to QuickBooks and Xero</td><td class="good">Built in, sends the invoice</td><td class="weak">None</td><td class="weak">None</td><td class="weak">None</td><td class="weak">None</td></tr>
+              <tr><th>Budget burn per project</th><td class="good">Hours and dollars, with alerts</td><td class="good">Hours, dollars, and margin</td><td>Hours, on a dashboard</td><td>Hours, on a widget</td><td>Hours, on a dashboard</td><td class="weak">None</td></tr>
+              <tr class="band"><th colspan="7">Creative work</th></tr>
+              <tr><th>Proofing and markup</th><td class="good">Image and PDF markup<sup>2</sup></td><td>Comments on files</td><td class="good">Image and PDF markup</td><td>Annotations on images</td><td class="good">Image and PDF markup</td><td>Comments, no markup</td></tr>
+              <tr><th>Client access</th><td class="good">Free client users</td><td class="good">Free client portal, view only</td><td>Free guests, per project</td><td>Free viewers, paid editors</td><td>Free guests, limited</td><td class="good">Free clients, curated view</td></tr>
+              <tr><th>Views</th><td>Board, table, Gantt, calendar</td><td>Board, table, timeline, calendar</td><td>Board, list, timeline, workload</td><td>Board, table, Gantt, workload</td><td>Every view there is</td><td class="weak">List, card, calendar; no Gantt</td></tr>
+              <tr class="band"><th colspan="7">Running it</th></tr>
+              <tr><th>Setup</th><td>About two weeks</td><td class="weak">Three to four weeks<sup>4</sup></td><td class="good">About a week</td><td class="good">About a week</td><td class="weak">Two to three weeks</td><td class="good">One afternoon</td></tr>
+              <tr><th>Accounting and chat</th><td class="good">QuickBooks, Xero, Slack, Drive</td><td class="good">QuickBooks, Xero, Slack, Drive</td><td>Slack, Drive; QuickBooks via connector<sup>6</sup></td><td>Slack, Drive, QuickBooks app</td><td>Slack, Drive; QuickBooks via Zapier</td><td>Slack, Drive; the rest via Zapier</td></tr>
+              <tr><th>Utilization reporting</th><td class="good">Per person and per project</td><td class="good">Per person, project, forecast</td><td>Workload, no billable split</td><td>Workload, no billable split</td><td>Workload, no billable split</td><td class="weak">None</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="footnotes" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Footnotes, by tool
+        </p>
+        <!-- prettier-ignore -->
+        <div class="note mt-3 grid gap-x-8 gap-y-5 text-sm leading-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <p class="font-semibold">Teamwork</p>
+            <p class="mt-1 text-muted-foreground"><sup>1</sup> Grow is the cheapest tier with invoicing; Deliver, at $10.99, has timers but no billing rates.</p>
+            <p class="mt-1 text-muted-foreground"><sup>2</sup> Proofing counts against 250 GB of storage on Grow, and video reviews will find that limit.</p>
+          </div>
+          <div>
+            <p class="font-semibold">Productive</p>
+            <p class="mt-1 text-muted-foreground"><sup>3</sup> Priced per staff user; client contacts and freelancers on a view-only seat are free.</p>
+            <p class="mt-1 text-muted-foreground"><sup>4</sup> Rate cards and budgets have to exist before the first billable hour, which is where the setup time goes.</p>
+          </div>
+          <div>
+            <p class="font-semibold">Asana</p>
+            <p class="mt-1 text-muted-foreground"><sup>5</sup> Time tracking and proofing start at Advanced; Starter, at $10.99, has neither.</p>
+            <p class="mt-1 text-muted-foreground"><sup>6</sup> The QuickBooks link is a third-party connector at about $20 a month.</p>
+          </div>
+          <div>
+            <p class="font-semibold">monday.com</p>
+            <p class="mt-1 text-muted-foreground"><sup>7</sup> Seats sell in packs of five, so 12 people buy 15 seats. Pro is the first tier with time tracking and Gantt.</p>
+          </div>
+          <div>
+            <p class="font-semibold">ClickUp</p>
+            <p class="mt-1 text-muted-foreground"><sup>8</sup> Business is the first tier with unlimited timesheets and guest permissions.</p>
+            <p class="mt-1 text-muted-foreground"><sup>9</sup> $12 is the annual rate; month to month is $19 per user, or $228 for the team.</p>
+          </div>
+          <div>
+            <p class="font-semibold">Basecamp</p>
+            <p class="mt-1 text-muted-foreground"><sup>10</sup> One flat price for unlimited people, billed monthly, and no time tracking at all; an add-on such as Everhour runs about $8.50 per user.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="reading" class="mt-10 max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          How to read this
+        </p>
+        <ul class="mt-3 space-y-2 text-sm leading-6">
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-rows mt-1 text-lg text-brand-700"></i
+            ><span
+              >Read the Billing hourly band first. It is the only band where the
+              six tools genuinely differ, and it is the reason the agency
+              asked.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-columns mt-1 text-lg text-brand-700"></i
+            ><span
+              >Count tones, not features. No column is all green: Teamwork and
+              Productive win the billing rows and lose setup, ClickUp wins price
+              and loses invoicing, Basecamp wins simplicity and loses
+              hours.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-warning mt-1 text-lg text-brand-700"></i
+            ><span
+              >A warning tone means weak for this brief, not a bad product.
+              Asana's missing invoicing is a flaw for an agency that bills
+              hourly and irrelevant for one on retainer.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-hash mt-1 text-lg text-brand-700"></i
+            ><span
+              >A footnote number points at the catch behind a cell: a seat pack,
+              a tier boundary, an add-on with its own price.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Vendor pricing and
+        feature pages for all six tools at the annual rate, seen the week of
+        writing; each vendor's help center for the time-tracking and invoicing
+        specifics; and two current roundups of project tools for agencies.
+        Nothing was trialed with the agency's own projects, so the setup times
+        are estimates from the vendors' onboarding guides and from reviews.
+        Illustrative: figures are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

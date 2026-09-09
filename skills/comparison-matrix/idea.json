@@ -1,0 +1,17 @@
+{
+  "title": "Comparison matrix",
+  "tagline": "The spec table reviews sites publish, built for your shortlist.",
+  "when": "You have several options and want every one measured on the same attributes side by side before you decide what matters.",
+  "tags": ["decide"],
+  "order": 20,
+  "needs": [],
+  "cover": "travel-cameras",
+  "sections": [
+    "Intro",
+    "Legend",
+    "Matrix",
+    "Footnotes",
+    "How to read this",
+    "Sources"
+  ]
+}

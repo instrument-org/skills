@@ -1,0 +1,8 @@
+{
+  "title": "Six project tools for a 12-person agency that bills by the hour",
+  "prompt": "Compare six project management tools for a 12-person creative agency that bills hourly.",
+  "model": "claude-fable-5-1",
+  "note": "Tools run as columns and thirteen attributes as rows in four bands, because six options across a wide table is the shape a reader knows from review-site spec tables and the bands let the eye find the one band (Billing hourly) that decides this brief. The page stays light and airy with a sans title and wide margins, the legend explains each band in a clause above the table, and the only chrome is the matrix card itself; the tones do the work and no best mark is used, because with six columns the reader counts green cells rather than stars.",
+  "illustrative": true,
+  "html_sha256": "40f0ade3474ba74758329da41813a00ce8ef20934a3dc7f0d1dcbe8fa630441a"
+}

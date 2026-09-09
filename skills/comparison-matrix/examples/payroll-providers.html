@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Four payroll providers for twenty people in two states</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="comparison-matrix@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <style>
+      /* Matrix plumbing, transposed: providers are rows, attributes are
+         columns, and the last column is a sentence. */
+      .matrix {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+      .matrix th,
+      .matrix td {
+        padding: 0.875rem 0.625rem;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .matrix thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--color-card);
+        border-bottom: 2px solid var(--color-gray-300);
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--color-gray-600);
+      }
+      .matrix th:first-child,
+      .matrix td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 5;
+        background: var(--color-card);
+        border-right: 1px solid var(--color-border);
+      }
+      .matrix thead th:first-child {
+        z-index: 15;
+      }
+      .matrix td.good {
+        background: var(--color-brand-50);
+        color: var(--color-brand-900);
+      }
+      .matrix td.weak {
+        background: var(--color-warning-50);
+        color: var(--color-warning-900);
+      }
+      .matrix td.best::before {
+        content: "★";
+        margin-right: 0.25rem;
+        font-size: 0.6875rem;
+        color: var(--color-brand-600);
+      }
+      .matrix td.sum {
+        font-size: 0.8125rem;
+        line-height: 1.25rem;
+        color: var(--color-gray-700);
+      }
+      .matrix sup,
+      .note sup {
+        margin-left: 0.125rem;
+        font-family: var(--font-mono);
+        font-size: 0.625rem;
+        color: var(--color-brand-700);
+      }
+    </style>
+    <main class="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24">
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Comparison matrix
+        </p>
+        <h1
+          class="mt-4 font-serif text-4xl font-medium tracking-[-0.02em] sm:text-5xl"
+        >
+          Four payroll providers for twenty people in two states
+        </h1>
+        <p class="mt-6 text-base leading-7 text-muted-foreground">
+          Gusto, OnPay, Rippling, and ADP RUN, measured on the seven things that
+          decide the first quarter: what it costs, whether the second state is a
+          checkbox or a project, and how benefits, contractors, hours, the
+          books, and support are handled. No winner; each row ends in a sentence
+          that says what that provider is for.
+        </p>
+      </header>
+
+      <section
+        id="legend"
+        class="mt-14 flex flex-wrap items-center gap-x-7 gap-y-3 text-xs text-muted-foreground"
+      >
+        <span class="inline-flex items-center gap-2"
+          ><span
+            class="size-3.5 rounded-sm bg-brand-100 ring-1 ring-brand-300"
+          ></span
+          >Strong for a 20-person, two-state company</span
+        >
+        <span class="inline-flex items-center gap-2"
+          ><span class="size-3.5 rounded-sm bg-card ring-1 ring-gray-300"></span
+          >Fine</span
+        >
+        <span class="inline-flex items-center gap-2"
+          ><span
+            class="size-3.5 rounded-sm bg-warning-100 ring-1 ring-warning-300"
+          ></span
+          >A real weakness</span
+        >
+        <span class="inline-flex items-center gap-2"
+          ><span class="text-brand-600">★</span>Best in the column; no star for
+          a tie</span
+        >
+        <span class="inline-flex items-center gap-2"
+          ><sup class="font-mono text-[10px] text-brand-700">1</sup>Footnote,
+          keyed per provider below</span
+        >
+        <span
+          >Monthly prices for 20 people, seen the week of writing; two are
+          quotes</span
+        >
+      </section>
+
+      <section id="matrix" class="mt-6">
+        <div
+          class="overflow-x-auto rounded-xl border border-border bg-card shadow-sm xl:overflow-visible"
+        >
+          <!-- prettier-ignore -->
+          <table class="matrix min-w-[63rem] text-xs leading-5">
+            <colgroup><col style="width: 7.5rem" /><col /><col /><col /><col /><col /><col /><col /><col style="width: 12.5rem" /></colgroup>
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Monthly cost, 20 people</th>
+                <th>Two-state filing</th>
+                <th>Benefits</th>
+                <th>Contractors</th>
+                <th>Time and PTO</th>
+                <th>Accounting sync</th>
+                <th>Support</th>
+                <th>In one sentence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th><span class="block text-sm font-semibold text-foreground">Gusto</span><span class="block font-normal text-muted-foreground">Plus plan</span></th><td>$320<sup>1</sup></td><td class="good">Included on Plus<sup>2</sup></td><td class="good best">Broker built in, no fee</td><td class="good">Unlimited, included</td><td class="good">Built in on Plus</td><td class="good">QuickBooks and Xero, native</td><td>Chat and phone, business hours</td><td class="sum">The comfortable middle: two states and benefits are handled, at twice OnPay's price, with the health broker inside the product.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground">OnPay</span><span class="block font-normal text-muted-foreground">One plan</span></th><td class="good best">$160<sup>3</sup></td><td class="good best">Included, every state, no add-on</td><td class="good">Through OnPay's broker, no fee</td><td class="good">Unlimited, included</td><td class="weak">Via QuickBooks Time<sup>4</sup></td><td class="good">QuickBooks and Xero, native</td><td>Phone and chat, weekday hours</td><td class="sum">Cheapest and simplest, with every state filing included; you give up the HR layer and the employee app.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground">Rippling</span><span class="block font-normal text-muted-foreground">Payroll module</span></th><td>About $195, quoted<sup>5</sup></td><td class="good">Included; registration for a fee</td><td>Partner brokers, module fee</td><td class="weak">Per active contractor<sup>6</sup></td><td class="good best">Built in, with approvals and accruals</td><td class="good best">GL mapping to QuickBooks, Xero, NetSuite</td><td class="weak">Chat first; phone costs extra</td><td class="sum">The one to pick if payroll is the start of an HR and IT system; overkill and quote-priced if it is not.</td></tr>
+              <tr><th><span class="block text-sm font-semibold text-foreground">ADP RUN</span><span class="block font-normal text-muted-foreground">Essential</span></th><td>About $230, quoted<sup>7</sup></td><td class="good">Included; registration via ADP</td><td>ADP's broker, add-on fee</td><td class="weak">Add-on</td><td class="weak">Add-on</td><td>QuickBooks and Xero, via marketplace</td><td class="good best">24/7 phone; named rep on Complete<sup>8</sup></td><td class="sum">The known name with the best phone support and the most add-on fees; get the all-in quote in writing.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="footnotes" class="mt-14">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Footnotes, by provider
+        </p>
+        <!-- prettier-ignore -->
+        <div class="note mt-4 grid gap-x-10 gap-y-6 text-sm leading-6 sm:grid-cols-2">
+          <div>
+            <p class="font-semibold">Gusto</p>
+            <p class="mt-1 text-muted-foreground"><sup>1</sup> Plus is $80 a month plus $12 per person. Simple, at $40 plus $6, files in one state only, so the second state forces Plus.</p>
+            <p class="mt-1 text-muted-foreground"><sup>2</sup> Registering the company in a new state runs about $150 per state through Gusto's partner, or an afternoon on the state's site yourself.</p>
+          </div>
+          <div>
+            <p class="font-semibold">OnPay</p>
+            <p class="mt-1 text-muted-foreground"><sup>3</sup> One plan, $40 a month plus $6 per person, with multi-state filing, contractors, and year-end forms included.</p>
+            <p class="mt-1 text-muted-foreground"><sup>4</sup> No native time tracking; hours come in from QuickBooks Time or When I Work, each with its own per-user fee.</p>
+          </div>
+          <div>
+            <p class="font-semibold">Rippling</p>
+            <p class="mt-1 text-muted-foreground"><sup>5</sup> Quote-based. The figure is the usual range for 20 people on payroll alone with the platform fee, and it climbs quickly with the HR and IT modules.</p>
+            <p class="mt-1 text-muted-foreground"><sup>6</sup> Contractors are billed per active contractor per month, so a seasonal roster of ten adds real money.</p>
+          </div>
+          <div>
+            <p class="font-semibold">ADP RUN</p>
+            <p class="mt-1 text-muted-foreground"><sup>7</sup> Quote-based and negotiable; the figure is a representative Essential quote for 20 people. Year-end W-2 and 1099 delivery is a separate per-form fee.</p>
+            <p class="mt-1 text-muted-foreground"><sup>8</sup> A named representative comes with the Complete tier, which also adds the HR help desk.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="reading" class="mt-14 max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          How to read this
+        </p>
+        <ul class="mt-4 space-y-3 text-sm leading-6">
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-down mt-1 text-lg text-brand-700"></i
+            ><span
+              >Read down the last column first. It is each row read for you in
+              one sentence; the seven columns to its left are the
+              evidence.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-columns mt-1 text-lg text-brand-700"></i
+            ><span
+              >Then read the two columns that hurt if they are wrong: Two-state
+              filing and Support. The rest can be fixed after go-live; a missed
+              state filing cannot.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-warning mt-1 text-lg text-brand-700"></i
+            ><span
+              >The tones are relative to a 20-person, two-state company. OnPay's
+              missing time tracking is a weakness only if hours are not already
+              tracked somewhere else.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-receipt mt-1 text-lg text-brand-700"></i
+            ><span
+              >Two of the four prices are quotes. Treat those cells as a range,
+              and get the all-in number in writing before setting it beside the
+              two list prices.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-20 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Each provider's
+        pricing and feature pages, seen the week of writing, and the
+        state-filing and contractor pages in their help centers; two current
+        roundups of payroll software for small companies; and, for the two
+        quote-based providers, representative quotes reported by reviewers for
+        companies of this size. No provider was trialed. Illustrative: figures
+        are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

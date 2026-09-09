@@ -1,0 +1,8 @@
+{
+  "title": "Four payroll providers for twenty people in two states",
+  "prompt": "Compare four payroll providers for a 20-person company in two states.",
+  "model": "claude-fable-5-1",
+  "note": "Transposed, with providers as rows and seven attributes as columns, because four options with a sentence each read better as a scan-down list than as a wide grid; the summary column at the right is the row read for you, plain-toned so it never competes with the cells. A serif title, wide vertical spacing, and no photos, since payroll is software and the page's authority should come from the whitespace and the footnotes rather than from pictures; the best mark reads down a column, and the two quote-based prices are labeled as quotes in the cell and in the legend.",
+  "illustrative": true,
+  "html_sha256": "e7102b94a3723504f4eeb0007dffadf539317b3926a073aa6f0ce8a9408e1e92"
+}
