@@ -9,6 +9,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { parseFrontmatter } from "./check-skill.ts";
 import {
+  type ExampleMeta,
   type Idea,
   listIdeas,
   normalizedSkin,
@@ -59,13 +60,53 @@ const EXAMPLE_KEYS = ["title", "variant", "prompt", "model", "note"];
 /** A variant line is a card caption, so it has to fit on one. */
 const VARIANT_MAX_CHARS = 80;
 
-// Hosts a page may load from. Everything else has to be inlined.
-const ALLOWED_HOSTS = [
-  "https://fonts.googleapis.com",
-  "https://fonts.gstatic.com",
-  "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@",
-  "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@",
+// What a page may load, as an exact origin and the path that family lives
+// under. Matched through `new URL()` rather than by string prefix, so a
+// lookalike host like fonts.googleapis.com.example.net does not pass.
+// Everything else has to be inlined. Hyperlinks are not loads and are free.
+const ALLOWED_SOURCES = [
+  { origin: "https://fonts.googleapis.com", path: "/" },
+  { origin: "https://fonts.gstatic.com", path: "/" },
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/@tailwindcss/browser@" },
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/@phosphor-icons/web@" },
 ];
+// Tags that fetch what they name, and the attributes they fetch it through.
+const LOADER_TAGS = ["link", "script"];
+const MEDIA_TAGS = ["img", "video", "audio", "iframe", "source", "embed"];
+const MEDIA_URL_ATTRIBUTES = ["src", "poster", "srcset"];
+
+function isAllowedSource(url: string): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false;
+  }
+  return ALLOWED_SOURCES.some(
+    (source) =>
+      parsed.origin === source.origin &&
+      parsed.pathname.startsWith(source.path),
+  );
+}
+
+/**
+ * Values of `attribute` on any of `tags`, in all three of HTML's quoting forms,
+ * since generated markup varies and an unquoted or single-quoted src loads just
+ * as well as a double-quoted one.
+ */
+function attributeValues(
+  html: string,
+  tags: string[],
+  attribute: string,
+): string[] {
+  const pattern = new RegExp(
+    `<(?:${tags.join("|")})\\b[^>]*?\\b${attribute}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'>]+))`,
+    "gi",
+  );
+  return [...html.matchAll(pattern)].map(
+    (match) => match[1] ?? match[2] ?? match[3] ?? "",
+  );
+}
 
 function checkSize(file: string, html: string, errors: string[]) {
   const bytes = Buffer.byteLength(html);
@@ -88,22 +129,35 @@ function checkSize(file: string, html: string, errors: string[]) {
 }
 
 function checkSelfContained(file: string, html: string, errors: string[]) {
-  for (const match of html.matchAll(
-    /<(?:link|script)\b[^>]*?(?:href|src)="([^"]+)"/g,
-  )) {
-    const url = match[1] ?? "";
-    if (url.startsWith("data:")) continue;
-    if (!ALLOWED_HOSTS.some((host) => url.startsWith(host))) {
-      errors.push(`${file}: loads ${url}, which is not an allowed host`);
+  for (const attribute of ["href", "src"]) {
+    for (const url of attributeValues(html, LOADER_TAGS, attribute)) {
+      if (url.startsWith("data:")) continue;
+      if (!isAllowedSource(url)) {
+        errors.push(`${file}: loads ${url}, which is not an allowed source`);
+      }
     }
   }
-  for (const match of html.matchAll(
-    /<(?:img|video|audio|iframe|source)\b[^>]*?src="([^"]+)"/g,
-  )) {
+  for (const attribute of MEDIA_URL_ATTRIBUTES) {
+    for (const value of attributeValues(html, MEDIA_TAGS, attribute)) {
+      // A srcset holds several candidates, and a data URI has commas in it, so
+      // ask whether a remote scheme appears at all rather than splitting it.
+      const remote =
+        attribute === "srcset"
+          ? /https?:\/\//i.test(value)
+          : !value.startsWith("data:");
+      if (remote) {
+        errors.push(
+          `${file}: ${attribute} loads ${value.slice(0, 80)}; media must be inline data so the file opens anywhere`,
+        );
+      }
+    }
+  }
+  // CSS reaches the network too, from a style attribute or a <style> block.
+  for (const match of html.matchAll(/url\(\s*['"]?(https?:[^)'"]+)/gi)) {
     const url = match[1] ?? "";
-    if (!url.startsWith("data:")) {
+    if (!isAllowedSource(url)) {
       errors.push(
-        `${file}: embeds ${url.slice(0, 80)}; media must be inline data so the file opens anywhere`,
+        `${file}: a stylesheet loads ${url.slice(0, 80)}; it must be inline data`,
       );
     }
   }
@@ -184,8 +238,12 @@ function checkIdea(idea: Idea): string[] {
       continue;
     }
     for (const key of EXAMPLE_KEYS) {
-      if (!(key in example.meta))
-        errors.push(`${label}.json is missing "${key}"`);
+      // Present is not enough: capture writes a blank sidecar when one is
+      // missing, and a blank design note is the failure this check exists for.
+      const value = example.meta[key as keyof ExampleMeta];
+      if (typeof value !== "string" || value.trim() === "") {
+        errors.push(`${label}.json needs a non-empty "${key}"`);
+      }
     }
     if (
       typeof example.meta.variant === "string" &&
