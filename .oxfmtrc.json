@@ -10,6 +10,7 @@
     "out/",
     "pnpm-lock.yaml",
     "templates/htmx/public/htmx.min.js",
-    "_tmp_*"
+    "_tmp_*",
+    "**/*.html"
   ]
 }

@@ -59,6 +59,8 @@ Run checks through Turbo from repo root for caching. Do not `cd skills/*` for re
 
 A format hook runs oxfmt on every file you Edit/Write, then oxfmt over all changed files on Stop. With no linter installed, formatting is the whole of it. So: expect files to change after you write them, don't hand-format, and run the checks above for type errors and skill-rule violations, which the hook does not cover.
 
+HTML is exempt, by `**/*.html` in `.oxfmtrc.json`. Formatting it broke tags across lines mid-element (`</span\n>`, `<a\n href=`) often enough that one line in five of a page was a fragment meaning nothing on its own, which is what makes an exact-match edit fail for whoever revises the page next. Setting `htmlWhitespaceSensitivity` to `ignore` cuts that by about two thirds rather than fixing it, and buys a rendering risk on inline elements. Nothing is lost: a page is content, written fresh from a starter, and no one compares two of them for whitespace. Write it the way it reads best. Any `<!-- prettier-ignore -->` still in a page is inert now, though oxfmt does honor it where it formats.
+
 `scripts/generate-skill-md.ts` formats generated `SKILL.md` / `reference.md` with oxfmt's JS API, which — unlike its CLI — does not read `.oxfmtrc.json`. It passes the config through explicitly; keep that wiring if you touch the generator, or generated files will drift from `check:format`.
 
 ## Package management
