@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ten days in Japan in November, packed</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="checklist@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <style media="print">
+      @page {
+        margin: 0.6in;
+      }
+      body {
+        background: #fff;
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-brown-50 font-sans text-foreground antialiased print:bg-white"
+  >
+    <main
+      class="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16 print:max-w-none print:px-0 print:py-0"
+    >
+      <header class="text-center">
+        <p
+          class="text-xs font-medium tracking-[0.16em] text-brand-700 uppercase"
+        >
+          Packing list
+        </p>
+        <h1
+          class="mt-4 font-serif text-4xl font-medium leading-[1.1] tracking-[-0.02em] sm:text-5xl print:mt-2 print:text-3xl"
+        >
+          Ten days in Japan in November, packed
+        </h1>
+        <p
+          class="mx-auto mt-5 max-w-xl text-base leading-7 text-muted-foreground print:mt-2 print:text-sm print:leading-6"
+        >
+          Cities most days, one night at an onsen ryokan, and weather that runs
+          from cool mornings to mild afternoons. Everything here fits a carry-on
+          and a daypack if you pack for layers and buy toiletries there.
+        </p>
+        <p
+          class="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-muted-foreground print:mt-3 print:text-xs"
+        >
+          <span id="count" class="font-serif italic"
+            >43 things to pack or know</span
+          ><span aria-hidden="true">&middot;</span
+          ><span class="inline-flex items-center gap-1.5"
+            ><span
+              class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[11px] font-medium text-yellow-900"
+              >Before you fly</span
+            >cannot be fixed after landing</span
+          >
+        </p>
+      </header>
+
+      <section id="groups" class="mt-12 space-y-10 print:mt-5 print:space-y-4">
+        <section class="">
+          <h2
+            class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-[-0.01em] print:break-after-avoid print:text-base"
+          >
+            <i class="ph ph-t-shirt text-2xl text-brand-700 print:text-lg"></i
+            >Clothes
+          </h2>
+          <p
+            class="mt-1 pl-9 text-sm text-muted-foreground print:mt-0 print:pl-7 print:text-xs"
+          >
+            Layers for cool mornings and mild afternoons, and shoes that come
+            off fast.
+          </p>
+          <div
+            class="mt-3 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 print:mt-1.5 print:grid print:grid-cols-2 print:items-start print:gap-x-6"
+          >
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Light down or fleece midlayer</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Packable rain shell</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Tops for five days, then laundry</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Every ryokan and most city hotels have coin laundry. Packing
+                for ten days is what makes the bag heavy.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Two pairs of pants, one that passes at dinner</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Slip-on shoes you can walk all day in</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Shoes come off at temples, the ryokan, and some restaurants.
+                Laces slow you down every time.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Socks without holes, more than you think</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >You will be in socks indoors often, in front of other
+                people.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Warm hat and light gloves for evenings</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Underwear for five days, then laundry</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Sleepwear for hotel nights</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >The ryokan provides a yukata. City hotels may not.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >One outfit that passes at a nice dinner</span
+              >
+            </label>
+          </div>
+        </section>
+        <section class="">
+          <h2
+            class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-[-0.01em] print:break-after-avoid print:text-base"
+          >
+            <i
+              class="ph ph-identification-card text-2xl text-brand-700 print:text-lg"
+            ></i
+            >Documents and money
+          </h2>
+          <p
+            class="mt-1 pl-9 text-sm text-muted-foreground print:mt-0 print:pl-7 print:text-xs"
+          >
+            Everything the trip cannot start without, plus the cash that cities
+            still want.
+          </p>
+          <div
+            class="mt-3 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 print:mt-1.5 print:grid print:grid-cols-2 print:items-start print:gap-x-6"
+          >
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Passport, valid past the return date<span
+                  class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 align-middle text-[11px] font-medium text-yellow-900 print:px-1.5 print:text-[9px]"
+                  >Before you fly</span
+                ></span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Flight and hotel confirmations saved offline</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Suica or Pasmo added to the phone wallet<span
+                  class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 align-middle text-[11px] font-medium text-yellow-900 print:px-1.5 print:text-[9px]"
+                  >Before you fly</span
+                ></span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Set it up at home. It loads from a foreign card in the wallet
+                and pays for trains, buses, konbini, and vending machines.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Yen in cash for the first days<span
+                  class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 align-middle text-[11px] font-medium text-yellow-900 print:px-1.5 print:text-[9px]"
+                  >Before you fly</span
+                ></span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Small shrines, some ramen counters, and the onsen town take
+                cash only. Airport ATMs and post office ATMs take foreign
+                cards.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Credit card with no foreign transaction fee</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Ryokan booking with check-in and dinner times<span
+                  class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 align-middle text-[11px] font-medium text-yellow-900 print:px-1.5 print:text-[9px]"
+                  >Before you fly</span
+                ></span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Dinner is served at a set hour. Arriving late can mean missing
+                the meal you paid for.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Travel insurance card and policy number</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Photocopy of the passport, kept apart from it</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Screenshot of the arrival QR code</span
+              >
+            </label>
+          </div>
+        </section>
+        <section class="">
+          <h2
+            class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-[-0.01em] print:break-after-avoid print:text-base"
+          >
+            <i class="ph ph-plug text-2xl text-brand-700 print:text-lg"></i>Tech
+          </h2>
+          <p
+            class="mt-1 pl-9 text-sm text-muted-foreground print:mt-0 print:pl-7 print:text-xs"
+          >
+            The phone does the navigating and the translating, so keep it
+            charged.
+          </p>
+          <div
+            class="mt-3 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 print:mt-1.5 print:grid print:grid-cols-2 print:items-start print:gap-x-6"
+          >
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Phone with an eSIM, or a pocket wifi reservation<span
+                  class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 align-middle text-[11px] font-medium text-yellow-900 print:px-1.5 print:text-[9px]"
+                  >Before you fly</span
+                ></span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Set up the eSIM before boarding. The airport counters queue,
+                and the first train is where you need the map.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Battery pack</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Maps and translation run the phone flat by mid-afternoon.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Charging cables and a two-port wall plug</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >No plug adapter if your chargers have two flat pins</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Japan uses the same flat two-pin outlet as North America.
+                Three-pin plugs need an adapter.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Offline maps downloaded for each city</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Translation app with Japanese downloaded for offline</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Earbuds</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Trains are quiet and calls are frowned on.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Camera and a spare card, if you carry one</span
+              >
+            </label>
+          </div>
+        </section>
+        <section class="">
+          <h2
+            class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-[-0.01em] print:break-after-avoid print:text-base"
+          >
+            <i
+              class="ph ph-first-aid-kit text-2xl text-brand-700 print:text-lg"
+            ></i
+            >Health and toiletries
+          </h2>
+          <p
+            class="mt-1 pl-9 text-sm text-muted-foreground print:mt-0 print:pl-7 print:text-xs"
+          >
+            Bring the medicine you rely on and buy nearly everything else there.
+          </p>
+          <div
+            class="mt-3 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 print:mt-1.5 print:grid print:grid-cols-2 print:items-start print:gap-x-6"
+          >
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Prescription medicine in its original bottles, with the
+                prescription<span
+                  class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 align-middle text-[11px] font-medium text-yellow-900 print:px-1.5 print:text-[9px]"
+                  >Before you fly</span
+                ></span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Some common cold and ADHD medicines are restricted in Japan.
+                Check the list before you fly and carry a doctor's letter for
+                anything on it.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Painkillers and stomach remedies you know</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Blister care for the walking days</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >A small hand towel</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Many public restrooms have no paper towels. Everyone carries
+                one.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Deodorant in your usual strength</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Sunscreen or moisturizer if you are particular</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Masks for the shinkansen if you want them</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Hand sanitizer, small</span
+              >
+            </label>
+          </div>
+        </section>
+        <section
+          class="rounded-xl bg-brown-100 p-5 sm:p-6 print:border print:border-gray-300 print:bg-white print:p-3"
+        >
+          <h2
+            class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-[-0.01em] print:break-after-avoid print:text-base"
+          >
+            <i class="ph ph-bathtub text-2xl text-brand-700 print:text-lg"></i
+            >Onsen etiquette
+          </h2>
+          <p
+            class="mt-1 pl-9 text-sm text-muted-foreground print:mt-0 print:pl-7 print:text-xs"
+          >
+            Not things to pack, things to know before the ryokan night.
+          </p>
+          <div
+            class="mt-3 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 print:mt-1.5 print:grid print:grid-cols-2 print:items-start print:gap-x-6"
+          >
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Wash and rinse fully at the seated shower before the bath</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Small towel stays out of the water</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Fold it on your head or leave it on the edge.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Hair tied up and out of the water</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Tattoos: ask the ryokan about its policy<span
+                  class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 align-middle text-[11px] font-medium text-yellow-900 print:px-1.5 print:text-[9px]"
+                  >Before you fly</span
+                ></span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Many baths still refuse visible tattoos. Ask ahead, and ask
+                about a private bath if you need one.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >No swimwear; baths are taken nude, separated by gender</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Yukata closes left side over right</span
+              >
+              <span
+                class="col-start-2 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Right over left is how the dead are dressed.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Quiet voices, no phone in the bath area</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr] gap-x-3 py-1.5 print:break-inside-avoid print:py-0.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-[15px] leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Drink water before and after; the water is hot</span
+              >
+            </label>
+          </div>
+        </section>
+      </section>
+
+      <section
+        id="leave"
+        class="mt-12 break-inside-avoid border-t border-border pt-8 print:mt-5 print:pt-4"
+      >
+        <h2
+          class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-[-0.01em] print:text-base"
+        >
+          <i
+            class="ph ph-x-circle text-2xl text-muted-foreground print:text-lg"
+          ></i
+          >Leave at home
+        </h2>
+        <ul
+          class="mt-3 space-y-1.5 pl-9 text-[15px] leading-6 print:mt-1.5 print:grid print:grid-cols-2 print:gap-x-6 print:space-y-0 print:pl-7 print:text-[12px] print:leading-5"
+        >
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong class="font-medium">A hair dryer.</strong>
+              <span class="text-muted-foreground"
+                >Every hotel and ryokan has one.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong class="font-medium">Full-size toiletries.</strong>
+              <span class="text-muted-foreground"
+                >The konbini sells everything, in travel sizes.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong class="font-medium">Towels.</strong>
+              <span class="text-muted-foreground"
+                >Provided everywhere you sleep, including the onsen.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong class="font-medium">A voltage converter.</strong>
+              <span class="text-muted-foreground"
+                >Phone and laptop chargers handle it on their own.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong class="font-medium">Dress shoes with laces.</strong>
+              <span class="text-muted-foreground"
+                >See the shoe note above.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong class="font-medium">A second heavy sweater.</strong>
+              <span class="text-muted-foreground"
+                >November is cool, not cold, and rooms are heated.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-x mt-1 text-lg text-muted-foreground"></i
+            ><span
+              ><strong class="font-medium">Tipping money.</strong>
+              <span class="text-muted-foreground"
+                >There is no tipping, and it causes confusion.</span
+              ></span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-center text-xs leading-6 text-muted-foreground print:mt-5 print:break-inside-avoid print:pt-3 print:text-[10px] print:leading-4"
+      >
+        <strong class="text-foreground">Based on.</strong> A ten-day city trip
+        with one ryokan night in November; medicine rules, tattoo policies, and
+        cash habits vary by place and change, so the items marked before you fly
+        say what to check rather than what the answer is. Prints on two sheets
+        at Letter. Illustrative: items are representative, not verified.
+      </footer>
+    </main>
+    <script>
+      // Keeps the packed count current. With scripts off the line reads as
+      // written and the boxes still tick.
+      const boxes = [...document.querySelectorAll("main input[type=checkbox]")];
+      const count = document.getElementById("count");
+      const update = () => {
+        const done = boxes.filter((box) => box.checked).length;
+        count.textContent = `${done} of ${boxes.length} packed or read`;
+      };
+      for (const box of boxes) box.addEventListener("change", update);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moving out of the apartment, six weeks to the day</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="checklist@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <style media="print">
+      @page {
+        margin: 0.6in;
+      }
+      body {
+        background: #fff;
+      }
+    </style>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main
+      class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14 print:max-w-none print:px-0 print:py-0"
+    >
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Checklist
+        </p>
+        <h1
+          class="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl print:text-2xl"
+        >
+          Moving out of the apartment, six weeks to the day
+        </h1>
+        <p
+          class="mt-4 text-base leading-7 text-muted-foreground print:mt-2 print:text-sm print:leading-6"
+        >
+          For a renter leaving one apartment for another, with a deposit to get
+          back and a lease that ends on a fixed date. Start six weeks before the
+          move and tick as you go. The page remembers what you ticked when you
+          come back to it, and it prints as the paper copy for the fridge.
+        </p>
+      </header>
+
+      <section
+        id="context"
+        class="sticky top-0 z-10 -mx-5 mt-8 bg-background/95 px-5 py-3 backdrop-blur sm:-mx-8 sm:px-8 print:static print:mx-0 print:bg-transparent print:px-0 print:py-0"
+      >
+        <div
+          class="rounded-lg border border-border bg-card px-4 py-3 shadow-sm print:shadow-none"
+        >
+          <div
+            class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"
+          >
+            <p class="text-sm">
+              <strong id="count" class="font-semibold">37 items</strong>
+            </p>
+            <p class="flex items-center gap-2 text-xs text-muted-foreground">
+              <span
+                class="inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                >Costs money if missed</span
+              ><span>marks the ones that touch the deposit or a bill</span>
+            </p>
+          </div>
+          <div
+            class="mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted print:hidden"
+            aria-hidden="true"
+          >
+            <div
+              id="bar"
+              class="h-full w-0 rounded-full bg-brand-500 transition-[width]"
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="groups"
+        class="mt-6 space-y-5 print:mt-3 print:columns-2 print:gap-6 print:space-y-3"
+      >
+        <section
+          class="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6 print:rounded-none print:border-0 print:border-t print:border-gray-300 print:p-0 print:pt-3 print:shadow-none"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase print:text-[10px]"
+          >
+            Six weeks out
+          </p>
+          <h2
+            class="mt-1 text-lg font-semibold tracking-[-0.02em] print:break-after-avoid print:text-sm"
+          >
+            Notice, movers, and the big decisions
+          </h2>
+          <div class="mt-3 divide-y divide-border print:mt-1.5">
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Give the landlord written notice in the form the lease
+                requires, and keep a dated copy.</span
+              >
+              <span
+                class="col-start-3 mt-1 inline-flex items-center self-start rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-brand-700 peer-checked:opacity-60 print:px-1.5 print:text-[9px]"
+                >Costs money if missed</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Read the notice clause before you write anything. Most leases
+                want a set number of days and a set form, and a late or informal
+                notice can mean paying for another month.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Confirm the move-out date and the hour the keys are due.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Get quotes from three movers, or reserve a truck if you are
+                moving yourselves.</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Weekends and the last days of the month book first. If your
+                date is one of those, book now and shop later.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Decide what does not move: sell, donate, or toss, and put a
+                date on each pile.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Start a moving folder: lease, notice, quotes, and every receipt
+                from here on.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Ask the new building for its move-in rules: elevator
+                reservation, parking, hours.</span
+              >
+            </label>
+          </div>
+        </section>
+        <section
+          class="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6 print:rounded-none print:border-0 print:border-t print:border-gray-300 print:p-0 print:pt-3 print:shadow-none"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase print:text-[10px]"
+          >
+            Four weeks out
+          </p>
+          <h2
+            class="mt-1 text-lg font-semibold tracking-[-0.02em] print:break-after-avoid print:text-sm"
+          >
+            Paperwork and the things with lead time
+          </h2>
+          <div class="mt-3 divide-y divide-border print:mt-1.5">
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Book the mover or the truck and get the confirmation in
+                writing.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Reserve the elevator or the loading zone at both buildings if
+                either needs it.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Move renters insurance to the new address, or start a new
+                policy from move day.</span
+              >
+              <span
+                class="col-start-3 mt-1 inline-flex items-center self-start rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-brand-700 peer-checked:opacity-60 print:px-1.5 print:text-[9px]"
+                >Costs money if missed</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Most insurers move a policy on one call. A lapse between
+                addresses is the gap claims fall into, and some leases require
+                proof of coverage at move-in.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Order boxes, tape, and packing paper, more than you
+                think.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Pack what you will not touch for a month: books, off-season
+                clothes, decor.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Photograph anything valuable before it goes in a box.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Schedule the internet install at the new place.</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Install windows run a couple of weeks out in most cities. This
+                is the item that leaves people offline for the first week.</span
+              >
+            </label>
+          </div>
+        </section>
+        <section
+          class="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6 print:rounded-none print:border-0 print:border-t print:border-gray-300 print:p-0 print:pt-3 print:shadow-none"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase print:text-[10px]"
+          >
+            Two weeks out
+          </p>
+          <h2
+            class="mt-1 text-lg font-semibold tracking-[-0.02em] print:break-after-avoid print:text-sm"
+          >
+            Addresses and accounts
+          </h2>
+          <div class="mt-3 divide-y divide-border print:mt-1.5">
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >File mail forwarding to start on move day.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Change the address on bank, cards, payroll, and
+                insurance.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Transfer or stop utilities: power, gas, water, trash, with a
+                final read on the move date.</span
+              >
+              <span
+                class="col-start-3 mt-1 inline-flex items-center self-start rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-brand-700 peer-checked:opacity-60 print:px-1.5 print:text-[9px]"
+                >Costs money if missed</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Ask for a final bill at the old address and a start at the new
+                one the day before you arrive. A service left running bills you
+                for the next tenant's first week.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Cancel or move subscriptions and deliveries tied to the
+                address.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Update the address with your employer, doctor, pharmacy, and
+                the DMV.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Eat down the freezer and the pantry; stop buying more.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Arrange care for kids or pets on move day.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Confirm the mover's arrival window and walk them through the
+                inventory.</span
+              >
+            </label>
+          </div>
+        </section>
+        <section
+          class="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6 print:rounded-none print:border-0 print:border-t print:border-gray-300 print:p-0 print:pt-3 print:shadow-none"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase print:text-[10px]"
+          >
+            The week of
+          </p>
+          <h2
+            class="mt-1 text-lg font-semibold tracking-[-0.02em] print:break-after-avoid print:text-sm"
+          >
+            Pack it, clean it, document it
+          </h2>
+          <div class="mt-3 divide-y divide-border print:mt-1.5">
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Pack everything except a first-night box and the kitchen you
+                are still using.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Label boxes by room and mark the fragile ones on two
+                sides.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Return borrowed things and the cable box, router, or modem, and
+                get a receipt.</span
+              >
+              <span
+                class="col-start-3 mt-1 inline-flex items-center self-start rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-brand-700 peer-checked:opacity-60 print:px-1.5 print:text-[9px]"
+                >Costs money if missed</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >Unreturned equipment is billed at full replacement price.
+                Return it at a store for a receipt, or ship it and keep the
+                tracking number.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Defrost and dry the freezer; unplug the fridge the night before
+                if it moves.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Patch nail holes and clean, or book a cleaner, to the standard
+                the lease names.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Empty the storage unit, the bike room, and the mailbox.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Collect every key, fob, and garage remote in one
+                envelope.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Confirm the final walkthrough time with the landlord.</span
+              >
+            </label>
+          </div>
+        </section>
+        <section
+          class="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6 print:rounded-none print:border-0 print:border-t print:border-gray-300 print:p-0 print:pt-3 print:shadow-none"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase print:text-[10px]"
+          >
+            The day of
+          </p>
+          <h2
+            class="mt-1 text-lg font-semibold tracking-[-0.02em] print:break-after-avoid print:text-sm"
+          >
+            Walk out with proof
+          </h2>
+          <div class="mt-3 divide-y divide-border print:mt-1.5">
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Keep the first-night box, documents, and valuables in your own
+                car.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Walk every room, closet, and cabinet after the truck is
+                loaded.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Photograph every room, the appliances, and the meter readings,
+                with timestamps on.</span
+              >
+              <span
+                class="col-start-3 mt-1 inline-flex items-center self-start rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-brand-700 peer-checked:opacity-60 print:px-1.5 print:text-[9px]"
+                >Costs money if missed</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >The photos are your side of the deposit conversation. Take more
+                than feels necessary, and take them after the cleaning, not
+                before.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Send the final meter reading to each utility.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Set the thermostat and the water heater as the lease
+                says.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Hand over the keys and get a written receipt.</span
+              >
+              <span
+                class="col-start-3 mt-1 inline-flex items-center self-start rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-brand-700 peer-checked:opacity-60 print:px-1.5 print:text-[9px]"
+                >Costs money if missed</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Give the landlord your forwarding address for the deposit, in
+                writing.</span
+              >
+              <span
+                class="col-start-3 mt-1 inline-flex items-center self-start rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-brand-700 peer-checked:opacity-60 print:px-1.5 print:text-[9px]"
+                >Costs money if missed</span
+              >
+              <span
+                class="col-span-2 col-start-2 mt-0.5 text-xs leading-5 text-muted-foreground peer-checked:opacity-60 print:text-[10px] print:leading-4"
+                >The clock on returning a deposit usually starts when the
+                landlord has the forwarding address. Email it and keep the
+                send.</span
+              >
+            </label>
+            <label
+              class="grid cursor-pointer grid-cols-[auto_1fr_auto] gap-x-3 py-2.5 print:break-inside-avoid print:py-1.5"
+            >
+              <input
+                type="checkbox"
+                class="peer mt-1 size-4 accent-brand-600 print:size-3.5"
+              />
+              <span
+                class="text-sm leading-6 peer-checked:text-muted-foreground peer-checked:line-through print:text-[12px] print:leading-5"
+                >Lock up, and check the mailbox one last time.</span
+              >
+            </label>
+          </div>
+        </section>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground print:mt-6 print:break-inside-avoid print:pt-3 print:text-[10px] print:leading-4"
+      >
+        <strong class="text-foreground">Based on.</strong> The usual order of a
+        local move for a renter with a fixed lease end. Notice periods, deposit
+        rules, and cleaning standards vary by state and by lease, so the items
+        marked as costing money say where to check rather than what the rule is.
+        Ticks are stored in this browser only. Prints on two sheets at Letter
+        with the progress bar left off. Illustrative: items are representative,
+        not verified.
+      </footer>
+    </main>
+    <script>
+      // Counts the ticked boxes, fills the bar, and remembers the ticks in
+      // this browser so a list that runs six weeks does not reset each visit.
+      // With scripts off the line reads as written and the boxes still tick.
+      const KEY = "checklist:moving-out";
+      const boxes = [...document.querySelectorAll("main input[type=checkbox]")];
+      const count = document.getElementById("count");
+      const bar = document.getElementById("bar");
+      try {
+        for (const i of JSON.parse(localStorage.getItem(KEY) ?? "[]")) {
+          if (boxes[i]) boxes[i].checked = true;
+        }
+      } catch {}
+      const update = () => {
+        const done = boxes.filter((box) => box.checked).length;
+        count.textContent = `${done} of ${boxes.length} done`;
+        bar.style.width = `${(100 * done) / boxes.length}%`;
+        try {
+          const ticked = boxes.flatMap((box, i) => (box.checked ? [i] : []));
+          localStorage.setItem(KEY, JSON.stringify(ticked));
+        } catch {}
+      };
+      for (const box of boxes) box.addEventListener("change", update);
+      update();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "title": "Shipping a new feature to every customer",
+  "prompt": "A pre-launch checklist for shipping a new feature in our B2B SaaS.",
+  "model": "claude-fable-5-1",
+  "note": "Dense and wide because the reader is a launch lead who wants all five areas on one laptop screen, so the groups flow through two CSS columns under bare ruled headings rather than cards, every item is a short clause at 13 pixels with an owner chip in mono at the row's end, and priority is a single filled flag glyph so a row rarely wraps. The ten items that usually go wrong carry a small numbered superscript that links to a tips column on the right, which drops below the groups on a narrow screen and onto the second sheet in print, and the counter is a mono fraction in the header's right corner beside the legend.",
+  "illustrative": true,
+  "html_sha256": "1cc14af37beabf44c556670243a168846461368552bcf6d2100d2ed54d195265"
+}
