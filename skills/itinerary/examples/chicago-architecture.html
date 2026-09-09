@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TITLE</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="itinerary@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Itinerary · Chicago
+        </p>
+        <h1
+          class="mt-4 font-serif text-4xl font-medium leading-[1.1] tracking-[-0.02em] sm:text-5xl"
+        >
+          A long weekend in Chicago, for two people who read buildings
+        </h1>
+        <p class="mt-5 text-base leading-7 text-muted-foreground">
+          Friday evening to Monday morning, on foot and by the L, with the river
+          cruise as the spine and three Wright houses as the reason to leave the
+          Loop. Each day is a walk in one direction; the places beside it are in
+          the order you will reach them.
+        </p>
+      </header>
+
+      <section
+        id="glance"
+        class="mt-10 grid gap-6 border-y border-border py-6 text-sm sm:grid-cols-4"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Days
+          </p>
+          <p class="mt-1 font-medium">Friday evening to Monday morning</p>
+          <p class="text-muted-foreground">Two full days, two half days</p>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Base
+          </p>
+          <p class="mt-1 font-medium">The Loop, near the river</p>
+          <p class="text-muted-foreground">
+            So the cruise dock and every L line are a walk
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Pace
+          </p>
+          <p class="mt-1 font-medium">Long walks, few tickets</p>
+          <p class="text-muted-foreground">
+            Lobbies and facades most of the day, one tour each afternoon
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Who
+          </p>
+          <p class="mt-1 font-medium">Two adults who will stop for a cornice</p>
+          <p class="text-muted-foreground">Comfortable shoes, no car</p>
+        </div>
+      </section>
+
+      <section id="days" class="mt-4 divide-y divide-border">
+        <article class="grid gap-6 py-10 sm:grid-cols-[15rem_1fr] sm:gap-12">
+          <div>
+            <p class="font-mono text-xs text-muted-foreground">Friday</p>
+            <h2
+              class="mt-1 font-serif text-2xl font-medium tracking-[-0.01em] sm:hidden"
+            >
+              Arrive, and the Loop at golden hour
+            </h2>
+            <ol class="mt-4 space-y-3 text-sm">
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">1</span
+                ><span
+                  ><strong>Chicago Architecture Center.</strong> Galleries and
+                  the city model, on the river at Michigan Avenue.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">2</span
+                ><span
+                  ><strong>Michigan Avenue streetwall.</strong> The row of
+                  facades facing Grant Park, 1880s to 1920s.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">3</span
+                ><span
+                  ><strong>Chicago Cultural Center.</strong> Free; the Tiffany
+                  dome upstairs.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">4</span
+                ><span
+                  ><strong>Millennium Park.</strong> Gehry's Pritzker Pavilion
+                  and its bridge, the Bean.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">5</span
+                ><span
+                  ><strong>Art Institute, Modern Wing.</strong> Renzo Piano,
+                  seen from the park side.</span
+                >
+              </li>
+            </ol>
+          </div>
+          <div class="text-base leading-7">
+            <h2
+              class="hidden font-serif text-2xl font-medium tracking-[-0.01em] sm:block"
+            >
+              Arrive, and the Loop at golden hour
+            </h2>
+            <p class="sm:mt-4">
+              <span
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >Afternoon.</span
+              >
+              Check in, then walk to the Chicago Architecture Center for an hour
+              with the model of the city before you have seen any of it; it
+              makes the next two days legible. Book the Saturday river cruise
+              here if it is not already booked. Cross the bridge and walk south
+              along the Michigan Avenue streetwall, reading the row from the
+              park side of the street, where the whole cliff is visible at once.
+            </p>
+            <p class="mt-4">
+              <span
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >Late afternoon.</span
+              >
+              Into the Cultural Center for the dome, free and quiet, then across
+              to Millennium Park as the light drops: the pavilion's steel from
+              underneath, the serpentine bridge, and the Modern Wing's flying
+              roof from the park side. Sit on the lawn until the towers light.
+            </p>
+            <p class="mt-5 italic text-muted-foreground">
+              Dinner in the West Loop, then the Riverwalk back east under the
+              lit bridges.
+            </p>
+          </div>
+        </article>
+
+        <article class="grid gap-6 py-10 sm:grid-cols-[15rem_1fr] sm:gap-12">
+          <div>
+            <p class="font-mono text-xs text-muted-foreground">Saturday</p>
+            <h2
+              class="mt-1 font-serif text-2xl font-medium tracking-[-0.01em] sm:hidden"
+            >
+              The river, then the Loop by lobby
+            </h2>
+            <ol class="mt-4 space-y-3 text-sm">
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">1</span
+                ><span
+                  ><strong>Architecture river cruise.</strong> From the dock
+                  below Michigan Avenue; about 90 minutes.
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                    ><i class="ph ph-ticket"></i>Book ahead</span
+                  ></span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">2</span
+                ><span
+                  ><strong>Marina City.</strong> Goldberg's corncobs, 1964, from
+                  the north bank.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">3</span
+                ><span
+                  ><strong>Reliance Building.</strong> 1895, the
+                  glass-and-terracotta ancestor of every curtain wall; now a
+                  hotel.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">4</span
+                ><span
+                  ><strong>Sullivan Center.</strong> Sullivan's cast-iron
+                  ornament over the corner entrance, 1899.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">5</span
+                ><span
+                  ><strong>Marquette Building.</strong> Lobby mosaics, 1895.
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-[11px] font-medium text-warning-700"
+                    ><i class="ph ph-clock"></i>Confirm weekend hours</span
+                  ></span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">6</span
+                ><span
+                  ><strong>Federal Center.</strong> Mies's plaza, the post
+                  office pavilion, the Calder.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">7</span
+                ><span
+                  ><strong>Monadnock Building.</strong> 1891, the last tall
+                  wall-bearing brick building, and its later steel half.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">8</span
+                ><span
+                  ><strong>The Rookery.</strong> 1888, Burnham and Root;
+                  Wright's 1905 lobby.
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-[11px] font-medium text-warning-700"
+                    ><i class="ph ph-clock"></i>Confirm weekend hours</span
+                  ></span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">9</span
+                ><span
+                  ><strong>Chicago Board of Trade.</strong> Holabird and Root's
+                  art deco, closing LaSalle Street.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">10</span
+                ><span
+                  ><strong>Aqua and St. Regis.</strong> Studio Gang's two
+                  towers, from the Riverwalk or Lakeshore East park.</span
+                >
+              </li>
+            </ol>
+          </div>
+          <div class="text-base leading-7">
+            <h2
+              class="hidden font-serif text-2xl font-medium tracking-[-0.01em] sm:block"
+            >
+              The river, then the Loop by lobby
+            </h2>
+            <p class="sm:mt-4">
+              <span
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >Morning.</span
+              >
+              The first cruise of the day, when the light is on the east faces
+              and the boat is half empty. It is the best ninety minutes of
+              architecture talk in the country and it settles the argument about
+              which tower is which. Step off and look back at Marina City from
+              the bank, then walk south into the Loop.
+            </p>
+            <p class="mt-4">
+              <span
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >Afternoon.</span
+              >
+              The Loop in the order the places list gives, which runs south down
+              State and back north up LaSalle in about two miles. Lobbies are
+              the point: the Reliance's, the Marquette's mosaics, and the
+              Rookery's light court, which Wright whitened in 1905. Some Loop
+              lobbies keep office hours and close on weekends, so the two tagged
+              above are the ones to confirm and to swap for Monday if they are
+              shut. Finish at the Board of Trade, then cut east along the river
+              to see the two Gang towers from below.
+            </p>
+            <p class="mt-5 italic text-muted-foreground">
+              Dinner in River North; a drink on the Athletic Association roof,
+              looking down the park at the streetwall you walked yesterday.
+            </p>
+          </div>
+        </article>
+
+        <article class="grid gap-6 py-10 sm:grid-cols-[15rem_1fr] sm:gap-12">
+          <div>
+            <p class="font-mono text-xs text-muted-foreground">Sunday</p>
+            <h2
+              class="mt-1 font-serif text-2xl font-medium tracking-[-0.01em] sm:hidden"
+            >
+              Wright, west and south
+            </h2>
+            <ol class="mt-4 space-y-3 text-sm">
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">1</span
+                ><span
+                  ><strong>Wright Home and Studio.</strong> Oak Park, 1889 and
+                  after; guided tour.
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                    ><i class="ph ph-ticket"></i>Book ahead</span
+                  ></span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">2</span
+                ><span
+                  ><strong>Forest Avenue houses.</strong> The Moore, Heurtley,
+                  and Thomas houses, exteriors only, on the streets around the
+                  studio.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">3</span
+                ><span
+                  ><strong>Unity Temple.</strong> 1908, concrete, the sanctuary
+                  lit from above.
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                    ><i class="ph ph-ticket"></i>Book ahead</span
+                  ></span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">4</span
+                ><span
+                  ><strong>Robie House.</strong> Hyde Park, 1910, the Prairie
+                  house.
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                    ><i class="ph ph-ticket"></i>Book ahead</span
+                  ></span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">5</span
+                ><span
+                  ><strong>University of Chicago quads.</strong> Collegiate
+                  Gothic, Rockefeller Chapel, and Jahn's glass Mansueto Library
+                  dome.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">6</span
+                ><span
+                  ><strong>Promontory Point.</strong> The lakefront park, with
+                  the skyline five miles north.</span
+                >
+              </li>
+            </ol>
+          </div>
+          <div class="text-base leading-7">
+            <h2
+              class="hidden font-serif text-2xl font-medium tracking-[-0.01em] sm:block"
+            >
+              Wright, west and south
+            </h2>
+            <p class="sm:mt-4">
+              <span
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >Morning.</span
+              >
+              Green Line west to Oak Park, about half an hour from the Loop, for
+              the first tour of the Home and Studio. Then the self-guided walk
+              down Forest Avenue, where the houses go from Queen Anne to Prairie
+              in three blocks, and on to Unity Temple for its tour. Lunch on
+              Lake Street in Oak Park before heading back.
+            </p>
+            <p class="mt-4">
+              <span
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >Afternoon.</span
+              >
+              Back through the Loop and south to Hyde Park by Metra Electric
+              from Millennium station, about 20 minutes, for the Robie House
+              tour. Walk the quads afterward: the Gothic core, the chapel, and
+              the library dome, which is the day's one building after 1950. End
+              at the lake.
+            </p>
+            <p class="mt-5 italic text-muted-foreground">
+              Dinner in Hyde Park, then the lakefront path at Promontory Point
+              until the skyline lights.
+            </p>
+          </div>
+        </article>
+
+        <article class="grid gap-6 py-10 sm:grid-cols-[15rem_1fr] sm:gap-12">
+          <div>
+            <p class="font-mono text-xs text-muted-foreground">
+              Monday, before the flight
+            </p>
+            <h2
+              class="mt-1 font-serif text-2xl font-medium tracking-[-0.01em] sm:hidden"
+            >
+              Mies, then the airport
+            </h2>
+            <ol class="mt-4 space-y-3 text-sm">
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">1</span
+                ><span
+                  ><strong>Crown Hall.</strong> Mies, 1956, on the Illinois
+                  Institute of Technology campus; Koolhaas's student center
+                  wraps the L beside it.</span
+                >
+              </li>
+              <li class="grid grid-cols-[1.5rem_1fr] gap-2">
+                <span class="font-mono text-xs text-brand-700">2</span
+                ><span
+                  ><strong>860 and 880 Lake Shore Drive.</strong> Mies's 1951
+                  towers, if the flight is late enough for a detour north.</span
+                >
+              </li>
+            </ol>
+          </div>
+          <div class="text-base leading-7">
+            <h2
+              class="hidden font-serif text-2xl font-medium tracking-[-0.01em] sm:block"
+            >
+              Mies, then the airport
+            </h2>
+            <p class="sm:mt-4">
+              <span
+                class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+                >Morning.</span
+              >
+              Bags at the hotel desk, then the Green Line to the Illinois
+              Institute of Technology for Crown Hall, one room of glass and
+              steel that explains half the Loop's later towers. The campus is a
+              fifteen-minute wander. Either back to the Loop for the bags and
+              the Orange Line to Midway, or, with a later flight, the Red Line
+              north for the two lakefront towers and a taxi from there.
+            </p>
+            <p class="mt-5 italic text-muted-foreground">
+              Lunch is the airport's.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section
+        id="logistics"
+        class="grid gap-8 border-t border-border pt-10 text-sm leading-6 sm:grid-cols-3"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Getting around
+          </p>
+          <ul class="mt-2 space-y-1.5 text-muted-foreground">
+            <li>
+              A Ventra card or a tapped phone covers the L and buses. Metra
+              Electric to Hyde Park is a separate ticket, bought in its app.
+            </li>
+            <li>
+              The Loop walk on Saturday is about two miles; Oak Park's houses
+              are within a mile of the station.
+            </li>
+            <li>
+              Every day ends near an L stop on purpose, so no taxi is planned.
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Book ahead
+          </p>
+          <ul class="mt-2 space-y-1.5 text-muted-foreground">
+            <li>
+              <strong class="text-foreground">The river cruise.</strong> Weeks
+              ahead in summer; the first departure of the day.
+            </li>
+            <li>
+              <strong class="text-foreground"
+                >Wright Home and Studio, Unity Temple, Robie House.</strong
+              >
+              Timed tours, a week or two ahead, and the three together fit one
+              Sunday only if the first is the earliest slot.
+            </li>
+            <li>
+              <strong class="text-foreground">The rooftop bar.</strong> A
+              reservation saves the wait.
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Carry
+          </p>
+          <ul class="mt-2 space-y-1.5 text-muted-foreground">
+            <li>
+              A wind layer at any time of year; the river and the lake make
+              their own weather.
+            </li>
+            <li>Shoes for two miles of terrazzo and a mile of sidewalk.</li>
+            <li>
+              Binoculars for cornices, and no tripod: most lobbies allow a phone
+              and nothing more.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="budget" class="mt-10 grid gap-8 sm:grid-cols-[1fr_1.3fr]">
+        <div class="text-sm leading-6">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            What costs money
+          </p>
+          <p class="mt-2 text-muted-foreground">
+            No budget was given, so no figures. The priced items are the cruise
+            and the three house tours; the Loop, Oak Park's streets, the campus,
+            and the lakefront cost a train fare. The rooftop drink is the one
+            discretionary line.
+          </p>
+        </div>
+        <div id="backups" class="rounded-xl bg-brand-25 p-5 text-sm leading-6">
+          <p
+            class="flex items-center gap-2 text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            <i class="ph ph-cloud-rain text-base"></i>If it rains, or the legs
+            give out
+          </p>
+          <ul class="mt-2 space-y-1.5">
+            <li>
+              <strong>Saturday.</strong> The cruise runs in rain under a canopy.
+              Move the Loop walk underground through the Pedway between lobbies,
+              and put the Art Institute's interiors in place of the LaSalle
+              Street half.
+            </li>
+            <li>
+              <strong>Sunday.</strong> The tours are indoors. Cut the Forest
+              Avenue walk and the quads; keep the three houses.
+            </li>
+            <li>
+              <strong>Tired.</strong> Drop Hyde Park entirely and give Oak Park
+              the whole day; Robie House is the loss, and it is the smallest of
+              the three.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section
+        id="places"
+        class="mt-10 text-sm leading-6 text-muted-foreground"
+      >
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          The places
+        </p>
+        <p class="mt-2">
+          Every place on this page is in the rail beside its day, numbered in
+          walking order, with its architect and date where they are the reason
+          to go. Nothing appears twice, so the rails together are the list.
+        </p>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The Chicago
+        Architecture Center's building pages and cruise schedule, the Frank
+        Lloyd Wright Trust's tour pages for the three houses, the CTA and Metra
+        sites for the lines and rough travel times, and two current architecture
+        walking guides to the Loop. Building dates are from the Center's pages.
+        Lobby access varies by day and by building and was not checked for the
+        weekend in question. Illustrative: hours, prices, and availability are
+        representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

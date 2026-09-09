@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TITLE</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="itinerary@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-brown-50 font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
+      <header class="max-w-2xl">
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Itinerary · Lisbon
+        </p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Four slow days in Lisbon with a two-year-old
+        </h1>
+        <p class="mt-4 text-base leading-7 text-muted-foreground">
+          Thursday to Sunday from an apartment in Alfama, built around one
+          outing each morning, a real nap, and one easy outing after. The hills
+          are the plan's enemy, so every day starts from the door on foot and
+          comes home by taxi.
+        </p>
+      </header>
+      <!-- photo -->
+
+      <section id="glance" class="mt-8">
+        <dl
+          class="grid gap-px overflow-hidden rounded-xl border border-border bg-border text-sm sm:grid-cols-4"
+        >
+          <div class="bg-card p-4">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Days
+            </dt>
+            <dd class="mt-1 font-medium">Four, Thursday to Sunday</dd>
+            <dd class="text-muted-foreground">
+              Arrive Wednesday night, leave Monday morning
+            </dd>
+          </div>
+          <div class="bg-card p-4">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Base
+            </dt>
+            <dd class="mt-1 font-medium">Alfama, near Portas do Sol</dd>
+            <dd class="text-muted-foreground">
+              Two viewpoints and the castle within ten minutes on foot
+            </dd>
+          </div>
+          <div class="bg-card p-4">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Pace
+            </dt>
+            <dd class="mt-1 font-medium">Slow</dd>
+            <dd class="text-muted-foreground">
+              One morning outing, a nap window, one afternoon outing, dinner at
+              opening
+            </dd>
+          </div>
+          <div class="bg-card p-4">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Who
+            </dt>
+            <dd class="mt-1 font-medium">Two adults, one two-year-old</dd>
+            <dd class="text-muted-foreground">
+              Carrier for the hills, stroller for the flat days
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="days" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          The four days
+        </p>
+        <div class="mt-3 grid gap-4 sm:grid-cols-2">
+          <article
+            class="rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <div class="flex items-baseline justify-between gap-4">
+              <p class="font-mono text-xs text-muted-foreground">
+                Day 1 · Thursday
+              </p>
+              <p class="text-xs text-muted-foreground">On foot, carrier</p>
+            </div>
+            <h3 class="mt-1 text-lg font-semibold tracking-[-0.02em]">
+              Alfama on foot
+            </h3>
+            <ol class="mt-3 divide-y divide-border text-sm">
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Morning</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Miradouro de Santa Luzia, then down through the lanes
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Five minutes from the door. Tiled benches, the river, and
+                    the trams turning below, which is the whole show for a
+                    two-year-old. Wander down past the Sé to Campo das Cebolas,
+                    where there is a small playground and flat ground. Lunch at
+                    a tasca on the square around noon.
+                  </p>
+                </div>
+              </li>
+              <li
+                class="-mx-5 grid grid-cols-[5.5rem_1fr] gap-3 bg-yellow-50 px-5 py-2.5"
+              >
+                <span
+                  class="flex items-center gap-1 self-start pt-0.5 text-xs font-medium tracking-[0.1em] text-yellow-700 uppercase"
+                  ><i class="ph ph-moon"></i>Nap</span
+                >
+                <p class="leading-6 text-yellow-900">
+                  Roughly 1 to 3, back at the apartment. Taxi up the hill from
+                  the square; it is a few minutes and beats the stairs with a
+                  sleeping child.
+                </p>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Afternoon</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Castelo de São Jorge
+                    <span
+                      class="ml-1 inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                      ><i class="ph ph-ticket"></i>Book ahead</span
+                    >
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Ten minutes uphill from the base. Peacocks, ramparts to
+                    walk, and lawns to run on; an hour and a half is plenty.
+                    Carrier, not stroller: the ramparts are steps.
+                  </p>
+                </div>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Evening</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Dinner near Largo do Chafariz de Dentro
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Restaurants open for dinner around 7; be at the door when
+                    they do. Grilled fish, a high chair if you ask, and home
+                    before the fado starts.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </article>
+
+          <article
+            class="rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <div class="flex items-baseline justify-between gap-4">
+              <p class="font-mono text-xs text-muted-foreground">
+                Day 2 · Friday
+              </p>
+              <p class="text-xs text-muted-foreground">
+                Taxi out, stroller all day
+              </p>
+            </div>
+            <h3 class="mt-1 text-lg font-semibold tracking-[-0.02em]">
+              Belém, flat and by the river
+            </h3>
+            <ol class="mt-3 divide-y divide-border text-sm">
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Morning</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Mosteiro dos Jerónimos, then Pastéis de Belém
+                    <span
+                      class="ml-1 inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                      ><i class="ph ph-ticket"></i>Book ahead</span
+                    >
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Taxi at 9 for the first cloister slot, before the coach
+                    groups. The cloisters are stroller-friendly and an hour is
+                    enough. Cross to the pastry shop for the custard tarts, then
+                    the lawns of the Praça do Império for the child to run.
+                  </p>
+                </div>
+              </li>
+              <li
+                class="-mx-5 grid grid-cols-[5.5rem_1fr] gap-3 bg-yellow-50 px-5 py-2.5"
+              >
+                <span
+                  class="flex items-center gap-1 self-start pt-0.5 text-xs font-medium tracking-[0.1em] text-yellow-700 uppercase"
+                  ><i class="ph ph-moon"></i>Nap</span
+                >
+                <p class="leading-6 text-yellow-900">
+                  In the stroller. Walk the riverfront path west toward the
+                  tower and back; it is flat, shaded in stretches, and the
+                  motion does the work. Lunch at a kiosk on the way.
+                </p>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Afternoon</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Torre de Belém from the outside, and the MAAT lawn
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Skip the tower's interior; the spiral stair is not for a
+                    carrier. The museum's roof is a grass slope a toddler will
+                    climb for an hour. Taxi home around 4.
+                  </p>
+                </div>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Evening</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Playground at the Santa Clara garden, dinner in Graça
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    The garden on Campo de Santa Clara is up the hill behind the
+                    base and has the closest good playground. Dinner at one of
+                    the tascas on the way back down.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </article>
+
+          <article
+            class="rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <div class="flex items-baseline justify-between gap-4">
+              <p class="font-mono text-xs text-muted-foreground">
+                Day 3 · Saturday
+              </p>
+              <p class="text-xs text-muted-foreground">
+                Metro, stroller all day
+              </p>
+            </div>
+            <h3 class="mt-1 text-lg font-semibold tracking-[-0.02em]">
+              The aquarium and the waterfront
+            </h3>
+            <ol class="mt-3 divide-y divide-border text-sm">
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Morning</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Oceanário de Lisboa
+                    <span
+                      class="ml-1 inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                      ><i class="ph ph-ticket"></i>Book ahead</span
+                    >
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Metro from Santa Apolónia to the Parque das Nações station,
+                    elevators at both ends. Book the opening slot; the central
+                    tank is at toddler eye level on the lower floor and the
+                    otters are the hit. Two hours, then lunch at the Vasco da
+                    Gama mall next door, which has changing rooms.
+                  </p>
+                </div>
+              </li>
+              <li
+                class="-mx-5 grid grid-cols-[5.5rem_1fr] gap-3 bg-yellow-50 px-5 py-2.5"
+              >
+                <span
+                  class="flex items-center gap-1 self-start pt-0.5 text-xs font-medium tracking-[0.1em] text-yellow-700 uppercase"
+                  ><i class="ph ph-moon"></i>Nap</span
+                >
+                <p class="leading-6 text-yellow-900">
+                  In the stroller along the Parque das Nações promenade, which
+                  is the flattest mile in the city. The cable car runs above it
+                  if the child is awake and wants to see the river from the sky.
+                </p>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Afternoon</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Jardins Garcia de Orta and the playgrounds
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    The gardens run along the promenade with several playgrounds
+                    and a water feature. Stay an hour, then Metro home.
+                  </p>
+                </div>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Evening</span
+                >
+                <div>
+                  <p class="font-medium">Miradouro da Graça at sunset</p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Taxi up. A kiosk sells drinks and snacks, the terrace is
+                    walled, and the view is the castle and the whole city going
+                    orange. Dinner nearby, then downhill to bed.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </article>
+
+          <article
+            class="rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <div class="flex items-baseline justify-between gap-4">
+              <p class="font-mono text-xs text-muted-foreground">
+                Day 4 · Sunday
+              </p>
+              <p class="text-xs text-muted-foreground">Tram out, taxi home</p>
+            </div>
+            <h3 class="mt-1 text-lg font-semibold tracking-[-0.02em]">
+              A tram ride and a garden
+            </h3>
+            <ol class="mt-3 divide-y divide-border text-sm">
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Morning</span
+                >
+                <div>
+                  <p class="font-medium">Tram 28 to Estrela, early</p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Board at Graça before 9 with the stroller folded; later than
+                    that it is standing room. The child sits at the window for
+                    the whole rattle across town. Get off at Estrela for the
+                    Jardim da Estrela: a big playground, a duck pond, and a
+                    kiosk cafe for a long late breakfast.
+                  </p>
+                </div>
+              </li>
+              <li
+                class="-mx-5 grid grid-cols-[5.5rem_1fr] gap-3 bg-yellow-50 px-5 py-2.5"
+              >
+                <span
+                  class="flex items-center gap-1 self-start pt-0.5 text-xs font-medium tracking-[0.1em] text-yellow-700 uppercase"
+                  ><i class="ph ph-moon"></i>Nap</span
+                >
+                <p class="leading-6 text-yellow-900">
+                  Roughly 1 to 3, back at the apartment. Taxi from the garden
+                  gate; do not attempt the 28 back with a sleeping child.
+                </p>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Afternoon</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Museu Nacional do Azulejo
+                    <span
+                      class="ml-1 inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-[11px] font-medium text-warning-700"
+                      ><i class="ph ph-clock"></i>Confirm hours</span
+                    >
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    A short taxi east of the base. Quiet, mostly flat, a
+                    cloister garden with a cafe, and tiles of animals at knee
+                    height. An hour, no more. Or skip it and let the afternoon
+                    be nothing.
+                  </p>
+                </div>
+              </li>
+              <li class="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
+                <span
+                  class="pt-0.5 text-xs font-medium tracking-[0.1em] text-brand-700 uppercase"
+                  >Evening</span
+                >
+                <div>
+                  <p class="font-medium">
+                    Last dinner back at Campo das Cebolas
+                  </p>
+                  <p class="mt-0.5 leading-6 text-muted-foreground">
+                    Return to the square from Day 1, since the child already
+                    knows the playground. Pack after bedtime.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section id="logistics" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Stroller, hills, and what to book
+        </p>
+        <div
+          class="mt-3 grid gap-px overflow-hidden rounded-xl border border-border bg-border text-sm sm:grid-cols-3"
+        >
+          <div class="bg-card p-4">
+            <p class="flex items-center gap-2 font-medium">
+              <i class="ph ph-baby-carriage text-lg text-brand-700"></i>Getting
+              around
+            </p>
+            <ul class="mt-2 space-y-1.5 leading-6 text-muted-foreground">
+              <li>
+                Alfama is stairs and cobbles: carrier inside the neighborhood
+                and at the castle, stroller for Belém, the waterfront, and
+                Estrela.
+              </li>
+              <li>
+                A taxi or a ride app up the hill costs a few euros and is the
+                plan's secret. Tram 28 is for one early ride, not for transport.
+              </li>
+              <li>
+                The Metro has elevators at Santa Apolónia and at the Parque das
+                Nações station. Buy a rechargeable transit card at the first
+                station; the child rides free.
+              </li>
+            </ul>
+          </div>
+          <div class="bg-card p-4">
+            <p class="flex items-center gap-2 font-medium">
+              <i class="ph ph-ticket text-lg text-brand-700"></i>Book ahead
+            </p>
+            <ul class="mt-2 space-y-1.5 leading-6 text-muted-foreground">
+              <li>
+                <strong class="text-foreground">Jerónimos cloisters.</strong>
+                Timed entry online; take the first slot of the day.
+              </li>
+              <li>
+                <strong class="text-foreground">Oceanário.</strong> Timed entry
+                online; the opening slot is the quietest.
+              </li>
+              <li>
+                <strong class="text-foreground">Castelo.</strong> Buy online the
+                night before to skip the gate line.
+              </li>
+              <li>Under-threes are free at all three.</li>
+            </ul>
+          </div>
+          <div class="bg-card p-4">
+            <p class="flex items-center gap-2 font-medium">
+              <i class="ph ph-backpack text-lg text-brand-700"></i>Carry
+            </p>
+            <ul class="mt-2 space-y-1.5 leading-6 text-muted-foreground">
+              <li>
+                Sun hat and a light rain layer; the weather turns at the river.
+              </li>
+              <li>
+                Snacks and a water bottle, since lunch is late here and a hungry
+                toddler at 12:30 is the day's biggest risk.
+              </li>
+              <li>
+                A folding stroller that fits a taxi trunk, and shoes with grip
+                for the adults: the cobbles are polished.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="budget" class="mt-10 grid gap-8 sm:grid-cols-[1fr_1.2fr]">
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            What costs money
+          </p>
+          <p class="mt-2 text-sm leading-6 text-muted-foreground">
+            No budget was set, so no figures here. The priced tickets are the
+            castle, the monastery cloisters, and the aquarium, and the child is
+            free at each. Everything else on the page is a viewpoint, a garden,
+            a tram or Metro fare, a taxi up a hill, or a tasca lunch, which is
+            the cheap end of Western Europe. The aquarium is the one ticket that
+            costs real money for two adults.
+          </p>
+        </div>
+        <div id="backups" class="rounded-xl bg-brand-25 p-5">
+          <p
+            class="flex items-center gap-2 text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            <i class="ph ph-cloud-rain text-base"></i>If it rains, or everyone
+            is tired
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li>
+              <strong>Rain on Day 1 or 4.</strong> The Museu do Fado is two
+              minutes from the base and small enough for a toddler's attention;
+              the Sé is dry and echoes.
+            </li>
+            <li>
+              <strong>Rain on Day 2.</strong> Swap Belém for Day 3's aquarium
+              and do Belém on the first dry day; the cloisters are half
+              outdoors.
+            </li>
+            <li>
+              <strong>Rain on Day 3.</strong> The aquarium is already indoors.
+              Add the Pavilhão do Conhecimento next door, a science center with
+              a room for the under-sixes.
+            </li>
+            <li>
+              <strong>Tired.</strong> Drop the afternoon block, keep the nap and
+              the evening. The evenings are the part the child will remember.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="places" class="mt-10">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          The places, once
+        </p>
+        <ul class="mt-2 gap-x-8 text-sm sm:columns-2">
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D1</span
+            ><span
+              ><strong>Miradouro de Santa Luzia.</strong> Viewpoint with tiled
+              benches, next to Portas do Sol.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D1</span
+            ><span
+              ><strong>Sé de Lisboa.</strong> The cathedral, on the way down the
+              hill.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D1</span
+            ><span
+              ><strong>Campo das Cebolas.</strong> Riverside square with a small
+              playground and tascas.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D1</span
+            ><span
+              ><strong>Castelo de São Jorge.</strong> The castle above Alfama;
+              ramparts, peacocks, lawns.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>Mosteiro dos Jerónimos.</strong> Monastery in Belém; the
+              cloisters are the visit.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>Pastéis de Belém.</strong> The custard tart bakery across
+              the road from the monastery.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>Torre de Belém.</strong> Riverside tower, seen from the
+              path; skip the interior.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>MAAT.</strong> Art and architecture museum with a grass
+              roof to climb.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>Campo de Santa Clara garden.</strong> Garden and
+              playground on the hill behind the base.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D3</span
+            ><span
+              ><strong>Oceanário de Lisboa.</strong> Aquarium at Parque das
+              Nações.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D3</span
+            ><span
+              ><strong>Parque das Nações.</strong> Flat waterfront district with
+              a promenade, gardens, and a cable car.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D3</span
+            ><span
+              ><strong>Miradouro da Graça.</strong> Walled viewpoint with a
+              kiosk, facing the castle.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D4</span
+            ><span
+              ><strong>Tram 28.</strong> The yellow tram across the old city;
+              ride it once, early.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D4</span
+            ><span
+              ><strong>Jardim da Estrela.</strong> Large garden with a
+              playground, a pond, and a kiosk cafe.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D4</span
+            ><span
+              ><strong>Museu Nacional do Azulejo.</strong> Tile museum in a
+              convent, with a garden cafe.</span
+            >
+          </li>
+          <li
+            class="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-3 border-b border-border py-2"
+          >
+            <span class="font-mono text-xs text-muted-foreground">Rain</span
+            ><span
+              ><strong>Museu do Fado, Pavilhão do Conhecimento.</strong> The
+              fado museum by the base; the science center by the aquarium.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The official pages of
+        the castle, the monastery, the aquarium, and the two museums for hours
+        and ticketing, the Lisbon transit site for the tram and Metro, and two
+        current guides to Lisbon with small children for the playgrounds. Times
+        on the page are rough, and the nap windows are the family's, not the
+        city's. Illustrative: hours, prices, and availability are
+        representative, not verified.<!-- photo-credit -->
+      </footer>
+    </main>
+  </body>
+</html>

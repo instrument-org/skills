@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TITLE</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="itinerary@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-10">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Itinerary · Japan by rail
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em]">
+          Ten days in Japan by rail: Tokyo, a night in Hakone, Kyoto, Osaka
+        </h1>
+        <p class="mt-3 text-sm leading-6 text-muted-foreground">
+          A first trip, in one direction, with four nights in Tokyo, one in a
+          ryokan with an onsen, three in Kyoto, and two in Osaka. Four train
+          legs, all reserved seats, and the big suitcases sent ahead once so the
+          onsen night is carried in a backpack.
+        </p>
+      </header>
+
+      <section id="glance" class="mt-6">
+        <dl
+          class="grid gap-px overflow-hidden rounded-xl border border-border bg-border text-sm sm:grid-cols-4"
+        >
+          <div class="bg-card p-3.5">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Days
+            </dt>
+            <dd class="mt-1 font-medium">
+              Ten, arriving Day 1, flying out Day 10
+            </dd>
+          </div>
+          <div class="bg-card p-3.5">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Bases
+            </dt>
+            <dd class="mt-1 font-medium">
+              Shinjuku 4, Hakone 1, Kyoto 3, Osaka 2
+            </dd>
+          </div>
+          <div class="bg-card p-3.5">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Pace
+            </dt>
+            <dd class="mt-1 font-medium">
+              Brisk mornings, one district per afternoon, early dinners
+            </dd>
+          </div>
+          <div class="bg-card p-3.5">
+            <dt
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Who
+            </dt>
+            <dd class="mt-1 font-medium">
+              First-timers who walk all day and want the trains to be part of it
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="days" class="mt-8">
+        <ol
+          class="relative before:absolute before:top-2 before:bottom-2 before:left-[7px] before:w-0.5 before:bg-border before:content-['']"
+        >
+          <li class="relative pb-5 pl-9">
+            <span
+              class="absolute top-0 -left-1 flex size-6 items-center justify-center rounded-full bg-brand-600 text-white ring-4 ring-background"
+              ><i class="ph-fill ph-map-pin text-xs"></i
+            ></span>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              Tokyo · four nights
+            </p>
+            <p class="mt-0.5 text-sm text-muted-foreground">
+              Base in Shinjuku, west side, for the Odakyu line out to Hakone and
+              a Yamanote stop on the doorstep.
+            </p>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 1</p>
+            <h3 class="text-base font-semibold">
+              Arrive and stay awake until dark
+            </h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Airport to Shinjuku: the Narita Express from Narita (about 80
+                min) or the Keikyu line from Haneda (about 40 min, one change).
+                Add a Suica to the phone wallet before landing; it pays for
+                every train, bus, and convenience store from here on.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Check in, then Omoide Yokocho for a first bowl and a counter
+                seat under the tracks. Walk the Kabukicho neon once, sleep by 9.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 2</p>
+            <h3 class="text-base font-semibold">Tokyo, the east side</h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                Senso-ji in Asakusa by 7, while the jet lag is useful and
+                Nakamise is still shuttered. Then Kappabashi, the kitchen
+                street, for a knife or a pair of chopsticks to carry home.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Walk or ride one stop to Ueno: the park, and one museum of the
+                four (the Tokyo National Museum is the one to choose the first
+                time). Ameyoko market for a standing snack.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Akihabara after dark, for the lights and one retro game floor.
+                Dinner: a curry counter in the station.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 3</p>
+            <h3 class="text-base font-semibold">Tokyo, the west side</h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                Meiji Jingu at opening, through the cedar avenue from Harajuku
+                station. Then Omotesando's architecture walk down to Aoyama.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Shibuya: the crossing from the station's second floor, the
+                Hachiko exit, and a wander up to Miyashita Park. Shibuya Sky at
+                the sunset slot.
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                  ><i class="ph ph-ticket"></i>Book ahead · weeks</span
+                >
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Yakitori in Ebisu, two stops south, where the queues are shorter
+                than Shibuya's.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 4</p>
+            <h3 class="text-base font-semibold">
+              Tokyo, the bay, and the suitcases go ahead
+            </h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                Before leaving the hotel, hand the big suitcases to the front
+                desk for luggage forwarding to the Kyoto hotel; they arrive the
+                next day. Pack an overnight bag for Hakone. Then teamLab Planets
+                in Toyosu for the opening slot.
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                  ><i class="ph ph-ticket"></i>Book ahead · weeks</span
+                >
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Tsukiji outer market for a late lunch of whatever is grilled at
+                the stall with the shortest line, then Ginza on foot: the
+                department store basements and the stationery floors.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Yurakucho, under the railway arches, for the last Tokyo dinner.
+                Early night; tomorrow's train is a morning one.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-2 left-1 size-2 rounded-full bg-gray-400 ring-4 ring-background"
+            ></span>
+            <p
+              class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-muted px-3 py-1.5 font-mono text-xs text-muted-foreground"
+            >
+              <i class="ph ph-train text-base"></i
+              ><span class="text-foreground">Shinjuku → Hakone-Yumoto</span
+              ><span>Odakyu Romancecar</span><span>about 1 h 25</span
+              ><span
+                class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 font-sans text-[11px] font-medium text-brand-700"
+                ><i class="ph ph-ticket"></i>Reserve the seat</span
+              >
+            </p>
+          </li>
+
+          <li class="relative pb-5 pl-9">
+            <span
+              class="absolute top-0 -left-1 flex size-6 items-center justify-center rounded-full bg-brand-600 text-white ring-4 ring-background"
+              ><i class="ph-fill ph-map-pin text-xs"></i
+            ></span>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              Hakone · one night
+            </p>
+            <p class="mt-0.5 text-sm text-muted-foreground">
+              A ryokan with its own bath, in the hills above the Hakone-Yumoto
+              station. This is the onsen night, so the ryokan is the day.
+            </p>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 5</p>
+            <h3 class="text-base font-semibold">
+              The Hakone loop, then the bath
+            </h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                Leave the overnight bag at the station lockers or the ryokan's
+                desk. Buy the Hakone Free Pass at Shinjuku with the train
+                ticket; it covers the whole loop. Tozan railway up the
+                switchbacks, cable car, then the ropeway over Owakudani's
+                steaming vents.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                The ropeway down to Lake Ashi, the boat across to Moto-Hakone,
+                the cedar avenue and the shrine gate in the water. Bus back to
+                Yumoto to check in by 3.
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+                  ><i class="ph ph-ticket"></i>Ryokan · months</span
+                >
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Bath before dinner, kaiseki in the room or the dining hall at
+                the hour the ryokan sets, bath again, futon. Nothing else is
+                planned, on purpose.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-2 left-1 size-2 rounded-full bg-gray-400 ring-4 ring-background"
+            ></span>
+            <p
+              class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-muted px-3 py-1.5 font-mono text-xs text-muted-foreground"
+            >
+              <i class="ph ph-train text-base"></i
+              ><span class="text-foreground"
+                >Hakone-Yumoto → Odawara → Kyoto</span
+              ><span>Tozan line, then Hikari shinkansen</span
+              ><span>about 15 min, then about 2 h</span
+              ><span
+                class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 font-sans text-[11px] font-medium text-brand-700"
+                ><i class="ph ph-ticket"></i>Reserve the seat</span
+              >
+            </p>
+          </li>
+
+          <li class="relative pb-5 pl-9">
+            <span
+              class="absolute top-0 -left-1 flex size-6 items-center justify-center rounded-full bg-brand-600 text-white ring-4 ring-background"
+              ><i class="ph-fill ph-map-pin text-xs"></i
+            ></span>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              Kyoto · three nights
+            </p>
+            <p class="mt-0.5 text-sm text-muted-foreground">
+              Base near Karasuma-Oike, mid-city, so both the east and west sides
+              are one bus or subway ride.
+            </p>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 6</p>
+            <h3 class="text-base font-semibold">
+              Arrive Kyoto, the center on foot
+            </h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                On the train. Sit on the right side out of Odawara for Mount
+                Fuji, weather permitting, in the first half hour.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Drop bags, collect the forwarded suitcases, then Nishiki market
+                end to end and the covered arcades north of it. Tea at a
+                kissaten.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Gion at dusk: Hanamikoji, Yasaka shrine lit up, then dinner
+                along Pontocho's alley by the river.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 7</p>
+            <h3 class="text-base font-semibold">Kyoto, the eastern hills</h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                Fushimi Inari by 7, JR from Kyoto station, two stops. Climb past
+                the crowds to the Yotsutsuji crossing, about 45 minutes up, and
+                come down the quieter side. Then Tofuku-ji's garden on the way
+                back.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Bus to Kiyomizu-dera, then downhill through Sannenzaka and
+                Ninenzaka to Kodai-ji and Maruyama park. This is the crowded
+                stretch; it is worth it once.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Okonomiyaki near the base, then an early bath at a neighborhood
+                sento if the legs want it.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 8</p>
+            <h3 class="text-base font-semibold">
+              Kyoto, west to Arashiyama and the gold pavilion
+            </h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                JR Sagano line to Saga-Arashiyama, in the bamboo grove by 8.
+                Tenryu-ji's garden, then the Togetsukyo bridge and a river walk.
+                Lunch of yudofu in the district.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Bus across to Kinkaku-ji, then Ryoan-ji's rock garden fifteen
+                minutes' walk away. Two temples, no more; the third is the one
+                that blurs.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Kyoto station's ramen floor, and the rooftop skyway for a free
+                look at the city. Pack the suitcases for a short hop.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-2 left-1 size-2 rounded-full bg-gray-400 ring-4 ring-background"
+            ></span>
+            <p
+              class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-muted px-3 py-1.5 font-mono text-xs text-muted-foreground"
+            >
+              <i class="ph ph-train text-base"></i
+              ><span class="text-foreground">Kyoto → Osaka</span
+              ><span>JR special rapid</span><span>about 30 min</span
+              ><span>no reservation, tap in with Suica</span>
+            </p>
+          </li>
+
+          <li class="relative pb-5 pl-9">
+            <span
+              class="absolute top-0 -left-1 flex size-6 items-center justify-center rounded-full bg-brand-600 text-white ring-4 ring-background"
+              ><i class="ph-fill ph-map-pin text-xs"></i
+            ></span>
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              Osaka · two nights
+            </p>
+            <p class="mt-0.5 text-sm text-muted-foreground">
+              Base in Namba, so Dotonbori is on foot and the airport train
+              leaves from the doorstep.
+            </p>
+          </li>
+
+          <li class="relative pb-6 pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 9</p>
+            <h3 class="text-base font-semibold">
+              Osaka, the castle and the street food
+            </h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                Drop bags in Namba, then subway to Osaka Castle: the park and
+                the moat walls are the point, the reconstructed keep is
+                optional. Kuromon market for lunch on the way back.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Shinsekai, the old amusement district under Tsutenkaku tower,
+                for kushikatsu at a counter. Or Nakanoshima's riverside and the
+                library if the group wants quiet.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>
+                Dotonbori at full volume: takoyaki from a stall, the running man
+                sign, and a walk along the canal. Then Hozenji Yokocho's lantern
+                alley, one street over and silent.
+              </dd>
+            </dl>
+          </li>
+
+          <li class="relative pl-9">
+            <span
+              class="absolute top-1 left-0 size-4 rounded-full border-2 border-brand-600 bg-background ring-4 ring-background"
+            ></span>
+            <p class="font-mono text-xs text-muted-foreground">Day 10</p>
+            <h3 class="text-base font-semibold">
+              A last morning, then the airport
+            </h3>
+            <dl
+              class="mt-1.5 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+            >
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Morning
+              </dt>
+              <dd>
+                Umeda Sky Building's open-air roof for one last look, or a
+                depachika breakfast at the Hankyu food hall beneath it. Back to
+                Namba for the bags.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Afternoon
+              </dt>
+              <dd>
+                Nankai Rapi:t from Namba to Kansai airport, about 40 min,
+                reserved seat bought at the counter that morning. If the flight
+                home leaves from Tokyo instead, the Nozomi from Shin-Osaka takes
+                about 2 h 30 and this becomes a travel day.
+              </dd>
+              <dt
+                class="pt-0.5 font-mono text-xs text-muted-foreground uppercase"
+              >
+                Evening
+              </dt>
+              <dd>In the air.</dd>
+            </dl>
+          </li>
+        </ol>
+      </section>
+
+      <section
+        id="logistics"
+        class="mt-8 grid gap-6 text-sm leading-6 sm:grid-cols-3"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Getting around
+          </p>
+          <ul class="mt-2 space-y-1.5 text-muted-foreground">
+            <li>
+              <strong class="text-foreground"
+                >Skip the national rail pass.</strong
+              >
+              Since its price rose, three one-way legs cost less than seven days
+              of pass. Buy the shinkansen seats in the smartEX app a few days
+              ahead and pick up nothing.
+            </li>
+            <li>
+              <strong class="text-foreground">Suica on the phone</strong> for
+              every local train, bus, and subway in all three cities, and for
+              the lockers.
+            </li>
+            <li>
+              <strong class="text-foreground">Luggage forwarding</strong> from
+              the Tokyo hotel to the Kyoto hotel on Day 4, so the Hakone night
+              is a backpack.
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Book ahead, in this order
+          </p>
+          <ul class="mt-2 space-y-1.5 text-muted-foreground">
+            <li>
+              <strong class="text-foreground">The ryokan.</strong> Months ahead;
+              the ones with private baths go first.
+            </li>
+            <li>
+              <strong class="text-foreground"
+                >teamLab Planets, Shibuya Sky.</strong
+              >
+              Weeks ahead, timed slots.
+            </li>
+            <li>
+              <strong class="text-foreground"
+                >Romancecar and shinkansen seats.</strong
+              >
+              Days ahead, in the apps.
+            </li>
+            <li>
+              <strong class="text-foreground">Restaurants.</strong> None on this
+              page need it; a counter seat is the plan.
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Carry
+          </p>
+          <ul class="mt-2 space-y-1.5 text-muted-foreground">
+            <li>
+              Some cash for shrines, markets, and small counters; the phone
+              handles the rest.
+            </li>
+            <li>
+              Shoes that slip off, for temples and the ryokan. Socks without
+              holes.
+            </li>
+            <li>
+              A small towel and a coin purse, and a folding bag for the
+              Kappabashi haul.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section
+        id="budget"
+        class="mt-8 grid gap-6 text-sm leading-6 sm:grid-cols-[1fr_1.4fr]"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            What drives the cost
+          </p>
+          <p class="mt-2 text-muted-foreground">
+            No budget was given, so no figures. The ryokan night with dinner and
+            breakfast is the single largest line and the one worth it. The three
+            reserved train legs are the second. Everything else scales with how
+            the group eats: a counter lunch is cheap, and the department store
+            basement is where the money goes if it goes.
+          </p>
+        </div>
+        <div id="backups" class="rounded-xl border border-border bg-card p-4">
+          <p
+            class="flex items-center gap-2 text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            <i class="ph ph-umbrella text-base"></i>Rain, or a tired day
+          </p>
+          <ul class="mt-2 space-y-1">
+            <li>
+              <strong>Tokyo.</strong> Swap a day for the Tokyo National Museum
+              and the Ginza basements; Day 4 is already half indoors.
+            </li>
+            <li>
+              <strong>Hakone.</strong> The ropeway closes in high wind and the
+              mountain hides in cloud. Do the Hakone Open-Air Museum on the
+              Tozan line instead, then check in early. The bath is the point
+              either way.
+            </li>
+            <li>
+              <strong>Kyoto.</strong> Rain suits the temples; keep the day and
+              carry an umbrella. If tired, cut the afternoon temples and sit in
+              a kissaten.
+            </li>
+            <li>
+              <strong>Osaka.</strong> The aquarium at Kaiyukan replaces the
+              castle.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="places" class="mt-8">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          The places, once
+        </p>
+        <ul class="mt-1 columns-1 gap-8 text-sm sm:columns-2">
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D1</span
+            ><span
+              ><strong>Omoide Yokocho.</strong> Alley of yakitori counters by
+              Shinjuku station.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>Senso-ji.</strong> Asakusa's temple and its market
+              street.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>Kappabashi.</strong> The restaurant supply street; knives
+              and plastic food.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span
+              ><strong>Ueno Park, Tokyo National Museum, Ameyoko.</strong> Park,
+              museum, and market in one walk.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D2</span
+            ><span><strong>Akihabara.</strong> Electronics and arcades.</span>
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D3</span
+            ><span
+              ><strong>Meiji Jingu, Omotesando.</strong> Forest shrine, then the
+              avenue of flagship buildings.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D3</span
+            ><span
+              ><strong>Shibuya Sky.</strong> Open rooftop above the crossing;
+              timed entry.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D4</span
+            ><span
+              ><strong>teamLab Planets.</strong> Immersive art in Toyosu;
+              barefoot, timed entry.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D4</span
+            ><span
+              ><strong>Tsukiji outer market, Ginza, Yurakucho.</strong> Lunch
+              stalls, department stores, dinner under the arches.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D5</span
+            ><span
+              ><strong>The Hakone loop.</strong> Tozan railway, cable car,
+              ropeway over Owakudani, boat on Lake Ashi, bus back.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D6</span
+            ><span
+              ><strong>Nishiki market, Gion, Pontocho.</strong> Food street, the
+              geisha district, the dinner alley.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D7</span
+            ><span
+              ><strong>Fushimi Inari, Tofuku-ji.</strong> The torii mountain and
+              a garden temple, both by JR.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D7</span
+            ><span
+              ><strong>Kiyomizu-dera, Sannenzaka, Kodai-ji.</strong> The
+              hillside temple and the lanes below it.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D8</span
+            ><span
+              ><strong>Arashiyama, Tenryu-ji.</strong> Bamboo grove, garden
+              temple, river.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D8</span
+            ><span
+              ><strong>Kinkaku-ji, Ryoan-ji.</strong> The gold pavilion and the
+              rock garden.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D9</span
+            ><span
+              ><strong>Osaka Castle, Kuromon, Shinsekai, Dotonbori.</strong>
+              Castle park, market, old amusement quarter, the canal of
+              signs.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">D10</span
+            ><span
+              ><strong>Umeda Sky Building.</strong> Open-air roof over Osaka;
+              food hall beneath.</span
+            >
+          </li>
+          <li
+            class="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-border py-1.5"
+          >
+            <span class="font-mono text-xs text-muted-foreground">Rain</span
+            ><span
+              ><strong>Hakone Open-Air Museum, Kaiyukan.</strong> Sculpture park
+              on the Tozan line; Osaka's aquarium.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-10 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> The rail operators'
+        timetables for the four legs, the official pages of the timed-entry
+        places for booking windows, and three current first-timer guides to the
+        three cities for the district walks. Train durations are rounded from
+        published timetables; times of day are rough. The ryokan is unnamed
+        because the choice depends on the traveler's budget and the dates.
+        Illustrative: hours, prices, and availability are representative, not
+        verified.
+      </footer>
+    </main>
+  </body>
+</html>
