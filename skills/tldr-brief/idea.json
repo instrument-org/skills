@@ -1,0 +1,17 @@
+{
+  "title": "TLDR brief",
+  "tagline": "The smart-brevity item newsletters send, made for your decision.",
+  "when": "The research is done, or someone else did it, and the reader wants only the takeaways on one screen.",
+  "tags": ["learn"],
+  "order": 50,
+  "needs": [],
+  "cover": "ebike-battery-rules",
+  "sections": [
+    "Headline verdict",
+    "Bullets",
+    "Do and do not",
+    "Chart or table",
+    "Go deeper",
+    "Sources"
+  ]
+}

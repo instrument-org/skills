@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      How employer plans are changing GLP-1 coverage, for next year's plan
+      design
+    </title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="tldr-brief@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-12">
+      <header class="border-b border-foreground pb-6">
+        <div
+          class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-y border-foreground py-2 text-xs tracking-[0.12em] uppercase"
+        >
+          <span class="font-medium text-brand-700">TLDR brief</span>
+          <span class="text-muted-foreground"
+            >Benefits planning · For the HR lead · Two minutes</span
+          >
+        </div>
+        <h1
+          class="mt-6 font-serif text-4xl leading-[1.1] font-medium tracking-[-0.02em] sm:text-5xl"
+        >
+          Cover GLP-1s for weight loss next year, inside a managed program. The
+          market is moving to guardrails, not to yes or no.
+        </h1>
+        <p
+          class="mt-4 max-w-2xl font-serif text-lg leading-8 text-muted-foreground"
+        >
+          Employers are adding coverage with conditions attached, net prices are
+          falling, and employees are asking. The cost is real; the cost of
+          adding it and then pulling it is worse.
+        </p>
+      </header>
+
+      <div class="mt-8 grid gap-8 md:grid-cols-[minmax(0,1fr)_16rem] md:gap-0">
+        <section id="bullets" class="md:border-r md:border-border md:pr-8">
+          <div class="space-y-4 font-serif text-[15px] leading-7">
+            <p>
+              <span
+                class="mr-1 font-sans text-[15px] font-semibold tracking-[0.06em] [font-variant-caps:all-small-caps]"
+                >The big picture.</span
+              >Coverage is rising, not retreating. About 44 percent of employers
+              with 500 or more workers cover GLP-1s for obesity this year, up
+              from 34 percent a year earlier, and nearly every new adopter
+              attached conditions. The question for next year is which
+              conditions, not whether.
+            </p>
+            <p>
+              <span
+                class="mr-1 font-sans text-[15px] font-semibold tracking-[0.06em] [font-variant-caps:all-small-caps]"
+                >By the numbers.</span
+              >Net cost after rebates runs about $600 to $800 per user per
+              month. On a 500-member plan with open coverage, four to six
+              percent of members start within the year, which is roughly
+              $170,000 to $250,000. Why it matters: it is now the largest single
+              line in pharmacy trend, ahead of specialty drugs at many plans.
+            </p>
+            <p>
+              <span
+                class="mr-1 font-sans text-[15px] font-semibold tracking-[0.06em] [font-variant-caps:all-small-caps]"
+                >The shift.</span
+              >Plans have moved from yes or no to yes, with: a BMI floor of 30,
+              or 27 with a related condition, prior authorization, a required
+              lifestyle program, and a review at six months. Plans with all four
+              report uptake at about half the open-coverage rate and similar
+              weight outcomes for the people who stay on.
+            </p>
+            <p>
+              <span
+                class="mr-1 font-sans text-[15px] font-semibold tracking-[0.06em] [font-variant-caps:all-small-caps]"
+                >The catch.</span
+              >Persistence is poor. About half of people who start stop within a
+              year, and weight returns when they do. Paying for the drug without
+              the program buys the spend and not the outcome, and the program is
+              the cheap half.
+            </p>
+            <p>
+              <span
+                class="mr-1 font-sans text-[15px] font-semibold tracking-[0.06em] [font-variant-caps:all-small-caps]"
+                >Yes, but.</span
+              >Pulling coverage costs more than never adding it. Plans that
+              dropped obesity coverage after a year report it as the top
+              complaint at open enrollment and a named reason in exit
+              interviews. Design next year's terms as ones you can hold for
+              three.
+            </p>
+            <p>
+              <span
+                class="mr-1 font-sans text-[15px] font-semibold tracking-[0.06em] [font-variant-caps:all-small-caps]"
+                >What's next.</span
+              >Prices are moving down. Cash-pay vials at about $500 a month,
+              Medicare's negotiated price arriving in 2027, and oral GLP-1s
+              expected in 2026 should cut net prices 20 to 40 percent within two
+              years. Why it matters: the terms you set now can loosen later;
+              terms set loose now cannot tighten without a fight.
+            </p>
+            <p>
+              <span
+                class="mr-1 font-sans text-[15px] font-semibold tracking-[0.06em] [font-variant-caps:all-small-caps]"
+                >The alternative.</span
+              >A carve-out vendor that bundles the drug with coaching at a
+              capped per-member fee is the fastest way to a managed program.
+              Check that its clinicians prescribe on label and that its data
+              flows back to your carrier, or you will pay twice for the same
+              member.
+            </p>
+          </div>
+
+          <div id="figure" class="mt-8 md:pr-2">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              A 500-member plan, under three designs
+            </p>
+            <table class="mt-3 w-full text-sm">
+              <thead>
+                <tr
+                  class="border-b border-border text-left text-xs text-muted-foreground"
+                >
+                  <th class="pb-2 pr-4 font-medium">Design</th>
+                  <th class="pb-2 pr-4 font-medium whitespace-nowrap">
+                    Uptake
+                  </th>
+                  <th class="pb-2 pr-4 font-medium whitespace-nowrap">
+                    Annual net cost
+                  </th>
+                  <th class="pb-2 font-medium">Note</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border align-top">
+                <tr>
+                  <td class="py-2 pr-4 font-medium">Open, BMI criteria only</td>
+                  <td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">
+                    4 to 6%
+                  </td>
+                  <td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">
+                    $170k to $250k
+                  </td>
+                  <td class="py-2 text-muted-foreground">
+                    Fastest uptake, half gone by month twelve.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-2 pr-4 font-medium">
+                    Managed: prior auth, program, six-month review
+                  </td>
+                  <td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">
+                    2 to 3%
+                  </td>
+                  <td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">
+                    $85k to $125k
+                  </td>
+                  <td class="py-2 text-muted-foreground">
+                    Same outcomes for those who stay; the default at large plans
+                    now.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-2 pr-4 font-medium">
+                    Carve-out vendor, capped fee
+                  </td>
+                  <td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">
+                    1.5 to 2.5%
+                  </td>
+                  <td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">
+                    $50k to $85k
+                  </td>
+                  <td class="py-2 text-muted-foreground">
+                    Quick to launch; check the prescribing and the data flow.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="mt-2 text-xs leading-5 text-muted-foreground">
+              Estimates at $700 net per user per month; uptake ranges are what
+              comparable plans reported.
+            </p>
+          </div>
+        </section>
+
+        <aside class="md:pl-8">
+          <div
+            id="do-dont"
+            class="rounded-xl border border-border bg-card p-5 shadow-sm"
+          >
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              Do
+            </p>
+            <ul class="mt-2 space-y-1.5 text-sm leading-6">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                ><span
+                  >Put the BMI criteria in the plan document, not in a carrier
+                  memo.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                ><span
+                  >Tie the six-month re-authorization to a documented
+                  result.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                ><span>Pay for the lifestyle program, and require it.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-check mt-1 text-base text-brand-700"></i
+                ><span>Budget the high end of the managed range.</span>
+              </li>
+            </ul>
+            <p
+              class="mt-5 text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Do not
+            </p>
+            <ul class="mt-2 space-y-1.5 text-sm leading-6">
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                ><span>Cover the drug without the program.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                ><span>Add terms you may have to pull in a year.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                ><span>Let a vendor prescribe off label to hit its price.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+                ><span
+                  >Count compounded versions as a budget option; they are
+                  leaving the market.</span
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div id="go-deeper" class="mt-6">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Go deeper
+            </p>
+            <ul class="mt-2 space-y-1.5 text-sm leading-6">
+              <li class="flex items-start gap-2.5">
+                <i
+                  class="ph ph-arrow-up-right mt-1 text-base text-brand-700"
+                ></i
+                ><span
+                  ><a
+                    href="https://www.mercer.com/"
+                    class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                    >Mercer's employer health survey</a
+                  >, for coverage rates by employer size.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i
+                  class="ph ph-arrow-up-right mt-1 text-base text-brand-700"
+                ></i
+                ><span
+                  ><a
+                    href="https://www.kff.org/"
+                    class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                    >KFF</a
+                  >, for the employee-side polling and the price tracker.</span
+                >
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i
+                  class="ph ph-arrow-up-right mt-1 text-base text-brand-700"
+                ></i
+                ><span
+                  ><a
+                    href="https://www.ifebp.org/"
+                    class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                    >IFEBP</a
+                  >, for sample plan language and prior authorization
+                  criteria.</span
+                >
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <footer
+        class="mt-10 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Read in full: two
+        national employer benefits surveys, one pharmacy benefit manager's trend
+        report, two peer-reviewed persistence studies, and a benefits
+        consultancy's note on carve-out vendors. Coverage rates and uptake are
+        as reported by those surveys; the cost table is an estimate at $700 net
+        per user per month, and the 2026 and 2027 price moves are expectations,
+        not prices. Illustrative: figures are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

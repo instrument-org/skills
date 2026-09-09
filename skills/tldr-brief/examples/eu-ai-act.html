@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      What the EU AI Act means for a 30-person B2B SaaS with LLM features
+    </title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="tldr-brief@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          TLDR brief · The EU AI Act for a 30-person B2B SaaS
+        </p>
+        <h1
+          class="mt-4 text-3xl font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[2.5rem]"
+        >
+          You are a deployer, not a high&#8209;risk provider. Two obligations
+          land by August 2026, and both are about a week of work.
+        </h1>
+        <p class="mt-5 text-base leading-7 text-muted-foreground">
+          For the founder or ops lead of a 30-person B2B SaaS whose product
+          drafts, summarizes, and searches with a hosted LLM and sells into the
+          EU. Two minutes to read; the long notes are linked at the end.
+        </p>
+      </header>
+
+      <section id="bullets" class="mt-10">
+        <ul class="space-y-5 text-base leading-7">
+          <li>
+            <strong class="font-semibold">The big picture:</strong> The Act
+            sorts AI by risk, and nearly all of its text is written for the top
+            tiers. A drafting assistant, a support summarizer, or a semantic
+            search box is limited risk at most, which leaves you with disclosure
+            and training duties, not audits.
+          </li>
+          <li>
+            <strong class="font-semibold">Your role:</strong> Calling a hosted
+            model makes the vendor the provider of a general-purpose AI model
+            and you the provider of the AI system built on it. Why it matters:
+            the model's documentation, copyright, and safety duties are the
+            vendor's; the duties on the feature you ship are yours.
+          </li>
+          <li>
+            <strong class="font-semibold">Already in force:</strong> AI literacy
+            (Article 4) has applied since February 2, 2025. Staff who build,
+            sell, or operate AI features need training proportionate to their
+            role. A recorded two-hour session covers it; no session at all is
+            the gap a regulator would find first.
+          </li>
+          <li>
+            <strong class="font-semibold">The date that matters:</strong> August
+            2, 2026, when the transparency rules (Article 50) apply. People must
+            be told when they are interacting with an AI, and generated text
+            published to inform the public must be marked as generated. It is
+            the only obligation that touches your product's UI.
+          </li>
+          <li>
+            <strong class="font-semibold">The catch:</strong> If any feature
+            ranks, filters, or scores people in hiring, credit, education,
+            insurance, or essential services, it is high risk under Annex III,
+            and the duties jump to a risk management system, logging, human
+            oversight, a conformity assessment, and registration. Check every
+            roadmap feature against Annex III before building it, not after.
+          </li>
+          <li>
+            <strong class="font-semibold">By the numbers:</strong> Fines run up
+            to 15 million euros or 3 percent of global turnover for most
+            breaches, and up to 35 million or 7 percent for prohibited
+            practices. Small and medium enterprises pay whichever of the two
+            figures is lower. Proportionate, and still not small.
+          </li>
+          <li>
+            <strong class="font-semibold">What's next:</strong> Harmonized
+            standards for high-risk systems are still in draft, and a Commission
+            proposal to push the high-risk dates by about a year is in the
+            legislative process. Watch it; do not plan on it.
+          </li>
+        </ul>
+      </section>
+
+      <section id="figure" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          What applies when
+        </p>
+        <table class="mt-3 w-full text-sm">
+          <thead>
+            <tr
+              class="border-b border-border text-left text-xs text-muted-foreground"
+            >
+              <th class="pb-2 pr-4 font-medium">Date</th>
+              <th class="pb-2 pr-4 font-medium">What starts</th>
+              <th class="pb-2 font-medium">For you</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border align-top">
+            <tr>
+              <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">
+                Feb 2, 2025
+              </td>
+              <td class="py-2.5 pr-4 text-muted-foreground">
+                Prohibited practices, AI literacy
+              </td>
+              <td class="py-2.5 font-medium">
+                Train the team and keep the attendance list.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">
+                Aug 2, 2025
+              </td>
+              <td class="py-2.5 pr-4 text-muted-foreground">
+                General-purpose model duties, governance, penalties
+              </td>
+              <td class="py-2.5 font-medium">
+                Nothing direct. Ask your model vendor for its documentation and
+                file it.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">
+                Aug 2, 2026
+              </td>
+              <td class="py-2.5 pr-4 text-muted-foreground">
+                Transparency (Article 50), Annex III high risk, most of the rest
+              </td>
+              <td class="py-2.5 font-medium">
+                Disclose the AI in the UI and mark generated content. The
+                high-risk track only if a feature is Annex III.
+              </td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">
+                Aug 2, 2027
+              </td>
+              <td class="py-2.5 pr-4 text-muted-foreground">
+                High-risk AI inside regulated products (Annex I)
+              </td>
+              <td class="py-2.5 font-medium">
+                Not you, unless you sell into medical devices or machinery.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="do-dont" class="mt-12 grid gap-8 sm:grid-cols-2">
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Do
+          </p>
+          <ul class="mt-3 space-y-2 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Keep a one-page AI inventory: feature, model, vendor, purpose,
+                risk tier.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Add an "AI-generated" label to chat replies and generated
+                output before August 2026.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Run one AI literacy session this quarter and record who
+                attended.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Check each roadmap feature against Annex III at planning
+                time.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Do not
+          </p>
+          <ul class="mt-3 space-y-2 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Hire a conformity consultant before you have a high-risk
+                feature.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Treat it as GDPR with a new name; the triggers and the
+                regulator differ.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Ship a feature that ranks candidates or scores credit without a
+                legal review.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Assume a mostly US customer base exempts you; the Act applies
+                where the output is used.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="go-deeper" class="mt-12">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Go deeper
+        </p>
+        <ul class="mt-3 space-y-1.5 text-sm leading-6">
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i
+            ><span
+              ><a
+                href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >Regulation (EU) 2024/1689</a
+              >, the text; Article 50 and Annex III are the two pages worth
+              reading in full.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i
+            ><span
+              ><a
+                href="https://artificialintelligenceact.eu/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >The AI Act Explorer</a
+              >, a searchable copy with the timeline and a compliance checker
+              that takes ten minutes.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i
+            ><span
+              ><a
+                href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >The Commission's AI Act pages</a
+              >, for guidance as it is published and the status of the delay
+              proposal.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-12 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Read in full: the
+        regulation text, the Commission's AI Act pages, and two law-firm client
+        notes on obligations for small and medium enterprises; the AI Act
+        Explorer's timeline for the dates. Dates are from the regulation; the
+        delay proposal is reported, not adopted. No lawyer reviewed this page.
+        Illustrative: figures are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      E-bike battery safety rules and certification for a US bike shop
+    </title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="tldr-brief@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-12">
+      <header
+        class="grid gap-6 sm:grid-cols-[minmax(0,1fr)_17rem] sm:items-end sm:gap-10"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+          >
+            TLDR brief · E-bike battery rules for a US bike shop
+          </p>
+          <h1
+            class="mt-3 text-3xl font-semibold leading-[1.15] tracking-[-0.03em] sm:text-4xl"
+          >
+            Sell only certified bikes and packs, charge nothing overnight, and
+            never rebuild a battery. The law is catching up to what your insurer
+            already requires.
+          </h1>
+          <p class="mt-3 text-sm leading-6 text-muted-foreground">
+            For the owner of a US shop that sells, services, and stores e-bikes.
+            Two minutes. Rules are as of this week; the long notes are linked at
+            the end.
+          </p>
+        </div>
+        <figure class="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            By the numbers
+          </p>
+          <p class="mt-1 text-sm font-medium">
+            Lithium-ion battery fires in New York City
+          </p>
+          <svg
+            viewBox="0 0 300 130"
+            class="mt-2 w-full"
+            role="img"
+            aria-label="Bar chart of lithium-ion battery fires per year in New York City: 30 in 2019, 44 in 2020, 104 in 2021, 220 in 2022, 268 in 2023, 277 in 2024"
+          >
+            <g class="fill-brand-500">
+              <rect x="10" y="100" width="36" height="10" rx="2" />
+              <rect x="58" y="96" width="36" height="14" rx="2" />
+              <rect x="106" y="76" width="36" height="34" rx="2" />
+              <rect x="154" y="39" width="36" height="71" rx="2" />
+              <rect x="202" y="23" width="36" height="87" rx="2" />
+              <rect x="250" y="20" width="36" height="90" rx="2" />
+            </g>
+            <line
+              x1="10"
+              x2="286"
+              y1="110.5"
+              y2="110.5"
+              class="stroke-border"
+            />
+            <g
+              class="fill-foreground text-[11px] font-medium"
+              text-anchor="middle"
+            >
+              <text x="28" y="95">30</text>
+              <text x="76" y="91">44</text>
+              <text x="124" y="71">104</text>
+              <text x="172" y="34">220</text>
+              <text x="220" y="18">268</text>
+              <text x="268" y="15">277</text>
+            </g>
+            <g class="fill-muted-foreground text-[11px]" text-anchor="middle">
+              <text x="28" y="125">2019</text>
+              <text x="76" y="125">2020</text>
+              <text x="124" y="125">2021</text>
+              <text x="172" y="125">2022</text>
+              <text x="220" y="125">2023</text>
+              <text x="268" y="125">2024</text>
+            </g>
+          </svg>
+          <figcaption class="mt-2 text-xs leading-5 text-muted-foreground">
+            Fire department counts. Deaths peaked at 18 in 2023 and fell to 6 in
+            2024, the first full year of the city's sales ban.
+          </figcaption>
+        </figure>
+      </header>
+
+      <section id="bullets" class="mt-8 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            What the marks mean
+          </p>
+          <p class="mt-1.5 text-sm leading-6">
+            UL 2849 certifies the whole electrical system of a bike: pack,
+            charger, motor, and wiring together. UL 2271 certifies a pack on its
+            own. Why it matters: a listing that says "UL charger" says nothing
+            about the pack, and a certified pack on an uncertified bike is not a
+            certified bike.
+          </p>
+        </div>
+        <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Where it is law
+          </p>
+          <p class="mt-1.5 text-sm leading-6">
+            New York City has banned the sale, lease, and rental of uncertified
+            e-bikes and packs since September 2023. California requires UL 2849
+            or EN 15194 on bikes sold from January 2026 and UL 2271 on
+            standalone packs from 2027. About a dozen other states have bills.
+            Outside all of them, a fire in an uncertified bike you sold is a
+            claim you lose.
+          </p>
+        </div>
+        <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            What's next, federally
+          </p>
+          <p class="mt-1.5 text-sm leading-6">
+            The Consumer Product Safety Commission has no mandatory standard
+            yet; it has sent letters to makers, run recalls, and opened a
+            rulemaking. Expect a national rule that looks like UL 2849 within
+            two or three years, and expect it to grandfather nothing on your
+            floor.
+          </p>
+        </div>
+        <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Your insurer moves first
+          </p>
+          <p class="mt-1.5 text-sm leading-6">
+            Carriers are adding exclusions for uncertified batteries and for any
+            pack a shop has opened. Why it matters: the exclusion arrives at
+            renewal with no press release. Ask your agent for the endorsement
+            language before you sign.
+          </p>
+        </div>
+        <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            On the shop floor
+          </p>
+          <p class="mt-1.5 text-sm leading-6">
+            Store packs at 30 to 60 percent charge, charge on a noncombustible
+            surface during open hours with someone present, keep charging away
+            from exits, and put damaged packs in a lithium-rated cabinet or bag
+            outside the building. These are the fire department's rules, and the
+            ones an adjuster checks first.
+          </p>
+        </div>
+        <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Shipping a pack back
+          </p>
+          <p class="mt-1.5 text-sm leading-6">
+            A lithium pack ships as class 9 hazmat, UN 3480 on its own or UN
+            3481 inside a bike, which needs a trained shipper, the maker's UN
+            38.3 test summary, and a carrier that accepts it. Why it matters:
+            returning a warranty pack is the part of a claim that stalls.
+          </p>
+        </div>
+        <div
+          class="rounded-xl border-l-4 border-warning-500 bg-warning-50 p-4 sm:col-span-2"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-warning-700 uppercase"
+          >
+            The catch
+          </p>
+          <p class="mt-1.5 text-sm leading-6">
+            Opening a pack ends its certification. Re-celling, swapping a
+            battery management board, or fitting a "compatible" aftermarket pack
+            to a certified bike moves the liability from the maker to you, and
+            voids the very listing your insurer and your city require. Decline
+            the job, every time, and say why.
+          </p>
+        </div>
+      </section>
+
+      <section id="do-dont" class="mt-8 grid gap-6 sm:grid-cols-2">
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Do
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Ask suppliers for the certificate number and look it up in UL's
+                product directory before the first order.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Write "certified only" into the purchasing policy and the
+                consignment agreement.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Post the charging rules at the bench and train every hire on
+                them in week one.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-check mt-1 text-base text-brand-700"></i
+              ><span
+                >Point customers with uncertified bikes at the trade-in
+                programs; several cities pay for the swap.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Do not
+          </p>
+          <ul class="mt-2 space-y-1.5 text-sm leading-6">
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Take an uncertified bike on consignment, or service one you
+                would not sell.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Leave customer bikes charging after close, even on a
+                timer.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Store a swollen or crash-damaged pack indoors overnight.</span
+              >
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="ph ph-x mt-1 text-base text-muted-foreground"></i
+              ><span
+                >Open a pack, for any reason, including a customer who offers to
+                sign a waiver.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="go-deeper" class="mt-8">
+        <p
+          class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          Go deeper
+        </p>
+        <ul class="mt-2 grid gap-1.5 text-sm leading-6 sm:grid-cols-2">
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i
+            ><span
+              ><a
+                href="https://productiq.ul.com/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >UL Product iQ</a
+              >, to check a certificate number against the maker's claim.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i
+            ><span
+              ><a
+                href="https://www.cpsc.gov/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >CPSC</a
+              >, for recalls by brand and the state of the federal
+              rulemaking.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i
+            ><span
+              ><a
+                href="https://www.nyc.gov/site/fdny/index.page"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >FDNY</a
+              >, for the storage and charging guidance most other cities
+              copy.</span
+            >
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="ph ph-arrow-up-right mt-1 text-base text-brand-700"></i
+            ><span
+              ><a
+                href="https://www.nfpa.org/"
+                class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2"
+                >NFPA</a
+              >, for the lithium battery safety sheets to post at the
+              bench.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-10 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Sources.</strong> Read in full: the UL
+        2849 and UL 2271 scope pages, New York City's e-bike sales rule,
+        California's certification bill, the CPSC's letters and rulemaking
+        notice, and the fire department's annual battery fire counts. Fire
+        figures are the department's reported totals; the federal timeline is an
+        estimate. State bills were checked this week and move often.
+        Illustrative: figures are representative, not verified.
+      </footer>
+    </main>
+  </body>
+</html>
