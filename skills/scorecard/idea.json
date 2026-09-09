@@ -1,0 +1,17 @@
+{
+  "title": "Scorecard",
+  "tagline": "The rating page review sites publish, filled in for your decision.",
+  "when": "You have one vendor, tool, candidate, place, or plan in front of you and want it graded across the dimensions that matter, with the evidence beside each score.",
+  "tags": ["decide"],
+  "order": 70,
+  "needs": [],
+  "cover": "used-outback",
+  "sections": [
+    "Overall grade",
+    "Dimension scores",
+    "Evidence",
+    "Strengths and weaknesses",
+    "Comparables",
+    "Sources"
+  ]
+}

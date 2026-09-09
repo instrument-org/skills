@@ -1,0 +1,8 @@
+{
+  "title": "A one-owner 2019 Subaru Outback at 61,000 miles",
+  "prompt": "Score the used 2019 Subaru Outback we're considering buying, 61,000 miles, one owner, $19,500.",
+  "model": "claude-fable-5-1",
+  "note": "Scores out of ten as inline SVG dials in a three-column grid, with the overall as one larger dial, because a buyer scanning on a phone in a driveway reads a dial faster than a bar and a number out of ten maps to how people already talk about used cars. A representative photo of the model sits under the title so the page reads as being about a car, a walk-away callout precedes the strengths and weaknesses because the reader may be about to hand over money, and the comparables are three bordered cards with the subject first. The photo is representative of the category because the research is illustrative.",
+  "illustrative": true,
+  "html_sha256": "011065b5af7a67edd01d6f930fd7f67ea9362964a37dca37ab0933d72d3051d8"
+}
