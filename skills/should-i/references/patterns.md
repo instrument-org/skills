@@ -147,6 +147,24 @@ One Phosphor regular icon per row as a landmark, never two, never an emoji.
 </li>
 ```
 
+## Link to the thing
+
+The question names what the reader would be moving to and away from, and both are links there, since a reader who is not yet sure what either costs goes to check before reading the answer. Link the page that carries the number the page argues about, which is usually pricing rather than a marketing home page.
+
+```html
+<h1 class="mt-2 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
+  Should we move 40 people from <a href="https://slack.com/pricing">Slack</a> to
+  <a
+    href="https://www.microsoft.com/en-us/microsoft-teams/compare-microsoft-teams-business-options"
+    >Microsoft Teams</a
+  >?
+</h1>
+```
+
+The skin styles links in the base layer, so an anchor needs no classes, and a utility on it still wins where a link should read as something else. Color and underline only, never weight or size, so a link inside a heading keeps the type it sits in.
+
+Never a URL you have not read. Where no page for the exact thing exists, no link: a name pointing at the nearest other product is a mistake the reader cannot detect.
+
 ## Source footer
 
 Closes every page. What the numbers rest on, what was assumed, when rates and prices were seen.

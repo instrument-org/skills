@@ -279,6 +279,20 @@ One Phosphor regular icon per row as a landmark, never two, never an emoji.
 </li>
 ```
 
+## Link to the thing
+
+Each option that lives at a URL is a link on its name, where the page first names the set: the result strip, before the reader has read a single score. The scoring table below repeats the names as column heads and does not need them again.
+
+```html
+<dd class="text-muted-foreground">
+  <a href="https://www.mysql.com/">MySQL</a> 75
+</dd>
+```
+
+The skin styles links in the base layer, so an anchor needs no classes, and a utility on it still wins where a link should read as something else. Color and underline only, never weight or size, so a link inside a heading keeps the type it sits in.
+
+Never a URL you have not read. Where no page for the exact thing exists, no link: a name pointing at the nearest other product is a mistake the reader cannot detect.
+
 ## Source footer
 
 Closes every page. What was read, whose scores these are, what is inferred, when.

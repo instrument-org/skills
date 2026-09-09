@@ -50,7 +50,7 @@ A scorecard of a physical thing (a car, an apartment, a building) may open with 
 
 ## Refusals
 
-A page with no overall grade, or one that hides it below the fold. Two scales on one page. A dimension with a score and no evidence, or evidence that only restates the score. Every dimension scored the same. Strengths padded to match the length of the weaknesses. Comparables on a different scale than the subject, or comparables that are not peers. A page that could be any of the examples with the words swapped. Every section a bordered card. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data. A file over about 1.5 MB.
+A page with no overall grade, or one that hides it below the fold. Two scales on one page. A dimension with a score and no evidence, or evidence that only restates the score. Every dimension scored the same. Strengths padded to match the length of the weaknesses. Comparables on a different scale than the subject, or comparables that are not peers. A page that could be any of the examples with the words swapped. Every section a bordered card. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` that fetches from the network beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data. A file over about 1.5 MB. A small inline script is fine where the page reads without it, and a refusal where the page does not.
 
 ## Honesty about research
 

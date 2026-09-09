@@ -256,6 +256,21 @@ One Phosphor regular icon per row as a landmark, never two, never an emoji.
 </li>
 ```
 
+## Link to the thing
+
+A scorecard has one subject, so it gets one link, on its name in the heading. Comparables are there to calibrate the grade rather than to be chosen between, so they stay plain: linking them invites the reader to go shopping in a page that is not a shopping page.
+
+```html
+<h1 class="mt-3 text-3xl font-semibold tracking-[-0.03em]">
+  <a href="https://www.notion.com/pricing">Notion</a> as the company wiki for a
+  40-person team
+</h1>
+```
+
+The skin styles links in the base layer, so an anchor needs no classes, and a utility on it still wins where a link should read as something else. Color and underline only, never weight or size, so a link inside a heading keeps the type it sits in.
+
+Never a URL you have not read. Where no page for the exact thing exists, no link: a name pointing at the nearest other product is a mistake the reader cannot detect.
+
 ## Source footer
 
 Closes every page. What was read, inspected, or measured, when figures were seen, what is inferred, and the credit for any photo.

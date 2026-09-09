@@ -49,7 +49,7 @@ No photos. A matrix is about numbers and reasons, and a picture of the winner ad
 
 ## Refusals
 
-Weights that do not sum to 100, or a scale that changes between criteria. A total that does not reproduce from the shown weights and scores. A weight chosen after the scores. A score with no reason where the reason is not obvious. A winner not called out, or called out without its total. A sensitivity section that guesses instead of recomputing. A heatmap in red and green. A tie broken silently. A fourth option padded in when three exist. A page that could be any of the examples with the numbers swapped. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any interaction the page needs in order to be read.
+Weights that do not sum to 100, or a scale that changes between criteria. A total that does not reproduce from the shown weights and scores. A weight chosen after the scores. A score with no reason where the reason is not obvious. A winner not called out, or called out without its total. A sensitivity section that guesses instead of recomputing. A heatmap in red and green. A tie broken silently. A fourth option padded in when three exist. A page that could be any of the examples with the numbers swapped. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` that fetches from the network beyond the ones the starter carries, and any interaction the page needs in order to be read.
 
 ## Honesty about research
 

@@ -226,6 +226,22 @@ One Phosphor regular icon per row as a landmark, never two, never an emoji.
 </li>
 ```
 
+## Link to the thing
+
+Both sides are things the reader can go look at, so both get a link where the heading first names them, the thing being moved to and the thing being moved from. The tallies and the case headings below repeat the names and stay plain.
+
+```html
+<h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em]">
+  Moving a 300-product store from
+  <a href="https://woocommerce.com/pricing/">WooCommerce</a> to
+  <a href="https://www.shopify.com/pricing">Shopify</a>
+</h1>
+```
+
+The skin styles links in the base layer, so an anchor needs no classes, and a utility on it still wins where a link should read as something else. Color and underline only, never weight or size, so a link inside a heading keeps the type it sits in.
+
+Never a URL you have not read. Where no page for the exact thing exists, no link: a name pointing at the nearest other product is a mistake the reader cannot detect.
+
 ## Source footer
 
 Closes every page. What was read, when figures were seen, what was assumed about the reader, what is inferred.
