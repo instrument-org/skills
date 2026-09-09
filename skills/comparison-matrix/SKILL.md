@@ -50,7 +50,7 @@ A matrix about things people buy may carry a small photo of each option in its h
 
 ## Refusals
 
-A matrix where every cell is a check mark or an X. Cells of prose. More than three tones, or red for a weakness. A best mark in a line that is a tie. A cell that hides the catch a footnote should carry. Attributes only one option has. An option with blank cells. An intro that names a winner and then pretends the table is neutral. A header that scrolls away on a table taller than a screen. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a USB stick. A file over about 1.5 MB.
+A matrix where every cell is a check mark or an X. Cells of prose. More than three tones, or red for a weakness. A best mark in a line that is a tie. A cell that hides the catch a footnote should carry. Attributes only one option has. An option with blank cells. An intro that names a winner and then pretends the table is neutral. A header that scrolls away on a table taller than a screen. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a USB stick, which a hyperlink does nothing to prevent. A file over about 1.5 MB.
 
 ## Honesty about research
 

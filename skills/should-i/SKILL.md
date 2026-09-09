@@ -47,7 +47,7 @@ The look is one light theme, on purpose. A page may choose a darker surface with
 
 ## Refusals
 
-A page that could be any of the examples with the words swapped. A short answer that hedges inside the badge ("probably", "mostly yes"); the hedge lives in the sentence under it. "It depends" with no factors a reader can check, or with more than five. Personas that all reach the same answer. A next step that amounts to "do more research". Risks that are the factors restated. A FAQ padded with questions nobody asks. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a USB stick. A file over about 1.5 MB.
+A page that could be any of the examples with the words swapped. A short answer that hedges inside the badge ("probably", "mostly yes"); the hedge lives in the sentence under it. "It depends" with no factors a reader can check, or with more than five. Personas that all reach the same answer. A next step that amounts to "do more research". Risks that are the factors restated. A FAQ padded with questions nobody asks. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a USB stick, which a hyperlink does nothing to prevent. A file over about 1.5 MB.
 
 ## Honesty about research
 

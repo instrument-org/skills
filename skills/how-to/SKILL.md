@@ -51,7 +51,7 @@ A step carries a time because the procedure has one, and the total in the goal i
 
 ## Refusals
 
-A page that could be any of the examples with the words swapped. Steps with no times. A goal with no cost. A step that hides two actions. Pitfalls collected at the bottom, where the reader finds them after the mistake. A done checklist that repeats the steps instead of naming results. A code block around something that is not code. A guide for a procedure that should have said "call someone" and did not. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a USB stick. A file over about 1.5 MB.
+A page that could be any of the examples with the words swapped. Steps with no times. A goal with no cost. A step that hides two actions. Pitfalls collected at the bottom, where the reader finds them after the mistake. A done checklist that repeats the steps instead of naming results. A code block around something that is not code. A guide for a procedure that should have said "call someone" and did not. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a USB stick, which a hyperlink does nothing to prevent. A file over about 1.5 MB.
 
 ## Honesty about research
 

@@ -45,7 +45,7 @@ The look is one light theme, on purpose. A page may choose a toned surface withi
 
 ## Refusals
 
-A page that could be any of the examples with the words swapped. Entries with no consequence, so the page is a list of dates. Every entry a turning point, or none. A now marker missing from a page whose span reaches the present. Scheduled dates drawn the same as dates that have passed. Eras named by their years alone. A span chart with no scale, or one that is an image rather than inline SVG. Invented precision: a day when the source gave a month, a figure the research did not carry. Every entry a bordered card. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a USB stick. A file over about 1.5 MB.
+A page that could be any of the examples with the words swapped. Entries with no consequence, so the page is a list of dates. Every entry a turning point, or none. A now marker missing from a page whose span reaches the present. Scheduled dates drawn the same as dates that have passed. Eras named by their years alone. A span chart with no scale, or one that is an image rather than inline SVG. Invented precision: a day when the source gave a month, a figure the research did not carry. Every entry a bordered card. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a USB stick, which a hyperlink does nothing to prevent. A file over about 1.5 MB.
 
 ## Honesty about research
 

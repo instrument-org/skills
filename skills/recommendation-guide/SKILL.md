@@ -52,7 +52,7 @@ A guide about things people buy carries a photo of each pick, embedded in the fi
 
 ## Refusals
 
-A page that could be any of the examples with the words swapped. A hero image and three feature cards. Every section a bordered card. A verdict that names no price. A criteria list with no order. Runners-up padded to four when two exist. Sources that are not sources. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a USB stick. A photo of a different product than the one named. A file over about 1.5 MB, or an image left at its original size.
+A page that could be any of the examples with the words swapped. A hero image and three feature cards. Every section a bordered card. A verdict that names no price. A criteria list with no order. Runners-up padded to four when two exist. Sources that are not sources. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a USB stick, which a hyperlink does nothing to prevent. A photo of a different product than the one named. A file over about 1.5 MB, or an image left at its original size.
 
 ## Honesty about research
 

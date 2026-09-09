@@ -46,7 +46,7 @@ The look is one light theme, on purpose; a page never switches with the reader's
 
 ## Refusals
 
-A headline that names the topic rather than the verdict. Bullets without lead-ins, or lead-ins that are all the same word. More than seven bullets, or a bullet that hides two facts. A do list with no do not list, or the reverse. Two charts. A chart that repeats a bullet. A page that needs two screens at laptop width when a cut would fit it in one. Links with no clause on why to follow them. Sources that are not sources. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is not inline data.
+A headline that names the topic rather than the verdict. Bullets without lead-ins, or lead-ins that are all the same word. More than seven bullets, or a bullet that hides two facts. A do list with no do not list, or the reverse. Two charts. A chart that repeats a bullet. A page that needs two screens at laptop width when a cut would fit it in one. Links with no clause on why to follow them. Sources that are not sources. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is not inline data.
 
 ## Honesty about research
 

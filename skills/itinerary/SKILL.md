@@ -51,7 +51,7 @@ A trip page may open with one photo of the place, embedded as a data URI so the 
 
 ## Refusals
 
-A page that could be any of the examples with the cities swapped. A day that is a list of attractions with no order and no travel between them. Three sights in a morning that are an hour apart. A time to the minute when the prompt fixed no times. An exact price for a ticket that was not looked up. A budget figure where the prompt gave none. Every section a bordered card. A places list that repeats what the day blocks already said. A rain plan that is "visit a museum" with no museum named. Any `<link>` or `<script>` beyond the ones the starter carries, and any image that is a link or a relative path rather than inline data: the file has to open from a phone with no signal. A file over about 1.5 MB.
+A page that could be any of the examples with the cities swapped. A day that is a list of attractions with no order and no travel between them. Three sights in a morning that are an hour apart. A time to the minute when the prompt fixed no times. An exact price for a ticket that was not looked up. A budget figure where the prompt gave none. Every section a bordered card. A places list that repeats what the day blocks already said. A rain plan that is "visit a museum" with no museum named. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries, and any image whose `src` is a URL or a relative path rather than inline data: the file has to open from a phone with no signal, which a hyperlink does nothing to prevent. A file over about 1.5 MB.
 
 ## Honesty about research
 

@@ -46,7 +46,7 @@ The look is one light theme, on purpose; a page never switches with the reader's
 
 ## Refusals
 
-A page that could be any of the examples with the words swapped. Items that are topics rather than things done. A list with no groups, or a group with two items. Priority on more than about a fifth of the items, or a priority mark with no legend. A tip on every item. A counter that needs script to read at all. Checkboxes drawn with icons or spans rather than real inputs. A layout that prints the counter, a sticky bar, or a shadow. Numbers in items that the prompt or a source did not give: an amount, a count, a date. Any `<link>` or `<script>` beyond the ones the starter carries plus one inline script for the counter, and any image that is not inline data.
+A page that could be any of the examples with the words swapped. Items that are topics rather than things done. A list with no groups, or a group with two items. Priority on more than about a fifth of the items, or a priority mark with no legend. A tip on every item. A counter that needs script to read at all. Checkboxes drawn with icons or spans rather than real inputs. A layout that prints the counter, a sticky bar, or a shadow. Numbers in items that the prompt or a source did not give: an amount, a count, a date. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any `<link>` or `<script>` beyond the ones the starter carries plus one inline script for the counter, and any image that is not inline data.
 
 ## Honesty about research
 
