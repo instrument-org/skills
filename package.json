@@ -28,6 +28,7 @@
     "check:syncpack": "syncpack lint",
     "check:types": "tsc --noEmit",
     "fix:format": "oxfmt .",
+    "fix:skin": "node scripts/fix-skin.ts",
     "fix:spelling": "node scripts/typos.ts --write-changes",
     "fix:syncpack": "syncpack fix",
     "test": "turbo run test",
