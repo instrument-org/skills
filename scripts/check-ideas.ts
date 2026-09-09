@@ -1,12 +1,15 @@
-// Validates every idea: the skills that carry an idea.json and are rendered as
-// Discover pages on the website. Run by `pnpm check:ideas` and in CI.
+// Validates the create-page skill and every template inside it. The templates
+// are what the website renders as Discover pages, where they are called ideas.
+// Run by `pnpm check:ideas` and in CI.
 //
-// An idea passes when its sidecar is complete, its description is short enough
-// for the agent's index, it has three or more examples with design notes, every
-// example's capture matches the HTML it was made from, its starter carries the
-// shared skin verbatim, and no file depends on anything outside itself.
+// The skill passes when its description fits the agent's index, it links every
+// template it ships, and its one starter carries the shared skin verbatim. A
+// template passes when it has a spec and a main, its sidecar is complete, it has
+// three or more examples with design notes, every example's capture matches the
+// HTML it was made from, and no file depends on anything outside itself.
 
 import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseFrontmatter } from "./check-skill.ts";
 import {
@@ -14,14 +17,17 @@ import {
   type Idea,
   listIdeas,
   normalizedSkin,
+  PAGE_SKILL_DIR,
   sha256,
   skinBlockOf,
-  SKILLS_DIR,
+  STARTER_PATH,
 } from "./ideas.ts";
 
-// Ideas share the agent's skill index with every other skill, so their
-// descriptions are budgeted tighter than the 1024 characters the spec allows.
-const IDEA_DESCRIPTION_MAX_LENGTH = 220;
+// The one description the whole family routes on. It shares the agent's skill
+// index with every other skill, so it is budgeted well under the 1024 the spec
+// allows, but it has sixteen templates to name and gets more room than any one
+// of them used to have.
+const SKILL_DESCRIPTION_MAX_LENGTH = 400;
 const MIN_EXAMPLES = 3;
 // A page travels as one file, so its size is its shareability. Inline images
 // are where it goes wrong: a handful at a few megabytes each and the file no
@@ -209,14 +215,55 @@ export function checkSelfContained(
   }
 }
 
+/**
+ * The parts that are one skill's rather than one template's: the shared shell
+ * every page is copied from, and the single description the whole family routes
+ * on. Both used to be checked sixteen times over sixteen copies.
+ */
+function checkPageSkill(): string[] {
+  const errors: string[] = [];
+
+  const skillMd = readFileSync(join(PAGE_SKILL_DIR, "SKILL.md"), "utf-8");
+  const fm = parseFrontmatter(skillMd);
+  if (!fm?.description) {
+    errors.push("SKILL.md has no description");
+  } else if (fm.description.length > SKILL_DESCRIPTION_MAX_LENGTH) {
+    errors.push(
+      `description is ${fm.description.length} characters (max ${SKILL_DESCRIPTION_MAX_LENGTH}); it shares the agent's skill index with every other skill`,
+    );
+  }
+  // Every template has to be reachable by name from the router, because the
+  // runtime truncates the file listing an agent is handed and a template it
+  // cannot see is a template it cannot open.
+  for (const idea of listIdeas()) {
+    if (!skillMd.includes(`templates/${idea.name}/template.md`)) {
+      errors.push(`SKILL.md never links templates/${idea.name}/template.md`);
+    }
+  }
+
+  if (!existsSync(STARTER_PATH)) {
+    errors.push("starter.html is missing");
+    return errors;
+  }
+  const starter = readFileSync(STARTER_PATH, "utf-8");
+  const block = skinBlockOf(starter);
+  if (block === null) {
+    errors.push("starter.html has no /* skin:start */ … /* skin:end */ block");
+  } else if (block !== normalizedSkin()) {
+    errors.push("starter.html's skin block differs from skin/theme.css");
+  }
+  checkSelfContained("starter.html", starter, errors);
+
+  return errors;
+}
+
 function checkIdea(idea: Idea): string[] {
   const errors: string[] = [];
-  const skillMd = readFileSync(`${idea.dir}/SKILL.md`, "utf-8");
-  const fm = parseFrontmatter(skillMd);
-  if (fm?.description && fm.description.length > IDEA_DESCRIPTION_MAX_LENGTH) {
-    errors.push(
-      `description is ${fm.description.length} characters (max ${IDEA_DESCRIPTION_MAX_LENGTH} for an idea)`,
-    );
+  if (!existsSync(join(idea.dir, "template.md"))) {
+    errors.push("template.md is missing");
+  }
+  if (!existsSync(join(idea.dir, "main.html"))) {
+    errors.push("main.html is missing");
   }
 
   if (!idea.meta) {
@@ -242,21 +289,6 @@ function checkIdea(idea: Idea): string[] {
         "idea.json sketch has more than seven rows; a tile has room for six",
       );
     }
-  }
-
-  if (!existsSync(idea.starterPath)) {
-    errors.push("starter.html is missing");
-  } else {
-    const starter = readFileSync(idea.starterPath, "utf-8");
-    const block = skinBlockOf(starter);
-    if (block === null) {
-      errors.push(
-        "starter.html has no /* skin:start */ … /* skin:end */ block",
-      );
-    } else if (block !== normalizedSkin()) {
-      errors.push("starter.html's skin block differs from skin/theme.css");
-    }
-    checkSelfContained("starter.html", starter, errors);
   }
 
   if (idea.examples.length < MIN_EXAMPLES) {
@@ -309,11 +341,21 @@ function main() {
   // failing because nothing says so.
   if (!only && ideas.length === 0) {
     console.log(
-      `No ideas found under ${SKILLS_DIR}. Either none carry an idea.json, or they moved and listIdeas() in ideas.ts has not followed.`,
+      `No templates found under ${PAGE_SKILL_DIR}. Either none carry an idea.json, or they moved and listIdeas() in ideas.ts has not followed.`,
     );
     process.exit(1);
   }
   let failed = false;
+  // Checked once because there is one of each now: the shell every page copies,
+  // and the description the whole family routes on.
+  const skillErrors = only ? [] : checkPageSkill();
+  if (skillErrors.length > 0) {
+    failed = true;
+    console.log("❌ create-page");
+    for (const error of skillErrors) console.log(`   • ${error}`);
+  } else if (!only) {
+    console.log("✅ create-page");
+  }
   for (const idea of ideas) {
     const errors = checkIdea(idea);
     if (errors.length === 0) {
@@ -324,7 +366,7 @@ function main() {
     console.log(`❌ ${idea.name}`);
     for (const error of errors) console.log(`   • ${error}`);
   }
-  console.log(`${ideas.length} idea(s) checked`);
+  console.log(`${ideas.length} template(s) checked`);
   if (failed) process.exit(1);
 }
 

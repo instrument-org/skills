@@ -5,17 +5,24 @@
 // captured from has changed.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { listIdeas, normalizedSkin, skinBlockOf } from "./ideas.ts";
+import {
+  listIdeas,
+  normalizedSkin,
+  skinBlockOf,
+  STARTER_PATH,
+} from "./ideas.ts";
 
 const START = "/* skin:start */";
 const END = "/* skin:end */";
 
 const skin = readFileSync("skin/theme.css", "utf-8").trimEnd();
 const wanted = normalizedSkin();
-const files = listIdeas().flatMap((idea) => [
-  idea.starterPath,
-  ...idea.examples.map((example) => example.htmlPath),
-]);
+const files = [
+  STARTER_PATH,
+  ...listIdeas().flatMap((idea) =>
+    idea.examples.map((example) => example.htmlPath),
+  ),
+];
 
 let changed = 0;
 for (const file of files) {

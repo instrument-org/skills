@@ -1,6 +1,11 @@
-// Shared reader for ideas: the skills that carry an `idea.json` sidecar and an
-// `examples/` folder, which the website renders as Discover pages. Used by
-// preview.ts, capture.ts, and check-ideas.ts.
+// Shared reader for ideas: the templates inside the `create-page` skill that
+// carry an `idea.json` sidecar and an `examples/` folder, which the website
+// renders as Discover pages. Used by preview.ts, capture.ts, and check-ideas.ts.
+//
+// "Idea" is the website's word for one of these and stays the website's word,
+// because it is baked into its URLs, its components, and its analytics.
+// "Template" is what the agent calls the same thing. This file is the seam, so
+// it is the one place both names appear.
 
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
@@ -9,6 +14,11 @@ import { fileURLToPath } from "node:url";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const SKILLS_DIR = join(REPO_ROOT, "skills");
+/** The skill the templates live in. One starter serves all of them. */
+export const PAGE_SKILL_DIR = join(SKILLS_DIR, "create-page");
+const TEMPLATES_DIR = join(PAGE_SKILL_DIR, "templates");
+/** The single shared shell, checked once rather than once per template. */
+export const STARTER_PATH = join(PAGE_SKILL_DIR, "starter.html");
 const CAPTURES_DIR = join(REPO_ROOT, "captures");
 const SKIN_PATH = join(REPO_ROOT, "skin", "theme.css");
 
@@ -48,7 +58,6 @@ export interface Idea {
   dir: string;
   metaPath: string;
   meta: IdeaMeta | null;
-  starterPath: string;
   examples: Example[];
 }
 
@@ -65,16 +74,16 @@ export function sha256(content: string | Uint8Array): string {
 }
 
 export function listIdeas(): Idea[] {
-  return readdirSync(SKILLS_DIR, { withFileTypes: true })
+  return readdirSync(TEMPLATES_DIR, { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => d.name)
-    .filter((name) => existsSync(join(SKILLS_DIR, name, "idea.json")))
+    .filter((name) => existsSync(join(TEMPLATES_DIR, name, "idea.json")))
     .sort()
     .map((name) => readIdea(name));
 }
 
 export function readIdea(name: string): Idea {
-  const dir = join(SKILLS_DIR, name);
+  const dir = join(TEMPLATES_DIR, name);
   const metaPath = join(dir, "idea.json");
   const examplesDir = join(dir, "examples");
   const examples: Example[] = existsSync(examplesDir)
@@ -98,7 +107,6 @@ export function readIdea(name: string): Idea {
     dir,
     metaPath,
     meta: readJson<IdeaMeta>(metaPath),
-    starterPath: join(dir, "starter.html"),
     examples,
   };
 }

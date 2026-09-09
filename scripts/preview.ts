@@ -10,7 +10,7 @@
 import { readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize, sep } from "node:path";
-import { listIdeas, SKILLS_DIR } from "./ideas.ts";
+import { listIdeas, PAGE_SKILL_DIR, STARTER_PATH } from "./ideas.ts";
 
 const args = process.argv.slice(2);
 const portIndex = args.indexOf("--port");
@@ -35,8 +35,9 @@ function escapeHtml(text: string): string {
 /** Every frame's file and its mtime, so the page can tell what changed. */
 function state(): Record<string, number> {
   const out: Record<string, number> = {};
+  // One starter serves every template, so it is one frame rather than sixteen.
+  out["/skills/starter.html"] = mtime(STARTER_PATH);
   for (const idea of listIdeas()) {
-    out[`/skills/${idea.name}/starter.html`] = mtime(idea.starterPath);
     for (const example of idea.examples) {
       out[`/skills/${idea.name}/examples/${example.name}.html`] = mtime(
         example.htmlPath,
@@ -68,8 +69,8 @@ function page(): string {
         ),
         `
         <figure>
-          <iframe data-src="/skills/${idea.name}/starter.html" src="/skills/${idea.name}/starter.html" title="starter"></iframe>
-          <figcaption><strong>starter.html</strong> <span>the skeleton an agent copies</span> <a href="/skills/${idea.name}/starter.html" target="_blank">open</a></figcaption>
+          <iframe data-src="/skills/starter.html" src="/skills/starter.html" title="starter"></iframe>
+          <figcaption><strong>starter.html</strong> <span>the shell every template copies</span> <a href="/skills/starter.html" target="_blank">open</a></figcaption>
         </figure>`,
       ].join("");
       return `
@@ -152,7 +153,10 @@ const server = createServer((request, response) => {
       response.writeHead(400).end();
       return;
     }
-    const file = join(SKILLS_DIR, relative);
+    const file =
+      relative === "starter.html"
+        ? STARTER_PATH
+        : join(PAGE_SKILL_DIR, "templates", relative);
     try {
       const body = readFileSync(file);
       response.writeHead(200, {
