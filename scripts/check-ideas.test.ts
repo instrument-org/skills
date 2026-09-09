@@ -65,6 +65,24 @@ describe("checkSelfContained", () => {
     `);
   });
 
+  it("passes the favicon address a script is allowed to build", () => {
+    expect(
+      errorsFor(
+        `<script>icon.src = "https://t0.gstatic.com/faviconV2?size=64&url=" + encodeURIComponent(origin);</script>`,
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects any other address a script builds at runtime", () => {
+    expect(
+      errorsFor(`<script>fetch("https://evil.example/beacon?p=1");</script>`),
+    ).toMatchInlineSnapshot(`
+      [
+        "page.html: a script reaches https://evil.example/beacon?p=1; only https://t0.gstatic.com may be built at runtime",
+      ]
+    `);
+  });
+
   it("rejects an allowed origin serving a path outside its family", () => {
     expect(
       errorsFor(

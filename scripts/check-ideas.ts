@@ -71,6 +71,13 @@ const ALLOWED_SOURCES = [
   { origin: "https://cdn.jsdelivr.net", path: "/npm/@tailwindcss/browser@" },
   { origin: "https://cdn.jsdelivr.net", path: "/npm/@phosphor-icons/web@" },
 ];
+// The one remote address a script on these pages may build. A link wears the
+// icon of the site it points at, and no CSS can read a host out of an href, so
+// the icon's URL is assembled at runtime and is invisible to the scan below.
+// It is allowed because it is decoration: offline the icons never arrive and
+// every page reads exactly as it does with them. Anything else a script
+// reaches for is a load this file cannot see and must not have.
+const SCRIPT_BUILT_ORIGIN = "https://t0.gstatic.com";
 // Tags that fetch what they name, and the attributes they fetch it through.
 const LOADER_TAGS = ["link", "script"];
 const MEDIA_TAGS = ["img", "video", "audio", "iframe", "source", "embed"];
@@ -187,6 +194,16 @@ export function checkSelfContained(
       errors.push(
         `${file}: a stylesheet loads ${url.slice(0, 80)}; it must be inline data`,
       );
+    }
+  }
+  // A script builds its addresses at runtime, where nothing above can see them.
+  for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
+    for (const match of (script[1] ?? "").matchAll(/https?:\/\/[^\s"'`]+/g)) {
+      if (!match[0].startsWith(SCRIPT_BUILT_ORIGIN)) {
+        errors.push(
+          `${file}: a script reaches ${match[0].slice(0, 80)}; only ${SCRIPT_BUILT_ORIGIN} may be built at runtime`,
+        );
+      }
     }
   }
 }
