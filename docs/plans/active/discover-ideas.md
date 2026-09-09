@@ -1,6 +1,6 @@
 # Discover ideas
 
-Status: In progress. The framework and the first idea (`recommendation-guide`) exist; the remaining seven of the first eight are unwritten.
+Status: In progress. The framework and the first eight ideas exist with three examples each; the next wave is unscheduled.
 
 ## What this is
 
@@ -10,7 +10,7 @@ Ideas are skills that make a kind of document. The website's Discover section (`
 
 Each is a page shape from the research catalog. Sections are intents to answer, not a layout; every idea needs three examples that differ on purpose.
 
-1. `recommendation-guide` (done): the best option for most people, with how it was chosen. Verdict; who this is for; picks (top, runner-up, budget, upgrade); flaws but not dealbreakers; criteria; how we chose; what we skipped; sources.
+1. `recommendation-guide`: the best option for most people, with how it was chosen. Verdict; who this is for; picks (top, runner-up, budget, upgrade); flaws but not dealbreakers; criteria; how we chose; what we skipped; sources.
 2. `comparison-matrix`: many options across the same attributes at a glance, for multi-dimensional trade-offs with no single winner. Intro; criteria legend; the matrix; per-option footnotes; how to read this; sources.
 3. `should-i`: a yes, a no, or an it-depends for a binary or small-branch decision. Question restated; short answer; the three to five factors it depends on; recommendation by situation; risks; next step; questions people ask.
 4. `criteria-recommendation`: explicit weighted criteria, scored options, a transparent winner. Goal; criteria and weights; score table; winner; sensitivity (what changes if a weight moves); sources.
