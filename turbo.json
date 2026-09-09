@@ -90,6 +90,10 @@
       "inputs": ["$TURBO_DEFAULT$", "typos.toml"],
       "outputs": []
     },
+    "//#test:scripts": {
+      "inputs": ["scripts/**", "vitest.config.ts", "package.json"],
+      "outputs": []
+    },
     "//#check:format": {
       "inputs": ["$TURBO_DEFAULT$", ".oxfmtrc.json"],
       "outputs": []

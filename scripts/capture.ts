@@ -11,6 +11,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { pathToFileURL } from "node:url";
 import { listIdeas, readIdea, sha256, type ExampleMeta } from "./ideas.ts";
 
 // Portrait, two by three: the pages read at a narrow measure and carry their
@@ -81,4 +82,5 @@ function main() {
   }
 }
 
-main();
+// Imported by its tests, so only run as a command.
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) main();

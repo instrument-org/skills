@@ -7,6 +7,7 @@
 // shared skin verbatim, and no file depends on anything outside itself.
 
 import { existsSync, readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { parseFrontmatter } from "./check-skill.ts";
 import {
   type ExampleMeta,
@@ -128,7 +129,34 @@ function checkSize(file: string, html: string, errors: string[]) {
   }
 }
 
-function checkSelfContained(file: string, html: string, errors: string[]) {
+export function checkExampleMeta(
+  label: string,
+  meta: ExampleMeta,
+  errors: string[],
+) {
+  for (const key of EXAMPLE_KEYS) {
+    // Present is not enough: capture writes a blank sidecar when one is
+    // missing, and a blank design note is the failure this check exists for.
+    const value = meta[key as keyof ExampleMeta];
+    if (typeof value !== "string" || value.trim() === "") {
+      errors.push(`${label}.json needs a non-empty "${key}"`);
+    }
+  }
+  if (
+    typeof meta.variant === "string" &&
+    meta.variant.length > VARIANT_MAX_CHARS
+  ) {
+    errors.push(
+      `${label}.json: "variant" is ${meta.variant.length} characters, over the ${VARIANT_MAX_CHARS} a caption may take`,
+    );
+  }
+}
+
+export function checkSelfContained(
+  file: string,
+  html: string,
+  errors: string[],
+) {
   for (const attribute of ["href", "src"]) {
     for (const url of attributeValues(html, LOADER_TAGS, attribute)) {
       if (url.startsWith("data:")) continue;
@@ -237,22 +265,7 @@ function checkIdea(idea: Idea): string[] {
       errors.push(`${label}.json is missing or not valid JSON`);
       continue;
     }
-    for (const key of EXAMPLE_KEYS) {
-      // Present is not enough: capture writes a blank sidecar when one is
-      // missing, and a blank design note is the failure this check exists for.
-      const value = example.meta[key as keyof ExampleMeta];
-      if (typeof value !== "string" || value.trim() === "") {
-        errors.push(`${label}.json needs a non-empty "${key}"`);
-      }
-    }
-    if (
-      typeof example.meta.variant === "string" &&
-      example.meta.variant.length > VARIANT_MAX_CHARS
-    ) {
-      errors.push(
-        `${label}.json: "variant" is ${example.meta.variant.length} characters, over the ${VARIANT_MAX_CHARS} a caption may take`,
-      );
-    }
+    checkExampleMeta(label, example.meta, errors);
     if (!existsSync(example.capturePath)) {
       errors.push(`${label}: no capture; run \`pnpm capture ${idea.name}\``);
     } else if (example.meta.html_sha256 !== sha256(html)) {
@@ -288,4 +301,5 @@ function main() {
   if (failed) process.exit(1);
 }
 
-main();
+// Imported by its tests, so only run as a command.
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) main();
