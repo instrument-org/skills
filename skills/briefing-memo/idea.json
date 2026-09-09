@@ -1,0 +1,18 @@
+{
+  "title": "Briefing memo",
+  "tagline": "The policy brief think tanks publish, written for your decision.",
+  "when": "You have to decide something with real stakes and want the situation, the options, and a recommendation on one page before you commit.",
+  "tags": ["decide"],
+  "order": 60,
+  "needs": [],
+  "cover": "competitor-price-cut",
+  "sections": [
+    "Bottom line",
+    "Context",
+    "Key facts",
+    "Options",
+    "Recommendation",
+    "Open questions",
+    "Annex"
+  ]
+}

@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fulfillment: stay in Oakland or move to Reno</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="briefing-memo@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-gray-100 font-sans text-foreground antialiased">
+    <main
+      class="mx-auto my-6 max-w-3xl border border-border bg-card px-6 py-10 shadow-sm sm:my-12 sm:px-14 sm:py-14"
+    >
+      <header>
+        <p
+          class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+        >
+          Briefing memo
+        </p>
+        <h1
+          class="mt-3 font-serif text-2xl font-medium tracking-[-0.02em] sm:text-3xl"
+        >
+          Fulfillment: stay in Oakland or move to Reno
+        </h1>
+        <dl
+          class="mt-6 grid grid-cols-[4rem_1fr] gap-x-4 gap-y-1.5 border-y border-foreground py-4 text-sm"
+        >
+          <dt
+            class="pt-0.5 font-mono text-xs tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            To
+          </dt>
+          <dd>Dana Whitfield, CEO</dd>
+          <dt
+            class="pt-0.5 font-mono text-xs tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            From
+          </dt>
+          <dd>Marcus Lee, VP Operations</dd>
+          <dt
+            class="pt-0.5 font-mono text-xs tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            Date
+          </dt>
+          <dd>September 8, 2026</dd>
+          <dt
+            class="pt-0.5 font-mono text-xs tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            Re
+          </dt>
+          <dd>
+            Whether to move fulfillment from Oakland to Reno before the lease
+            ends in March 2028
+          </dd>
+        </dl>
+      </header>
+
+      <section id="bluf" class="mt-8">
+        <div class="border-2 border-foreground p-5">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Bottom line up front
+          </p>
+          <p class="mt-2 font-serif text-lg leading-7">
+            Move to Reno in phases: sign a lease by March 2027, ship
+            non-California orders from Reno by June, and keep a small Oakland
+            node for Bay Area same-day until the Oakland lease ends. A phased
+            move captures about 80 percent of the $725,000 a year a full move
+            saves and avoids a hard cutover of 900 orders a day. Decision needed
+            by <strong>November 15, 2026</strong> to hold the Reno incentive
+            window.
+          </p>
+        </div>
+      </section>
+
+      <section id="context" class="mt-10">
+        <h2 class="flex items-baseline gap-3 font-serif text-xl font-medium">
+          <span class="font-mono text-sm text-muted-foreground">1.</span>Context
+        </h2>
+        <p class="mt-3 text-[15px] leading-7">
+          We fulfill from a 48,000 square foot building in Oakland on a lease
+          that ends March 31, 2028. The landlord has offered an early renewal at
+          about $1.60 a square foot, up from $1.45. Volume is 900 orders a day
+          and the 2027 plan calls for 1,400, which the Oakland floor cannot hold
+          past about 1,200 without mezzanine racking or a second site. Reno's
+          industrial market is offering 12 to 18 months of free rent on
+          seven-year terms through early 2027, and both brokers we spoke to
+          expect that window to close once the two distribution centers now
+          under construction there open. Doing nothing means renewing in Oakland
+          at the higher rate in mid-2027, at capacity, with the Reno incentives
+          gone.
+        </p>
+      </section>
+
+      <section id="facts" class="mt-10">
+        <h2 class="flex items-baseline gap-3 font-serif text-xl font-medium">
+          <span class="font-mono text-sm text-muted-foreground">2.</span>Key
+          facts
+        </h2>
+        <ul class="mt-3 divide-y divide-border text-sm leading-6">
+          <li class="py-2">
+            <strong>900 orders a day</strong>, 5.5 days a week, peaking at 1,600
+            a day in November and December.
+          </li>
+          <li class="py-2">
+            <strong>Oakland rent: about $835,000 a year</strong> for 48,000
+            square feet at $1.45 per square foot NNN. The early renewal offer is
+            $1.60.
+          </li>
+          <li class="py-2">
+            <strong>Reno rent: about $520,000 a year</strong> for 60,000 square
+            feet at $0.72, from three current listings seen this week, before 12
+            to 18 months of free rent.
+          </li>
+          <li class="py-2">
+            <strong>Labor: about $520,000 a year lower in Reno.</strong> 42
+            warehouse FTE at a loaded $31 an hour in Oakland against about $25
+            in Reno, at today's rates.
+          </li>
+          <li class="py-2">
+            <strong>Inbound: about $117,000 a year higher from Reno.</strong>
+            180 containers a year land at the Port of Oakland; drayage to Reno
+            adds about $650 each.
+          </li>
+          <li class="py-2">
+            <strong>Net saving of a full move: about $725,000 a year</strong> at
+            today's volume, and about $1.0 million at the 2027 plan's 1,400 a
+            day.
+          </li>
+          <li class="py-2">
+            <strong>62 percent of orders ship to California.</strong> Reno
+            reaches the Bay Area in one ground day and Los Angeles in two;
+            Oakland reaches the Bay Area same day, which 14 percent of orders
+            use.
+          </li>
+          <li class="py-2">
+            <strong>9 of 42 staff would consider relocating.</strong> Severance
+            for the rest is about $180,000, and Reno hiring runs 8 to 10 weeks
+            per cohort.
+          </li>
+          <li class="py-2">
+            <strong>One-time cost of moving: $650,000 to $900,000</strong>,
+            covering racking, freight, dual running, severance, hiring, and
+            warehouse system reconfiguration.
+          </li>
+        </ul>
+      </section>
+
+      <section id="options" class="mt-10">
+        <h2 class="flex items-baseline gap-3 font-serif text-xl font-medium">
+          <span class="font-mono text-sm text-muted-foreground">3.</span>Options
+        </h2>
+        <div class="mt-4 grid gap-3 sm:-mx-8 sm:grid-cols-3">
+          <div class="flex flex-col border border-border p-4">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Option A
+            </p>
+            <p class="mt-1 font-serif text-lg leading-6 font-medium">
+              Stay in Oakland and renew early
+            </p>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Take the $1.60 renewal now and add mezzanine racking for 2027
+              volume.
+            </p>
+            <dl
+              class="mt-4 space-y-3 border-t border-border pt-4 text-sm leading-6"
+            >
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Cost
+                </dt>
+                <dd>
+                  Rent rises about $85,000 a year; about $150,000 once for
+                  racking; no move cost.
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Risk
+                </dt>
+                <dd>
+                  Low operationally. The floor is full at 1,200 a day, and the
+                  2027 plan passes that by October.
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Forecloses
+                </dt>
+                <dd>
+                  The Reno incentive window, and growth past 1,200 a day without
+                  a second site.
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div class="flex flex-col border border-border p-4">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase"
+            >
+              Option B
+            </p>
+            <p class="mt-1 font-serif text-lg leading-6 font-medium">
+              Full move, hard cutover in Q2 2027
+            </p>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Close Oakland over one weekend once Reno is racked and staffed.
+            </p>
+            <dl
+              class="mt-4 space-y-3 border-t border-border pt-4 text-sm leading-6"
+            >
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Cost
+                </dt>
+                <dd>
+                  $650,000 to $900,000 once; saves about $725,000 a year from
+                  the first full year. Oakland rent runs to 2028 unless sublet,
+                  and sublets recover 60 to 70 percent today.
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Risk
+                </dt>
+                <dd>
+                  Two to three weeks of degraded service at cutover, and 33
+                  experienced staff leaving on the same day.
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Forecloses
+                </dt>
+                <dd>
+                  Bay Area same-day delivery, before we know whether customers
+                  pay for it.
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div class="flex flex-col border-2 border-brand-300 p-4">
+            <p
+              class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+            >
+              Option C · Recommended
+            </p>
+            <p class="mt-1 font-serif text-lg leading-6 font-medium">
+              Phased move, Oakland kept as a same-day node
+            </p>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              Reno takes the 38 percent of orders that leave California by June,
+              then everything but Bay Area same-day by September.
+            </p>
+            <dl
+              class="mt-4 space-y-3 border-t border-border pt-4 text-sm leading-6"
+            >
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Cost
+                </dt>
+                <dd>
+                  $800,000 to $1,000,000 once, higher for the longer dual
+                  running; saves about $580,000 a year until Oakland closes,
+                  then the full $725,000.
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Risk
+                </dt>
+                <dd>
+                  Two nodes need the warehouse system's multi-site module, about
+                  six weeks of configuration, and a split inventory rebalanced
+                  weekly.
+                </dd>
+              </div>
+              <div>
+                <dt
+                  class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+                >
+                  Forecloses
+                </dt>
+                <dd>
+                  Little. The Oakland node can close in 2028 or stay as a 10,000
+                  square foot same-day room.
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section id="recommendation" class="mt-10">
+        <h2 class="flex items-baseline gap-3 font-serif text-xl font-medium">
+          <span class="font-mono text-sm text-muted-foreground">4.</span
+          >Recommendation
+        </h2>
+        <div class="mt-4 border-l-4 border-brand-500 bg-brand-25 p-5">
+          <p class="font-serif text-lg leading-7">
+            Option C, the phased move. It captures most of the saving, it moves
+            the risk out of peak, and it keeps the one thing Oakland does that
+            Reno cannot, same-day for the Bay Area, until we know whether
+            customers pay for it. Option B saves $145,000 a year more and buys
+            that with a cutover we have never done at this volume. Option A is
+            the cheapest year and the most expensive decade.
+          </p>
+          <ol class="mt-4 list-decimal space-y-1 pl-5 text-sm leading-6">
+            <li>
+              Tour the three Reno listings.
+              <span class="text-muted-foreground"
+                >Marcus, week of September 22.</span
+              >
+            </li>
+            <li>
+              Ask the Oakland landlord in writing about a partial surrender of
+              38,000 square feet from mid-2027.
+              <span class="text-muted-foreground">Marcus, by October 3.</span>
+            </li>
+            <li>
+              Scope the warehouse system's multi-site module with the vendor.
+              <span class="text-muted-foreground"
+                >Priya Nair, by October 17.</span
+              >
+            </li>
+            <li>Decision at the November 12 board meeting.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="questions" class="mt-10">
+        <h2 class="flex items-baseline gap-3 font-serif text-xl font-medium">
+          <span class="font-mono text-sm text-muted-foreground">5.</span>Open
+          questions
+        </h2>
+        <ol class="mt-3 list-decimal space-y-3 pl-5 text-sm leading-6">
+          <li>
+            Will the Oakland landlord accept a partial surrender or a sublease
+            of 38,000 square feet from mid-2027? If not, the phased option
+            carries dual rent a full year longer and its saving narrows to about
+            $400,000.
+            <span class="text-muted-foreground">Marcus, this month.</span>
+          </li>
+          <li>
+            How many of the nine who said they would relocate go once there is
+            an offer on the table? Below five, the Reno launch cohort has no
+            experienced leads.
+            <span class="text-muted-foreground"
+              >People team, by October 10.</span
+            >
+          </li>
+          <li>
+            Does the warehouse system's multi-site module hold one inventory
+            pool across two buildings, or two pools with transfers? Two pools
+            doubles safety stock on the top 200 SKUs.
+            <span class="text-muted-foreground">Priya, with the vendor.</span>
+          </li>
+          <li>
+            Does same-day delivery in the Bay Area move retention? We have never
+            measured it. A holdout test in October would answer it before the
+            decision.
+            <span class="text-muted-foreground">Growth, by November 1.</span>
+          </li>
+          <li>
+            What will Reno warehouse wages be once the two distribution centers
+            under construction start hiring in 2027? Our $25 loaded figure is
+            today's rate.
+            <span class="text-muted-foreground">Marcus, ask both brokers.</span>
+          </li>
+        </ol>
+      </section>
+
+      <footer
+        class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Annex.</strong> Read: the Oakland lease
+        and the landlord's renewal letter; three Reno industrial listings from
+        two brokers, seen this week; the Q2 fulfillment P&amp;L; county wage
+        data for warehouse occupations in Alameda and Washoe counties; our
+        parcel rate card and zone map; one call with our drayage carrier. Not
+        done: no Reno site visit, no landlord conversation, no customer research
+        on same-day. Rents, wages, and the one-time move cost are estimates with
+        the ranges shown. Illustrative: figures are representative, not
+        verified.
+      </footer>
+    </main>
+  </body>
+</html>

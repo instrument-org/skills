@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responding to Harbor's 20 percent price cut</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="briefing-memo@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <div id="bluf" class="border-b-4 border-warning-500 bg-warning-50">
+      <div class="mx-auto max-w-4xl px-5 py-5 sm:px-8">
+        <p
+          class="flex items-center gap-2 text-xs font-semibold tracking-[0.12em] text-warning-700 uppercase"
+        >
+          <i class="ph-fill ph-warning text-base"></i>Bottom line up front ·
+          decision needed Friday, September 12
+        </p>
+        <p
+          class="mt-2 text-lg leading-7 font-semibold tracking-[-0.01em] sm:text-xl sm:leading-8"
+        >
+          Do not match the cut. Hold list price at $45, fold the $8 reporting
+          add-on into the Team plan for new deals and renewals, and give sales a
+          capped 90-day retention discount for the $1.2 million of renewals
+          tagged price-sensitive. Matching costs $3.6 million of ARR to answer a
+          threat that has so far cost us two accounts.
+        </p>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-4xl px-5 py-8 sm:px-8">
+      <header
+        class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 border-b border-border pb-5"
+      >
+        <div>
+          <p
+            class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+          >
+            Briefing memo
+          </p>
+          <h1
+            class="mt-1 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl"
+          >
+            Responding to Harbor's 20 percent price cut
+          </h1>
+        </div>
+        <dl
+          class="grid grid-cols-[2.5rem_auto] gap-x-3 gap-y-0.5 text-xs leading-5 text-muted-foreground"
+        >
+          <dt class="font-medium tracking-[0.1em] uppercase">To</dt>
+          <dd class="text-foreground">Leadership team</dd>
+          <dt class="font-medium tracking-[0.1em] uppercase">From</dt>
+          <dd class="text-foreground">Elena Marsh, Revenue Operations</dd>
+          <dt class="font-medium tracking-[0.1em] uppercase">Date</dt>
+          <dd class="text-foreground">September 8, 2026</dd>
+          <dt class="font-medium tracking-[0.1em] uppercase">Re</dt>
+          <dd class="text-foreground">
+            Harbor's Team plan, $49 to $39 a seat, effective September 1
+          </dd>
+        </dl>
+      </header>
+
+      <section id="facts" class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border border-border bg-card p-4">
+          <p
+            class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            Exposed pipeline
+          </p>
+          <p class="mt-1 font-mono text-2xl font-medium tracking-[-0.02em]">
+            $2.3M
+          </p>
+          <p class="mt-1 text-xs leading-5 text-muted-foreground">
+            61 open deals where Harbor is the alternative, closing in the next
+            90 days. 14 have proposals due next week.
+          </p>
+        </div>
+        <div class="rounded-lg border border-border bg-card p-4">
+          <p
+            class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            Renewals in 90 days
+          </p>
+          <p class="mt-1 font-mono text-2xl font-medium tracking-[-0.02em]">
+            $4.1M
+          </p>
+          <p class="mt-1 text-xs leading-5 text-muted-foreground">
+            Of which $1.2M is tagged price-sensitive by customer success: 38
+            accounts, mostly under 30 seats.
+          </p>
+        </div>
+        <div class="rounded-lg border border-border bg-card p-4">
+          <p
+            class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            Win rate vs Harbor
+          </p>
+          <p class="mt-1 font-mono text-2xl font-medium tracking-[-0.02em]">
+            54%
+          </p>
+          <p class="mt-1 text-xs leading-5 text-muted-foreground">
+            87 deals against Harbor in the 90 days before the cut, at $45 list
+            against their $49.
+          </p>
+        </div>
+        <div class="rounded-lg border border-border bg-card p-4">
+          <p
+            class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+          >
+            Cost to match
+          </p>
+          <p class="mt-1 font-mono text-2xl font-medium tracking-[-0.02em]">
+            $3.6M
+          </p>
+          <p class="mt-1 text-xs leading-5 text-muted-foreground">
+            ARR given up if a 20 percent cut reaches the $18M base at renewal;
+            $1.9M if new deals only.
+          </p>
+        </div>
+      </section>
+
+      <section id="context" class="mt-8">
+        <h2
+          class="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          01 · Context
+        </h2>
+        <p class="mt-2 max-w-3xl text-sm leading-6">
+          Harbor cut its Team plan from $49 to $39 a seat per month on Tuesday,
+          September 1, effective immediately for new customers and at renewal
+          for existing ones. Its Business plan did not move. Our Team plan lists
+          at $45 and realizes about $41 after discounts, so Harbor went from 9
+          percent above us to 13 percent below us in a week. Six business days
+          in, four open deals have asked us to match and two accounts, $71,000
+          of ARR together, have given notice citing price. Sales wants guidance
+          by Friday because 14 of the exposed deals have proposals due next
+          week, and every day without a position is a day reps improvise one.
+        </p>
+        <p class="mt-3 max-w-3xl text-sm leading-6">
+          What we know about Harbor: their last round was in 2024, press reports
+          put gross margin near 70 percent, and their pricing page shows no end
+          date on the new price. Two customers who buy from both of us say it
+          was presented to them as permanent. A 20 percent list cut at their
+          margin costs them more than waiting costs us.
+        </p>
+      </section>
+
+      <section id="options" class="mt-8">
+        <h2
+          class="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          02 · Options
+        </h2>
+        <div class="mt-3 overflow-x-auto">
+          <table class="w-full min-w-[44rem] text-sm">
+            <thead>
+              <tr
+                class="border-b border-border text-left text-xs text-muted-foreground"
+              >
+                <th class="pb-2 pr-4 font-medium">Option</th>
+                <th class="pb-2 pr-4 font-medium">What it is</th>
+                <th class="pb-2 pr-4 font-medium">Cost, annual</th>
+                <th class="pb-2 pr-4 font-medium">Risk</th>
+                <th class="pb-2 font-medium">Forecloses</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border align-top leading-5">
+              <tr>
+                <td class="py-3 pr-4 font-semibold whitespace-nowrap">
+                  A · Match
+                </td>
+                <td class="py-3 pr-4">
+                  Cut the Team list price to $36 for new deals and at renewal.
+                </td>
+                <td class="py-3 pr-4">
+                  $3.6M of ARR at renewal across the base; $1.9M if new deals
+                  only, which existing customers notice within a quarter.
+                </td>
+                <td class="py-3 pr-4">
+                  Starts a price war we have less margin to fight; gross margin
+                  falls from 78 to about 72 percent; tells the market the
+                  product is worth what Harbor charges.
+                </td>
+                <td class="py-3">
+                  Pricing above Harbor again, and the premium position the
+                  roadmap assumes.
+                </td>
+              </tr>
+              <tr class="bg-brand-25">
+                <td class="py-3 pr-4 pl-2 font-semibold whitespace-nowrap">
+                  B · Hold and add value<span
+                    class="mt-1 block w-fit rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-semibold tracking-[0.08em] text-brand-700 uppercase"
+                    >Recommended</span
+                  >
+                </td>
+                <td class="py-3 pr-4">
+                  Keep $45. Bundle the $8 reporting add-on into Team for new
+                  deals and renewals. Authorize up to 15 percent off for 90 days
+                  on renewals tagged price-sensitive, capped at $400,000 in
+                  total.
+                </td>
+                <td class="py-3 pr-4">
+                  About $600,000 of add-on revenue forgone, plus up to $400,000
+                  of retention discounts: about $1.0M at the worst case.
+                </td>
+                <td class="py-3 pr-4">
+                  We lose 10 to 15 of the 61 exposed deals on price. If Harbor's
+                  cut holds a year, a slow leak in accounts under 30 seats.
+                </td>
+                <td class="py-3 pr-2">
+                  Unbundling reporting later. Little else.
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3 pr-4 font-semibold whitespace-nowrap">
+                  C · New $29 tier
+                </td>
+                <td class="py-3 pr-4">
+                  Ship a Core tier without automations or integrations at $29 a
+                  seat. Team stays at $45.
+                </td>
+                <td class="py-3 pr-4">
+                  About $250,000 to build and package, then $500,000 to $900,000
+                  a year of Team customers trading down.
+                </td>
+                <td class="py-3 pr-4">
+                  Three months to ship, past the renewal window. Splits the
+                  roadmap, and Harbor can cut again at $29.
+                </td>
+                <td class="py-3">
+                  Nothing durable, but on its own it leaves the next 90 days
+                  unanswered.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="recommendation" class="mt-8">
+        <h2
+          class="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          03 · Recommendation
+        </h2>
+        <div
+          class="mt-3 grid gap-5 rounded-lg border border-brand-300 bg-card p-5 shadow-sm sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
+        >
+          <p class="text-sm leading-6">
+            <strong>Option B now, with C scoped for a Q1 decision.</strong> The
+            win rate held at 54 percent with a 9 percent price gap in Harbor's
+            favor closed by product. A 13 percent gap the other way is a harder
+            sell, not a lost one, and the reporting bundle is worth $8 a seat to
+            a buyer while costing us far less than a list cut. The retention
+            discount is targeted, capped, and expires; a price cut is none of
+            those. If Harbor is still at $39 in January, the Core tier is the
+            durable answer, and we will have 90 days of win-loss data to size
+            it.
+          </p>
+          <ol class="list-decimal space-y-1.5 pl-5 text-sm leading-6">
+            <li>
+              Bundle and discount rules to sales.
+              <span class="text-muted-foreground"
+                >Elena, Monday September 15.</span
+              >
+            </li>
+            <li>
+              Set the $400,000 cap and review it weekly.
+              <span class="text-muted-foreground"
+                >Jon Park, finance, from September 15.</span
+              >
+            </li>
+            <li>
+              Scope the Core tier for a January decision.
+              <span class="text-muted-foreground"
+                >Maya Chen, product, by October 31.</span
+              >
+            </li>
+            <li>
+              Revisit with 30 days of win-loss data.
+              <span class="text-muted-foreground"
+                >Leadership meeting, October 6.</span
+              >
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="questions" class="mt-8">
+        <h2
+          class="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+        >
+          04 · Open questions
+        </h2>
+        <ul class="mt-3 divide-y divide-border text-sm leading-6">
+          <li class="flex items-start gap-3 py-2.5">
+            <i class="ph ph-square mt-1 text-lg text-muted-foreground"></i
+            ><span
+              >Is the cut permanent or a promotion? No end date on their page
+              and two customers say permanent. Confirm with two more shared
+              customers.
+              <span class="text-muted-foreground">Elena, Wednesday.</span></span
+            >
+          </li>
+          <li class="flex items-start gap-3 py-2.5">
+            <i class="ph ph-square mt-1 text-lg text-muted-foreground"></i
+            ><span
+              >Are they discounting below $39 in competitive deals? Loss reviews
+              on the four match requests. If they are at $35 in practice, option
+              B's leak estimate doubles.
+              <span class="text-muted-foreground"
+                >Sales leads, Thursday.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-3 py-2.5">
+            <i class="ph ph-square mt-1 text-lg text-muted-foreground"></i
+            ><span
+              >Can billing apply the reporting bundle at renewal without a
+              manual step? If not, the bundle starts with new deals only and
+              renewals get it at the next cycle.
+              <span class="text-muted-foreground"
+                >Engineering, Wednesday.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-3 py-2.5">
+            <i class="ph ph-square mt-1 text-lg text-muted-foreground"></i
+            ><span
+              >Which 12 of the price-sensitive renewals are due in the next 30
+              days, and who owns each one?
+              <span class="text-muted-foreground"
+                >Customer success, Tuesday.</span
+              ></span
+            >
+          </li>
+          <li class="flex items-start gap-3 py-2.5">
+            <i class="ph ph-square mt-1 text-lg text-muted-foreground"></i
+            ><span
+              >How long can Harbor carry this? Last raise 2024, margin near 70
+              percent by press reports. An informal read, not a number we can
+              plan on.
+              <span class="text-muted-foreground">Finance, no date.</span></span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <footer
+        class="mt-10 border-t border-border pt-5 text-xs leading-6 text-muted-foreground"
+      >
+        <strong class="text-foreground">Annex.</strong> Read: Harbor's pricing
+        page, captured September 2 and September 8; the CRM export of deals
+        closing in 90 days; win-loss notes for 87 head-to-head deals; billing
+        data for renewals due through December; calls with two customers who buy
+        from both companies. Not done: no customer survey, no test of the
+        bundle's effect on win rate. Harbor's margin and funding figures are
+        from press reports. Illustrative: figures are representative, not
+        verified.
+      </footer>
+    </main>
+  </body>
+</html>

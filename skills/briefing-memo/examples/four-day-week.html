@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Piloting a four-day week for one quarter</title>
+    <!-- Lineage, so a future share button knows which idea made this file. -->
+    <meta name="instrument:idea" content="briefing-memo@1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css"
+    />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's light theme as Tailwind tokens.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        --shadow-sm:
+          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
+          0 0 0 1px rgb(10 13 18 / 0.06);
+        --shadow-xl:
+          0 12px 24px -4px rgb(10 13 18 / 0.07),
+          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+
+        --color-gray-25: #fdfdfc;
+        --color-gray-50: #fafaf9;
+        --color-gray-100: #f5f5f4;
+        --color-gray-200: #e7e5e4;
+        --color-gray-300: #d7d3d0;
+        --color-gray-400: #a9a29d;
+        --color-gray-500: #79716b;
+        --color-gray-600: #57534e;
+        --color-gray-700: #44403c;
+        --color-gray-800: #292524;
+        --color-gray-900: #1c1917;
+        --color-gray-950: #171412;
+
+        --color-brand-25: #f1f4f2;
+        --color-brand-50: #e2eae7;
+        --color-brand-100: #c5d5d0;
+        --color-brand-200: #9dbfb6;
+        --color-brand-300: #6ca89c;
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: #0a4a42;
+        --color-brand-800: #093a34;
+        --color-brand-900: #082c28;
+        --color-brand-950: #051b18;
+
+        --color-error-50: #fbeef0;
+        --color-error-100: #f8e4e8;
+        --color-error-300: #e197a6;
+        --color-error-500: #b4324f;
+        --color-error-700: #7a1f30;
+        --color-error-900: #3f121a;
+
+        --color-warning-50: #fffaeb;
+        --color-warning-100: #fef0c7;
+        --color-warning-300: #fec84b;
+        --color-warning-500: #f79009;
+        --color-warning-700: #b54708;
+        --color-warning-900: #7a2e0e;
+
+        --color-success-50: #e9f5eb;
+        --color-success-100: #d9f1db;
+        --color-success-300: #7dcb87;
+        --color-success-500: #29a845;
+        --color-success-700: #176229;
+        --color-success-900: #0b3216;
+
+        --color-yellow-50: #fdf6e2;
+        --color-yellow-100: #fbebc9;
+        --color-yellow-300: #f1cc8e;
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: #b26747;
+        --color-yellow-900: #59301e;
+
+        --color-brown-50: #fcfbf8;
+        --color-brown-100: #f6f4f0;
+        --color-brown-300: #e8e3da;
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: #937b5b;
+        --color-brown-900: #564538;
+
+        --color-background: #fafaf9;
+        --color-foreground: #171412;
+        --color-card: #ffffff;
+        --color-popover: #ffffff;
+        --color-primary: #171412;
+        --color-primary-foreground: #ffffff;
+        --color-secondary: #f5f5f4;
+        --color-secondary-foreground: #292524;
+        --color-muted: #f5f5f4;
+        --color-muted-foreground: #79716b;
+        --color-accent: #e7e5e4;
+        --color-accent-foreground: #292524;
+        --color-destructive: #b4324f;
+        --color-border: #e7e5e4;
+        --color-input: #e7e5e4;
+        --color-ring: #a9a29d;
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main
+      class="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-x-14"
+    >
+      <div class="lg:col-start-1 lg:row-start-1">
+        <header>
+          <p
+            class="text-xs font-medium tracking-[0.14em] text-brand-700 uppercase"
+          >
+            Briefing memo
+          </p>
+          <h1
+            class="mt-3 font-serif text-3xl font-medium tracking-[-0.02em] sm:text-4xl"
+          >
+            Piloting a four-day week for one quarter
+          </h1>
+          <dl
+            class="mt-5 grid grid-cols-[3.5rem_1fr] gap-x-4 gap-y-1 text-sm leading-6"
+          >
+            <dt
+              class="font-mono text-xs leading-6 tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              To
+            </dt>
+            <dd>Priya Raman, CEO</dd>
+            <dt
+              class="font-mono text-xs leading-6 tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              From
+            </dt>
+            <dd>Tom Okafor, Head of People</dd>
+            <dt
+              class="font-mono text-xs leading-6 tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Date
+            </dt>
+            <dd>September 8, 2026</dd>
+            <dt
+              class="font-mono text-xs leading-6 tracking-[0.1em] text-muted-foreground uppercase"
+            >
+              Re
+            </dt>
+            <dd>
+              A one-quarter pilot of a four-day week for the 25-person team
+            </dd>
+          </dl>
+        </header>
+
+        <section id="bluf" class="mt-8 border-t-4 border-foreground pt-4">
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase"
+          >
+            Bottom line up front
+          </p>
+          <p class="mt-2 font-serif text-lg leading-8 sm:text-xl">
+            Run the pilot in Q1 2027: 32 hours at full pay, Fridays off for the
+            whole company, a two-person rotation covering support on Fridays,
+            and a written go/no-go on April 17 against three measures we set
+            now. The cash cost is under $10,000. The real cost is delivery risk,
+            and the real danger is a pilot with no criteria that drifts into a
+            permanent change nobody chose. Decision needed by
+            <strong>October 15, 2026</strong>.
+          </p>
+        </section>
+      </div>
+
+      <aside
+        class="mt-10 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:self-start lg:sticky lg:top-8"
+      >
+        <section id="facts">
+          <h2
+            class="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+          >
+            Key facts
+          </h2>
+          <ul class="mt-2 divide-y divide-border text-sm leading-6">
+            <li class="py-2">
+              <strong>25 people</strong>: 14 engineering and product, 5 support
+              and success, 3 sales, 3 finance and operations.
+            </li>
+            <li class="py-2">
+              <strong>Support covers 8 to 6 Pacific</strong> on weekdays. Friday
+              carries 17 percent of tickets, the lightest day.
+            </li>
+            <li class="py-2">
+              <strong>Velocity: 61 points a sprint</strong> on average over four
+              quarters, standard deviation 9.
+            </li>
+            <li class="py-2">
+              <strong>Attrition: 5 of 25</strong> in twelve months; replacing an
+              engineer costs about $45,000 in recruiting and ramp.
+            </li>
+            <li class="py-2">
+              <strong>17 of 25 want it</strong>, per the June survey. eNPS was
+              24.
+            </li>
+            <li class="py-2">
+              <strong>Pay unchanged</strong>: 32 hours at 100 percent. Cash cost
+              under $10,000 for the quarter.
+            </li>
+            <li class="py-2">
+              <strong>Window: January 5 to April 3, 2027</strong>, clear of peak
+              and annual planning.
+            </li>
+          </ul>
+        </section>
+        <section
+          id="recommendation-card"
+          class="mt-6 rounded-xl bg-brand-600 p-5 text-white shadow-sm"
+        >
+          <p
+            class="text-xs font-medium tracking-[0.12em] text-white/70 uppercase"
+          >
+            Recommendation
+          </p>
+          <p class="mt-1 text-lg leading-6 font-semibold">
+            Option A: Fridays off, 32 hours, full pay
+          </p>
+          <p class="mt-2 text-sm leading-6 text-white/90">
+            Thirteen weeks from January 5, with a two-person Friday support
+            rotation. Go or no-go on April 17 against velocity, Friday response
+            time, and eNPS.
+          </p>
+          <p class="mt-3 border-t border-white/20 pt-3 text-sm text-white/90">
+            Decide by <strong class="text-white">October 15, 2026</strong>
+          </p>
+        </section>
+      </aside>
+
+      <div class="lg:col-start-1 lg:row-start-2">
+        <section id="context" class="mt-10">
+          <h2 class="flex items-baseline gap-3 font-serif text-2xl font-medium">
+            <span class="font-mono text-sm text-muted-foreground">1.</span
+            >Context
+          </h2>
+          <p class="mt-3 font-serif text-[17px] leading-8">
+            The team asked. In the June engagement survey, 17 of 25 people said
+            they would want a four-day week, and three of the five people who
+            left in the last year named burnout or flexibility in their exit
+            interview. Two of the four companies we lose engineering candidates
+            to advertise a four-day week. We are 25 people at $4.2 million of
+            annual recurring revenue, with customers who expect support from 8
+            to 6 Pacific on weekdays. Doing nothing is a choice too: the survey
+            result is known to everyone who answered it, and a year of silence
+            will read as an answer.
+          </p>
+        </section>
+
+        <section id="options" class="mt-10">
+          <h2 class="flex items-baseline gap-3 font-serif text-2xl font-medium">
+            <span class="font-mono text-sm text-muted-foreground">2.</span
+            >Options
+          </h2>
+          <h3
+            class="mt-5 flex flex-wrap items-center gap-x-3 font-serif text-xl font-medium"
+          >
+            Option A: Fridays off, whole company, 32 hours<span
+              class="rounded-full bg-brand-100 px-2 py-0.5 font-sans text-[10px] font-semibold tracking-[0.08em] text-brand-700 uppercase"
+              >Recommended</span
+            >
+          </h3>
+          <p class="mt-2 font-serif text-[17px] leading-8">
+            Everyone takes Friday. Support runs two people each Friday, so each
+            of the five works two Fridays in five, and sales keeps Friday for
+            prospects by choice and takes Monday instead. It is the version the
+            team asked for and the version the published trials measured.
+          </p>
+          <dl
+            class="mt-3 grid gap-x-6 gap-y-2 border-t border-border pt-3 text-sm leading-6 sm:grid-cols-3"
+          >
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Cost
+              </dt>
+              <dd>
+                Under $10,000 cash: the two hourly staff at 32 hours on the same
+                rate, and a Friday stipend for support. Plan for velocity within
+                10 percent.
+              </dd>
+            </div>
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Risk
+              </dt>
+              <dd>
+                Friday first response slows. A visible benefit that is hard to
+                take back if the measures come in mixed.
+              </dd>
+            </div>
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Forecloses
+              </dt>
+              <dd>
+                Friday customer meetings by default for a quarter, and the
+                quieter staggered trial below.
+              </dd>
+            </div>
+          </dl>
+
+          <h3 class="mt-8 font-serif text-xl font-medium">
+            Option B: A staggered day off, Monday or Friday, 32 hours
+          </h3>
+          <p class="mt-2 font-serif text-[17px] leading-8">
+            Each person picks Monday or Friday and teams keep three shared days.
+            Coverage is easier and nothing about the company's week changes from
+            the outside. What it gives up is the shared day, which the published
+            trials say is where most of the morale effect comes from.
+          </p>
+          <dl
+            class="mt-3 grid gap-x-6 gap-y-2 border-t border-border pt-3 text-sm leading-6 sm:grid-cols-3"
+          >
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Cost
+              </dt>
+              <dd>
+                Same cash. Two thin days to schedule around instead of one.
+              </dd>
+            </div>
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Risk
+              </dt>
+              <dd>
+                Monday and Friday both become half-days for meetings, and the
+                pilot measures a weaker version of the idea.
+              </dd>
+            </div>
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Forecloses
+              </dt>
+              <dd>Little. The easiest option to end quietly.</dd>
+            </div>
+          </dl>
+
+          <h3 class="mt-8 font-serif text-xl font-medium">
+            Option C: A compressed week, four nine-hour days
+          </h3>
+          <p class="mt-2 font-serif text-[17px] leading-8">
+            Fridays off at 36 hours, so the same work in longer days. The
+            evidence is that compressed weeks move burnout rather than reduce
+            it, and the team asked for less work, not a rearranged schedule.
+            Offered as a pilot, it will read as the offer they did not make.
+          </p>
+          <dl
+            class="mt-3 grid gap-x-6 gap-y-2 border-t border-border pt-3 text-sm leading-6 sm:grid-cols-3"
+          >
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Cost
+              </dt>
+              <dd>None in hours or cash.</dd>
+            </div>
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Risk
+              </dt>
+              <dd>
+                Longer days for parents and commuters; a survey result answered
+                with something else.
+              </dd>
+            </div>
+            <div>
+              <dt
+                class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase"
+              >
+                Forecloses
+              </dt>
+              <dd>The credibility of a real trial later.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section id="recommendation" class="mt-10">
+          <h2 class="flex items-baseline gap-3 font-serif text-2xl font-medium">
+            <span class="font-mono text-sm text-muted-foreground">3.</span
+            >Recommendation
+          </h2>
+          <p class="mt-3 font-serif text-[17px] leading-8">
+            Option A. It is the version the team asked for, the version the
+            trials measured, and it has a clean end: three measures, one date.
+            The support rotation is the load-bearing detail; if we cannot staff
+            two people every Friday, we should not start. The measures, set now:
+            sprint velocity within 10 percent of the trailing four-quarter
+            average of 61 points; Friday first response under two hours; eNPS in
+            the March survey above June's 24. Two of three carries it forward.
+            Fewer ends it on April 3, with thanks and the numbers.
+          </p>
+          <ol class="mt-4 list-decimal space-y-1.5 pl-5 text-sm leading-6">
+            <li>
+              Friday support rotation and coverage plan.
+              <span class="text-muted-foreground"
+                >Sam Ortiz, support, by October 1.</span
+              >
+            </li>
+            <li>
+              Velocity and response-time baselines pulled and frozen.
+              <span class="text-muted-foreground"
+                >Tom with engineering, by October 15.</span
+              >
+            </li>
+            <li>
+              Customer note for the January release notes.
+              <span class="text-muted-foreground">Tom, by December 1.</span>
+            </li>
+            <li>Decision at the October 15 leadership meeting.</li>
+          </ol>
+        </section>
+
+        <section id="questions" class="mt-10">
+          <h2 class="flex items-baseline gap-3 font-serif text-2xl font-medium">
+            <span class="font-mono text-sm text-muted-foreground">4.</span>Open
+            questions
+          </h2>
+          <ol class="mt-3 list-decimal space-y-3 pl-5 text-sm leading-6">
+            <li>
+              Do the three salespeople keep Fridays? Prospects work Fridays, and
+              the proposal is that sales takes Monday. Ask them rather than
+              decide for them.
+              <span class="text-muted-foreground">Tom, by September 26.</span>
+            </li>
+            <li>
+              What do we tell customers? A line in the January release notes, or
+              nothing. Nothing risks a customer learning about it from a slow
+              Friday.
+              <span class="text-muted-foreground">Priya, with Sam.</span>
+            </li>
+            <li>
+              What about contractors and the two hourly staff? Hourly at 32
+              hours on the same rate is a raise of about $6,000 for the quarter;
+              contractors are on their own terms.
+              <span class="text-muted-foreground">Finance, by October 1.</span>
+            </li>
+            <li>
+              What if the measures come in mixed, say velocity down 12 percent
+              and eNPS up 20 points? The go/no-go has to say now which measure
+              wins.
+              <span class="text-muted-foreground"
+                >Priya and Tom, before October 15.</span
+              >
+            </li>
+            <li>
+              Does PTO accrual change on a four-day week? Recommend no change
+              for the pilot, and a decision only if it becomes permanent.
+              <span class="text-muted-foreground">Tom, in the pilot note.</span>
+            </li>
+          </ol>
+        </section>
+
+        <footer
+          class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground"
+        >
+          <strong class="text-foreground">Annex.</strong> Read: the June 2026
+          engagement survey and its comments; twelve months of exit interviews;
+          the support ticket log by weekday for two quarters; the engineering
+          velocity export for four quarters; three published pilot reports from
+          teams of 20 to 60 people, all of which rely on self-reported output.
+          Not done: no conversation yet with the support team about the
+          rotation, no customer research. The 10 percent velocity tolerance is a
+          judgment, not a derived number. Illustrative: figures are
+          representative, not verified.
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>
