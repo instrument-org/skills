@@ -243,7 +243,7 @@ Grouped per option, numbered straight through the page in the order the superscr
 
 ## Header photos
 
-A small photo of each option, one per column, all at 4:3, in the header cell above the name. Sourced from the maker's product page, or from a Creative Commons search with the credit in the footer; a photo of a different product than the one named is a lie the reader cannot detect, so a representative photo says so in the caption.
+A small photo of each option, one per column, all at 4:3, in the header cell above the name. Sourced from the maker's product page, or from a Creative Commons search with the credit in the footer; a photo of a different product than the one named is a lie the reader cannot detect, so a representative photo says so in the caption. When the photo came from the maker's page, that is the page the name links to, per Link to the thing below.
 
 ```html
 <th>
@@ -290,6 +290,25 @@ One Phosphor regular icon per row as a landmark, never two, never an emoji. The 
   ><span>The claim, in a clause.</span>
 </li>
 ```
+
+## Link to the thing
+
+An option that lives at a URL is a link on its own name, in the header cell where the reader's eye already is, so going to look at it is one click rather than a fresh search. The same holds for a vendor in a footnote and a source in the footer. Link where the page first names the thing; the name repeated in prose below does not need it again.
+
+```html
+<th>
+  <span class="block text-sm font-semibold"
+    ><a href="https://asana.com/pricing">Asana</a></span
+  >
+  <span class="block font-normal text-muted-foreground"
+    >Advanced · $24.99 per user</span
+  >
+</th>
+```
+
+The skin styles links in the base layer, so an anchor needs no classes, and a utility on it still wins where a link should read as something else. Color and underline only, never weight or size, so a link inside a heading or a header cell keeps the type it sits in.
+
+Never a URL you have not read. Where no page for the exact thing exists, no link: a name pointing at the nearest other product is a mistake the reader cannot detect.
 
 ## Source footer
 

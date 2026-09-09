@@ -142,6 +142,20 @@ One Phosphor regular icon per row as a landmark, never two, never an emoji.
 </li>
 ```
 
+## Link to the thing
+
+A pick the reader can go buy is a link on its own name: in the verdict, in the pick card's title, on each runner-up in the ledger, and on each option in the skipped list, which is where someone who disagrees with the pick goes next. Link where the page first names each one; the name repeated in the reasoning below does not need it again.
+
+```html
+<p class="mt-1 text-xl font-semibold tracking-[-0.02em]">
+  <a href="https://www.copper.com/pricing">Copper</a>, Starter plan
+</p>
+```
+
+The skin styles links in the base layer, so an anchor needs no classes, and a utility on it still wins where a link should read as something else. Color and underline only, never weight or size, so a link inside a heading or a pick title keeps the type it sits in.
+
+Never a URL you have not read. Where no page for the exact thing exists, no link: a name pointing at the nearest other product is a mistake the reader cannot detect.
+
 ## Source footer
 
 Closes every page. What was read, when prices were seen, what is inferred.
