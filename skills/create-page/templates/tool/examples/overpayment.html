@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>What paying a bit extra actually buys you</title>
+    <title>What an extra $200 a month takes off a mortgage</title>
     <!-- Lineage: the template that made this file. Set it to the template name. -->
     <meta name="instrument:idea" content="tool@1" />
     <!-- shell:start -->
@@ -261,21 +261,12 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
+    <main class="mx-auto max-w-3xl px-5 py-8 sm:px-6">
       <header>
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Tool &middot; Nothing leaves this page
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          What paying a bit extra actually buys you
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          Four numbers in, two out: how much earlier the loan ends and how much
-          interest never happens. The reason this is worth a page rather than a
-          sentence is that the answer is wildly non-linear &mdash; the first fifty a
-          month is worth several times the fifth fifty &mdash; and the only way to
-          feel that is to move the slider and watch the second curve peel away from
-          the first.
+        <h1 class="text-xl font-semibold tracking-[-0.02em]">What an extra $200 a month takes off a mortgage</h1>
+        <p class="mt-1 text-[13px] leading-6 text-muted-foreground">
+          Move the slider and watch the two curves come apart. The gap between
+          them is interest that never gets charged.
         </p>
       </header>
 
@@ -347,32 +338,12 @@
         </p>
       </section>
 
-      <section id="worked" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">The answer it opens with</h2>
-        <p class="mt-3 text-sm leading-7 text-muted-foreground">
-          On $280,000 at 5.9% with 24 years left, the scheduled payment is about
-          $1,820 a month and the interest still to come is around $244,000 &mdash;
-          nearly as much again as the balance. Adding $200 a month, which is 11% more
-          out of the account, ends the loan about
-          <b class="text-foreground">four and a half years early</b> and removes
-          roughly <b class="text-foreground">$53,000</b> of interest. Move the slider
-          to $50 and it is still about fifteen months and $16,000, which is the shape
-          worth knowing: the first small amount is worth far more per dollar than the
-          last large one, because it is removed from the balance earliest and every
-          month after that compounds on a smaller number.
-        </p>
-      </section>
-
-      <section id="how" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">What it assumes, and where it is wrong</h2>
-        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">Ordinary monthly amortization, compounded monthly.</span> The scheduled payment is the standard annuity formula; the overpaid version is the same schedule simulated a month at a time with the extra taken off the balance after interest. Both are exact arithmetic on the numbers above, not an approximation.</li>
-          <li><span class="font-medium text-foreground">The rate never changes.</span> Which for most loans is false. On a rate that resets in two years, treat everything past the reset as an illustration of the shape rather than a figure, and rerun it when you know the new rate.</li>
-          <li><span class="font-medium text-foreground">No fees, no penalties, no tax.</span> Some loans charge for paying early, some cap the overpayment, and in some places the interest is deductible, which changes the answer materially. None of that is here and all of it is in the loan documents.</li>
-          <li><span class="font-medium text-foreground">It compares the loan against itself, not against the alternative.</span> Money put into the loan is not in an emergency fund and not invested. Whether paying down a 5.9% loan beats the alternative is the actual question and this page has no opinion about it.</li>
-          <li><span class="font-medium text-foreground">Nothing leaves the page.</span> The numbers you type stay in the tab and are gone when it closes.</li>
-        </ul>
-      </section>
+      <div class="mt-6 grid gap-x-8 gap-y-2 text-[12px] leading-6 text-muted-foreground sm:grid-cols-2">
+        <p><b class="font-medium text-foreground">Nothing leaves this page.</b> No balance, rate or figure is sent anywhere and nothing is stored. The file works offline, and it will work in ten years.</p>
+        <p><b class="font-medium text-foreground">What it assumes.</b> A repayment loan at a rate that never changes, one overpayment a month on top of the normal payment, and every extra pound going straight at the balance.</p>
+        <p><b class="font-medium text-foreground">Where it is wrong.</b> A fixed rate that ends and resets, an early-repayment charge, an annual overpayment cap, or a lender that holds overpayments as a credit rather than reducing the balance. Any of the four changes the answer, and the last one changes it a lot.</p>
+        <p><b class="font-medium text-foreground">Where the defaults came from.</b> Nowhere. $280,000 at 5.9% over 24 years is a shape that makes the curves legible, not an offer, a market average, or anybody's actual loan.</p>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
       <script>
@@ -546,15 +517,6 @@
         }
         draw();
       </script>
-
-      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        The numbers this opens with &mdash; $280,000 at 5.9% over 24 years &mdash;
-        are an example chosen to be recognizable, not a rate anyone is offering. The
-        arithmetic is exact for the assumptions listed above and worth nothing
-        outside them: a loan with a resetting rate, an early-repayment charge or a
-        cap on overpayments will not behave like this, and the loan documents are the
-        only place that says which of those applies.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

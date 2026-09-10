@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What is on repeat, out of a statement you paste in</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="tool@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
+
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-8 sm:px-6">
+      <header>
+        <h1 class="text-xl font-semibold tracking-[-0.02em]">What is on repeat, out of a statement you paste in</h1>
+        <p class="mt-1 text-[13px] leading-6 text-muted-foreground">
+          Paste three months of card or account lines. It finds the charges that
+          come back on a schedule, prices them by the month and by the year, and
+          says which ones went up. Nothing is sent anywhere, which is the only
+          reason this is a page rather than a question you could ask someone.
+        </p>
+      </header>
+
+      <section id="tool" class="mt-6">
+        <div class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <label class="block">
+            <span class="flex items-baseline justify-between gap-4">
+              <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Your lines</span>
+              <span class="text-[11px] text-muted-foreground">A date, a description and an amount, in any order that keeps them on one line</span>
+            </span>
+            <textarea id="lines" rows="7" spellcheck="false" class="mt-2 w-full rounded-lg border border-input bg-background p-3 font-mono text-[11px] leading-5 outline-none">
+2026-04-01  NORTHGATE FITNESS            42.00
+2026-04-02  ORBIT MUSIC                   9.99
+2026-04-03  GREGSON HARDWARE             34.20
+2026-04-05  MARKET STREET FOOD           62.15
+2026-04-06  AIRWAVE MOBILE               21.00
+2026-04-08  STREAMLINE TV                10.99
+2026-04-09  THE BLUE ANCHOR              28.40
+2026-04-11  HELIOS MEDIA                 18.99
+2026-04-12  RAIL ADVANCE SINGLE          41.50
+2026-04-14  CLOUDVAULT 200GB              2.99
+2026-04-16  MARKET STREET FOOD           71.05
+2026-04-19  DELIVERY PLUS                 7.99
+2026-04-21  THE MERIDIAN                  6.00
+2026-04-24  ROOK DOMAINS                 38.00
+2026-04-27  MARKET STREET FOOD           44.80
+2026-04-29  PARK LANE DENTAL             85.00
+2026-05-01  NORTHGATE FITNESS            42.00
+2026-05-02  ORBIT MUSIC                   9.99
+2026-05-06  AIRWAVE MOBILE               21.00
+2026-05-07  MARKET STREET FOOD           68.30
+2026-05-08  STREAMLINE TV                10.99
+2026-05-11  HELIOS MEDIA                 18.99
+2026-05-14  CLOUDVAULT 200GB              2.99
+2026-05-17  THE BLUE ANCHOR              31.60
+2026-05-19  MARKET STREET FOOD           55.20
+2026-05-19  DELIVERY PLUS                 7.99
+2026-05-21  THE MERIDIAN                  6.00
+2026-05-23  KESTREL NURSERIES           112.40
+2026-06-01  NORTHGATE FITNESS            42.00
+2026-06-02  ORBIT MUSIC                   9.99
+2026-06-02  MARKET STREET FOOD           73.45
+2026-06-06  AIRWAVE MOBILE               21.00
+2026-06-08  STREAMLINE TV                12.99
+2026-06-11  HELIOS MEDIA                 18.99
+2026-06-14  CLOUDVAULT 200GB              2.99
+2026-06-15  MARKET STREET FOOD           61.10
+2026-06-19  DELIVERY PLUS                 7.99
+2026-06-20  RAIL ADVANCE SINGLE          39.80
+2026-06-21  THE MERIDIAN                  6.00
+2026-06-26  THE BLUE ANCHOR              24.15</textarea>
+          </label>
+
+          <div id="answer" class="mt-6 grid gap-4 sm:grid-cols-3">
+<div class="rounded-xl border border-brand-200 bg-brand-50 text-brand-700 p-4">
+              <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">On repeat</p>
+              <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">£119.75</p>
+              <p class="text-[12px] text-muted-foreground">a month, at today's prices</p>
+            </div>
+            <div class="rounded-xl border border-brand-200 bg-brand-50 text-brand-700 p-4">
+              <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">Which is</p>
+              <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">£1,436.96</p>
+              <p class="text-[12px] text-muted-foreground">a year, if nothing changes</p>
+            </div>
+            <div class="rounded-xl border border-border bg-background p-4">
+              <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">Share of what went out</p>
+              <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">29%</p>
+              <p class="text-[12px] text-muted-foreground">£361.85 of £1,232.95 across 40 lines</p>
+            </div>
+          </div>
+
+          <div id="repeats" class="mt-6">
+<p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">8 charges on a schedule</p>
+                 <p class="mt-1 text-[12px] leading-5 text-muted-foreground">Same description, an even gap between them, and no jump bigger than a third from one charge to the next, so a bill that went up is still a bill.</p>
+                 <table class="mt-2 w-full text-left text-[13px]">
+                   <thead><tr class="border-b border-border text-[10px] tracking-wide text-muted-foreground uppercase">
+                     <th class="py-1.5">What</th><th class="py-1.5">How often</th>
+                     <th class="py-1.5 text-right">Last charge</th><th class="py-1.5 text-right">A month</th>
+                   </tr></thead>
+                   <tbody>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">NORTHGATE FITNESS</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£42.00</td>
+              <td class="py-2 text-right font-mono font-semibold">£41.24</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">AIRWAVE MOBILE</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£21.00</td>
+              <td class="py-2 text-right font-mono font-semibold">£20.62</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">HELIOS MEDIA</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£18.99</td>
+              <td class="py-2 text-right font-mono font-semibold">£18.65</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">STREAMLINE TV</span>
+                <span class="ml-2 rounded-full bg-warning-100 px-2 py-0.5 text-[10px] font-medium text-warning-700">was £10.99</span>
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£12.99</td>
+              <td class="py-2 text-right font-mono font-semibold">£12.76</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">ORBIT MUSIC</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£9.99</td>
+              <td class="py-2 text-right font-mono font-semibold">£9.81</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">DELIVERY PLUS</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£7.99</td>
+              <td class="py-2 text-right font-mono font-semibold">£7.85</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">THE MERIDIAN</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£6.00</td>
+              <td class="py-2 text-right font-mono font-semibold">£5.89</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">CLOUDVAULT 200GB</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every month</td>
+              <td class="py-2 pr-3 text-right font-mono">£2.99</td>
+              <td class="py-2 text-right font-mono font-semibold">£2.94</td>
+            </tr></tbody>
+                 </table>
+          </div>
+          <div id="loose" class="mt-6">
+<p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">3 that come back, but not on a schedule</p>
+                 <p class="mt-1 text-[12px] leading-5 text-muted-foreground">Recognized, and deliberately not counted: the amounts move about too much, or the gaps do. This is where a weekly food shop lands, and it is the line a tool like this most often gets wrong in the other direction.</p>
+                 <table class="mt-2 w-full text-left text-[13px]">
+                   <thead><tr class="border-b border-border text-[10px] tracking-wide text-muted-foreground uppercase">
+                     <th class="py-1.5">What</th><th class="py-1.5">How often</th>
+                     <th class="py-1.5 text-right">Last charge</th><th class="py-1.5 text-right">Times</th>
+                   </tr></thead>
+                   <tbody>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">MARKET STREET FOOD</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">every fortnight</td>
+              <td class="py-2 pr-3 text-right font-mono">£61.10</td>
+              <td class="py-2 text-right font-mono text-muted-foreground">7x</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">THE BLUE ANCHOR</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">about every 40 days</td>
+              <td class="py-2 pr-3 text-right font-mono">£24.15</td>
+              <td class="py-2 text-right font-mono text-muted-foreground">3x</td>
+            </tr>
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">RAIL ADVANCE SINGLE</span>
+                
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">about every 69 days</td>
+              <td class="py-2 pr-3 text-right font-mono">£39.80</td>
+              <td class="py-2 text-right font-mono text-muted-foreground">2x</td>
+            </tr></tbody>
+                 </table><p class="mt-3 text-[12px] leading-5 text-muted-foreground">4 more descriptions appear once each, £269.60 in total. A yearly bill inside a three-month statement is indistinguishable from a one-off, so some of those are subscriptions and this page cannot tell you which.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="mt-6 grid gap-x-8 gap-y-2 text-[12px] leading-6 text-muted-foreground sm:grid-cols-2">
+        <p><b class="font-medium text-foreground">Nothing leaves this page.</b> What you paste is read by about eighty lines of script in your own browser and then forgotten. No request is made from this file, there is no server behind it, and it works with the network off. That is the whole reason a statement is a safe thing to put in it.</p>
+        <p><b class="font-medium text-foreground">What it assumes.</b> One charge per line, with a date and an amount somewhere on it. Two charges count as a schedule when they share a description, come back at an even interval that matches a real billing period, and no charge jumps more than a third from the one before it.</p>
+        <p><b class="font-medium text-foreground">Where it is wrong.</b> Three months cannot see a yearly bill: ROOK DOMAINS in the sample charges once and is filed as a one-off, which is exactly the charge people most want found. It will also miss a subscription whose description carries a changing reference number, and it will not know that two names are one company.</p>
+        <p><b class="font-medium text-foreground">Where the sample came from.</b> It is invented, merchants and all, and the amounts were chosen to put a price rise and a false positive in front of you. Replace the whole box with your own and the page recalculates as you paste.</p>
+      </div>
+
+      <script>
+        // Everything happens here. Nothing is sent, and there is nowhere to send it.
+        const $ = (id) => document.querySelector("#" + id);
+        const money = (n) => "£" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        const DAY = 86400000;
+
+        /** A line is a date, an amount, and whatever is left. Deliberately loose
+         *  about order and separator, because every bank exports differently and
+         *  a tool that only reads one of them is a tool nobody's file fits. */
+        const parse = (text) =>
+          text
+            .split("\n")
+            .map((line) => {
+              const when = line.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})|(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+              const amounts = [...line.matchAll(/-?[£$€]?\s?(\d[\d,]*\.\d{2})/g)];
+              if (!when || !amounts.length) return null;
+              const [y, m, d] = when[1] ? [when[1], when[2], when[3]] : [when[4 + 2], when[5], when[4]];
+              const last = amounts[amounts.length - 1];
+              const what = line
+                .replace(when[0], " ")
+                .replace(last[0], " ")
+                .replace(/[,;|\t]+/g, " ")
+                .trim();
+              return what ? { at: Date.UTC(+y, +m - 1, +d), what, amount: Number(last[1].replace(/,/g, "")) } : null;
+            })
+            .filter(Boolean);
+
+        /** Merchants arrive with reference numbers, store numbers and card
+         *  suffixes stuck to them. Strip what varies, keep what names them. */
+        const key = (what) =>
+          what
+            .toUpperCase()
+            .replace(/\b(?:REF|TXN|ID|NO|CARD|X{2,})[\s:#*-]*[\dX]+\b/g, " ")
+            .replace(/\b\d{4,}\b/g, " ")
+            .replace(/[*#]+/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
+
+        const CADENCE = [
+          [7, 2, "every week"],
+          [14, 3, "every fortnight"],
+          [30.44, 5, "every month"],
+          [91, 12, "every quarter"],
+          [365, 30, "every year"],
+        ];
+
+        const draw = () => {
+          const rows = parse($("lines").value);
+          const groups = new Map();
+          for (const row of rows) {
+            const name = key(row.what);
+            if (!groups.has(name)) groups.set(name, []);
+            groups.get(name).push(row);
+          }
+
+          const scheduled = [];
+          const irregular = [];
+          let onceOnly = 0;
+          let onceTotal = 0;
+
+          for (const [name, charges] of groups) {
+            charges.sort((a, b) => a.at - b.at);
+            if (charges.length < 2) {
+              onceOnly += 1;
+              onceTotal += charges[0].amount;
+              continue;
+            }
+            const gaps = charges.slice(1).map((c, i) => (c.at - charges[i].at) / DAY);
+            const middle = median(gaps);
+            const steady = gaps.every((g) => Math.abs(g - middle) <= Math.max(4, middle * 0.25));
+            // Consecutive amounts rather than all of them against a median,
+            // because a subscription that went up in June is still a
+            // subscription and comparing to the median throws it out.
+            const level = charges
+              .slice(1)
+              .every((c, i) => Math.abs(c.amount - charges[i].amount) <= Math.max(1, charges[i].amount * 0.3));
+            const cadence = CADENCE.find(([days, slack]) => Math.abs(middle - days) <= slack);
+
+            const latest = charges[charges.length - 1];
+            const entry = {
+              name,
+              charges,
+              latest,
+              gap: middle,
+              cadence: cadence ? cadence[2] : `about every ${Math.round(middle)} days`,
+              // Priced off the latest charge rather than the average: a bill
+              // that went up in March costs the new price from here on.
+              monthly: (latest.amount * 30.44) / middle,
+              rose: charges.length > 1 && charges[charges.length - 2].amount !== latest.amount ? charges[charges.length - 2].amount : null,
+            };
+            if (steady && level && cadence) scheduled.push(entry);
+            else irregular.push(entry);
+          }
+
+          scheduled.sort((a, b) => b.monthly - a.monthly);
+          irregular.sort((a, b) => b.charges.length - a.charges.length);
+
+          const monthly = scheduled.reduce((sum, s) => sum + s.monthly, 0);
+          const wentOut = rows.reduce((sum, r) => sum + r.amount, 0);
+          const onRepeat = scheduled.reduce((sum, s) => sum + s.charges.reduce((a, c) => a + c.amount, 0), 0);
+
+          const tile = (label, value, note, tone) => `
+            <div class="rounded-xl border ${tone} p-4">
+              <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">${label}</p>
+              <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">${value}</p>
+              <p class="text-[12px] text-muted-foreground">${note}</p>
+            </div>`;
+
+          $("answer").innerHTML =
+            tile("On repeat", money(monthly), "a month, at today's prices", "border-brand-200 bg-brand-50 text-brand-700") +
+            tile("Which is", money(monthly * 12), "a year, if nothing changes", "border-brand-200 bg-brand-50 text-brand-700") +
+            tile(
+              "Share of what went out",
+              `${Math.round((onRepeat / wentOut) * 100)}%`,
+              `${money(onRepeat)} of ${money(wentOut)} across ${rows.length} lines`,
+              "border-border bg-background",
+            );
+
+          // The rise badge belongs only where the page is calling something a
+        // subscription. On a row it has just said is not one, a "was" is noise.
+        const row = (entry, showMonthly) => `
+            <tr class="border-b border-border/60">
+              <td class="py-2 pr-3">
+                <span class="font-medium">${entry.name}</span>
+                ${showMonthly && entry.rose ? `<span class="ml-2 rounded-full bg-warning-100 px-2 py-0.5 text-[10px] font-medium text-warning-700">was ${money(entry.rose)}</span>` : ""}
+              </td>
+              <td class="py-2 pr-3 text-muted-foreground">${entry.cadence}</td>
+              <td class="py-2 pr-3 text-right font-mono">${money(entry.latest.amount)}</td>
+              ${showMonthly ? `<td class="py-2 text-right font-mono font-semibold">${money(entry.monthly)}</td>` : `<td class="py-2 text-right font-mono text-muted-foreground">${entry.charges.length}x</td>`}
+            </tr>`;
+
+          const table = (title, note, entries, showMonthly) =>
+            entries.length
+              ? `<p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">${title}</p>
+                 <p class="mt-1 text-[12px] leading-5 text-muted-foreground">${note}</p>
+                 <table class="mt-2 w-full text-left text-[13px]">
+                   <thead><tr class="border-b border-border text-[10px] tracking-wide text-muted-foreground uppercase">
+                     <th class="py-1.5">What</th><th class="py-1.5">How often</th>
+                     <th class="py-1.5 text-right">Last charge</th><th class="py-1.5 text-right">${showMonthly ? "A month" : "Times"}</th>
+                   </tr></thead>
+                   <tbody>${entries.map((e) => row(e, showMonthly)).join("")}</tbody>
+                 </table>`
+              : "";
+
+          $("repeats").innerHTML = table(
+            `${scheduled.length} charges on a schedule`,
+            "Same description, an even gap between them, and no jump bigger than a third from one charge to the next, so a bill that went up is still a bill.",
+            scheduled,
+            true,
+          );
+          $("loose").innerHTML = table(
+            `${irregular.length} that come back, but not on a schedule`,
+            "Recognized, and deliberately not counted: the amounts move about too much, or the gaps do. This is where a weekly food shop lands, and it is the line a tool like this most often gets wrong in the other direction.",
+            irregular,
+            false,
+          ) + `<p class="mt-3 text-[12px] leading-5 text-muted-foreground">${onceOnly} more descriptions appear once each, ${money(onceTotal)} in total. A yearly bill inside a three-month statement is indistinguishable from a one-off, so some of those are subscriptions and this page cannot tell you which.</p>`;
+        };
+
+        for (const input of document.querySelectorAll("#tool input, #tool select, #tool textarea")) {
+          input.addEventListener("input", draw);
+          input.addEventListener("change", draw);
+        }
+        draw();
+      </script>
+    </main>
+    <!-- shell:start -->
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+
+        // A line may break between an image and the text beside it, so the icon
+        // and the first word it leads go in a span that cannot break. A link
+        // with no text of its own takes the icon at the front of the link.
+        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+        let text = walker.nextNode();
+        while (text && !text.data.trim()) text = walker.nextNode();
+        let host = link;
+        if (text) {
+          const at = text.data.search(/\S/);
+          const word = at > 0 ? text.splitText(at) : text;
+          const space = word.data.search(/\s/);
+          if (space > 0) word.splitText(space); // The rest of the text stays put.
+          host = document.createElement("span");
+          host.className = "site-icon-word";
+          word.replaceWith(host);
+          host.append(word);
+        }
+
+        const drop = () => {
+          icon.remove();
+          if (host !== link) host.replaceWith(...host.childNodes);
+        };
+        icon.onerror = drop;
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) drop();
+        };
+        host.prepend(icon);
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

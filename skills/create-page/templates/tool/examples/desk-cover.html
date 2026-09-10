@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paste something that used to be a table</title>
+    <title>How many people the desk needs, and what happens when one is off</title>
     <!-- Lineage: the template that made this file. Set it to the template name. -->
     <meta name="instrument:idea" content="tool@1" />
     <!-- shell:start -->
@@ -261,267 +261,214 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
+    <main class="mx-auto max-w-3xl px-5 py-8 sm:px-6">
       <header>
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Tool &middot; Nothing leaves this page
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          Paste something that used to be a table
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          Text copied out of a PDF, an email, a terminal or a slide arrives as
-          columns held together by spaces, and every tool that wants a table wants
-          commas. This guesses how the columns were separated, says which guess it
-          made and why, and hands the result back as Markdown, CSV, TSV or JSON. It
-          opens with a paste already in it, so you can see what it does before you
-          give it anything.
+        <h1 class="text-xl font-semibold tracking-[-0.02em]">How many people the desk needs, and what happens when one is off</h1>
+        <p class="mt-1 text-[13px] leading-6 text-muted-foreground">
+          Queues do not get worse in proportion. Take one person off a desk that
+          is coping and the average wait does not go up by a fifth, it goes up
+          several times over. Move the numbers and watch where the cliff is.
         </p>
       </header>
 
-      <section id="tool" class="mt-9">
+      <section id="tool" class="mt-6">
         <div class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-          <label class="block">
-            <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Paste it here</span>
-            <textarea id="input" rows="9" spellcheck="false" class="mt-2 block w-full rounded-lg border border-input bg-background p-3 font-mono text-[12px] leading-5 outline-none focus:border-ring">River          Length (km)   Outflow             Basin countries
-Nile                  6650   Mediterranean Sea   11
-Amazon                6400   Atlantic Ocean      7
-Yangtze               6300   East China Sea      1
-Mississippi           6275   Gulf of Mexico      2
-Yenisei               5539   Kara Sea            2
-Yellow River          5464   Bohai Sea           1
-Ob                    5410   Gulf of Ob          2
-Paraná                4880   Rio de la Plata     4
-Congo                 4700   Atlantic Ocean      9
-Amur                  4444   Sea of Okhotsk      3</textarea>
-          </label>
-
-          <div class="mt-4 flex flex-wrap items-end gap-4">
+          <div class="grid gap-5 sm:grid-cols-3">
             <label class="block">
-              <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Split columns on</span>
-              <select id="split" class="mt-2 block rounded-lg border border-input bg-background px-3 py-2 text-sm">
-                <option value="auto" selected>Whatever it looks like</option>
-                <option value="tab">Tabs</option>
-                <option value="comma">Commas</option>
-                <option value="pipe">Pipes</option>
-                <option value="spaces">Two or more spaces</option>
-              </select>
+              <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Arriving</span>
+              <div class="mt-2 flex items-center gap-2 rounded-lg border border-input bg-background px-3 py-2">
+                <input id="arrivals" type="number" value="18" min="1" max="200" step="1" class="w-full bg-transparent text-sm outline-none" />
+                <span class="shrink-0 text-sm text-muted-foreground">an hour</span>
+              </div>
             </label>
-            <label class="flex items-center gap-2 pb-2.5 text-sm">
-              <input id="header" type="checkbox" checked class="size-4 accent-brand-600" />
-              First row is the heading
+            <label class="block">
+              <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Each one takes</span>
+              <div class="mt-2 flex items-center gap-2 rounded-lg border border-input bg-background px-3 py-2">
+                <input id="minutes" type="number" value="12" min="1" max="120" step="1" class="w-full bg-transparent text-sm outline-none" />
+                <span class="shrink-0 text-sm text-muted-foreground">minutes</span>
+              </div>
             </label>
-            <div class="ml-auto flex items-center gap-1 rounded-lg bg-accent p-0.5" id="formats"></div>
+            <label class="block">
+              <span class="flex items-baseline justify-between">
+                <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">On the desk</span>
+                <span id="people-value" class="font-mono text-[15px] font-semibold">5</span>
+              </span>
+              <input id="people" type="range" value="5" min="1" max="12" step="1" class="mt-3 w-full accent-brand-600" />
+              <span class="mt-1 flex justify-between font-mono text-[10px] text-muted-foreground"><span>1</span><span>6</span><span>12</span></span>
+            </label>
           </div>
 
-          <div id="note" class="mt-4"></div>
-
-          <div class="mt-4 overflow-x-auto rounded-lg border border-border">
-            <table class="w-full text-left text-[13px]"><thead id="head"></thead><tbody id="body"></tbody></table>
+          <div id="answer" class="mt-6 grid gap-4 sm:grid-cols-3">
+<div class="rounded-xl border border-brand-200 bg-brand-50 text-brand-700 p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">Average wait</p>
+            <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">3.5 min</p>
+            <p class="text-[12px] text-muted-foreground">before anyone picks it up</p>
+          </div>
+          <div class="rounded-xl border border-brand-200 bg-brand-50 text-brand-700 p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">Busy</p>
+            <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">72%</p>
+            <p class="text-[12px] text-muted-foreground">work for 3.6 people, and 5 on</p>
+          </div>
+          <div class="rounded-xl border border-brand-200 bg-brand-50 text-brand-700 p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">Waiting over 10 min</p>
+            <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">13%</p>
+            <p class="text-[12px] text-muted-foreground">of everyone who arrives</p>
+          </div>
           </div>
 
-          <div class="mt-4">
-            <div class="flex items-center justify-between">
-              <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Take it away</p>
-              <button id="copy" class="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 text-[13px] font-semibold text-background">
-                <i class="ph ph-copy text-base"></i>Copy
-              </button>
-            </div>
-            <pre id="out" class="mt-2 max-h-64 overflow-auto rounded-lg bg-code p-3 font-mono text-[11px] leading-5 text-code-foreground"></pre>
+          <p id="finding" class="mt-5 rounded-lg bg-accent px-4 py-3 text-[13px] leading-6">
+<b>Take one person off and the average wait goes from 3.5 min to 24 min</b> — 6.7 times longer, for 20% less cover. Put one on instead and it goes to 59 sec.
+          </p>
+
+          <!-- No chart library: bars of one number each are HTML, and a page
+               that loads nothing cannot be broken by a CDN. -->
+          <div class="mt-6">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Average wait, at every staffing level</p>
+            <div id="bars" class="mt-3 space-y-1.5">
+<div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] text-muted-foreground">3 on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:100%; background:var(--color-error-500)"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] text-muted-foreground">never clears</span>
+              </div><div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] text-muted-foreground">4 on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:100%; background:var(--color-gray-400)"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] text-muted-foreground">24 min</span>
+              </div><div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] font-semibold text-foreground">5 on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:14.88478421940331%; background:var(--color-brand-500)"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] font-semibold">3.5 min</span>
+              </div><div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] text-muted-foreground">6 on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:4.158795282995314%; background:var(--color-gray-400)"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] text-muted-foreground">59 sec</span>
+              </div><div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] text-muted-foreground">7 on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:1.2879998488392497%; background:var(--color-gray-400)"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] text-muted-foreground">18 sec</span>
+              </div><div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] text-muted-foreground">8 on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:0.6%; background:var(--color-gray-400)"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] text-muted-foreground">6 sec</span>
+              </div><div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] text-muted-foreground">9 on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:0.6%; background:var(--color-gray-400)"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] text-muted-foreground">2 sec</span>
+              </div>
+          </div>
           </div>
         </div>
-
-        <p class="mt-3 text-xs leading-6 text-muted-foreground">
-          Everything runs in this page. Nothing you paste is sent anywhere, stored,
-          or kept when the tab closes, which is the point of a page like this
-          existing at all: the text people most need to reshape is usually the text
-          they least want to hand to a website.
-        </p>
       </section>
 
-      <section id="worked" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">Why the example is the example</h2>
-        <p class="mt-3 text-sm leading-7 text-muted-foreground">
-          The paste it opens with is the hard case, not the easy one. Its columns
-          are separated by runs of spaces, and one of its headings &mdash;
-          <span class="font-mono text-[13px]">Length (km)</span> &mdash; contains a
-          single space, so a tool that splits on whitespace turns four columns into
-          five and quietly ruins the header row. Splitting on <b class="text-foreground">two
-          or more</b> spaces gets it right, and that is the rule the guess uses. It
-          is also why the tool tells you which separator it picked instead of just
-          producing a table: when the guess is wrong, the output looks plausible,
-          and a plausible wrong table is worse than an obvious failure.
-        </p>
-      </section>
-
-      <section id="how" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">How it guesses, and when it will be wrong</h2>
-        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">It picks the separator that gives every row the same number of columns.</span> Each candidate is tried on every line; the one whose column count varies least, and is greater than one, wins. Consistency beats frequency, which is why a comma inside one cell does not win an argument against eleven tabs.</li>
-          <li><span class="font-medium text-foreground">Ragged rows are shown, not silently padded.</span> If a row comes out with the wrong number of cells it is marked, and the count is on the page. A tool that pads to fit hides exactly the row you needed to look at.</li>
-          <li><span class="font-medium text-foreground">Quoted CSV is not fully handled.</span> A comma inside quotes will split the cell. For anything that came out of a real spreadsheet, copy the cells rather than the file and you will get tabs, which have no such problem.</li>
-          <li><span class="font-medium text-foreground">Nothing is coerced.</span> Numbers stay strings, dates stay strings, and blank cells stay blank. In JSON that means every value is quoted, which is the honest thing for text of unknown provenance: guessing types is where importers eat leading zeros and turn identifiers into floats.</li>
-          <li><span class="font-medium text-foreground">Nothing leaves the page.</span> No request is made from this file at all.</li>
-        </ul>
-      </section>
+      <div class="mt-6 grid gap-x-8 gap-y-2 text-[12px] leading-6 text-muted-foreground sm:grid-cols-2">
+        <p><b class="font-medium text-foreground">Nothing leaves this page.</b> The arithmetic is about forty lines of it. Nothing is sent, nothing is stored, and the file works offline.</p>
+        <p><b class="font-medium text-foreground">What it assumes.</b> The standard queue model: people arrive at random rather than in a rush, anyone on the desk can take anyone, everybody waits their turn, and nobody gives up and leaves.</p>
+        <p><b class="font-medium text-foreground">Where it is wrong.</b> Every one of those four. A Monday-morning spike beats a daily average; a desk where only one person can do refunds is really two queues; and people do give up, which is why a real desk that looks like this one has a worse day and a shorter queue.</p>
+        <p><b class="font-medium text-foreground">Where the defaults came from.</b> Nowhere. Eighteen an hour at twelve minutes each is a shape that puts the cliff on screen, not a measurement of anyone's desk. Put your own numbers in; that is what it is for.</p>
+      </div>
 
       <script>
-        // Everything below runs in the page. There is no network call in this file.
-
+        // Erlang C, which is the queuing model behind every staffing rule of
+        // thumb anyone has ever quoted at you. All of it runs here.
         const $ = (id) => document.querySelector("#" + id);
-        let format = "markdown";
 
-        const FORMATS = [
-          ["markdown", "Markdown"],
-          ["csv", "CSV"],
-          ["tsv", "TSV"],
-          ["json", "JSON"],
-        ];
-
-        // Candidate separators, in the order a tie is broken. Two or more spaces
-        // comes before a single space because a heading like "Length (km)" has one
-        // space inside it, and splitting on that turns four columns into five.
-        const SPLITTERS = {
-          tab: { label: "tabs", re: /\t/ },
-          pipe: { label: "pipes", re: /\s*\|\s*/ },
-          comma: { label: "commas", re: /\s*,\s*/ },
-          spaces: { label: "runs of two or more spaces", re: / {2,}/ },
+        /** Erlang B, by the recurrence rather than the factorials, which
+         *  overflow at about c = 170 and are the usual way this goes wrong. */
+        const erlangB = (load, servers) => {
+          let blocked = 1;
+          for (let n = 1; n <= servers; n++) blocked = (load * blocked) / (n + load * blocked);
+          return blocked;
         };
 
-        /** Splits `lines` on `re` and reports how consistent the result is. */
-        const tryOne = (lines, re) => {
-          const rows = lines.map((line) => line.split(re).map((cell) => cell.trim()));
-          const counts = rows.map((row) => row.length);
-          const width = counts.sort((a, b) => counts.filter((c) => c === a).length - counts.filter((c) => c === b).length).pop();
-          return { rows, width, ragged: rows.filter((row) => row.length !== width).length };
+        /** The chance an arrival finds every server busy and has to wait. */
+        const erlangC = (load, servers) => {
+          const blocked = erlangB(load, servers);
+          return blocked / (1 - (load / servers) * (1 - blocked));
         };
 
-        /** The separator whose columns come out most consistently. Consistency
-         *  rather than frequency: one comma inside a cell should not outvote
-         *  eleven tabs that line up perfectly. */
-        const guess = (lines) => {
-          let best = null;
-          for (const [key, { re }] of Object.entries(SPLITTERS)) {
-            const attempt = { key, ...tryOne(lines, re) };
-            if (attempt.width < 2) continue;
-            if (!best || attempt.ragged < best.ragged || (attempt.ragged === best.ragged && attempt.width > best.width)) {
-              best = attempt;
-            }
-          }
-          return best;
-        };
-
-        const escapeHtml = (text) => text.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
-        const csvCell = (cell) => (/[",\n]/.test(cell) ? `"${cell.replaceAll('"', '""')}"` : cell);
-
-        const render = () => {
-          const lines = $("input").value.split("\n").map((line) => line.replace(/\s+$/, "")).filter((line) => line.trim());
-          const choice = $("split").value;
-          const picked = choice === "auto" ? guess(lines) : { key: choice, ...tryOne(lines, SPLITTERS[choice].re) };
-
-          if (!lines.length || !picked) {
-            $("note").innerHTML = `<p class="rounded-lg border border-border bg-background p-3 text-[13px] text-muted-foreground">Nothing to split yet. Paste some rows above.</p>`;
-            $("head").innerHTML = "";
-            $("body").innerHTML = "";
-            $("out").textContent = "";
-            return;
-          }
-
-          const hasHeader = $("header").checked;
-          const heading = hasHeader ? picked.rows[0] : picked.rows[0].map((_, i) => `column ${i + 1}`);
-          const body = hasHeader ? picked.rows.slice(1) : picked.rows;
-
-          // ---- what it decided, said out loud ----
-          const trouble = picked.ragged > 0;
-          $("note").innerHTML = `
-            <div class="flex items-start gap-2.5 rounded-lg border ${trouble ? "border-warning-300 bg-warning-50" : "border-brand-200 bg-brand-50"} p-3">
-              <i class="ph ${trouble ? "ph-warning" : "ph-check-circle"} mt-0.5 text-base ${trouble ? "text-warning-700" : "text-brand-600"}"></i>
-              <p class="text-[13px] leading-5 ${trouble ? "text-warning-900" : "text-brand-700"}">
-                Split on <b>${SPLITTERS[picked.key].label}</b>${choice === "auto" ? ", which gave the most consistent columns" : ", because you asked for it"}.
-                <b>${body.length}</b> rows &times; <b>${picked.width}</b> columns${hasHeader ? ", first row used as the heading" : ""}.
-                ${trouble ? `<b>${picked.ragged}</b> row${picked.ragged === 1 ? " does" : "s do"} not have ${picked.width} cells &mdash; marked below. Try a different separator, or fix those rows.` : ""}
-              </p>
-            </div>`;
-
-          // ---- the table ----
-          $("head").innerHTML = `<tr class="border-b border-border bg-background">${heading
-            .map((cell) => `<th class="px-3 py-2 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">${escapeHtml(cell)}</th>`)
-            .join("")}</tr>`;
-          $("body").innerHTML = body
-            .map(
-              (row) =>
-                `<tr class="border-b border-border/60 ${row.length !== picked.width ? "bg-warning-50" : ""}">${Array.from(
-                  { length: picked.width },
-                  (_, i) => `<td class="px-3 py-1.5">${escapeHtml(row[i] ?? "")}</td>`,
-                ).join("")}</tr>`,
-            )
-            .join("");
-
-          // ---- the output ----
-          const grid = [heading, ...body].map((row) => Array.from({ length: picked.width }, (_, i) => row[i] ?? ""));
-          const outputs = {
-            markdown: () => {
-              const widths = grid[0].map((_, i) => Math.max(...grid.map((row) => row[i].length)));
-              const line = (row) => `| ${row.map((cell, i) => cell.padEnd(widths[i])).join(" | ")} |`;
-              return [line(grid[0]), `|${widths.map((w) => "-".repeat(w + 2)).join("|")}|`, ...grid.slice(1).map(line)].join("\n");
-            },
-            csv: () => grid.map((row) => row.map(csvCell).join(",")).join("\n"),
-            tsv: () => grid.map((row) => row.join("\t")).join("\n"),
-            json: () =>
-              JSON.stringify(
-                body.map((row) => Object.fromEntries(heading.map((key, i) => [key, row[i] ?? ""]))),
-                null,
-                2,
-              ),
+        /** Everything the page shows, for one staffing level. A desk with fewer
+         *  people than the work needs has no average wait: the queue grows all
+         *  day, so the honest answer is that it never clears. */
+        const model = (load, servers, serviceMinutes) => {
+          if (servers <= load) return { busy: 1, wait: Infinity, overTen: 1 };
+          const waits = erlangC(load, servers);
+          return {
+            busy: load / servers,
+            wait: (waits * serviceMinutes) / (servers - load),
+            overTen: waits * Math.exp((-(servers - load) * 10) / serviceMinutes),
           };
-          $("out").textContent = outputs[format]();
         };
 
-        const paintFormats = () => {
-          $("formats").innerHTML = FORMATS.map(
-            ([key, label]) =>
-              `<button data-format="${key}" class="rounded-md px-2.5 py-1 text-[12px] font-medium ${
-                key === format ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
-              }">${label}</button>`,
-          ).join("");
+        const clock = (minutes) => {
+          if (!isFinite(minutes)) return "never clears";
+          if (minutes < 1) return `${Math.round(minutes * 60)} sec`;
+          if (minutes < 90) return `${minutes < 10 ? minutes.toFixed(1) : Math.round(minutes)} min`;
+          return `${Math.floor(minutes / 60)}h ${Math.round(minutes % 60)}m`;
         };
 
-        $("formats").addEventListener("click", (event) => {
-          const button = event.target.closest("[data-format]");
-          if (!button) return;
-          format = button.dataset.format;
-          paintFormats();
-          render();
-        });
+        const tile = (label, value, note, tone) => `
+          <div class="rounded-xl border ${tone} p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] uppercase opacity-70">${label}</p>
+            <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">${value}</p>
+            <p class="text-[12px] text-muted-foreground">${note}</p>
+          </div>`;
 
-        $("copy").addEventListener("click", async (event) => {
-          const button = event.currentTarget;
-          try {
-            await navigator.clipboard.writeText($("out").textContent);
-            button.innerHTML = '<i class="ph ph-check text-base"></i>Copied';
-            setTimeout(() => (button.innerHTML = '<i class="ph ph-copy text-base"></i>Copy'), 1600);
-          } catch {
-            // Clipboard access is refused in some frames. The text is already on
-            // screen and selectable, so say so rather than failing silently.
-            button.innerHTML = '<i class="ph ph-selection-all text-base"></i>Select it below';
+        const PLAIN = "border-border bg-background";
+        const GOOD = "border-brand-200 bg-brand-50 text-brand-700";
+        const BAD = "border-error-300 bg-error-50 text-error-700";
+
+        const draw = () => {
+          const arrivals = Math.max(1, Number($("arrivals").value) || 1);
+          const serviceMinutes = Math.max(1, Number($("minutes").value) || 1);
+          const people = Number($("people").value);
+          $("people-value").textContent = people;
+
+          // Offered load in erlangs: the number of people you would need if
+          // nobody ever had to wait and nobody was ever idle.
+          const load = (arrivals * serviceMinutes) / 60;
+          const now = model(load, people, serviceMinutes);
+          const oneFewer = model(load, people - 1, serviceMinutes);
+
+          const busyTone = now.busy > 0.85 ? BAD : now.busy > 0.75 ? PLAIN : GOOD;
+          $("answer").innerHTML =
+            tile("Average wait", clock(now.wait), `before anyone picks it up`, now.wait > 10 ? BAD : GOOD) +
+            tile("Busy", `${Math.round(now.busy * 100)}%`, `work for ${load.toFixed(1)} people, and ${people} on`, busyTone) +
+            tile("Waiting over 10 min", `${Math.round(now.overTen * 100)}%`, "of everyone who arrives", now.overTen > 0.2 ? BAD : GOOD);
+
+          // The finding is the comparison, not the figure, so the page states it
+          // in words rather than leaving the reader to do the division.
+          const times = oneFewer.wait / now.wait;
+          $("finding").innerHTML =
+            people <= 1
+              ? `One person, and the work needs ${load.toFixed(1)}. Nothing about this is a queue; it is a backlog.`
+              : !isFinite(oneFewer.wait)
+                ? `<b>Take one person off and the queue never clears.</b> ${people - 1} people cannot get through work that needs ${load.toFixed(1)}, so it grows all day and the wait depends only on when you arrived.`
+                : `<b>Take one person off and the average wait goes from ${clock(now.wait)} to ${clock(oneFewer.wait)}</b> &mdash; ${times < 10 ? times.toFixed(1) : Math.round(times)} times longer, for ${Math.round((1 / people) * 100)}% less cover. Put one on instead and it goes to ${clock(model(load, people + 1, serviceMinutes).wait)}.`;
+
+          // ---- the bars ----
+          const levels = [];
+          for (let n = Math.max(1, Math.ceil(load) - 1); n <= Math.max(people, Math.ceil(load)) + 4; n++) {
+            levels.push([n, model(load, n, serviceMinutes).wait]);
           }
-        });
+          const longest = Math.max(...levels.filter(([, w]) => isFinite(w)).map(([, w]) => w), 1);
+          $("bars").innerHTML = levels
+            .map(([n, wait]) => {
+              const width = isFinite(wait) ? Math.max(0.6, (wait / longest) * 100) : 100;
+              const fill = !isFinite(wait) ? "var(--color-error-500)" : n === people ? "var(--color-brand-500)" : "var(--color-gray-400)";
+              return `<div class="flex items-center gap-3">
+                <span class="w-20 shrink-0 text-right font-mono text-[11px] ${n === people ? "font-semibold text-foreground" : "text-muted-foreground"}">${n} on</span>
+                <span class="h-4 flex-1 overflow-hidden rounded bg-muted"><span class="block h-4 rounded" style="width:${width}%; background:${fill}"></span></span>
+                <span class="w-24 shrink-0 text-right font-mono text-[11px] ${n === people ? "font-semibold" : "text-muted-foreground"}">${clock(wait)}</span>
+              </div>`;
+            })
+            .join("");
+        };
 
-        $("input").addEventListener("input", render);
-        for (const control of document.querySelectorAll("#split, #header")) control.addEventListener("change", render);
-
-        paintFormats();
-        render();
+        for (const input of document.querySelectorAll("#tool input, #tool select, #tool textarea")) {
+          input.addEventListener("input", draw);
+          input.addEventListener("change", draw);
+        }
+        draw();
       </script>
-
-      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        The example paste is a small table of long rivers, chosen because the
-        figures are widely published and because its heading contains a space,
-        which is the case that breaks naive splitting. The lengths are the
-        commonly cited ones and are disputed by tens of kilometers depending on
-        where a river is said to start; nothing here depends on them being right,
-        since the tool is about the shape of the text rather than the truth of it.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

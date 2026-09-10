@@ -1,8 +1,0 @@
-{
-  "title": "An hour that is not the middle of someone's night",
-  "variant": "No libraries at all: Intl knows every time zone already",
-  "prompt": "Find us a time that works for people in London, New York, LA, Bengaluru and Sydney.",
-  "model": "claude-opus-5",
-  "note": "The cover, and the one that argues the template's central rule hardest: it opens on five cities that have no good answer, and it says so -- 'there is no good window, this is the least bad one' -- instead of ranking three bad hours and presenting the top one as a result. A tool that can return a bad verdict is a tool you can trust with a good one. It loads nothing: local hours come from the browser's own IANA database through `Intl.DateTimeFormat`, so half-hour offsets and daylight saving are correct without a byte of it being written down. The date is fixed at 14 April 2026 and printed, because an overlap computed 'today' is a quietly different answer next month.",
-  "html_sha256": "2d8679a746e752fd0ec7028c8f17e998271114555341c30550c4aedfd6703d06"
-}

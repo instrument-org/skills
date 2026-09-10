@@ -1,16 +1,11 @@
 {
   "title": "Tool",
-  "tagline": "One small thing, done completely, in one file.",
-  "when": "The answer depends on numbers only the reader has, or they will ask it again next week with different ones. A calculator, a converter, a checker, a planner, a reshaper -- with a real example already in it.",
+  "tagline": "One small thing that computes.",
+  "when": "The answer has a parameter in it: it turns on numbers only the reader has, or on data they should not hand to anyone, and the useful thing is either the feel of how the answer moves or the fact that nothing left their machine.",
   "tags": ["do"],
   "order": 45,
   "needs": [],
-  "cover": "meeting-window",
-  "sections": [
-    "What it does",
-    "The tool",
-    "The answer it opens with",
-    "What it does, and what it does not"
-  ],
-  "sketch": ["k", "T", "p", "s", "c3", "b"]
+  "cover": "desk-cover",
+  "sections": ["A name and one line", "The tool", "The fine print"],
+  "sketch": ["t", "c3", "c3", "s", "b", "2"]
 }
