@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A year of weather in six cities</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="explorer@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
+
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@6.5.2/dist/css/tabulator_simple.min.css" />
+    <style>
+      .tabulator {
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-card);
+        color: var(--color-foreground);
+        font-family: inherit;
+        font-size: 13px;
+      }
+      .tabulator .tabulator-header,
+      .tabulator .tabulator-footer {
+        background: var(--color-muted);
+        border-color: var(--color-border);
+        color: var(--color-muted-foreground);
+        font-weight: 500;
+      }
+      .tabulator .tabulator-header .tabulator-col {
+        background: transparent;
+        border-right: 1px solid var(--color-border);
+      }
+      .tabulator .tabulator-header .tabulator-col.tabulator-sortable.tabulator-col-sorter-element:hover {
+        background-color: var(--color-accent);
+      }
+      .tabulator .tabulator-col-sorter .tabulator-arrow {
+        border-bottom-color: var(--color-gray-400) !important;
+        border-top-color: var(--color-gray-400) !important;
+      }
+      .tabulator [aria-sort="ascending"] .tabulator-col-sorter .tabulator-arrow,
+      .tabulator [aria-sort="descending"] .tabulator-col-sorter .tabulator-arrow {
+        border-bottom-color: var(--color-brand-500) !important;
+        border-top-color: var(--color-brand-500) !important;
+      }
+      .tabulator-row,
+      .tabulator-row.tabulator-row-even {
+        background-color: var(--color-card);
+        border-bottom: 1px solid var(--color-border);
+        color: var(--color-foreground);
+      }
+      .tabulator-row:hover {
+        background-color: var(--color-muted) !important;
+        cursor: pointer;
+      }
+      .tabulator-row .tabulator-cell {
+        border-right: 1px solid var(--color-border);
+      }
+      .tabulator-row .tabulator-cell:last-of-type {
+        border-right: none;
+      }
+      .tabulator .tabulator-header input,
+      .tabulator .tabulator-header select {
+        border: 1px solid var(--color-input);
+        border-radius: var(--radius-sm);
+        background: var(--color-background);
+        padding: 2px 5px;
+        color: var(--color-foreground);
+        font-family: inherit;
+      }
+      .tabulator .tabulator-col-title {
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 11px;
+      }
+      .tabulator .tabulator-col-resize-guide {
+        background-color: var(--color-brand-500);
+      }
+    </style>
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Data explorer &middot; 2,190 days &middot; September 2025 to August 2026
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          A year of weather in six cities
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          Daily high, daily low and rainfall for London, New York, Tokyo, Sydney, Nairobi and Reykjavik, every day
+          from 1 September 2025 to 31 August 2026, from the
+          <a href="https://open-meteo.com/">Open-Meteo</a> reanalysis archive. Three hundred and sixty-five days each,
+          which is enough for the year to have a shape you can see rather than a number you have to trust.
+        </p>
+      </header>
+
+      <section id="glance" class="mt-9">
+        <div id="tiles" class="grid grid-cols-2 gap-3 sm:grid-cols-4"></div>
+      </section>
+
+      <section id="shape" class="mt-12">
+        <h2 class="flex items-baseline gap-2 font-serif text-2xl font-medium tracking-[-0.01em]">
+          <i class="ph ph-waveform shrink-0 text-lg text-gray-400"></i>Six years, on the same axis
+        </h2>
+        <p class="mt-3 text-sm leading-7 text-muted-foreground">
+          Daily highs, smoothed to a seven-day mean so the shape survives the noise. One line is upside down and one
+          is nearly flat, which is most of what there is to say about climate.
+        </p>
+        <div class="mt-5 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div class="relative h-80"><canvas id="c-year"></canvas></div>
+          <p class="mt-3 text-xs leading-5 text-muted-foreground">
+            Click a city in the legend to take it out. The unsmoothed daily numbers behind every line are in the grid
+            at the bottom of the page.
+          </p>
+        </div>
+        <div id="c-year-table" class="mt-4"></div>
+      </section>
+
+      <section id="charts" class="mt-12">
+        <h2 class="flex items-baseline gap-2 font-serif text-2xl font-medium tracking-[-0.01em]">
+          <i class="ph ph-drop shrink-0 text-lg text-gray-400"></i>Rain, counted two ways
+        </h2>
+        <div class="mt-5 grid gap-4 lg:grid-cols-2">
+          <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
+              How much fell, in millimeters
+            </p>
+            <div class="relative mt-2 h-56"><canvas id="c-rain"></canvas></div>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
+              How often it rained, in days over a millimeter
+            </p>
+            <div class="relative mt-2 h-56"><canvas id="c-wet"></canvas></div>
+          </div>
+        </div>
+        <div id="rain-table" class="mt-4"></div>
+      </section>
+
+      <section id="findings" class="mt-12">
+        <h2 class="flex items-baseline gap-2 font-serif text-2xl font-medium tracking-[-0.01em]">
+          <i class="ph ph-magnifying-glass shrink-0 text-lg text-gray-400"></i>Three things the year says
+        </h2>
+        <div class="mt-5 space-y-4">
+          <div class="rounded-xl border-l-4 border-brand-500 bg-card p-5 shadow-sm">
+            <p class="font-serif text-xl leading-7 font-medium">Sydney's year runs backwards, and Nairobi's barely runs.</p>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              London's warmest month is July at a mean high of 28.0&deg;C and its coldest is January at 7.6. Sydney's
+              warmest is February at 27.1 and its coldest is July at 17.0 &mdash; the same curve, six months out of
+              phase. Nairobi never leaves a five-degree band all year, which is what being on the equator does: it has
+              a wet season and a dry season rather than a warm one and a cold one.
+            </p>
+          </div>
+          <div class="rounded-xl border-l-4 border-warning-500 bg-card p-5 shadow-sm">
+            <p class="font-serif text-xl leading-7 font-medium">
+              Reykjavik rains far more often than Tokyo and far less hard.
+            </p>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              197 days of rain in Reykjavik against 144 in Tokyo &mdash; and 1,406 mm of water against 1,743. One
+              drizzles for more than half the year, the other holds its rain and then drops it: Tokyo's wettest single
+              day, 73.8 mm on 5 September 2025, is more than five percent of its annual total. &ldquo;Is it rainy&rdquo;
+              turns out to be two different questions, and the two charts above answer them differently.
+            </p>
+          </div>
+          <div class="rounded-xl border-l-4 border-gray-300 bg-card p-5 shadow-sm">
+            <p class="font-serif text-xl leading-7 font-medium">
+              The extremes are one day each, and they are the numbers people will quote.
+            </p>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+              42.0&deg;C in Sydney on 10 January and &minus;18.3&deg;C in New York on 31 January are both single rows
+              out of 2,190. New York's 59-degree spread between its hottest high and its coldest low is real and it is
+              also the least representative fact on this page &mdash; its mean high, 17.1&deg;C, is within a third of a
+              degree of London's. A year of data is worth having precisely because it makes that visible.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="summarize" class="mt-12">
+        <h2 class="flex items-baseline gap-2 font-serif text-2xl font-medium tracking-[-0.01em]">
+          <i class="ph ph-function shrink-0 text-lg text-gray-400"></i>Group it however you like
+        </h2>
+        <p class="mt-3 text-sm leading-7 text-muted-foreground">
+          Pick a way to group the 2,190 days and a number to measure. A SQLite engine compiled to WebAssembly answers
+          it in the page; the query it wrote is printed underneath, so you can see what you asked without typing it.
+        </p>
+        <div class="mt-5 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div class="flex flex-wrap items-end gap-3">
+            <label class="text-sm">
+              <span class="block text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase">Group by</span>
+              <select id="pv-group" class="mt-1 rounded-lg border border-input bg-background px-3 py-2 text-sm"></select>
+            </label>
+            <label class="text-sm">
+              <span class="block text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase">Measure</span>
+              <select id="pv-measure" class="mt-1 rounded-lg border border-input bg-background px-3 py-2 text-sm"></select>
+            </label>
+            <span id="pv-status" class="pb-2 text-xs text-muted-foreground">Starting the engine&hellip;</span>
+          </div>
+          <div class="mt-4 grid gap-4 lg:grid-cols-[1fr_20rem]">
+            <div class="relative h-72"><canvas id="pv-chart"></canvas></div>
+            <div id="pv-table" class="max-h-72 overflow-y-auto"></div>
+          </div>
+          <p class="mt-3 border-t border-border pt-3 font-mono text-[11px] leading-5 text-muted-foreground">
+            <span id="pv-sql"></span>
+          </p>
+        </div>
+      </section>
+
+      <section id="grid" class="mt-12">
+        <h2 class="flex items-baseline gap-2 font-serif text-2xl font-medium tracking-[-0.01em]">
+          <i class="ph ph-table shrink-0 text-lg text-gray-400"></i>Every day
+        </h2>
+        <p class="mt-3 text-sm leading-7 text-muted-foreground">
+          All 2,190 rows. Filter to one city, sort by whatever you are curious about, and take the result away as a
+          spreadsheet.
+        </p>
+        <div class="mt-5 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span class="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase">Columns</span>
+            <div id="grid-cols" class="flex flex-wrap gap-x-3 gap-y-1.5 text-xs"></div>
+            <div class="ml-auto flex items-center gap-3">
+              <span id="grid-count" class="font-mono text-xs text-muted-foreground"></span>
+              <button
+                id="grid-csv"
+                class="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs hover:bg-muted"
+              >
+                <i class="ph ph-download-simple"></i>CSV
+              </button>
+            </div>
+          </div>
+          <div id="grid-host" class="mt-3">
+            <div id="grid-fallback" class="overflow-x-auto overflow-y-auto" style="max-height: 26rem"></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="mt-14 border-t border-border pt-6 text-xs leading-6 text-muted-foreground">
+        <strong class="text-foreground">Method.</strong> Daily maximum and minimum two-meter temperature and daily
+        precipitation sum from the <a href="https://open-meteo.com/">Open-Meteo</a> historical archive, one request
+        per city for 1 September 2025 to 31 August 2026 in UTC, read on 10 September 2026. Coordinates are each
+        city&rsquo;s centre to two decimal places, so these are the conditions in the middle of town rather than at the
+        airport the official figures usually come from, and they will differ by a degree or so from a national met
+        office. The archive is reanalysis: model output corrected against observations, not a thermometer reading, so
+        treat a single day as very good rather than exact. <strong class="text-foreground">What it cannot answer:</strong>
+        anything about whether this year was normal. One year has no baseline in it, and every comparison on this page
+        is between cities rather than between years.
+      </footer>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/sql-wasm.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6.5.2/dist/js/tabulator.min.js"></script>
+      <script>
+        (() => {
+          // [city, date, tmax, tmin, precipitationMm]
+          const W = [["London","2025-09-01",19.3,14.3,3.3],["London","2025-09-02",19.0,12.8,1.9],["London","2025-09-03",20.0,15.6,25.6],["London","2025-09-04",18.8,13.6,4.7],["London","2025-09-05",20.7,11.4,0],["London","2025-09-06",22.0,13.3,0],["London","2025-09-07",24.5,15.7,0],["London","2025-09-08",19.6,13.5,0.1],["London","2025-09-09",19.8,11.0,0.3],["London","2025-09-10",18.0,14.1,7.7],["London","2025-09-11",18.0,12.0,3.7],["London","2025-09-12",17.6,10.9,4.4],["London","2025-09-13",17.2,11.7,3.0],["London","2025-09-14",17.8,9.2,3.5],["London","2025-09-15",17.8,13.9,0.4],["London","2025-09-16",18.3,12.0,0],["London","2025-09-17",18.8,12.5,1.1],["London","2025-09-18",21.5,15.8,0],["London","2025-09-19",25.4,15.0,0],["London","2025-09-20",21.1,13.5,0],["London","2025-09-21",15.5,9.5,0],["London","2025-09-22",15.7,7.5,0],["London","2025-09-23",16.4,7.2,0],["London","2025-09-24",17.5,9.6,0],["London","2025-09-25",18.3,9.5,0],["London","2025-09-26",16.1,9.4,1.1],["London","2025-09-27",17.4,10.6,0],["London","2025-09-28",16.8,11.8,0.5],["London","2025-09-29",17.7,8.0,0],["London","2025-09-30",18.3,8.9,0],["London","2025-10-01",17.9,9.9,0.1],["London","2025-10-02",18.5,10.2,0],["London","2025-10-03",17.9,14.3,12.4],["London","2025-10-04",16.7,11.3,3.6],["London","2025-10-05",15.7,10.6,0],["London","2025-10-06",18.6,9.6,0],["London","2025-10-07",17.0,11.6,0],["London","2025-10-08",16.8,11.3,0.4],["London","2025-10-09",15.0,8.8,0],["London","2025-10-10",15.8,12.0,0.1],["London","2025-10-11",14.8,10.3,0],["London","2025-10-12",15.0,7.5,0],["London","2025-10-13",15.6,12.3,0.2],["London","2025-10-14",13.7,10.7,0.1],["London","2025-10-15",13.0,10.5,0],["London","2025-10-16",15.4,9.5,0],["London","2025-10-17",14.8,11.1,0],["London","2025-10-18",14.6,11.1,0],["London","2025-10-19",15.3,12.0,6.1],["London","2025-10-20",14.6,11.5,3.4],["London","2025-10-21",15.3,10.9,0.2],["London","2025-10-22",14.6,8.9,9.9],["London","2025-10-23",11.7,6.9,14.2],["London","2025-10-24",12.0,5.8,0],["London","2025-10-25",11.8,6.3,1.1],["London","2025-10-26",11.2,4.9,0.7],["London","2025-10-27",12.8,9.9,0],["London","2025-10-28",14.4,11.3,0.3],["London","2025-10-29",12.5,7.1,4.7],["London","2025-10-30",12.9,5.6,0],["London","2025-10-31",15.7,13.5,4.4],["London","2025-11-01",15.8,9.0,4.5],["London","2025-11-02",12.2,7.4,3.8],["London","2025-11-03",15.9,7.5,1.3],["London","2025-11-04",15.8,13.6,0],["London","2025-11-05",17.2,14.5,0.1],["London","2025-11-06",16.6,14.1,1.1],["London","2025-11-07",15.0,12.1,1.7],["London","2025-11-08",14.1,8.7,1.5],["London","2025-11-09",14.0,5.2,0],["London","2025-11-10",13.2,8.5,5.8],["London","2025-11-11",14.8,8.3,1.5],["London","2025-11-12",16.4,13.2,0.3],["London","2025-11-13",16.7,12.7,4.7],["London","2025-11-14",14.3,12.1,15.2],["London","2025-11-15",13.2,10.4,0.2],["London","2025-11-16",10.4,6.1,0.6],["London","2025-11-17",7.6,2.8,0],["London","2025-11-18",6.9,-0.1,0.1],["London","2025-11-19",5.0,0.6,6.3],["London","2025-11-20",3.6,-1.4,0],["London","2025-11-21",5.7,0.6,0],["London","2025-11-22",7.8,1.1,10.4],["London","2025-11-23",10.0,5.3,9.7],["London","2025-11-24",6.9,4.2,1.6],["London","2025-11-25",6.6,3.4,0],["London","2025-11-26",8.8,-0.1,0.9],["London","2025-11-27",13.3,9.2,1.1],["London","2025-11-28",12.9,8.6,0],["London","2025-11-29",11.5,5.0,3.9],["London","2025-11-30",7.6,3.0,0],["London","2025-12-01",11.8,7.2,6.7],["London","2025-12-02",10.7,6.7,2.6],["London","2025-12-03",9.2,3.4,0.8],["London","2025-12-04",8.2,2.2,6.1],["London","2025-12-05",9.7,-0.4,10.6],["London","2025-12-06",11.8,8.9,1.0],["London","2025-12-07",14.1,8.2,4.3],["London","2025-12-08",13.8,10.4,0.6],["London","2025-12-09",14.4,11.6,6.7],["London","2025-12-10",12.8,8.4,0],["London","2025-12-11",11.6,7.7,0],["London","2025-12-12",12.1,6.5,0.2],["London","2025-12-13",9.1,3.4,0],["London","2025-12-14",10.4,6.2,0],["London","2025-12-15",11.3,9.9,0],["London","2025-12-16",11.4,6.0,4.5],["London","2025-12-17",10.1,1.7,0],["London","2025-12-18",12.7,10.4,17.7],["London","2025-12-19",11.0,6.4,0.2],["London","2025-12-20",9.1,4.0,0],["London","2025-12-21",10.3,7.3,5.1],["London","2025-12-22",10.6,7.6,0.9],["London","2025-12-23",7.6,5.9,0.1],["London","2025-12-24",5.9,3.6,0],["London","2025-12-25",5.1,3.0,0],["London","2025-12-26",5.8,3.2,0],["London","2025-12-27",7.5,2.5,0],["London","2025-12-28",7.1,4.1,0],["London","2025-12-29",6.1,3.1,0],["London","2025-12-30",5.8,1.6,0],["London","2025-12-31",2.7,-1.3,0],["London","2026-01-01",5.7,-0.6,0],["London","2026-01-02",3.4,-0.6,0.4],["London","2026-01-03",2.3,-1.2,0],["London","2026-01-04",1.7,-3.3,0],["London","2026-01-05",1.3,-3.7,0],["London","2026-01-06",3.6,-5.2,1.4],["London","2026-01-07",5.5,0.7,6.8],["London","2026-01-08",6.8,1.9,13.5],["London","2026-01-09",5.7,1.9,2.9],["London","2026-01-10",3.2,-0.6,0],["London","2026-01-11",9.8,-1.5,2.4],["London","2026-01-12",10.7,9.3,0.2],["London","2026-01-13",10.3,6.3,12.9],["London","2026-01-14",9.2,-0.7,3.9],["London","2026-01-15",9.4,5.8,14.6],["London","2026-01-16",9.3,3.1,0.5],["London","2026-01-17",9.9,5.0,1.3],["London","2026-01-18",11.1,6.0,0.5],["London","2026-01-19",10.4,6.6,0.8],["London","2026-01-20",9.9,7.4,5.5],["London","2026-01-21",10.0,5.3,10.4],["London","2026-01-22",9.5,7.6,2.5],["London","2026-01-23",8.9,6.2,3.5],["London","2026-01-24",9.2,5.5,4.0],["London","2026-01-25",7.9,5.6,3.1],["London","2026-01-26",6.2,4.1,0.1],["London","2026-01-27",9.6,5.7,16.7],["London","2026-01-28",8.8,1.5,0.2],["London","2026-01-29",6.8,1.8,0],["London","2026-01-30",10.5,3.9,5.5],["London","2026-01-31",9.7,5.6,1.5],["London","2026-02-01",9.2,5.2,5.5],["London","2026-02-02",8.9,5.5,0.2],["London","2026-02-03",6.6,2.9,10.0],["London","2026-02-04",10.1,2.9,5.1],["London","2026-02-05",8.3,6.1,5.2],["London","2026-02-06",10.7,7.8,9.6],["London","2026-02-07",10.7,7.1,3.1],["London","2026-02-08",10.6,6.6,0.7],["London","2026-02-09",10.2,6.5,4.4],["London","2026-02-10",11.4,7.6,3.7],["London","2026-02-11",12.2,7.8,2.4],["London","2026-02-12",10.3,6.0,3.5],["London","2026-02-13",9.4,4.3,2.0],["London","2026-02-14",5.8,1.3,0],["London","2026-02-15",8.2,3.1,9.1],["London","2026-02-16",9.2,5.4,2.6],["London","2026-02-17",6.1,2.1,0],["London","2026-02-18",5.4,2.3,6.2],["London","2026-02-19",6.9,4.4,1.3],["London","2026-02-20",10.9,4.7,1.7],["London","2026-02-21",13.2,9.0,3.9],["London","2026-02-22",13.3,9.2,2.0],["London","2026-02-23",13.0,8.6,0.7],["London","2026-02-24",14.5,11.1,0.2],["London","2026-02-25",16.8,8.4,0],["London","2026-02-26",13.3,9.5,0.6],["London","2026-02-27",13.3,8.9,4.7],["London","2026-02-28",10.1,6.0,4.2],["London","2026-03-01",12.5,6.9,0.6],["London","2026-03-02",14.7,8.8,0],["London","2026-03-03",14.2,6.0,0],["London","2026-03-04",13.3,5.2,0],["London","2026-03-05",17.0,6.9,0],["London","2026-03-06",11.0,7.5,5.4],["London","2026-03-07",10.0,6.9,0],["London","2026-03-08",12.6,7.2,0],["London","2026-03-09",14.2,6.7,0.2],["London","2026-03-10",12.3,9.1,0.4],["London","2026-03-11",12.1,7.0,1.7],["London","2026-03-12",11.6,6.5,0.7],["London","2026-03-13",11.1,3.5,6.4],["London","2026-03-14",10.4,1.8,0.7],["London","2026-03-15",11.6,2.4,2.6],["London","2026-03-16",11.7,5.3,0],["London","2026-03-17",13.6,9.0,0],["London","2026-03-18",17.3,8.1,0],["London","2026-03-19",15.6,5.4,0],["London","2026-03-20",13.0,3.6,0],["London","2026-03-21",12.4,2.7,0],["London","2026-03-22",11.5,1.2,0],["London","2026-03-23",14.9,3.7,0],["London","2026-03-24",13.1,8.7,1.9],["London","2026-03-25",8.8,4.2,3.1],["London","2026-03-26",9.6,2.1,0],["London","2026-03-27",11.9,5.7,1.1],["London","2026-03-28",10.3,3.9,0.5],["London","2026-03-29",10.0,2.3,0.5],["London","2026-03-30",11.2,6.5,0.2],["London","2026-03-31",16.4,7.2,0.4],["London","2026-04-01",13.7,8.8,0.1],["London","2026-04-02",10.6,5.5,0],["London","2026-04-03",16.0,7.9,1.5],["London","2026-04-04",14.3,7.9,0.4],["London","2026-04-05",13.2,6.6,0.4],["London","2026-04-06",14.9,3.1,0],["London","2026-04-07",20.3,6.6,0],["London","2026-04-08",25.9,9.8,0],["London","2026-04-09",21.1,8.5,0.2],["London","2026-04-10",12.9,6.5,0],["London","2026-04-11",12.8,8.3,0.3],["London","2026-04-12",15.1,7.9,0.3],["London","2026-04-13",13.3,4.7,1.0],["London","2026-04-14",16.5,5.4,0],["London","2026-04-15",17.0,10.8,1.0],["London","2026-04-16",17.4,10.2,0.5],["London","2026-04-17",17.7,10.9,0.8],["London","2026-04-18",16.8,9.6,0],["London","2026-04-19",15.7,6.5,0],["London","2026-04-20",13.4,5.8,0],["London","2026-04-21",14.1,5.9,0],["London","2026-04-22",16.5,6.7,0],["London","2026-04-23",18.1,7.2,0],["London","2026-04-24",19.2,4.7,0],["London","2026-04-25",21.6,4.7,0],["London","2026-04-26",19.5,7.5,0],["London","2026-04-27",21.6,8.0,0.6],["London","2026-04-28",17.4,9.2,0.4],["London","2026-04-29",17.9,8.4,0],["London","2026-04-30",20.9,10.8,0],["London","2026-05-01",24.2,10.8,0],["London","2026-05-02",22.5,10.7,7.8],["London","2026-05-03",19.2,12.6,1.6],["London","2026-05-04",16.3,11.6,0.4],["London","2026-05-05",16.5,10.9,1.1],["London","2026-05-06",13.3,8.4,0.2],["London","2026-05-07",15.0,7.5,0.4],["London","2026-05-08",18.5,8.3,0],["London","2026-05-09",21.1,9.5,0],["London","2026-05-10",13.6,7.8,0.3],["London","2026-05-11",12.0,4.7,0.7],["London","2026-05-12",15.5,4.2,0.1],["London","2026-05-13",13.0,8.0,6.1],["London","2026-05-14",11.8,6.1,4.0],["London","2026-05-15",14.5,5.9,0.8],["London","2026-05-16",15.0,6.0,1.5],["London","2026-05-17",16.5,8.9,1.6],["London","2026-05-18",15.0,7.7,3.0],["London","2026-05-19",17.8,11.3,4.1],["London","2026-05-20",19.2,11.8,1.0],["London","2026-05-21",23.2,11.0,0],["London","2026-05-22",27.7,15.0,0],["London","2026-05-23",30.1,18.9,0],["London","2026-05-24",32.5,16.3,0],["London","2026-05-25",33.8,19.1,0],["London","2026-05-26",34.5,21.2,0],["London","2026-05-27",27.2,16.8,0],["London","2026-05-28",31.2,15.7,0.5],["London","2026-05-29",26.7,18.3,0],["London","2026-05-30",30.0,16.6,0],["London","2026-05-31",23.0,15.8,0],["London","2026-06-01",24.4,13.7,2.2],["London","2026-06-02",19.8,14.2,15.5],["London","2026-06-03",19.1,12.6,4.4],["London","2026-06-04",17.8,13.0,10.0],["London","2026-06-05",17.7,11.5,0.3],["London","2026-06-06",16.9,12.5,5.9],["London","2026-06-07",18.7,10.9,0.1],["London","2026-06-08",16.9,11.4,9.9],["London","2026-06-09",17.2,9.0,4.5],["London","2026-06-10",16.9,9.1,8.7],["London","2026-06-11",16.9,9.1,5.4],["London","2026-06-12",20.9,13.8,0],["London","2026-06-13",19.9,12.5,0],["London","2026-06-14",20.5,11.6,0],["London","2026-06-15",22.3,12.7,2.9],["London","2026-06-16",26.0,15.0,1.0],["London","2026-06-17",25.3,16.2,0.9],["London","2026-06-18",25.5,16.6,0.1],["London","2026-06-19",29.9,17.7,0],["London","2026-06-20",25.7,17.4,0.1],["London","2026-06-21",30.7,18.5,0.1],["London","2026-06-22",28.6,17.5,2.9],["London","2026-06-23",33.5,18.3,13.1],["London","2026-06-24",34.7,21.8,0],["London","2026-06-25",31.7,20.2,0],["London","2026-06-26",36.0,23.3,0.2],["London","2026-06-27",32.4,22.0,0],["London","2026-06-28",26.1,18.2,0],["London","2026-06-29",24.4,14.4,0],["London","2026-06-30",25.4,17.9,0.4],["London","2026-07-01",25.3,15.9,0],["London","2026-07-02",25.9,16.9,0.1],["London","2026-07-03",26.0,13.6,0],["London","2026-07-04",29.5,15.7,0],["London","2026-07-05",27.9,16.9,0],["London","2026-07-06",31.6,17.6,0],["London","2026-07-07",31.0,18.9,0],["London","2026-07-08",32.7,20.4,0],["London","2026-07-09",34.7,21.6,0],["London","2026-07-10",30.5,21.6,0],["London","2026-07-11",29.2,18.6,0],["London","2026-07-12",29.2,16.6,0],["London","2026-07-13",26.6,14.7,0],["London","2026-07-14",29.6,16.1,0],["London","2026-07-15",28.4,17.4,0],["London","2026-07-16",28.5,16.5,0],["London","2026-07-17",27.8,15.8,0],["London","2026-07-18",22.9,15.7,0],["London","2026-07-19",23.0,13.4,0],["London","2026-07-20",26.0,12.6,0],["London","2026-07-21",22.9,14.9,0],["London","2026-07-22",27.2,15.6,0],["London","2026-07-23",26.3,16.9,0],["London","2026-07-24",28.5,18.0,0],["London","2026-07-25",28.4,17.2,0],["London","2026-07-26",26.1,18.2,0.6],["London","2026-07-27",27.3,15.9,0],["London","2026-07-28",29.9,18.1,0],["London","2026-07-29",33.5,18.4,0],["London","2026-07-30",27.7,19.1,3.3],["London","2026-07-31",25.2,16.3,0.6],["London","2026-08-01",26.4,16.1,0],["London","2026-08-02",28.2,15.5,0],["London","2026-08-03",31.3,18.0,0.1],["London","2026-08-04",29.7,19.7,1.8],["London","2026-08-05",24.9,17.6,0.5],["London","2026-08-06",22.3,14.3,0],["London","2026-08-07",25.9,13.6,0],["London","2026-08-08",27.6,14.4,0],["London","2026-08-09",32.2,17.4,0],["London","2026-08-10",26.4,18.5,0],["London","2026-08-11",25.3,16.4,0],["London","2026-08-12",32.8,17.2,0],["London","2026-08-13",36.2,18.9,0],["London","2026-08-14",33.9,21.7,0],["London","2026-08-15",27.3,20.1,0.3],["London","2026-08-16",25.2,17.6,0.9],["London","2026-08-17",26.3,16.9,0],["London","2026-08-18",23.8,18.0,1.0],["London","2026-08-19",23.8,17.0,2.2],["London","2026-08-20",22.1,14.5,3.6],["London","2026-08-21",21.1,12.8,0.1],["London","2026-08-22",22.2,11.4,1.6],["London","2026-08-23",24.8,13.3,0],["London","2026-08-24",21.8,13.6,0],["London","2026-08-25",25.3,15.8,0],["London","2026-08-26",26.7,17.3,1.8],["London","2026-08-27",23.1,18.0,11.9],["London","2026-08-28",23.4,15.1,2.9],["London","2026-08-29",20.2,16.5,7.3],["London","2026-08-30",21.4,15.7,1.1],["London","2026-08-31",22.1,13.8,3.1],["New York","2025-09-01",26.7,16.6,0],["New York","2025-09-02",26.9,16.6,0],["New York","2025-09-03",26.4,15.5,0],["New York","2025-09-04",25.2,16.1,2.8],["New York","2025-09-05",28.5,18.1,6.5],["New York","2025-09-06",30.2,21.8,15.8],["New York","2025-09-07",21.7,16.8,22.3],["New York","2025-09-08",21.7,13.2,0.1],["New York","2025-09-09",22.3,13.3,0],["New York","2025-09-10",20.7,15.3,5.0],["New York","2025-09-11",26.9,15.4,0],["New York","2025-09-12",27.4,16.3,0],["New York","2025-09-13",26.5,16.2,0.7],["New York","2025-09-14",29.8,17.1,0.5],["New York","2025-09-15",28.6,17.9,0],["New York","2025-09-16",24.5,17.5,0],["New York","2025-09-17",21.1,17.2,6.8],["New York","2025-09-18",27.4,18.2,0.1],["New York","2025-09-19",28.1,18.1,0],["New York","2025-09-20",23.8,14.5,0],["New York","2025-09-21",22.1,13.8,0],["New York","2025-09-22",22.7,12.0,0],["New York","2025-09-23",29.5,16.7,0],["New York","2025-09-24",26.6,18.4,7.3],["New York","2025-09-25",24.9,19.9,50.7],["New York","2025-09-26",26.6,18.7,0.2],["New York","2025-09-27",24.4,16.9,0],["New York","2025-09-28",28.0,17.7,0.7],["New York","2025-09-29",24.1,17.3,0],["New York","2025-09-30",25.4,17.0,0],["New York","2025-10-01",21.2,12.1,0],["New York","2025-10-02",19.1,9.6,0],["New York","2025-10-03",22.2,9.0,0],["New York","2025-10-04",27.8,11.8,0],["New York","2025-10-05",29.8,14.4,0],["New York","2025-10-06",26.8,14.6,0],["New York","2025-10-07",27.4,17.1,0],["New York","2025-10-08",22.6,17.5,5.4],["New York","2025-10-09",16.6,9.8,0],["New York","2025-10-10",16.2,4.9,0],["New York","2025-10-11",19.0,9.7,1.4],["New York","2025-10-12",16.8,13.4,8.6],["New York","2025-10-13",14.9,12.3,33.7],["New York","2025-10-14",16.2,12.2,4.9],["New York","2025-10-15",19.9,12.7,0],["New York","2025-10-16",15.3,7.2,0],["New York","2025-10-17",17.0,7.2,0],["New York","2025-10-18",17.9,6.5,0],["New York","2025-10-19",20.8,9.9,0],["New York","2025-10-20",20.1,13.9,10.2],["New York","2025-10-21",19.3,8.0,0],["New York","2025-10-22",16.7,12.1,1.6],["New York","2025-10-23",15.1,8.6,0.1],["New York","2025-10-24",14.9,5.9,0],["New York","2025-10-25",14.4,5.8,0],["New York","2025-10-26",14.4,6.9,0.1],["New York","2025-10-27",13.0,3.5,0],["New York","2025-10-28",12.4,4.3,0],["New York","2025-10-29",13.6,7.1,0],["New York","2025-10-30",16.5,10.9,41.7],["New York","2025-10-31",16.3,10.1,2.8],["New York","2025-11-01",14.5,7.6,0],["New York","2025-11-02",15.0,4.0,0],["New York","2025-11-03",14.0,6.3,0],["New York","2025-11-04",14.9,8.1,0.1],["New York","2025-11-05",18.3,4.0,0],["New York","2025-11-06",16.5,7.7,1.6],["New York","2025-11-07",15.4,1.8,0],["New York","2025-11-08",18.5,11.9,4.8],["New York","2025-11-09",16.4,8.5,0.2],["New York","2025-11-10",14.6,5.2,11.9],["New York","2025-11-11",4.4,0.8,0.5],["New York","2025-11-12",9.3,2.2,0],["New York","2025-11-13",10.5,5.7,1.8],["New York","2025-11-14",10.1,2.9,0],["New York","2025-11-15",8.8,1.3,0],["New York","2025-11-16",13.0,6.4,1.0],["New York","2025-11-17",6.2,1.4,0],["New York","2025-11-18",7.9,0.9,0],["New York","2025-11-19",8.3,2.1,4.6],["New York","2025-11-20",7.9,0.0,0],["New York","2025-11-21",11.0,2.5,0],["New York","2025-11-22",11.0,7.1,5.1],["New York","2025-11-23",7.7,-0.9,0],["New York","2025-11-24",11.4,4.2,0],["New York","2025-11-25",12.5,2.9,2.8],["New York","2025-11-26",15.4,10.6,11.2],["New York","2025-11-27",13.6,3.8,0.8],["New York","2025-11-28",5.7,0.1,0],["New York","2025-11-29",5.8,-0.2,0],["New York","2025-11-30",4.9,-0.4,3.3],["New York","2025-12-01",6.1,2.0,0],["New York","2025-12-02",3.0,-1.6,17.2],["New York","2025-12-03",4.3,-1.3,0],["New York","2025-12-04",5.5,-1.2,0.1],["New York","2025-12-05",-0.1,-6.7,0],["New York","2025-12-06",4.4,-1.8,0.4],["New York","2025-12-07",5.1,-1.7,0],["New York","2025-12-08",2.5,-3.9,0],["New York","2025-12-09",-0.6,-7.5,0],["New York","2025-12-10",6.5,-0.8,1.6],["New York","2025-12-11",4.3,-0.6,1.5],["New York","2025-12-12",1.6,-4.9,0],["New York","2025-12-13",3.8,-4.5,0],["New York","2025-12-14",1.2,-6.8,12.5],["New York","2025-12-15",-2.9,-8.6,0],["New York","2025-12-16",-2.4,-9.3,0],["New York","2025-12-17",4.3,-6.5,0],["New York","2025-12-18",5.9,-4.6,0],["New York","2025-12-19",14.5,4.5,26.2],["New York","2025-12-20",2.5,-2.1,0],["New York","2025-12-21",7.9,-0.1,0],["New York","2025-12-22",3.1,-3.0,0],["New York","2025-12-23",3.1,0.1,2.9],["New York","2025-12-24",7.4,1.6,0],["New York","2025-12-25",8.4,-1.7,0],["New York","2025-12-26",2.0,-5.8,0.6],["New York","2025-12-27",-1.0,-5.0,12.1],["New York","2025-12-28",-0.5,-11.6,0],["New York","2025-12-29",7.4,-0.6,4.8],["New York","2025-12-30",3.5,-2.3,0],["New York","2025-12-31",-0.3,-3.7,0],["New York","2026-01-01",0.7,-6.4,1.1],["New York","2026-01-02",-1.3,-7.3,0.3],["New York","2026-01-03",-0.7,-6.7,0],["New York","2026-01-04",1.0,-4.5,0.3],["New York","2026-01-05",0.3,-5.4,0.8],["New York","2026-01-06",4.0,-2.2,0.6],["New York","2026-01-07",9.4,0.8,0.3],["New York","2026-01-08",10.1,1.5,0],["New York","2026-01-09",9.1,0.3,1.9],["New York","2026-01-10",11.0,4.3,10.3],["New York","2026-01-11",8.3,3.4,5.2],["New York","2026-01-12",4.8,-1.2,0],["New York","2026-01-13",7.5,-0.7,0],["New York","2026-01-14",9.9,4.0,0.1],["New York","2026-01-15",7.5,-2.4,0.1],["New York","2026-01-16",0.1,-6.0,0],["New York","2026-01-17",2.0,-1.9,4.7],["New York","2026-01-18",0.5,-4.6,6.2],["New York","2026-01-19",-0.2,-7.1,3.0],["New York","2026-01-20",-3.3,-11.0,0],["New York","2026-01-21",0.6,-15.4,0],["New York","2026-01-22",6.9,1.0,0.2],["New York","2026-01-23",3.5,-4.3,0],["New York","2026-01-24",-1.7,-13.1,0],["New York","2026-01-25",-6.9,-12.2,28.2],["New York","2026-01-26",-3.2,-7.9,5.3],["New York","2026-01-27",-6.4,-13.4,0.1],["New York","2026-01-28",-6.8,-13.4,0],["New York","2026-01-29",-8.1,-15.2,0],["New York","2026-01-30",-9.3,-15.4,0],["New York","2026-01-31",-7.3,-18.3,0],["New York","2026-02-01",-6.6,-14.1,0],["New York","2026-02-02",-0.9,-11.0,0],["New York","2026-02-03",-0.9,-13.6,0],["New York","2026-02-04",-1.1,-10.0,0],["New York","2026-02-05",-2.6,-13.1,0],["New York","2026-02-06",-2.4,-12.5,0],["New York","2026-02-07",-3.7,-15.2,1.1],["New York","2026-02-08",-10.2,-17.8,0],["New York","2026-02-09",-4.0,-14.7,0],["New York","2026-02-10",-1.5,-9.9,0],["New York","2026-02-11",3.4,-3.1,0.3],["New York","2026-02-12",0.9,-3.5,0],["New York","2026-02-13",1.1,-8.5,0],["New York","2026-02-14",3.8,-7.8,0],["New York","2026-02-15",2.5,-6.3,0],["New York","2026-02-16",2.1,-2.1,2.4],["New York","2026-02-17",5.8,0.1,0],["New York","2026-02-18",3.8,-0.5,1.7],["New York","2026-02-19",3.9,1.4,0.9],["New York","2026-02-20",4.4,1.3,8.3],["New York","2026-02-21",8.0,-0.9,1.3],["New York","2026-02-22",5.5,-0.5,6.9],["New York","2026-02-23",1.5,-1.7,28.2],["New York","2026-02-24",0.8,-7.9,0],["New York","2026-02-25",2.4,-11.0,1.5],["New York","2026-02-26",3.7,-4.0,0.6],["New York","2026-02-27",2.4,-9.2,0],["New York","2026-02-28",2.8,-6.5,0],["New York","2026-03-01",3.2,-2.8,0.9],["New York","2026-03-02",0.1,-9.9,0],["New York","2026-03-03",1.2,-6.2,5.7],["New York","2026-03-04",8.7,0.2,5.5],["New York","2026-03-05",5.8,2.4,13.6],["New York","2026-03-06",5.9,2.5,14.7],["New York","2026-03-07",8.8,2.7,0.1],["New York","2026-03-08",20.5,6.4,0.9],["New York","2026-03-09",21.0,4.3,0],["New York","2026-03-10",24.4,6.5,0],["New York","2026-03-11",22.3,11.3,0],["New York","2026-03-12",19.5,2.3,15.0],["New York","2026-03-13",5.4,-1.9,0.1],["New York","2026-03-14",10.6,2.8,1.9],["New York","2026-03-15",6.5,1.1,0],["New York","2026-03-16",17.6,4.8,11.4],["New York","2026-03-17",14.6,0.9,9.5],["New York","2026-03-18",2.3,-4.0,0],["New York","2026-03-19",4.8,-2.1,0],["New York","2026-03-20",12.8,0.6,0],["New York","2026-03-21",14.1,7.7,3.8],["New York","2026-03-22",16.5,5.1,2.7],["New York","2026-03-23",12.7,4.6,16.2],["New York","2026-03-24",8.3,-0.3,0],["New York","2026-03-25",10.6,0.6,0],["New York","2026-03-26",22.6,5.9,0],["New York","2026-03-27",19.5,6.7,4.3],["New York","2026-03-28",6.6,-1.8,0],["New York","2026-03-29",12.5,-1.5,0],["New York","2026-03-30",21.0,7.0,0],["New York","2026-03-31",26.7,15.2,0.6],["New York","2026-04-01",26.6,18.6,1.0],["New York","2026-04-02",18.2,6.9,5.7],["New York","2026-04-03",21.2,5.4,0.4],["New York","2026-04-04",22.4,10.3,0],["New York","2026-04-05",15.9,6.3,6.8],["New York","2026-04-06",12.9,4.0,0.1],["New York","2026-04-07",11.8,4.6,0],["New York","2026-04-08",9.4,-1.6,0],["New York","2026-04-09",9.7,-0.2,0],["New York","2026-04-10",17.4,3.1,0],["New York","2026-04-11",17.6,10.2,0.7],["New York","2026-04-12",14.5,5.5,0],["New York","2026-04-13",26.5,8.3,0],["New York","2026-04-14",31.1,16.0,1.4],["New York","2026-04-15",32.7,18.6,0.5],["New York","2026-04-16",33.4,22.8,0.1],["New York","2026-04-17",28.1,20.6,4.6],["New York","2026-04-18",21.9,11.8,0],["New York","2026-04-19",11.7,6.9,4.5],["New York","2026-04-20",10.2,2.4,1.8],["New York","2026-04-21",11.4,-0.1,0],["New York","2026-04-22",12.8,6.4,1.5],["New York","2026-04-23",22.5,6.3,5.8],["New York","2026-04-24",20.9,12.9,0],["New York","2026-04-25",11.0,6.0,14.0],["New York","2026-04-26",13.9,5.4,13.4],["New York","2026-04-27",19.6,5.6,0],["New York","2026-04-28",18.1,7.0,0],["New York","2026-04-29",16.9,10.2,0],["New York","2026-04-30",15.7,8.8,10.4],["New York","2026-05-01",19.0,6.9,0.1],["New York","2026-05-02",15.4,9.0,1.9],["New York","2026-05-03",14.6,6.7,0],["New York","2026-05-04",24.5,8.5,0],["New York","2026-05-05",29.4,15.3,0],["New York","2026-05-06",25.4,18.2,3.6],["New York","2026-05-07",19.7,10.7,4.9],["New York","2026-05-08",18.6,8.4,0.5],["New York","2026-05-09",18.6,11.6,8.1],["New York","2026-05-10",24.5,10.0,4.2],["New York","2026-05-11",20.5,11.3,0.7],["New York","2026-05-12",20.1,7.3,0],["New York","2026-05-13",24.6,11.3,0],["New York","2026-05-14",19.4,12.9,2.5],["New York","2026-05-15",19.4,9.6,0.2],["New York","2026-05-16",28.5,11.2,0],["New York","2026-05-17",32.9,19.6,0],["New York","2026-05-18",32.0,21.0,0],["New York","2026-05-19",35.8,23.3,0.7],["New York","2026-05-20",34.6,24.0,5.4],["New York","2026-05-21",24.1,14.2,11.6],["New York","2026-05-22",20.3,13.0,0],["New York","2026-05-23",14.9,10.4,11.2],["New York","2026-05-24",15.4,10.3,35.8],["New York","2026-05-25",23.0,13.8,5.8],["New York","2026-05-26",26.3,14.9,0],["New York","2026-05-27",27.2,18.8,0],["New York","2026-05-28",25.4,18.6,0],["New York","2026-05-29",27.0,14.3,0],["New York","2026-05-30",24.2,12.1,1.0],["New York","2026-05-31",25.6,9.5,0],["New York","2026-06-01",22.8,15.4,0.2],["New York","2026-06-02",25.5,10.8,0],["New York","2026-06-03",29.5,15.8,0],["New York","2026-06-04",32.0,16.5,0],["New York","2026-06-05",33.7,18.3,0],["New York","2026-06-06",34.3,22.2,3.3],["New York","2026-06-07",29.2,19.9,5.9],["New York","2026-06-08",24.8,17.7,0],["New York","2026-06-09",27.7,14.5,0],["New York","2026-06-10",29.3,20.7,2.6],["New York","2026-06-11",35.4,22.5,3.0],["New York","2026-06-12",33.7,24.2,5.5],["New York","2026-06-13",32.5,21.8,0],["New York","2026-06-14",33.4,21.8,0],["New York","2026-06-15",27.5,19.0,20.5],["New York","2026-06-16",26.3,14.3,0],["New York","2026-06-17",25.8,16.9,1.1],["New York","2026-06-18",31.9,19.8,1.2],["New York","2026-06-19",29.3,21.8,0],["New York","2026-06-20",29.4,19.3,0],["New York","2026-06-21",29.3,18.9,0],["New York","2026-06-22",27.4,21.3,5.9],["New York","2026-06-23",22.0,20.2,22.8],["New York","2026-06-24",28.1,17.8,0],["New York","2026-06-25",29.0,17.7,0.1],["New York","2026-06-26",28.2,19.3,7.1],["New York","2026-06-27",26.2,21.9,12.1],["New York","2026-06-28",27.3,19.9,2.7],["New York","2026-06-29",31.6,19.4,0],["New York","2026-06-30",34.0,22.2,1.0],["New York","2026-07-01",35.8,23.3,2.4],["New York","2026-07-02",40.7,26.9,4.2],["New York","2026-07-03",40.0,29.1,1.5],["New York","2026-07-04",36.0,25.5,0.9],["New York","2026-07-05",33.5,23.4,16.7],["New York","2026-07-06",24.5,20.0,47.7],["New York","2026-07-07",22.6,18.1,9.9],["New York","2026-07-08",29.8,18.1,0],["New York","2026-07-09",29.9,20.7,7.2],["New York","2026-07-10",29.7,22.8,1.0],["New York","2026-07-11",28.0,22.0,12.4],["New York","2026-07-12",29.6,19.8,0.2],["New York","2026-07-13",29.9,19.6,0.3],["New York","2026-07-14",34.2,21.4,0],["New York","2026-07-15",36.9,25.5,0.7],["New York","2026-07-16",33.2,23.5,0.4],["New York","2026-07-17",31.3,21.7,0],["New York","2026-07-18",29.0,21.8,18.1],["New York","2026-07-19",26.9,21.8,13.3],["New York","2026-07-20",29.1,16.8,0],["New York","2026-07-21",28.2,21.5,20.2],["New York","2026-07-22",30.0,22.1,1.1],["New York","2026-07-23",27.9,17.6,0],["New York","2026-07-24",28.0,17.5,0],["New York","2026-07-25",27.6,17.8,0],["New York","2026-07-26",29.7,17.2,0.4],["New York","2026-07-27",30.3,20.6,3.6],["New York","2026-07-28",27.4,20.8,7.6],["New York","2026-07-29",28.0,20.9,67.0],["New York","2026-07-30",25.2,19.6,5.4],["New York","2026-07-31",29.2,19.5,1.2],["New York","2026-08-01",29.6,21.0,1.1],["New York","2026-08-02",28.0,23.7,4.1],["New York","2026-08-03",28.4,22.7,40.8],["New York","2026-08-04",28.7,18.6,0],["New York","2026-08-05",28.1,20.2,0.6],["New York","2026-08-06",32.6,23.3,6.1],["New York","2026-08-07",35.2,24.6,4.3],["New York","2026-08-08",31.3,22.9,2.4],["New York","2026-08-09",33.4,23.5,0],["New York","2026-08-10",32.6,22.1,3.5],["New York","2026-08-11",31.2,22.4,4.7],["New York","2026-08-12",31.7,22.6,1.7],["New York","2026-08-13",29.4,20.2,16.1],["New York","2026-08-14",29.4,21.0,0.1],["New York","2026-08-15",28.7,18.7,0.1],["New York","2026-08-16",26.9,19.8,0.1],["New York","2026-08-17",27.6,20.1,12.4],["New York","2026-08-18",29.5,22.0,4.3],["New York","2026-08-19",30.3,20.3,0],["New York","2026-08-20",29.0,20.8,13.1],["New York","2026-08-21",25.7,17.9,18.7],["New York","2026-08-22",24.7,19.7,0.5],["New York","2026-08-23",26.9,20.0,9.0],["New York","2026-08-24",25.9,17.0,0.4],["New York","2026-08-25",25.3,16.9,0.1],["New York","2026-08-26",27.5,17.1,0],["New York","2026-08-27",26.7,20.6,6.6],["New York","2026-08-28",29.0,21.2,0.7],["New York","2026-08-29",26.4,16.9,0],["New York","2026-08-30",28.7,17.4,2.0],["New York","2026-08-31",26.7,20.5,6.8],["Tokyo","2025-09-01",35.8,27.1,0],["Tokyo","2025-09-02",36.6,28.0,0],["Tokyo","2025-09-03",36.5,25.2,1.4],["Tokyo","2025-09-04",29.1,24.9,9.4],["Tokyo","2025-09-05",26.6,23.3,73.8],["Tokyo","2025-09-06",30.0,23.9,0],["Tokyo","2025-09-07",30.7,23.9,0],["Tokyo","2025-09-08",33.1,25.9,1.2],["Tokyo","2025-09-09",32.6,25.5,0.5],["Tokyo","2025-09-10",33.1,25.3,4.1],["Tokyo","2025-09-11",31.9,22.4,35.5],["Tokyo","2025-09-12",28.6,22.8,19.5],["Tokyo","2025-09-13",28.5,25.1,4.3],["Tokyo","2025-09-14",31.5,24.6,0],["Tokyo","2025-09-15",30.3,24.3,4.4],["Tokyo","2025-09-16",31.8,24.9,0.6],["Tokyo","2025-09-17",33.8,25.9,0],["Tokyo","2025-09-18",36.5,20.6,24.5],["Tokyo","2025-09-19",24.5,20.8,1.4],["Tokyo","2025-09-20",28.1,22.2,2.0],["Tokyo","2025-09-21",29.5,19.7,16.5],["Tokyo","2025-09-22",25.5,17.1,0],["Tokyo","2025-09-23",24.2,17.0,0],["Tokyo","2025-09-24",26.4,18.1,0],["Tokyo","2025-09-25",28.3,21.9,0],["Tokyo","2025-09-26",32.2,21.4,20.0],["Tokyo","2025-09-27",27.5,20.8,0.3],["Tokyo","2025-09-28",28.0,23.7,1.3],["Tokyo","2025-09-29",32.0,20.4,7.2],["Tokyo","2025-09-30",28.0,19.9,8.4],["Tokyo","2025-10-01",21.9,16.6,18.5],["Tokyo","2025-10-02",26.4,18.4,0],["Tokyo","2025-10-03",24.6,19.7,0],["Tokyo","2025-10-04",24.2,19.5,2.7],["Tokyo","2025-10-05",27.8,21.9,0.5],["Tokyo","2025-10-06",29.0,19.3,0.2],["Tokyo","2025-10-07",24.1,18.6,0],["Tokyo","2025-10-08",28.2,21.9,0],["Tokyo","2025-10-09",23.5,16.2,0],["Tokyo","2025-10-10",24.0,18.3,0.1],["Tokyo","2025-10-11",18.0,15.5,4.0],["Tokyo","2025-10-12",24.4,18.7,0.1],["Tokyo","2025-10-13",25.9,17.3,0],["Tokyo","2025-10-14",20.7,15.2,4.4],["Tokyo","2025-10-15",19.9,16.3,7.2],["Tokyo","2025-10-16",22.9,17.2,11.1],["Tokyo","2025-10-17",23.3,14.5,0.1],["Tokyo","2025-10-18",24.8,18.3,0],["Tokyo","2025-10-19",24.4,15.0,5.2],["Tokyo","2025-10-20",20.7,13.7,5.0],["Tokyo","2025-10-21",15.3,11.7,3.0],["Tokyo","2025-10-22",13.1,11.3,12.7],["Tokyo","2025-10-23",17.6,10.6,0],["Tokyo","2025-10-24",16.5,12.2,4.0],["Tokyo","2025-10-25",14.3,12.1,9.9],["Tokyo","2025-10-26",18.0,14.0,15.2],["Tokyo","2025-10-27",21.2,13.2,0.4],["Tokyo","2025-10-28",19.6,11.5,0],["Tokyo","2025-10-29",15.7,7.9,0],["Tokyo","2025-10-30",17.3,11.3,0],["Tokyo","2025-10-31",17.0,10.8,48.8],["Tokyo","2025-11-01",20.9,11.2,0],["Tokyo","2025-11-02",18.9,10.2,0],["Tokyo","2025-11-03",18.1,7.6,0],["Tokyo","2025-11-04",15.6,8.3,0],["Tokyo","2025-11-05",14.8,10.8,2.5],["Tokyo","2025-11-06",17.9,10.9,0],["Tokyo","2025-11-07",19.5,10.4,0],["Tokyo","2025-11-08",15.9,10.1,2.8],["Tokyo","2025-11-09",14.7,10.5,6.4],["Tokyo","2025-11-10",18.2,9.5,1.9],["Tokyo","2025-11-11",14.7,7.4,0],["Tokyo","2025-11-12",14.4,7.5,0],["Tokyo","2025-11-13",12.8,9.0,0],["Tokyo","2025-11-14",18.5,10.3,0],["Tokyo","2025-11-15",16.4,7.6,0],["Tokyo","2025-11-16",16.4,9.3,0],["Tokyo","2025-11-17",20.9,10.0,0],["Tokyo","2025-11-18",14.0,4.9,0.7],["Tokyo","2025-11-19",13.0,5.9,0],["Tokyo","2025-11-20",13.6,4.5,0],["Tokyo","2025-11-21",16.0,6.9,0],["Tokyo","2025-11-22",16.2,9.1,0.2],["Tokyo","2025-11-23",15.1,6.9,0],["Tokyo","2025-11-24",17.6,8.5,0],["Tokyo","2025-11-25",11.4,4.3,7.2],["Tokyo","2025-11-26",17.4,6.2,0],["Tokyo","2025-11-27",15.4,7.4,0.1],["Tokyo","2025-11-28",19.2,7.9,0],["Tokyo","2025-11-29",15.1,6.5,0],["Tokyo","2025-11-30",16.2,5.2,0],["Tokyo","2025-12-01",20.7,9.4,0.1],["Tokyo","2025-12-02",17.4,9.8,0.2],["Tokyo","2025-12-03",11.9,5.0,1.9],["Tokyo","2025-12-04",10.1,-0.4,0],["Tokyo","2025-12-05",11.1,2.1,0],["Tokyo","2025-12-06",11.8,1.7,0],["Tokyo","2025-12-07",15.0,3.0,0],["Tokyo","2025-12-08",17.7,7.9,0],["Tokyo","2025-12-09",12.7,2.5,0],["Tokyo","2025-12-10",14.3,3.6,0],["Tokyo","2025-12-11",15.7,5.6,0],["Tokyo","2025-12-12",8.8,2.1,0],["Tokyo","2025-12-13",8.4,1.9,11.0],["Tokyo","2025-12-14",8.9,3.7,4.2],["Tokyo","2025-12-15",12.9,3.3,0],["Tokyo","2025-12-16",11.4,2.4,0],["Tokyo","2025-12-17",12.0,6.0,0],["Tokyo","2025-12-18",11.6,1.4,0],["Tokyo","2025-12-19",10.4,3.2,0],["Tokyo","2025-12-20",14.2,5.4,3.3],["Tokyo","2025-12-21",19.0,8.2,1.2],["Tokyo","2025-12-22",10.8,0.6,0],["Tokyo","2025-12-23",8.9,2.5,0.3],["Tokyo","2025-12-24",7.9,4.3,15.0],["Tokyo","2025-12-25",11.8,6.6,5.1],["Tokyo","2025-12-26",9.8,0.4,0],["Tokyo","2025-12-27",5.4,-0.4,0],["Tokyo","2025-12-28",9.2,1.7,0],["Tokyo","2025-12-29",10.4,1.0,0],["Tokyo","2025-12-30",13.8,2.3,0],["Tokyo","2025-12-31",12.1,2.9,0],["Tokyo","2026-01-01",9.8,3.1,0],["Tokyo","2026-01-02",8.8,-1.2,2.8],["Tokyo","2026-01-03",9.1,0.5,0],["Tokyo","2026-01-04",9.9,0.7,0],["Tokyo","2026-01-05",10.6,2.6,0],["Tokyo","2026-01-06",11.0,1.9,0],["Tokyo","2026-01-07",5.9,-2.0,0],["Tokyo","2026-01-08",9.3,1.3,0],["Tokyo","2026-01-09",9.2,0.6,0],["Tokyo","2026-01-10",14.3,2.6,0],["Tokyo","2026-01-11",16.5,-0.1,0],["Tokyo","2026-01-12",9.0,-2.2,0],["Tokyo","2026-01-13",14.3,2.5,0],["Tokyo","2026-01-14",11.2,1.2,0],["Tokyo","2026-01-15",11.3,3.5,0],["Tokyo","2026-01-16",17.6,3.1,0],["Tokyo","2026-01-17",15.3,5.7,0],["Tokyo","2026-01-18",12.8,5.1,0],["Tokyo","2026-01-19",12.2,5.2,0],["Tokyo","2026-01-20",8.2,1.0,0],["Tokyo","2026-01-21",5.8,-1.1,0],["Tokyo","2026-01-22",6.4,-3.5,0],["Tokyo","2026-01-23",8.1,-3.0,0],["Tokyo","2026-01-24",10.4,0.5,0.2],["Tokyo","2026-01-25",7.2,-0.5,0],["Tokyo","2026-01-26",7.9,1.4,0],["Tokyo","2026-01-27",9.8,1.6,0],["Tokyo","2026-01-28",9.0,1.5,0],["Tokyo","2026-01-29",8.0,-1.8,0.4],["Tokyo","2026-01-30",8.9,-0.3,0],["Tokyo","2026-01-31",8.6,-1.1,0],["Tokyo","2026-02-01",10.6,0.6,0],["Tokyo","2026-02-02",10.7,2.3,0],["Tokyo","2026-02-03",9.9,-0.3,0],["Tokyo","2026-02-04",11.0,2.0,0],["Tokyo","2026-02-05",13.4,1.4,0],["Tokyo","2026-02-06",15.8,3.2,0.2],["Tokyo","2026-02-07",3.0,-3.4,7.2],["Tokyo","2026-02-08",-0.7,-3.1,5.1],["Tokyo","2026-02-09",9.1,-0.5,0],["Tokyo","2026-02-10",10.7,0.8,7.9],["Tokyo","2026-02-11",7.6,2.3,5.6],["Tokyo","2026-02-12",10.2,2.4,0],["Tokyo","2026-02-13",12.0,1.2,0],["Tokyo","2026-02-14",15.0,5.4,0],["Tokyo","2026-02-15",18.1,8.5,0],["Tokyo","2026-02-16",15.4,2.8,7.9],["Tokyo","2026-02-17",7.1,3.4,0],["Tokyo","2026-02-18",11.6,1.5,0.1],["Tokyo","2026-02-19",9.8,0.2,0],["Tokyo","2026-02-20",10.8,2.7,0],["Tokyo","2026-02-21",14.7,2.4,0],["Tokyo","2026-02-22",17.5,7.2,0],["Tokyo","2026-02-23",22.8,10.6,0],["Tokyo","2026-02-24",19.2,10.1,6.4],["Tokyo","2026-02-25",11.0,5.7,43.9],["Tokyo","2026-02-26",12.1,7.6,0],["Tokyo","2026-02-27",16.2,9.8,0],["Tokyo","2026-02-28",17.8,6.9,0],["Tokyo","2026-03-01",16.7,8.1,0.1],["Tokyo","2026-03-02",13.1,7.3,2.7],["Tokyo","2026-03-03",8.2,4.3,34.6],["Tokyo","2026-03-04",13.9,5.4,0.4],["Tokyo","2026-03-05",14.6,3.5,0],["Tokyo","2026-03-06",13.2,5.6,1.5],["Tokyo","2026-03-07",15.1,3.2,0.8],["Tokyo","2026-03-08",10.6,2.2,0],["Tokyo","2026-03-09",11.6,2.3,2.7],["Tokyo","2026-03-10",8.2,0.5,1.3],["Tokyo","2026-03-11",10.1,3.4,0],["Tokyo","2026-03-12",11.2,2.8,0],["Tokyo","2026-03-13",10.0,5.0,0],["Tokyo","2026-03-14",15.4,4.5,0],["Tokyo","2026-03-15",15.3,6.9,2.5],["Tokyo","2026-03-16",13.7,7.4,0.3],["Tokyo","2026-03-17",14.5,7.9,4.1],["Tokyo","2026-03-18",16.9,10.6,3.0],["Tokyo","2026-03-19",19.5,8.9,5.6],["Tokyo","2026-03-20",10.6,3.7,3.5],["Tokyo","2026-03-21",15.2,3.8,0],["Tokyo","2026-03-22",15.7,9.1,1.7],["Tokyo","2026-03-23",15.8,8.2,1.1],["Tokyo","2026-03-24",16.8,9.4,0.2],["Tokyo","2026-03-25",12.5,9.9,22.7],["Tokyo","2026-03-26",13.3,9.2,6.4],["Tokyo","2026-03-27",16.5,9.5,9.9],["Tokyo","2026-03-28",17.7,10.4,0.1],["Tokyo","2026-03-29",20.3,11.5,1.8],["Tokyo","2026-03-30",19.4,13.9,0.5],["Tokyo","2026-03-31",19.2,15.0,13.4],["Tokyo","2026-04-01",17.8,9.2,40.4],["Tokyo","2026-04-02",16.2,7.0,1.9],["Tokyo","2026-04-03",18.1,12.2,0],["Tokyo","2026-04-04",17.3,13.3,20.3],["Tokyo","2026-04-05",23.2,14.7,0.7],["Tokyo","2026-04-06",22.7,15.2,0],["Tokyo","2026-04-07",18.3,6.4,0.5],["Tokyo","2026-04-08",16.7,9.2,0],["Tokyo","2026-04-09",18.9,15.7,5.2],["Tokyo","2026-04-10",20.0,15.3,18.0],["Tokyo","2026-04-11",25.5,12.2,0],["Tokyo","2026-04-12",21.4,12.2,0],["Tokyo","2026-04-13",22.6,14.2,0.1],["Tokyo","2026-04-14",23.5,14.2,0],["Tokyo","2026-04-15",23.1,13.7,16.5],["Tokyo","2026-04-16",21.3,8.3,1.4],["Tokyo","2026-04-17",17.8,11.0,0],["Tokyo","2026-04-18",21.0,13.5,0],["Tokyo","2026-04-19",24.6,14.4,0],["Tokyo","2026-04-20",23.6,16.5,0],["Tokyo","2026-04-21",24.8,12.2,0],["Tokyo","2026-04-22",23.3,15.8,0],["Tokyo","2026-04-23",20.2,11.9,26.8],["Tokyo","2026-04-24",18.7,10.8,0],["Tokyo","2026-04-25",17.5,9.2,0],["Tokyo","2026-04-26",20.3,13.7,22.0],["Tokyo","2026-04-27",21.6,10.5,15.6],["Tokyo","2026-04-28",22.5,15.8,0],["Tokyo","2026-04-29",18.2,13.1,7.5],["Tokyo","2026-04-30",15.4,10.7,19.8],["Tokyo","2026-05-01",20.4,11.4,23.2],["Tokyo","2026-05-02",26.1,13.9,0],["Tokyo","2026-05-03",23.2,16.0,5.2],["Tokyo","2026-05-04",26.3,11.6,0],["Tokyo","2026-05-05",21.4,14.8,0],["Tokyo","2026-05-06",20.2,16.1,0],["Tokyo","2026-05-07",24.6,17.5,0],["Tokyo","2026-05-08",25.8,16.1,0],["Tokyo","2026-05-09",23.9,14.1,0],["Tokyo","2026-05-10",24.4,17.0,0],["Tokyo","2026-05-11",25.2,16.7,0.1],["Tokyo","2026-05-12",25.7,15.7,0],["Tokyo","2026-05-13",27.5,17.3,0.4],["Tokyo","2026-05-14",26.6,13.6,0.7],["Tokyo","2026-05-15",24.4,14.4,0],["Tokyo","2026-05-16",27.2,17.1,0],["Tokyo","2026-05-17",31.2,17.9,0],["Tokyo","2026-05-18",30.2,18.2,0],["Tokyo","2026-05-19",29.9,19.6,0],["Tokyo","2026-05-20",30.9,21.3,2.9],["Tokyo","2026-05-21",22.8,14.3,21.7],["Tokyo","2026-05-22",17.7,11.6,2.6],["Tokyo","2026-05-23",17.3,12.9,0.6],["Tokyo","2026-05-24",22.6,16.5,0.2],["Tokyo","2026-05-25",25.9,17.5,0.2],["Tokyo","2026-05-26",26.5,18.8,1.6],["Tokyo","2026-05-27",28.2,20.7,0],["Tokyo","2026-05-28",28.9,22.7,0.8],["Tokyo","2026-05-29",32.3,20.9,0.1],["Tokyo","2026-05-30",30.1,21.5,0],["Tokyo","2026-05-31",32.2,20.3,0.8],["Tokyo","2026-06-01",33.7,20.5,0],["Tokyo","2026-06-02",26.4,18.1,73.1],["Tokyo","2026-06-03",20.4,18.3,72.2],["Tokyo","2026-06-04",23.8,16.4,0.1],["Tokyo","2026-06-05",21.0,15.1,0.1],["Tokyo","2026-06-06",23.0,15.4,0],["Tokyo","2026-06-07",21.4,18.1,17.6],["Tokyo","2026-06-08",24.0,18.9,17.4],["Tokyo","2026-06-09",22.6,17.8,3.7],["Tokyo","2026-06-10",23.2,16.4,0.5],["Tokyo","2026-06-11",24.6,17.2,1.1],["Tokyo","2026-06-12",25.0,17.3,19.8],["Tokyo","2026-06-13",27.3,18.6,2.4],["Tokyo","2026-06-14",26.3,17.2,4.5],["Tokyo","2026-06-15",22.0,16.1,1.7],["Tokyo","2026-06-16",26.6,18.4,0],["Tokyo","2026-06-17",27.4,20.0,22.5],["Tokyo","2026-06-18",27.0,19.7,6.0],["Tokyo","2026-06-19",28.5,20.9,5.0],["Tokyo","2026-06-20",24.8,21.1,42.8],["Tokyo","2026-06-21",26.8,20.0,0.1],["Tokyo","2026-06-22",27.7,18.0,0.1],["Tokyo","2026-06-23",24.0,17.4,0],["Tokyo","2026-06-24",25.9,19.3,9.0],["Tokyo","2026-06-25",22.3,19.6,12.5],["Tokyo","2026-06-26",26.3,20.7,59.9],["Tokyo","2026-06-27",23.4,21.2,27.6],["Tokyo","2026-06-28",23.5,20.1,6.7],["Tokyo","2026-06-29",26.7,20.5,2.6],["Tokyo","2026-06-30",28.5,20.0,2.4],["Tokyo","2026-07-01",28.1,21.0,20.5],["Tokyo","2026-07-02",23.7,20.6,9.6],["Tokyo","2026-07-03",25.7,19.8,2.2],["Tokyo","2026-07-04",26.1,21.2,4.1],["Tokyo","2026-07-05",26.7,21.3,3.5],["Tokyo","2026-07-06",25.5,19.6,5.1],["Tokyo","2026-07-07",25.2,20.2,0.4],["Tokyo","2026-07-08",28.7,21.8,0],["Tokyo","2026-07-09",30.4,23.0,0],["Tokyo","2026-07-10",32.6,23.6,0],["Tokyo","2026-07-11",32.1,25.3,0],["Tokyo","2026-07-12",32.8,25.9,0.5],["Tokyo","2026-07-13",32.5,24.5,2.5],["Tokyo","2026-07-14",36.1,26.8,0],["Tokyo","2026-07-15",35.4,27.5,0.5],["Tokyo","2026-07-16",36.7,27.4,3.1],["Tokyo","2026-07-17",32.4,25.3,24.1],["Tokyo","2026-07-18",29.2,25.0,2.4],["Tokyo","2026-07-19",32.6,25.8,0],["Tokyo","2026-07-20",37.1,27.8,0],["Tokyo","2026-07-21",38.1,28.3,4.9],["Tokyo","2026-07-22",37.9,28.3,3.7],["Tokyo","2026-07-23",38.3,26.5,9.2],["Tokyo","2026-07-24",34.7,26.0,14.2],["Tokyo","2026-07-25",37.0,25.4,3.1],["Tokyo","2026-07-26",34.5,24.5,15.7],["Tokyo","2026-07-27",30.8,22.2,15.0],["Tokyo","2026-07-28",31.0,23.6,2.9],["Tokyo","2026-07-29",36.6,27.6,0.7],["Tokyo","2026-07-30",39.1,27.0,2.0],["Tokyo","2026-07-31",38.4,27.5,4.7],["Tokyo","2026-08-01",39.2,29.9,0.5],["Tokyo","2026-08-02",38.6,23.5,20.1],["Tokyo","2026-08-03",27.2,21.7,0.9],["Tokyo","2026-08-04",30.0,22.6,0],["Tokyo","2026-08-05",33.1,24.5,5.6],["Tokyo","2026-08-06",33.7,26.6,1.6],["Tokyo","2026-08-07",34.1,26.3,1.1],["Tokyo","2026-08-08",34.9,25.8,0],["Tokyo","2026-08-09",35.7,25.1,3.0],["Tokyo","2026-08-10",31.7,22.2,2.8],["Tokyo","2026-08-11",31.0,22.2,49.6],["Tokyo","2026-08-12",28.4,22.0,21.7],["Tokyo","2026-08-13",28.6,22.7,70.9],["Tokyo","2026-08-14",29.6,22.3,26.0],["Tokyo","2026-08-15",28.4,22.0,5.7],["Tokyo","2026-08-16",26.4,22.0,2.6],["Tokyo","2026-08-17",29.7,23.2,0.5],["Tokyo","2026-08-18",30.2,23.7,0.5],["Tokyo","2026-08-19",31.2,24.2,0.2],["Tokyo","2026-08-20",31.8,24.8,0.3],["Tokyo","2026-08-21",31.2,23.7,5.0],["Tokyo","2026-08-22",32.3,23.2,19.3],["Tokyo","2026-08-23",31.3,23.4,3.2],["Tokyo","2026-08-24",32.3,26.0,0.1],["Tokyo","2026-08-25",34.9,27.7,0],["Tokyo","2026-08-26",35.9,26.3,0.1],["Tokyo","2026-08-27",31.2,24.5,0.8],["Tokyo","2026-08-28",34.9,22.5,5.8],["Tokyo","2026-08-29",24.0,19.6,8.9],["Tokyo","2026-08-30",26.8,21.7,0],["Tokyo","2026-08-31",26.8,21.8,0.1],["Sydney","2025-09-01",17.8,9.5,0],["Sydney","2025-09-02",18.0,8.9,0.9],["Sydney","2025-09-03",20.4,12.1,0],["Sydney","2025-09-04",22.5,11.3,0],["Sydney","2025-09-05",16.7,10.5,0.4],["Sydney","2025-09-06",19.3,10.1,0],["Sydney","2025-09-07",21.8,15.6,0],["Sydney","2025-09-08",28.0,16.7,0],["Sydney","2025-09-09",24.4,15.5,7.3],["Sydney","2025-09-10",17.5,8.8,50.2],["Sydney","2025-09-11",15.9,9.5,5.5],["Sydney","2025-09-12",19.0,9.1,0],["Sydney","2025-09-13",19.1,9.5,0],["Sydney","2025-09-14",21.3,9.7,0],["Sydney","2025-09-15",24.7,15.7,0],["Sydney","2025-09-16",26.5,16.8,0.4],["Sydney","2025-09-17",24.8,9.4,0],["Sydney","2025-09-18",19.4,9.7,0],["Sydney","2025-09-19",22.7,15.3,7.8],["Sydney","2025-09-20",22.1,9.8,0],["Sydney","2025-09-21",21.9,10.2,0],["Sydney","2025-09-22",22.3,8.2,5.5],["Sydney","2025-09-23",16.4,8.8,0],["Sydney","2025-09-24",24.2,10.0,0],["Sydney","2025-09-25",25.8,16.5,0],["Sydney","2025-09-26",28.8,17.4,0],["Sydney","2025-09-27",31.7,18.7,0],["Sydney","2025-09-28",23.7,14.7,0.4],["Sydney","2025-09-29",22.5,13.9,0.2],["Sydney","2025-09-30",23.9,17.4,0],["Sydney","2025-10-01",27.1,12.9,0],["Sydney","2025-10-02",25.4,12.0,0],["Sydney","2025-10-03",24.9,12.1,0],["Sydney","2025-10-04",22.2,12.4,0],["Sydney","2025-10-05",27.5,20.7,0],["Sydney","2025-10-06",32.7,16.2,4.8],["Sydney","2025-10-07",22.3,15.3,0.8],["Sydney","2025-10-08",29.2,20.8,1.4],["Sydney","2025-10-09",26.4,15.0,0],["Sydney","2025-10-10",30.3,16.8,0],["Sydney","2025-10-11",30.6,16.5,0],["Sydney","2025-10-12",32.1,15.0,1.3],["Sydney","2025-10-13",22.2,13.6,0],["Sydney","2025-10-14",26.4,14.3,0],["Sydney","2025-10-15",25.6,15.0,0],["Sydney","2025-10-16",28.8,20.6,0],["Sydney","2025-10-17",33.2,16.7,0.9],["Sydney","2025-10-18",21.7,16.7,0],["Sydney","2025-10-19",25.7,16.6,0],["Sydney","2025-10-20",33.3,17.9,0],["Sydney","2025-10-21",27.6,18.0,0],["Sydney","2025-10-22",38.2,16.9,0],["Sydney","2025-10-23",21.5,17.1,0.1],["Sydney","2025-10-24",23.1,14.0,0.1],["Sydney","2025-10-25",24.3,15.9,0],["Sydney","2025-10-26",24.4,16.6,2.4],["Sydney","2025-10-27",24.6,13.6,1.1],["Sydney","2025-10-28",16.2,12.0,6.5],["Sydney","2025-10-29",18.9,13.5,10.2],["Sydney","2025-10-30",20.5,14.6,0.8],["Sydney","2025-10-31",22.2,15.9,11.4],["Sydney","2025-11-01",23.7,16.7,4.8],["Sydney","2025-11-02",22.6,17.6,0.1],["Sydney","2025-11-03",25.6,16.9,2.1],["Sydney","2025-11-04",21.9,12.4,0.1],["Sydney","2025-11-05",25.4,12.1,0],["Sydney","2025-11-06",23.9,16.8,0],["Sydney","2025-11-07",28.1,19.5,2.0],["Sydney","2025-11-08",31.6,15.3,0.4],["Sydney","2025-11-09",19.8,13.1,0.2],["Sydney","2025-11-10",22.8,13.7,0.7],["Sydney","2025-11-11",27.7,10.4,0.1],["Sydney","2025-11-12",21.4,11.4,0],["Sydney","2025-11-13",26.7,17.4,0.4],["Sydney","2025-11-14",23.2,17.7,0.3],["Sydney","2025-11-15",25.0,18.5,0.6],["Sydney","2025-11-16",30.4,17.6,1.9],["Sydney","2025-11-17",23.5,14.1,0],["Sydney","2025-11-18",25.6,15.2,0],["Sydney","2025-11-19",28.0,17.5,0],["Sydney","2025-11-20",23.0,16.1,1.4],["Sydney","2025-11-21",20.4,17.0,10.6],["Sydney","2025-11-22",22.8,18.1,9.2],["Sydney","2025-11-23",25.8,17.8,0],["Sydney","2025-11-24",24.6,16.7,0.1],["Sydney","2025-11-25",30.1,18.4,0],["Sydney","2025-11-26",35.1,18.5,0.7],["Sydney","2025-11-27",32.5,17.3,0.1],["Sydney","2025-11-28",29.8,19.6,0.6],["Sydney","2025-11-29",32.3,17.4,0.8],["Sydney","2025-11-30",28.9,14.4,0.3],["Sydney","2025-12-01",24.4,13.4,0.4],["Sydney","2025-12-02",21.6,13.5,0],["Sydney","2025-12-03",27.2,15.3,0],["Sydney","2025-12-04",31.8,17.9,0],["Sydney","2025-12-05",36.2,23.8,0],["Sydney","2025-12-06",38.8,20.0,0],["Sydney","2025-12-07",22.5,18.3,0.8],["Sydney","2025-12-08",27.7,17.8,0.2],["Sydney","2025-12-09",31.4,19.1,1.4],["Sydney","2025-12-10",24.5,19.1,4.9],["Sydney","2025-12-11",22.1,17.9,21.2],["Sydney","2025-12-12",22.7,16.1,7.6],["Sydney","2025-12-13",24.2,18.4,12.7],["Sydney","2025-12-14",29.0,18.4,1.5],["Sydney","2025-12-15",21.7,17.9,0.8],["Sydney","2025-12-16",22.7,17.6,0],["Sydney","2025-12-17",25.0,18.3,0],["Sydney","2025-12-18",31.2,21.2,0],["Sydney","2025-12-19",39.1,22.3,7.6],["Sydney","2025-12-20",30.5,21.8,0.5],["Sydney","2025-12-21",34.8,24.7,1.0],["Sydney","2025-12-22",28.6,21.3,1.1],["Sydney","2025-12-23",32.5,17.7,0],["Sydney","2025-12-24",30.1,19.4,1.3],["Sydney","2025-12-25",21.6,15.0,3.1],["Sydney","2025-12-26",18.1,13.3,0.5],["Sydney","2025-12-27",20.4,15.6,0.2],["Sydney","2025-12-28",20.9,14.3,0.7],["Sydney","2025-12-29",22.0,13.8,0],["Sydney","2025-12-30",22.7,15.1,0],["Sydney","2025-12-31",23.0,18.2,2.9],["Sydney","2026-01-01",19.7,17.1,0.5],["Sydney","2026-01-02",22.5,17.8,0.9],["Sydney","2026-01-03",24.7,19.0,1.7],["Sydney","2026-01-04",28.1,18.3,11.5],["Sydney","2026-01-05",24.0,19.2,3.7],["Sydney","2026-01-06",26.8,19.6,0.2],["Sydney","2026-01-07",30.2,20.7,0],["Sydney","2026-01-08",32.9,20.5,0],["Sydney","2026-01-09",33.0,25.0,0],["Sydney","2026-01-10",42.0,21.4,0],["Sydney","2026-01-11",21.7,18.4,13.1],["Sydney","2026-01-12",23.6,18.2,6.1],["Sydney","2026-01-13",25.5,20.6,0.2],["Sydney","2026-01-14",24.5,21.3,4.3],["Sydney","2026-01-15",24.7,19.3,16.9],["Sydney","2026-01-16",24.7,19.1,14.6],["Sydney","2026-01-17",21.5,18.4,63.4],["Sydney","2026-01-18",21.9,18.2,9.7],["Sydney","2026-01-19",22.7,17.4,2.3],["Sydney","2026-01-20",22.8,16.9,0.9],["Sydney","2026-01-21",22.6,16.6,0.2],["Sydney","2026-01-22",23.1,17.6,0.2],["Sydney","2026-01-23",23.5,15.8,0],["Sydney","2026-01-24",25.7,19.1,0],["Sydney","2026-01-25",34.1,21.6,0.2],["Sydney","2026-01-26",25.1,19.1,0],["Sydney","2026-01-27",25.6,17.3,0],["Sydney","2026-01-28",27.4,20.5,0],["Sydney","2026-01-29",27.4,19.4,0],["Sydney","2026-01-30",28.4,21.3,0],["Sydney","2026-01-31",30.6,22.4,0.1],["Sydney","2026-02-01",27.3,17.2,3.7],["Sydney","2026-02-02",20.4,16.9,3.1],["Sydney","2026-02-03",23.5,17.5,0.5],["Sydney","2026-02-04",27.6,19.7,0],["Sydney","2026-02-05",35.1,20.1,0],["Sydney","2026-02-06",30.2,21.2,0],["Sydney","2026-02-07",30.5,22.3,3.1],["Sydney","2026-02-08",24.7,21.4,6.0],["Sydney","2026-02-09",27.4,20.8,5.0],["Sydney","2026-02-10",25.8,20.3,0],["Sydney","2026-02-11",29.3,22.4,0],["Sydney","2026-02-12",23.8,18.4,3.2],["Sydney","2026-02-13",22.4,17.6,4.0],["Sydney","2026-02-14",23.8,18.0,2.9],["Sydney","2026-02-15",22.0,17.4,8.2],["Sydney","2026-02-16",23.7,16.7,0.6],["Sydney","2026-02-17",29.1,19.8,0],["Sydney","2026-02-18",36.9,21.2,1.0],["Sydney","2026-02-19",27.1,22.8,0.2],["Sydney","2026-02-20",28.4,21.9,0.1],["Sydney","2026-02-21",32.1,21.6,1.1],["Sydney","2026-02-22",32.9,23.2,6.5],["Sydney","2026-02-23",27.3,20.8,0],["Sydney","2026-02-24",28.7,21.4,0],["Sydney","2026-02-25",27.6,20.7,2.2],["Sydney","2026-02-26",24.8,20.6,21.1],["Sydney","2026-02-27",23.1,20.3,6.1],["Sydney","2026-02-28",24.7,20.2,2.3],["Sydney","2026-03-01",24.9,21.3,0],["Sydney","2026-03-02",26.1,21.1,4.4],["Sydney","2026-03-03",25.5,21.0,0.8],["Sydney","2026-03-04",28.3,21.0,5.4],["Sydney","2026-03-05",27.5,21.4,0.5],["Sydney","2026-03-06",26.9,22.4,0.3],["Sydney","2026-03-07",27.4,20.7,20.9],["Sydney","2026-03-08",23.0,20.5,13.4],["Sydney","2026-03-09",23.5,19.1,11.9],["Sydney","2026-03-10",25.5,19.3,4.0],["Sydney","2026-03-11",26.6,20.8,0],["Sydney","2026-03-12",23.6,18.2,4.8],["Sydney","2026-03-13",20.5,15.4,0],["Sydney","2026-03-14",22.9,15.1,0],["Sydney","2026-03-15",25.2,16.3,0],["Sydney","2026-03-16",26.1,19.5,0],["Sydney","2026-03-17",28.3,19.0,16.6],["Sydney","2026-03-18",22.6,19.9,7.2],["Sydney","2026-03-19",23.5,19.3,8.8],["Sydney","2026-03-20",24.6,18.7,9.6],["Sydney","2026-03-21",24.7,18.7,5.7],["Sydney","2026-03-22",25.0,19.1,2.6],["Sydney","2026-03-23",24.4,18.2,1.3],["Sydney","2026-03-24",25.6,17.8,0.2],["Sydney","2026-03-25",26.0,18.2,0.2],["Sydney","2026-03-26",27.9,12.3,18.5],["Sydney","2026-03-27",16.8,14.1,7.4],["Sydney","2026-03-28",20.9,13.1,0],["Sydney","2026-03-29",21.4,14.0,0.2],["Sydney","2026-03-30",22.9,13.6,0],["Sydney","2026-03-31",23.4,14.9,0],["Sydney","2026-04-01",24.7,16.4,0],["Sydney","2026-04-02",26.2,16.4,0],["Sydney","2026-04-03",23.8,18.1,4.2],["Sydney","2026-04-04",20.2,16.5,6.7],["Sydney","2026-04-05",21.3,13.7,0.1],["Sydney","2026-04-06",21.1,13.9,1.9],["Sydney","2026-04-07",26.6,17.2,0],["Sydney","2026-04-08",25.9,17.1,0],["Sydney","2026-04-09",27.6,18.8,0],["Sydney","2026-04-10",29.6,17.8,0.3],["Sydney","2026-04-11",24.7,12.0,0],["Sydney","2026-04-12",20.3,12.6,0],["Sydney","2026-04-13",22.8,12.6,0],["Sydney","2026-04-14",23.2,11.7,0],["Sydney","2026-04-15",25.0,13.3,0],["Sydney","2026-04-16",26.3,12.9,0],["Sydney","2026-04-17",27.5,10.7,2.9],["Sydney","2026-04-18",19.1,10.4,0],["Sydney","2026-04-19",20.0,10.9,0],["Sydney","2026-04-20",20.5,14.6,3.5],["Sydney","2026-04-21",19.5,15.2,1.8],["Sydney","2026-04-22",20.4,13.6,0.3],["Sydney","2026-04-23",21.3,14.9,0.1],["Sydney","2026-04-24",22.3,13.9,0.1],["Sydney","2026-04-25",23.3,12.7,0],["Sydney","2026-04-26",23.1,11.3,0],["Sydney","2026-04-27",22.9,12.3,0],["Sydney","2026-04-28",22.8,11.8,0],["Sydney","2026-04-29",23.2,14.6,0],["Sydney","2026-04-30",23.1,13.9,0.1],["Sydney","2026-05-01",22.2,15.8,1.3],["Sydney","2026-05-02",23.0,16.1,0.3],["Sydney","2026-05-03",24.4,15.9,0.1],["Sydney","2026-05-04",20.9,12.9,4.8],["Sydney","2026-05-05",22.2,11.0,0],["Sydney","2026-05-06",21.2,10.5,0],["Sydney","2026-05-07",17.0,10.0,0.1],["Sydney","2026-05-08",19.0,11.2,0],["Sydney","2026-05-09",20.6,10.0,0],["Sydney","2026-05-10",21.3,14.7,0.5],["Sydney","2026-05-11",21.7,15.7,3.9],["Sydney","2026-05-12",20.4,17.1,3.5],["Sydney","2026-05-13",18.6,15.0,10.5],["Sydney","2026-05-14",20.1,13.7,2.1],["Sydney","2026-05-15",19.8,13.0,3.0],["Sydney","2026-05-16",20.2,14.7,1.1],["Sydney","2026-05-17",21.1,15.6,4.3],["Sydney","2026-05-18",20.0,15.7,16.4],["Sydney","2026-05-19",20.3,12.1,1.7],["Sydney","2026-05-20",17.9,11.2,0],["Sydney","2026-05-21",17.4,13.6,4.5],["Sydney","2026-05-22",18.7,15.7,3.9],["Sydney","2026-05-23",18.7,14.2,4.1],["Sydney","2026-05-24",20.0,14.7,5.2],["Sydney","2026-05-25",19.8,16.1,3.9],["Sydney","2026-05-26",19.3,15.3,15.1],["Sydney","2026-05-27",20.9,16.9,15.4],["Sydney","2026-05-28",20.0,16.4,25.6],["Sydney","2026-05-29",19.3,11.8,1.1],["Sydney","2026-05-30",18.4,11.3,0],["Sydney","2026-05-31",17.9,9.6,0],["Sydney","2026-06-01",16.2,11.0,2.8],["Sydney","2026-06-02",17.5,13.5,3.9],["Sydney","2026-06-03",19.6,12.4,0],["Sydney","2026-06-04",17.5,10.3,1.8],["Sydney","2026-06-05",17.9,8.3,0],["Sydney","2026-06-06",16.8,8.3,0],["Sydney","2026-06-07",17.5,7.9,0],["Sydney","2026-06-08",18.0,9.8,1.5],["Sydney","2026-06-09",18.8,11.5,0.1],["Sydney","2026-06-10",21.2,13.6,2.0],["Sydney","2026-06-11",19.9,13.9,0.5],["Sydney","2026-06-12",19.3,12.2,0.2],["Sydney","2026-06-13",20.6,14.6,0.1],["Sydney","2026-06-14",19.4,15.1,4.7],["Sydney","2026-06-15",18.7,11.5,0],["Sydney","2026-06-16",19.9,11.9,0],["Sydney","2026-06-17",19.5,12.9,0],["Sydney","2026-06-18",21.1,16.8,0],["Sydney","2026-06-19",20.5,12.3,0],["Sydney","2026-06-20",19.1,8.8,0],["Sydney","2026-06-21",17.2,8.6,0],["Sydney","2026-06-22",16.6,8.2,0],["Sydney","2026-06-23",15.9,7.0,0],["Sydney","2026-06-24",17.1,11.7,2.6],["Sydney","2026-06-25",16.1,9.8,16.0],["Sydney","2026-06-26",15.1,10.6,0.9],["Sydney","2026-06-27",15.6,10.1,8.8],["Sydney","2026-06-28",16.3,9.6,4.0],["Sydney","2026-06-29",16.9,10.3,0.4],["Sydney","2026-06-30",18.0,13.4,0.6],["Sydney","2026-07-01",21.1,14.4,2.5],["Sydney","2026-07-02",21.2,12.5,0],["Sydney","2026-07-03",16.9,9.5,0],["Sydney","2026-07-04",16.8,6.8,0],["Sydney","2026-07-05",14.2,11.8,5.9],["Sydney","2026-07-06",15.3,11.0,5.2],["Sydney","2026-07-07",15.7,10.7,3.1],["Sydney","2026-07-08",15.9,11.3,7.0],["Sydney","2026-07-09",15.6,8.6,0.6],["Sydney","2026-07-10",15.1,7.5,1.0],["Sydney","2026-07-11",16.3,10.5,0],["Sydney","2026-07-12",15.5,9.3,0],["Sydney","2026-07-13",18.0,8.6,0],["Sydney","2026-07-14",18.5,10.1,0],["Sydney","2026-07-15",15.4,10.3,0],["Sydney","2026-07-16",15.9,12.7,11.1],["Sydney","2026-07-17",16.4,11.6,4.1],["Sydney","2026-07-18",17.9,11.7,0.5],["Sydney","2026-07-19",17.6,8.5,0],["Sydney","2026-07-20",17.9,6.5,0],["Sydney","2026-07-21",18.2,7.2,0],["Sydney","2026-07-22",18.5,9.2,0],["Sydney","2026-07-23",17.5,6.6,0],["Sydney","2026-07-24",15.5,5.9,0],["Sydney","2026-07-25",17.9,8.9,0],["Sydney","2026-07-26",16.8,7.9,0],["Sydney","2026-07-27",17.0,7.9,0],["Sydney","2026-07-28",19.7,10.6,0],["Sydney","2026-07-29",16.9,7.1,0],["Sydney","2026-07-30",14.8,6.2,0],["Sydney","2026-07-31",15.6,8.3,4.7],["Sydney","2026-08-01",15.5,8.4,1.0],["Sydney","2026-08-02",17.6,7.9,0],["Sydney","2026-08-03",20.9,6.5,0.8],["Sydney","2026-08-04",16.5,6.3,0],["Sydney","2026-08-05",15.8,5.9,0],["Sydney","2026-08-06",15.9,5.9,0],["Sydney","2026-08-07",16.1,6.6,0],["Sydney","2026-08-08",17.0,7.8,0],["Sydney","2026-08-09",18.0,11.7,10.9],["Sydney","2026-08-10",15.3,11.4,1.3],["Sydney","2026-08-11",18.9,10.0,0],["Sydney","2026-08-12",18.2,10.7,0.4],["Sydney","2026-08-13",18.3,8.5,0],["Sydney","2026-08-14",18.9,9.0,0.2],["Sydney","2026-08-15",16.3,10.9,3.8],["Sydney","2026-08-16",17.1,11.0,4.4],["Sydney","2026-08-17",16.3,9.7,2.6],["Sydney","2026-08-18",17.3,8.8,0.3],["Sydney","2026-08-19",18.2,9.6,0.5],["Sydney","2026-08-20",21.4,13.6,1.3],["Sydney","2026-08-21",20.8,10.0,1.9],["Sydney","2026-08-22",20.8,10.7,0.3],["Sydney","2026-08-23",18.4,11.9,0.4],["Sydney","2026-08-24",20.5,14.1,0],["Sydney","2026-08-25",20.0,14.2,12.8],["Sydney","2026-08-26",17.7,13.4,5.4],["Sydney","2026-08-27",16.7,8.8,0.1],["Sydney","2026-08-28",18.5,10.0,0],["Sydney","2026-08-29",17.7,9.0,0.2],["Sydney","2026-08-30",19.1,8.9,0],["Sydney","2026-08-31",19.6,9.4,0],["Nairobi","2025-09-01",26.1,13.5,0],["Nairobi","2025-09-02",26.9,11.8,0],["Nairobi","2025-09-03",24.3,12.3,0],["Nairobi","2025-09-04",26.8,12.2,0],["Nairobi","2025-09-05",26.4,13.0,0],["Nairobi","2025-09-06",27.7,12.4,0],["Nairobi","2025-09-07",26.8,12.2,0],["Nairobi","2025-09-08",26.9,13.3,0.1],["Nairobi","2025-09-09",25.9,15.5,1.3],["Nairobi","2025-09-10",27.4,14.0,0.7],["Nairobi","2025-09-11",27.0,14.6,0],["Nairobi","2025-09-12",27.3,13.0,0],["Nairobi","2025-09-13",27.5,12.7,0],["Nairobi","2025-09-14",28.0,13.2,0.1],["Nairobi","2025-09-15",27.3,13.5,2.1],["Nairobi","2025-09-16",26.4,13.8,0.3],["Nairobi","2025-09-17",27.0,12.9,0.1],["Nairobi","2025-09-18",25.9,15.6,4.0],["Nairobi","2025-09-19",27.3,14.4,1.4],["Nairobi","2025-09-20",27.3,13.0,0.2],["Nairobi","2025-09-21",25.4,14.8,0.6],["Nairobi","2025-09-22",25.9,13.2,1.0],["Nairobi","2025-09-23",27.8,14.3,2.3],["Nairobi","2025-09-24",28.5,12.1,0],["Nairobi","2025-09-25",28.2,13.1,0],["Nairobi","2025-09-26",28.1,14.7,0.2],["Nairobi","2025-09-27",28.3,15.1,0.8],["Nairobi","2025-09-28",27.2,14.9,0.1],["Nairobi","2025-09-29",29.1,14.1,0.6],["Nairobi","2025-09-30",29.2,13.9,0],["Nairobi","2025-10-01",29.3,13.4,0],["Nairobi","2025-10-02",28.3,12.8,0],["Nairobi","2025-10-03",27.0,15.8,1.0],["Nairobi","2025-10-04",22.8,15.7,0.8],["Nairobi","2025-10-05",25.2,15.6,1.2],["Nairobi","2025-10-06",25.0,14.9,1.0],["Nairobi","2025-10-07",26.0,15.6,2.8],["Nairobi","2025-10-08",24.1,15.0,4.4],["Nairobi","2025-10-09",25.5,14.8,4.6],["Nairobi","2025-10-10",24.9,15.0,2.2],["Nairobi","2025-10-11",27.5,13.5,0],["Nairobi","2025-10-12",26.7,13.5,0.1],["Nairobi","2025-10-13",26.5,14.9,0.3],["Nairobi","2025-10-14",26.3,15.3,0.2],["Nairobi","2025-10-15",27.7,14.6,0.1],["Nairobi","2025-10-16",25.9,14.8,0.9],["Nairobi","2025-10-17",25.7,15.5,5.2],["Nairobi","2025-10-18",25.1,14.9,2.6],["Nairobi","2025-10-19",25.8,14.3,0.1],["Nairobi","2025-10-20",28.5,13.1,0],["Nairobi","2025-10-21",28.0,14.7,0.5],["Nairobi","2025-10-22",23.6,16.6,0.8],["Nairobi","2025-10-23",26.4,16.0,0.7],["Nairobi","2025-10-24",24.7,16.0,4.0],["Nairobi","2025-10-25",25.8,16.0,0.7],["Nairobi","2025-10-26",25.9,14.8,0.8],["Nairobi","2025-10-27",26.3,14.9,5.1],["Nairobi","2025-10-28",25.5,16.2,13.2],["Nairobi","2025-10-29",22.1,16.0,10.4],["Nairobi","2025-10-30",23.8,15.7,8.2],["Nairobi","2025-10-31",23.7,15.2,11.6],["Nairobi","2025-11-01",21.8,16.0,7.1],["Nairobi","2025-11-02",23.6,14.9,3.7],["Nairobi","2025-11-03",24.2,15.2,3.1],["Nairobi","2025-11-04",25.4,15.4,1.8],["Nairobi","2025-11-05",25.7,14.4,0.1],["Nairobi","2025-11-06",25.7,15.9,1.5],["Nairobi","2025-11-07",25.6,15.6,5.4],["Nairobi","2025-11-08",26.1,15.7,0.8],["Nairobi","2025-11-09",20.5,14.7,4.4],["Nairobi","2025-11-10",24.4,13.5,1.0],["Nairobi","2025-11-11",24.6,15.5,1.8],["Nairobi","2025-11-12",24.9,15.2,2.5],["Nairobi","2025-11-13",23.9,15.3,4.0],["Nairobi","2025-11-14",25.2,14.7,1.9],["Nairobi","2025-11-15",25.4,15.2,0.6],["Nairobi","2025-11-16",25.3,16.5,2.0],["Nairobi","2025-11-17",25.0,15.3,0.7],["Nairobi","2025-11-18",26.0,15.3,2.2],["Nairobi","2025-11-19",25.8,14.1,0.4],["Nairobi","2025-11-20",26.1,14.1,0.4],["Nairobi","2025-11-21",26.4,15.2,0.7],["Nairobi","2025-11-22",25.3,13.5,0.5],["Nairobi","2025-11-23",23.6,14.4,3.8],["Nairobi","2025-11-24",25.5,13.1,1.3],["Nairobi","2025-11-25",25.4,15.8,3.4],["Nairobi","2025-11-26",23.7,15.4,7.3],["Nairobi","2025-11-27",24.0,15.6,4.3],["Nairobi","2025-11-28",25.4,15.6,0.9],["Nairobi","2025-11-29",26.1,15.7,1.0],["Nairobi","2025-11-30",26.1,15.2,0],["Nairobi","2025-12-01",25.8,14.3,0],["Nairobi","2025-12-02",26.8,13.6,0.2],["Nairobi","2025-12-03",26.4,15.1,0.9],["Nairobi","2025-12-04",26.0,15.7,1.9],["Nairobi","2025-12-05",25.6,15.4,1.3],["Nairobi","2025-12-06",25.3,15.1,1.7],["Nairobi","2025-12-07",24.5,14.8,1.1],["Nairobi","2025-12-08",24.4,15.4,1.3],["Nairobi","2025-12-09",25.3,14.7,0.2],["Nairobi","2025-12-10",26.4,14.8,0],["Nairobi","2025-12-11",26.0,15.8,1.0],["Nairobi","2025-12-12",26.3,15.8,2.3],["Nairobi","2025-12-13",26.2,14.2,6.8],["Nairobi","2025-12-14",24.6,15.8,5.4],["Nairobi","2025-12-15",25.4,15.2,1.9],["Nairobi","2025-12-16",26.0,16.1,2.2],["Nairobi","2025-12-17",27.2,16.4,1.7],["Nairobi","2025-12-18",26.8,16.0,2.0],["Nairobi","2025-12-19",25.6,16.1,3.8],["Nairobi","2025-12-20",25.7,15.8,4.4],["Nairobi","2025-12-21",24.0,15.4,3.8],["Nairobi","2025-12-22",24.5,15.3,3.0],["Nairobi","2025-12-23",25.6,14.7,0.2],["Nairobi","2025-12-24",26.1,15.5,1.9],["Nairobi","2025-12-25",26.7,14.8,0.6],["Nairobi","2025-12-26",28.8,15.9,0.1],["Nairobi","2025-12-27",29.5,16.3,10.6],["Nairobi","2025-12-28",23.8,15.6,9.0],["Nairobi","2025-12-29",25.5,15.3,5.5],["Nairobi","2025-12-30",24.3,14.7,3.2],["Nairobi","2025-12-31",24.7,14.6,0.5],["Nairobi","2026-01-01",24.0,14.8,1.8],["Nairobi","2026-01-02",25.7,14.6,0.1],["Nairobi","2026-01-03",27.1,14.7,0],["Nairobi","2026-01-04",26.7,15.3,0],["Nairobi","2026-01-05",27.0,15.7,0],["Nairobi","2026-01-06",26.4,14.9,0],["Nairobi","2026-01-07",27.6,15.2,0],["Nairobi","2026-01-08",26.3,16.6,0],["Nairobi","2026-01-09",27.0,16.0,0.3],["Nairobi","2026-01-10",26.7,14.8,2.0],["Nairobi","2026-01-11",28.0,15.9,0.4],["Nairobi","2026-01-12",25.3,15.0,7.5],["Nairobi","2026-01-13",26.2,15.5,0.1],["Nairobi","2026-01-14",26.6,13.7,0],["Nairobi","2026-01-15",27.7,14.3,0],["Nairobi","2026-01-16",29.7,15.0,0],["Nairobi","2026-01-17",27.7,15.9,0.7],["Nairobi","2026-01-18",26.7,15.9,1.1],["Nairobi","2026-01-19",26.1,15.2,0.7],["Nairobi","2026-01-20",27.8,14.9,0],["Nairobi","2026-01-21",28.7,15.0,0],["Nairobi","2026-01-22",26.3,15.5,0.3],["Nairobi","2026-01-23",27.6,14.9,0],["Nairobi","2026-01-24",29.4,15.2,0],["Nairobi","2026-01-25",31.3,16.0,0],["Nairobi","2026-01-26",30.1,16.0,0],["Nairobi","2026-01-27",28.9,15.9,0],["Nairobi","2026-01-28",28.1,16.6,0.1],["Nairobi","2026-01-29",29.9,16.1,0],["Nairobi","2026-01-30",28.7,16.0,0],["Nairobi","2026-01-31",28.5,16.4,0],["Nairobi","2026-02-01",28.6,16.4,0],["Nairobi","2026-02-02",27.7,15.7,0],["Nairobi","2026-02-03",28.7,15.8,0],["Nairobi","2026-02-04",29.9,15.6,0],["Nairobi","2026-02-05",28.8,17.1,0.1],["Nairobi","2026-02-06",27.8,17.5,0.2],["Nairobi","2026-02-07",29.5,15.6,0],["Nairobi","2026-02-08",28.6,16.4,0.4],["Nairobi","2026-02-09",27.4,16.5,1.2],["Nairobi","2026-02-10",28.7,17.0,0],["Nairobi","2026-02-11",28.7,15.6,0],["Nairobi","2026-02-12",29.6,15.5,0],["Nairobi","2026-02-13",30.0,15.7,0],["Nairobi","2026-02-14",28.6,16.5,0.1],["Nairobi","2026-02-15",28.3,16.3,2.2],["Nairobi","2026-02-16",28.0,15.8,0.1],["Nairobi","2026-02-17",27.1,16.8,1.2],["Nairobi","2026-02-18",25.4,16.1,1.0],["Nairobi","2026-02-19",28.2,15.2,0.5],["Nairobi","2026-02-20",28.9,16.7,0.4],["Nairobi","2026-02-21",23.5,15.9,7.8],["Nairobi","2026-02-22",24.5,15.7,13.4],["Nairobi","2026-02-23",21.4,15.3,5.6],["Nairobi","2026-02-24",23.7,15.2,7.9],["Nairobi","2026-02-25",24.2,15.3,14.9],["Nairobi","2026-02-26",25.1,15.2,18.5],["Nairobi","2026-02-27",25.4,15.0,9.9],["Nairobi","2026-02-28",23.5,15.7,8.6],["Nairobi","2026-03-01",23.3,15.6,9.0],["Nairobi","2026-03-02",23.6,15.9,6.4],["Nairobi","2026-03-03",24.0,15.9,19.4],["Nairobi","2026-03-04",23.9,16.1,7.6],["Nairobi","2026-03-05",23.7,15.7,21.6],["Nairobi","2026-03-06",23.5,16.0,18.1],["Nairobi","2026-03-07",22.7,14.8,6.3],["Nairobi","2026-03-08",24.4,14.5,6.3],["Nairobi","2026-03-09",24.0,15.6,3.0],["Nairobi","2026-03-10",24.3,16.1,3.2],["Nairobi","2026-03-11",25.2,16.0,0.7],["Nairobi","2026-03-12",25.2,16.2,0.7],["Nairobi","2026-03-13",26.3,15.2,1.9],["Nairobi","2026-03-14",24.8,16.2,2.5],["Nairobi","2026-03-15",25.2,15.7,0.9],["Nairobi","2026-03-16",25.1,15.4,0.5],["Nairobi","2026-03-17",26.0,16.4,1.9],["Nairobi","2026-03-18",26.4,16.2,5.4],["Nairobi","2026-03-19",25.7,16.3,3.3],["Nairobi","2026-03-20",23.9,15.7,39.1],["Nairobi","2026-03-21",23.6,16.2,23.8],["Nairobi","2026-03-22",23.8,15.9,9.1],["Nairobi","2026-03-23",23.2,15.9,7.1],["Nairobi","2026-03-24",23.7,15.7,11.8],["Nairobi","2026-03-25",23.5,15.7,2.5],["Nairobi","2026-03-26",24.5,15.8,2.8],["Nairobi","2026-03-27",23.1,15.8,10.1],["Nairobi","2026-03-28",23.8,15.0,0.9],["Nairobi","2026-03-29",24.3,15.2,0.8],["Nairobi","2026-03-30",24.5,15.8,1.5],["Nairobi","2026-03-31",24.1,15.2,3.3],["Nairobi","2026-04-01",24.5,15.6,1.6],["Nairobi","2026-04-02",24.5,15.4,2.5],["Nairobi","2026-04-03",25.2,15.4,1.2],["Nairobi","2026-04-04",25.1,15.2,0.8],["Nairobi","2026-04-05",24.0,15.2,4.6],["Nairobi","2026-04-06",24.9,15.0,1.4],["Nairobi","2026-04-07",24.6,16.1,2.9],["Nairobi","2026-04-08",25.2,16.2,1.6],["Nairobi","2026-04-09",25.4,16.0,0.5],["Nairobi","2026-04-10",25.9,16.0,0.8],["Nairobi","2026-04-11",27.0,15.5,0.6],["Nairobi","2026-04-12",25.5,16.5,4.2],["Nairobi","2026-04-13",25.2,16.4,4.8],["Nairobi","2026-04-14",23.3,16.3,9.3],["Nairobi","2026-04-15",23.9,16.2,4.1],["Nairobi","2026-04-16",24.2,15.8,4.3],["Nairobi","2026-04-17",22.8,16.0,8.2],["Nairobi","2026-04-18",23.2,15.8,12.3],["Nairobi","2026-04-19",23.2,15.8,4.1],["Nairobi","2026-04-20",23.7,16.1,2.5],["Nairobi","2026-04-21",24.0,16.1,1.2],["Nairobi","2026-04-22",24.2,16.4,2.9],["Nairobi","2026-04-23",22.3,15.7,9.5],["Nairobi","2026-04-24",23.3,15.2,0.7],["Nairobi","2026-04-25",23.4,14.1,3.4],["Nairobi","2026-04-26",24.0,15.5,12.1],["Nairobi","2026-04-27",23.9,15.9,19.1],["Nairobi","2026-04-28",23.0,15.2,28.5],["Nairobi","2026-04-29",20.6,14.6,7.1],["Nairobi","2026-04-30",22.6,16.0,11.1],["Nairobi","2026-05-01",23.0,16.0,11.7],["Nairobi","2026-05-02",23.2,15.8,3.8],["Nairobi","2026-05-03",23.9,14.4,3.1],["Nairobi","2026-05-04",23.8,15.0,1.4],["Nairobi","2026-05-05",23.8,16.4,1.8],["Nairobi","2026-05-06",24.8,16.1,2.5],["Nairobi","2026-05-07",24.3,16.1,1.3],["Nairobi","2026-05-08",25.0,16.6,1.6],["Nairobi","2026-05-09",23.5,16.1,8.4],["Nairobi","2026-05-10",23.8,15.3,0.8],["Nairobi","2026-05-11",24.8,15.1,1.4],["Nairobi","2026-05-12",23.2,16.2,2.0],["Nairobi","2026-05-13",23.9,16.5,8.0],["Nairobi","2026-05-14",24.1,16.2,0.9],["Nairobi","2026-05-15",23.3,16.0,0.8],["Nairobi","2026-05-16",24.4,15.7,1.6],["Nairobi","2026-05-17",23.4,15.4,1.6],["Nairobi","2026-05-18",23.7,15.7,0.7],["Nairobi","2026-05-19",24.4,14.3,0],["Nairobi","2026-05-20",24.5,14.6,0],["Nairobi","2026-05-21",24.8,16.3,0.7],["Nairobi","2026-05-22",25.9,15.0,0.5],["Nairobi","2026-05-23",25.7,15.9,0.6],["Nairobi","2026-05-24",25.3,15.1,0.2],["Nairobi","2026-05-25",24.4,15.7,0.6],["Nairobi","2026-05-26",24.6,15.1,0.3],["Nairobi","2026-05-27",23.2,15.6,0.4],["Nairobi","2026-05-28",24.1,15.3,0.5],["Nairobi","2026-05-29",23.5,14.5,1.1],["Nairobi","2026-05-30",23.3,16.1,3.3],["Nairobi","2026-05-31",23.6,16.1,4.1],["Nairobi","2026-06-01",22.1,15.8,6.0],["Nairobi","2026-06-02",23.0,15.7,4.5],["Nairobi","2026-06-03",22.2,15.4,0.8],["Nairobi","2026-06-04",24.0,15.2,2.3],["Nairobi","2026-06-05",25.0,13.3,0.1],["Nairobi","2026-06-06",26.5,15.3,0.2],["Nairobi","2026-06-07",26.0,14.6,0.2],["Nairobi","2026-06-08",25.8,14.7,0.5],["Nairobi","2026-06-09",25.9,13.6,0],["Nairobi","2026-06-10",24.9,15.2,0.3],["Nairobi","2026-06-11",24.6,15.2,0.1],["Nairobi","2026-06-12",25.8,15.9,2.5],["Nairobi","2026-06-13",22.7,15.5,1.1],["Nairobi","2026-06-14",22.3,13.8,0.3],["Nairobi","2026-06-15",24.4,13.0,0.1],["Nairobi","2026-06-16",24.1,10.6,0.2],["Nairobi","2026-06-17",21.7,12.5,1.4],["Nairobi","2026-06-18",23.6,14.9,1.2],["Nairobi","2026-06-19",24.2,14.4,0.5],["Nairobi","2026-06-20",23.0,14.7,0.9],["Nairobi","2026-06-21",22.7,14.6,0.6],["Nairobi","2026-06-22",21.3,13.3,0.2],["Nairobi","2026-06-23",22.6,12.3,0],["Nairobi","2026-06-24",22.3,13.0,1.2],["Nairobi","2026-06-25",23.9,13.4,2.4],["Nairobi","2026-06-26",24.7,13.0,0.6],["Nairobi","2026-06-27",24.9,12.1,0.2],["Nairobi","2026-06-28",24.4,12.3,0],["Nairobi","2026-06-29",23.4,12.4,0.1],["Nairobi","2026-06-30",22.6,14.6,0.9],["Nairobi","2026-07-01",23.0,13.9,0.1],["Nairobi","2026-07-02",25.2,11.6,0.1],["Nairobi","2026-07-03",25.8,12.6,0.1],["Nairobi","2026-07-04",24.1,13.6,0.2],["Nairobi","2026-07-05",21.5,14.2,0],["Nairobi","2026-07-06",24.7,13.0,0.1],["Nairobi","2026-07-07",23.3,11.6,0],["Nairobi","2026-07-08",24.8,14.2,0.2],["Nairobi","2026-07-09",24.7,14.4,0],["Nairobi","2026-07-10",23.6,14.2,0.7],["Nairobi","2026-07-11",21.7,15.4,2.8],["Nairobi","2026-07-12",23.5,13.3,0.2],["Nairobi","2026-07-13",24.9,12.7,0],["Nairobi","2026-07-14",25.0,12.3,0],["Nairobi","2026-07-15",25.2,14.5,0.1],["Nairobi","2026-07-16",26.4,13.2,0.3],["Nairobi","2026-07-17",24.4,12.8,0],["Nairobi","2026-07-18",25.3,13.0,0.6],["Nairobi","2026-07-19",26.3,12.7,0],["Nairobi","2026-07-20",24.6,12.8,0.1],["Nairobi","2026-07-21",25.9,13.1,0.4],["Nairobi","2026-07-22",24.2,12.8,0.1],["Nairobi","2026-07-23",24.3,13.0,0.2],["Nairobi","2026-07-24",24.9,13.7,0.2],["Nairobi","2026-07-25",23.4,13.5,0.3],["Nairobi","2026-07-26",21.6,12.9,0.4],["Nairobi","2026-07-27",22.1,14.0,0.4],["Nairobi","2026-07-28",22.2,12.0,0],["Nairobi","2026-07-29",24.3,13.2,0],["Nairobi","2026-07-30",24.8,12.6,0.3],["Nairobi","2026-07-31",25.3,13.0,0.6],["Nairobi","2026-08-01",25.2,12.8,0.1],["Nairobi","2026-08-02",22.8,13.2,0.7],["Nairobi","2026-08-03",21.5,12.5,0.1],["Nairobi","2026-08-04",20.6,12.7,0.8],["Nairobi","2026-08-05",25.6,11.6,0],["Nairobi","2026-08-06",25.1,12.6,0],["Nairobi","2026-08-07",23.8,13.3,0],["Nairobi","2026-08-08",24.3,13.1,0.1],["Nairobi","2026-08-09",23.6,13.7,0.6],["Nairobi","2026-08-10",27.9,12.5,0.4],["Nairobi","2026-08-11",26.4,11.5,0],["Nairobi","2026-08-12",27.0,11.7,0],["Nairobi","2026-08-13",26.3,12.0,0],["Nairobi","2026-08-14",26.7,11.6,0],["Nairobi","2026-08-15",24.0,12.7,0],["Nairobi","2026-08-16",20.9,15.0,0.4],["Nairobi","2026-08-17",23.6,14.6,0.4],["Nairobi","2026-08-18",22.2,15.1,2.8],["Nairobi","2026-08-19",23.3,15.5,3.8],["Nairobi","2026-08-20",25.1,13.1,0],["Nairobi","2026-08-21",25.0,11.1,0],["Nairobi","2026-08-22",27.5,12.0,0.5],["Nairobi","2026-08-23",27.3,16.1,2.3],["Nairobi","2026-08-24",27.1,14.8,0.9],["Nairobi","2026-08-25",27.1,13.0,0],["Nairobi","2026-08-26",27.4,12.1,0],["Nairobi","2026-08-27",26.5,11.7,0],["Nairobi","2026-08-28",25.9,12.5,0],["Nairobi","2026-08-29",25.4,13.3,0],["Nairobi","2026-08-30",25.7,14.0,0.5],["Nairobi","2026-08-31",21.7,13.8,4.8],["Reykjavik","2025-09-01",16.4,8.9,3.0],["Reykjavik","2025-09-02",16.4,8.6,1.9],["Reykjavik","2025-09-03",15.1,9.4,0],["Reykjavik","2025-09-04",13.3,8.5,6.6],["Reykjavik","2025-09-05",10.7,5.5,3.3],["Reykjavik","2025-09-06",11.4,4.8,1.8],["Reykjavik","2025-09-07",7.5,5.3,13.0],["Reykjavik","2025-09-08",15.9,7.1,18.0],["Reykjavik","2025-09-09",9.9,7.6,2.2],["Reykjavik","2025-09-10",12.2,7.7,28.5],["Reykjavik","2025-09-11",15.0,8.2,3.0],["Reykjavik","2025-09-12",14.4,7.1,0.4],["Reykjavik","2025-09-13",13.3,4.4,2.0],["Reykjavik","2025-09-14",11.7,8.1,7.1],["Reykjavik","2025-09-15",13.7,8.1,1.4],["Reykjavik","2025-09-16",13.4,7.6,2.6],["Reykjavik","2025-09-17",10.2,3.4,0],["Reykjavik","2025-09-18",7.3,2.1,0],["Reykjavik","2025-09-19",5.8,1.8,0],["Reykjavik","2025-09-20",5.9,2.1,0],["Reykjavik","2025-09-21",9.1,3.3,1.7],["Reykjavik","2025-09-22",12.0,8.2,0.5],["Reykjavik","2025-09-23",11.3,8.8,13.5],["Reykjavik","2025-09-24",10.3,7.8,8.5],["Reykjavik","2025-09-25",11.0,8.1,10.0],["Reykjavik","2025-09-26",12.0,9.5,17.3],["Reykjavik","2025-09-27",10.1,6.0,6.0],["Reykjavik","2025-09-28",11.0,2.1,0],["Reykjavik","2025-09-29",12.1,8.2,15.0],["Reykjavik","2025-09-30",9.7,8.6,20.8],["Reykjavik","2025-10-01",11.8,8.2,13.0],["Reykjavik","2025-10-02",10.1,6.5,2.5],["Reykjavik","2025-10-03",9.3,5.0,0],["Reykjavik","2025-10-04",8.7,5.9,0.2],["Reykjavik","2025-10-05",9.5,6.4,7.1],["Reykjavik","2025-10-06",6.9,3.3,2.5],["Reykjavik","2025-10-07",5.8,4.1,4.1],["Reykjavik","2025-10-08",8.8,3.9,5.1],["Reykjavik","2025-10-09",9.5,6.9,4.9],["Reykjavik","2025-10-10",9.0,7.0,9.1],["Reykjavik","2025-10-11",11.9,6.7,23.6],["Reykjavik","2025-10-12",11.6,7.4,8.7],["Reykjavik","2025-10-13",11.4,4.3,0.5],["Reykjavik","2025-10-14",11.4,9.9,3.3],["Reykjavik","2025-10-15",9.2,8.2,2.8],["Reykjavik","2025-10-16",8.7,6.6,0.6],["Reykjavik","2025-10-17",8.1,5.7,0.2],["Reykjavik","2025-10-18",8.1,2.5,0],["Reykjavik","2025-10-19",7.4,2.8,0.6],["Reykjavik","2025-10-20",5.5,2.3,15.9],["Reykjavik","2025-10-21",3.5,0.2,1.3],["Reykjavik","2025-10-22",1.8,0.3,0],["Reykjavik","2025-10-23",1.9,-1.0,0],["Reykjavik","2025-10-24",4.7,-0.6,2.5],["Reykjavik","2025-10-25",1.8,-3.2,3.0],["Reykjavik","2025-10-26",1.6,-2.7,6.0],["Reykjavik","2025-10-27",1.8,-6.5,2.0],["Reykjavik","2025-10-28",0.6,-2.3,30.4],["Reykjavik","2025-10-29",-2.2,-6.1,0],["Reykjavik","2025-10-30",-0.4,-9.6,0.3],["Reykjavik","2025-10-31",5.7,0.6,6.7],["Reykjavik","2025-11-01",7.3,1.4,3.1],["Reykjavik","2025-11-02",3.1,0.3,0],["Reykjavik","2025-11-03",3.1,0.2,0],["Reykjavik","2025-11-04",3.2,-0.2,0],["Reykjavik","2025-11-05",4.9,2.5,0],["Reykjavik","2025-11-06",4.5,0.1,1.2],["Reykjavik","2025-11-07",5.0,1.2,0],["Reykjavik","2025-11-08",7.0,3.0,0],["Reykjavik","2025-11-09",5.6,2.4,2.9],["Reykjavik","2025-11-10",3.9,2.2,1.5],["Reykjavik","2025-11-11",3.1,-3.5,0],["Reykjavik","2025-11-12",-1.5,-4.1,0],["Reykjavik","2025-11-13",2.1,-4.5,0.1],["Reykjavik","2025-11-14",1.9,-0.4,0.8],["Reykjavik","2025-11-15",4.1,1.2,0.4],["Reykjavik","2025-11-16",4.1,-2.4,1.0],["Reykjavik","2025-11-17",4.2,-0.9,0.7],["Reykjavik","2025-11-18",-1.6,-4.1,0],["Reykjavik","2025-11-19",3.1,-2.7,2.8],["Reykjavik","2025-11-20",6.9,-1.5,11.7],["Reykjavik","2025-11-21",5.6,1.1,0.7],["Reykjavik","2025-11-22",1.8,0.1,2.3],["Reykjavik","2025-11-23",1.1,-4.8,0],["Reykjavik","2025-11-24",-0.5,-3.1,0],["Reykjavik","2025-11-25",4.0,-0.1,13.5],["Reykjavik","2025-11-26",1.7,-3.4,0.2],["Reykjavik","2025-11-27",-0.2,-2.3,0.3],["Reykjavik","2025-11-28",-2.6,-6.7,0],["Reykjavik","2025-11-29",-1.0,-11.0,4.5],["Reykjavik","2025-11-30",2.9,0.2,9.3],["Reykjavik","2025-12-01",4.3,1.6,3.9],["Reykjavik","2025-12-02",1.8,-3.7,0],["Reykjavik","2025-12-03",2.4,-2.3,6.7],["Reykjavik","2025-12-04",-1.6,-4.6,0],["Reykjavik","2025-12-05",2.0,-1.9,1.9],["Reykjavik","2025-12-06",3.4,-1.6,0],["Reykjavik","2025-12-07",3.9,3.0,0],["Reykjavik","2025-12-08",4.5,2.4,0.7],["Reykjavik","2025-12-09",5.5,4.1,14.5],["Reykjavik","2025-12-10",4.7,2.6,0.5],["Reykjavik","2025-12-11",5.8,3.4,10.8],["Reykjavik","2025-12-12",5.0,3.3,5.1],["Reykjavik","2025-12-13",5.7,-0.3,0],["Reykjavik","2025-12-14",1.1,-3.7,3.7],["Reykjavik","2025-12-15",-0.8,-5.6,0],["Reykjavik","2025-12-16",0.6,-4.2,0],["Reykjavik","2025-12-17",3.8,1.0,2.6],["Reykjavik","2025-12-18",3.6,-0.9,4.0],["Reykjavik","2025-12-19",4.7,-1.6,6.4],["Reykjavik","2025-12-20",7.7,2.5,10.9],["Reykjavik","2025-12-21",7.9,3.6,0.3],["Reykjavik","2025-12-22",7.0,2.0,12.1],["Reykjavik","2025-12-23",7.7,2.5,13.0],["Reykjavik","2025-12-24",9.6,6.9,18.0],["Reykjavik","2025-12-25",9.0,7.9,6.1],["Reykjavik","2025-12-26",8.2,2.0,11.1],["Reykjavik","2025-12-27",6.5,-1.9,0],["Reykjavik","2025-12-28",6.7,5.8,1.4],["Reykjavik","2025-12-29",5.0,1.4,0.1],["Reykjavik","2025-12-30",5.5,4.5,0.9],["Reykjavik","2025-12-31",5.7,-1.6,2.6],["Reykjavik","2026-01-01",3.5,-2.2,0],["Reykjavik","2026-01-02",-1.9,-4.5,0],["Reykjavik","2026-01-03",-4.4,-6.4,0],["Reykjavik","2026-01-04",0.3,-4.5,0],["Reykjavik","2026-01-05",0.3,-4.7,0.3],["Reykjavik","2026-01-06",-4.3,-7.1,0],["Reykjavik","2026-01-07",-3.2,-6.5,0],["Reykjavik","2026-01-08",1.1,-3.6,0.1],["Reykjavik","2026-01-09",-4.1,-7.6,0],["Reykjavik","2026-01-10",-4.7,-7.9,0],["Reykjavik","2026-01-11",-3.0,-7.8,0],["Reykjavik","2026-01-12",-1.6,-2.7,0],["Reykjavik","2026-01-13",-1.6,-3.4,0],["Reykjavik","2026-01-14",0.3,-6.3,0],["Reykjavik","2026-01-15",0.9,-5.0,0.6],["Reykjavik","2026-01-16",0.8,-3.0,0],["Reykjavik","2026-01-17",6.0,-3.5,0.1],["Reykjavik","2026-01-18",6.2,3.6,25.3],["Reykjavik","2026-01-19",4.2,-0.7,5.7],["Reykjavik","2026-01-20",3.3,0.3,1.3],["Reykjavik","2026-01-21",6.7,1.0,0],["Reykjavik","2026-01-22",7.8,5.4,4.1],["Reykjavik","2026-01-23",7.3,3.4,4.7],["Reykjavik","2026-01-24",5.2,3.3,0],["Reykjavik","2026-01-25",5.2,2.9,0.1],["Reykjavik","2026-01-26",5.7,2.7,0],["Reykjavik","2026-01-27",5.6,2.1,2.5],["Reykjavik","2026-01-28",4.2,2.8,0],["Reykjavik","2026-01-29",4.8,1.8,0.8],["Reykjavik","2026-01-30",3.0,-1.4,0.2],["Reykjavik","2026-01-31",2.3,-1.6,0],["Reykjavik","2026-02-01",4.9,0.3,0.4],["Reykjavik","2026-02-02",6.1,3.8,0],["Reykjavik","2026-02-03",5.9,3.2,0],["Reykjavik","2026-02-04",3.5,0.3,0],["Reykjavik","2026-02-05",2.3,-1.7,0],["Reykjavik","2026-02-06",3.1,-1.8,7.9],["Reykjavik","2026-02-07",1.5,-2.9,0],["Reykjavik","2026-02-08",0.8,-2.9,0],["Reykjavik","2026-02-09",2.1,-1.8,0.2],["Reykjavik","2026-02-10",3.0,-2.2,10.5],["Reykjavik","2026-02-11",-2.2,-6.9,0],["Reykjavik","2026-02-12",-4.4,-9.1,0],["Reykjavik","2026-02-13",-3.6,-10.3,0],["Reykjavik","2026-02-14",-2.2,-10.0,0],["Reykjavik","2026-02-15",-4.1,-10.0,0],["Reykjavik","2026-02-16",-3.3,-10.6,0],["Reykjavik","2026-02-17",-3.8,-8.0,0],["Reykjavik","2026-02-18",-2.3,-6.6,1.1],["Reykjavik","2026-02-19",-0.7,-8.5,0],["Reykjavik","2026-02-20",0.3,-6.9,0],["Reykjavik","2026-02-21",1.3,-7.5,0],["Reykjavik","2026-02-22",3.0,0.9,1.3],["Reykjavik","2026-02-23",4.4,0.4,8.7],["Reykjavik","2026-02-24",4.2,-2.0,4.2],["Reykjavik","2026-02-25",2.4,-2.6,16.5],["Reykjavik","2026-02-26",3.5,-4.9,14.7],["Reykjavik","2026-02-27",-0.9,-5.5,0.8],["Reykjavik","2026-02-28",-0.4,-4.3,3.8],["Reykjavik","2026-03-01",-1.7,-3.3,0.2],["Reykjavik","2026-03-02",-0.5,-4.8,0.1],["Reykjavik","2026-03-03",6.8,-8.5,12.3],["Reykjavik","2026-03-04",3.9,-1.7,4.0],["Reykjavik","2026-03-05",1.0,-1.6,2.6],["Reykjavik","2026-03-06",4.6,-0.1,17.7],["Reykjavik","2026-03-07",2.9,-0.3,6.1],["Reykjavik","2026-03-08",1.3,-0.7,6.3],["Reykjavik","2026-03-09",3.7,0.2,19.1],["Reykjavik","2026-03-10",4.1,1.2,1.8],["Reykjavik","2026-03-11",1.9,-2.0,0.2],["Reykjavik","2026-03-12",0.2,-3.0,1.4],["Reykjavik","2026-03-13",2.0,-0.4,1.4],["Reykjavik","2026-03-14",3.1,-2.3,0.4],["Reykjavik","2026-03-15",2.7,0.8,4.8],["Reykjavik","2026-03-16",1.0,-1.2,0],["Reykjavik","2026-03-17",1.5,-1.5,0],["Reykjavik","2026-03-18",2.4,-0.9,1.3],["Reykjavik","2026-03-19",6.8,1.4,27.2],["Reykjavik","2026-03-20",1.1,-2.9,3.8],["Reykjavik","2026-03-21",1.2,-2.2,4.7],["Reykjavik","2026-03-22",-0.2,-3.9,7.6],["Reykjavik","2026-03-23",0.4,-3.4,5.6],["Reykjavik","2026-03-24",-0.1,-4.8,1.2],["Reykjavik","2026-03-25",-3.8,-8.5,0],["Reykjavik","2026-03-26",3.0,-4.4,20.2],["Reykjavik","2026-03-27",1.5,-2.8,7.5],["Reykjavik","2026-03-28",3.7,-6.7,20.9],["Reykjavik","2026-03-29",3.1,1.3,16.1],["Reykjavik","2026-03-30",2.7,0.7,4.6],["Reykjavik","2026-03-31",1.0,-0.7,11.2],["Reykjavik","2026-04-01",2.9,-0.3,0.7],["Reykjavik","2026-04-02",3.0,-6.0,14.6],["Reykjavik","2026-04-03",-0.5,-4.8,1.0],["Reykjavik","2026-04-04",0.7,-6.7,0.4],["Reykjavik","2026-04-05",1.4,-7.2,1.5],["Reykjavik","2026-04-06",4.7,-0.5,19.8],["Reykjavik","2026-04-07",5.6,3.3,6.9],["Reykjavik","2026-04-08",5.8,2.9,13.5],["Reykjavik","2026-04-09",4.9,1.7,10.2],["Reykjavik","2026-04-10",3.9,-2.0,0.6],["Reykjavik","2026-04-11",2.8,-1.9,0],["Reykjavik","2026-04-12",4.6,0.0,1.9],["Reykjavik","2026-04-13",6.4,-2.0,7.4],["Reykjavik","2026-04-14",7.1,1.9,1.0],["Reykjavik","2026-04-15",9.3,2.4,6.1],["Reykjavik","2026-04-16",9.3,1.3,0.5],["Reykjavik","2026-04-17",7.6,-0.5,1.8],["Reykjavik","2026-04-18",5.9,0.8,0.2],["Reykjavik","2026-04-19",8.7,-0.5,0],["Reykjavik","2026-04-20",12.0,4.8,0],["Reykjavik","2026-04-21",8.1,2.1,0.4],["Reykjavik","2026-04-22",6.9,4.7,1.5],["Reykjavik","2026-04-23",7.3,4.5,0],["Reykjavik","2026-04-24",7.1,4.5,0],["Reykjavik","2026-04-25",8.3,5.6,0.2],["Reykjavik","2026-04-26",11.6,7.0,1.5],["Reykjavik","2026-04-27",9.9,8.1,19.1],["Reykjavik","2026-04-28",9.1,5.8,12.6],["Reykjavik","2026-04-29",6.8,3.2,1.5],["Reykjavik","2026-04-30",6.4,2.8,3.2],["Reykjavik","2026-05-01",3.9,1.0,0.6],["Reykjavik","2026-05-02",7.5,-1.4,0.3],["Reykjavik","2026-05-03",6.9,3.1,0],["Reykjavik","2026-05-04",5.0,0.3,0],["Reykjavik","2026-05-05",4.1,-1.6,0.2],["Reykjavik","2026-05-06",4.7,-0.7,0.7],["Reykjavik","2026-05-07",4.1,-1.7,0],["Reykjavik","2026-05-08",5.3,-1.3,1.5],["Reykjavik","2026-05-09",6.9,3.6,6.8],["Reykjavik","2026-05-10",7.4,5.5,8.6],["Reykjavik","2026-05-11",8.6,5.4,2.7],["Reykjavik","2026-05-12",7.9,2.6,2.3],["Reykjavik","2026-05-13",6.5,3.2,0.3],["Reykjavik","2026-05-14",9.1,4.0,0.4],["Reykjavik","2026-05-15",9.1,6.2,4.3],["Reykjavik","2026-05-16",9.7,6.2,15.1],["Reykjavik","2026-05-17",9.7,5.6,0.4],["Reykjavik","2026-05-18",9.4,1.5,0],["Reykjavik","2026-05-19",10.0,3.2,0.1],["Reykjavik","2026-05-20",11.5,3.7,0],["Reykjavik","2026-05-21",14.4,7.3,0.7],["Reykjavik","2026-05-22",12.7,7.9,3.4],["Reykjavik","2026-05-23",12.3,7.1,5.2],["Reykjavik","2026-05-24",10.4,6.0,8.1],["Reykjavik","2026-05-25",9.4,5.6,3.5],["Reykjavik","2026-05-26",9.8,5.8,1.5],["Reykjavik","2026-05-27",8.6,6.3,1.0],["Reykjavik","2026-05-28",9.2,6.2,2.7],["Reykjavik","2026-05-29",8.1,6.6,0.9],["Reykjavik","2026-05-30",9.1,6.2,3.5],["Reykjavik","2026-05-31",13.7,8.7,0.2],["Reykjavik","2026-06-01",12.2,8.9,1.4],["Reykjavik","2026-06-02",13.5,8.5,6.7],["Reykjavik","2026-06-03",11.8,9.1,6.4],["Reykjavik","2026-06-04",11.8,8.6,7.3],["Reykjavik","2026-06-05",10.9,7.3,6.4],["Reykjavik","2026-06-06",10.3,5.2,3.1],["Reykjavik","2026-06-07",11.3,6.2,1.7],["Reykjavik","2026-06-08",10.7,8.3,5.6],["Reykjavik","2026-06-09",11.3,8.2,5.6],["Reykjavik","2026-06-10",13.4,6.9,1.8],["Reykjavik","2026-06-11",15.3,5.6,0],["Reykjavik","2026-06-12",15.9,9.1,1.6],["Reykjavik","2026-06-13",15.1,8.8,0],["Reykjavik","2026-06-14",14.4,6.2,0.6],["Reykjavik","2026-06-15",12.1,9.6,6.1],["Reykjavik","2026-06-16",11.7,8.7,3.5],["Reykjavik","2026-06-17",14.2,5.9,0],["Reykjavik","2026-06-18",13.3,8.3,0.2],["Reykjavik","2026-06-19",14.4,8.1,1.6],["Reykjavik","2026-06-20",13.0,8.4,0.3],["Reykjavik","2026-06-21",10.9,5.5,0.6],["Reykjavik","2026-06-22",11.8,8.1,4.0],["Reykjavik","2026-06-23",13.2,8.2,0.2],["Reykjavik","2026-06-24",12.5,9.2,0.5],["Reykjavik","2026-06-25",9.9,7.1,11.3],["Reykjavik","2026-06-26",11.2,7.1,6.8],["Reykjavik","2026-06-27",11.5,8.0,14.5],["Reykjavik","2026-06-28",12.6,9.2,4.1],["Reykjavik","2026-06-29",11.7,8.6,3.8],["Reykjavik","2026-06-30",11.8,7.3,7.3],["Reykjavik","2026-07-01",12.0,7.2,12.9],["Reykjavik","2026-07-02",10.2,6.9,4.8],["Reykjavik","2026-07-03",11.7,6.9,0.9],["Reykjavik","2026-07-04",11.0,7.6,0],["Reykjavik","2026-07-05",15.6,7.8,0],["Reykjavik","2026-07-06",12.2,9.7,1.3],["Reykjavik","2026-07-07",13.3,8.0,20.6],["Reykjavik","2026-07-08",12.2,9.8,2.2],["Reykjavik","2026-07-09",11.7,8.5,5.2],["Reykjavik","2026-07-10",12.5,7.8,7.4],["Reykjavik","2026-07-11",12.7,9.6,0.8],["Reykjavik","2026-07-12",12.8,10.7,4.1],["Reykjavik","2026-07-13",12.6,10.4,19.2],["Reykjavik","2026-07-14",13.0,11.1,4.9],["Reykjavik","2026-07-15",11.9,9.9,3.3],["Reykjavik","2026-07-16",11.4,8.6,2.3],["Reykjavik","2026-07-17",11.3,9.5,1.7],["Reykjavik","2026-07-18",13.2,8.6,4.4],["Reykjavik","2026-07-19",13.4,10.3,3.0],["Reykjavik","2026-07-20",12.8,11.0,3.4],["Reykjavik","2026-07-21",13.2,11.1,4.8],["Reykjavik","2026-07-22",12.8,10.4,10.4],["Reykjavik","2026-07-23",13.9,9.8,1.1],["Reykjavik","2026-07-24",12.7,9.9,2.0],["Reykjavik","2026-07-25",13.9,8.1,0],["Reykjavik","2026-07-26",16.2,7.1,0],["Reykjavik","2026-07-27",16.0,8.2,0.4],["Reykjavik","2026-07-28",12.8,7.2,1.3],["Reykjavik","2026-07-29",11.4,6.4,0],["Reykjavik","2026-07-30",14.0,5.6,0],["Reykjavik","2026-07-31",13.9,9.0,0],["Reykjavik","2026-08-01",15.2,9.2,0],["Reykjavik","2026-08-02",13.7,8.6,0],["Reykjavik","2026-08-03",11.9,9.5,0],["Reykjavik","2026-08-04",12.0,8.8,0.3],["Reykjavik","2026-08-05",12.8,9.5,3.1],["Reykjavik","2026-08-06",12.7,10.6,19.7],["Reykjavik","2026-08-07",12.5,10.1,21.6],["Reykjavik","2026-08-08",12.5,8.3,3.0],["Reykjavik","2026-08-09",13.7,6.4,0],["Reykjavik","2026-08-10",14.4,5.2,1.9],["Reykjavik","2026-08-11",16.3,7.5,1.3],["Reykjavik","2026-08-12",15.7,11.8,13.5],["Reykjavik","2026-08-13",14.3,11.8,0.5],["Reykjavik","2026-08-14",13.7,9.2,0],["Reykjavik","2026-08-15",11.8,7.6,0],["Reykjavik","2026-08-16",12.5,4.7,0],["Reykjavik","2026-08-17",14.7,6.1,0],["Reykjavik","2026-08-18",12.9,6.2,0],["Reykjavik","2026-08-19",11.3,7.3,0.1],["Reykjavik","2026-08-20",11.2,9.4,0.4],["Reykjavik","2026-08-21",12.9,9.6,2.0],["Reykjavik","2026-08-22",12.4,10.5,15.1],["Reykjavik","2026-08-23",12.3,8.4,1.4],["Reykjavik","2026-08-24",9.7,7.7,15.3],["Reykjavik","2026-08-25",10.3,5.2,0.3],["Reykjavik","2026-08-26",11.1,6.6,0],["Reykjavik","2026-08-27",10.0,7.3,0.1],["Reykjavik","2026-08-28",10.2,7.5,0],["Reykjavik","2026-08-29",9.7,6.1,0],["Reykjavik","2026-08-30",11.6,2.6,0.3],["Reykjavik","2026-08-31",12.8,5.9,2.0]];
+          const CITY = 0, DATE = 1, TMAX = 2, TMIN = 3, RAIN = 4;
+          const CITIES = ["London", "New York", "Tokyo", "Sydney", "Nairobi", "Reykjavik"];
+
+          const probe = document.createElement("span");
+          probe.style.display = "none";
+          document.body.appendChild(probe);
+          let tones = new Map();
+          const tone = (name) => {
+            if (!tones.has(name)) {
+              probe.style.color = "var(" + name + ")";
+              tones.set(name, getComputedStyle(probe).color);
+            }
+            return tones.get(name);
+          };
+          // Six lines need six separated hues, and the skin holds five saturated
+          // ones that survive both themes. The sixth is the neutral 500.
+          const LINE = ["--color-brand-500", "--color-error-500", "--color-warning-500",
+            "--color-success-500", "--color-yellow-500", "--color-gray-500"];
+
+          const byCity = new Map(CITIES.map((c) => [c, []]));
+          for (const r of W) byCity.get(r[CITY]).push(r);
+          for (const rows of byCity.values()) rows.sort((a, b) => (a[DATE] < b[DATE] ? -1 : 1));
+
+          const hottest = W.reduce((a, b) => (b[TMAX] > a[TMAX] ? b : a));
+          const coldest = W.reduce((a, b) => (b[TMIN] < a[TMIN] ? b : a));
+          const wettest = W.reduce((a, b) => (b[RAIN] > a[RAIN] ? b : a));
+          document.querySelector("#tiles").innerHTML = [
+            ["2,190", "days, six cities, one year"],
+            [hottest[TMAX].toFixed(1) + "°", "the hottest, " + hottest[CITY] + " on " + hottest[DATE].slice(5)],
+            [coldest[TMIN].toFixed(1) + "°", "the coldest, " + coldest[CITY] + " on " + coldest[DATE].slice(5)],
+            [wettest[RAIN].toFixed(0) + " mm", "the wettest day, " + wettest[CITY]],
+          ].map(([big, small]) =>
+            '<div class="rounded-xl border border-border bg-card p-4 shadow-sm">' +
+            '<p class="text-2xl font-semibold tracking-[-0.03em]">' + big + "</p>" +
+            '<p class="mt-1 text-xs leading-5 text-muted-foreground">' + small + "</p></div>").join("");
+
+          // Yearly summary table: the numbers behind every chart on the page,
+          // rendered whether or not a chart ever draws.
+          const summary = CITIES.map((c) => {
+            const rows = byCity.get(c);
+            const highs = rows.map((r) => r[TMAX]);
+            const mean = highs.reduce((s, v) => s + v, 0) / highs.length;
+            return {
+              city: c,
+              mean: mean,
+              warmest: Math.max(...highs),
+              coldest: Math.min(...rows.map((r) => r[TMIN])),
+              rain: rows.reduce((s, r) => s + r[RAIN], 0),
+              wetDays: rows.filter((r) => r[RAIN] >= 1).length,
+            };
+          });
+          const summaryTable = (cols) =>
+            '<div class="overflow-x-auto rounded-xl border border-border bg-card shadow-sm"><table class="w-full text-left text-sm">' +
+            '<thead><tr class="border-b border-border text-xs tracking-[0.08em] text-muted-foreground uppercase">' +
+            '<th class="px-4 py-2.5 font-medium">City</th>' +
+            cols.map((c) => '<th class="px-4 py-2.5 text-right font-medium">' + c[0] + "</th>").join("") +
+            '</tr></thead><tbody class="divide-y divide-border">' +
+            summary.map((s) =>
+              '<tr><td class="px-4 py-2.5">' + s.city + "</td>" +
+              cols.map((c) => '<td class="px-4 py-2.5 text-right font-mono text-xs">' + c[1](s) + "</td>").join("") +
+              "</tr>").join("") + "</tbody></table></div>";
+          document.querySelector("#c-year-table").innerHTML = summaryTable([
+            ["Mean high", (s) => s.mean.toFixed(1) + "°"],
+            ["Warmest", (s) => s.warmest.toFixed(1) + "°"],
+            ["Coldest", (s) => s.coldest.toFixed(1) + "°"],
+          ]);
+          document.querySelector("#rain-table").innerHTML = summaryTable([
+            ["Rain, mm", (s) => Math.round(s.rain)],
+            ["Days over 1 mm", (s) => s.wetDays],
+            ["Mm per wet day", (s) => (s.rain / s.wetDays).toFixed(1)],
+          ]);
+
+          // ---- The grid.
+          const ROWS = W.map((r) => ({
+            city: r[CITY], date: r[DATE], high: r[TMAX], low: r[TMIN], rain: r[RAIN],
+          }));
+          const COLUMNS = [
+            { title: "City", field: "city", width: 140, headerFilter: "list",
+              headerFilterParams: { valuesLookup: true, clearable: true } },
+            { title: "Date", field: "date", width: 140, headerFilter: "input", headerFilterPlaceholder: "2026-01" },
+            { title: "High °C", field: "high", width: 116, sorter: "number", hozAlign: "right",
+              headerFilter: "number", headerFilterPlaceholder: "≥", headerFilterFunc: ">=",
+              formatter: (c) => c.getValue().toFixed(1) },
+            { title: "Low °C", field: "low", width: 112, sorter: "number", hozAlign: "right",
+              headerFilter: "number", headerFilterPlaceholder: "≥", headerFilterFunc: ">=",
+              formatter: (c) => c.getValue().toFixed(1) },
+            { title: "Rain mm", field: "rain", width: 116, sorter: "number", hozAlign: "right",
+              headerFilter: "number", headerFilterPlaceholder: "≥", headerFilterFunc: ">=",
+              formatter: (c) => c.getValue().toFixed(1) },
+          ];
+          const countEl = document.querySelector("#grid-count");
+          const TOTAL = ROWS.length.toLocaleString();
+          const fallback = document.querySelector("#grid-fallback");
+          fallback.innerHTML =
+            '<table class="w-full text-left text-sm"><thead><tr class="border-b border-border text-xs tracking-[0.08em] text-muted-foreground uppercase">' +
+            ["City", "Date", "High °C", "Low °C", "Rain mm"].map((h) => '<th class="py-2 pr-4 font-medium">' + h + "</th>").join("") +
+            '</tr></thead><tbody class="divide-y divide-border">' +
+            [...ROWS].sort((a, b) => b.high - a.high).slice(0, 60).map((r) =>
+              '<tr><td class="py-2 pr-4">' + r.city +
+              '</td><td class="py-2 pr-4 font-mono text-xs text-muted-foreground">' + r.date +
+              '</td><td class="py-2 pr-4 text-right font-mono text-xs">' + r.high.toFixed(1) +
+              '</td><td class="py-2 pr-4 text-right font-mono text-xs">' + r.low.toFixed(1) +
+              '</td><td class="py-2 pr-4 text-right font-mono text-xs">' + r.rain.toFixed(1) + "</td></tr>").join("") +
+            "</tbody></table>";
+          countEl.textContent = "60 hottest of 2,190";
+
+          if (typeof Tabulator !== "undefined") {
+            fallback.remove();
+            const table = new Tabulator("#grid-host", {
+              data: ROWS, columns: COLUMNS, height: "26rem", layout: "fitColumns",
+              initialSort: [{ column: "high", dir: "desc" }],
+              placeholder: "Nothing matches those filters.",
+            });
+            const showCount = (shown) => {
+              const n = shown === undefined ? ROWS.length : shown;
+              countEl.textContent =
+                n === ROWS.length ? TOTAL + " days" : n.toLocaleString() + " of " + TOTAL;
+            };
+            showCount();
+              document.querySelector("#grid-cols").innerHTML = COLUMNS.map((c) =>
+                '<label class="flex cursor-pointer items-center gap-1.5"><input type="checkbox" checked data-col="' +
+                c.field + '" class="size-3.5 accent-brand-600" />' + c.title + "</label>").join("");
+            table.on("dataFiltered", (filters, rows) => showCount(rows.length));
+            document.querySelector("#grid-cols").addEventListener("change", (e) => {
+              const box = e.target.closest("[data-col]");
+              if (box) table.toggleColumn(box.dataset.col);
+            });
+            document.querySelector("#grid-csv").addEventListener("click", () => table.download("csv", "weather.csv"));
+          } else {
+            document.querySelector("#grid-cols").innerHTML =
+              '<span class="text-muted-foreground">The grid library did not load, so the sixty hottest days are listed instead.</span>';
+            document.querySelector("#grid-csv").disabled = true;
+          }
+
+          // ---- The charts.
+          if (typeof Chart !== "undefined") {
+            Chart.defaults.font.family = "Inter, sans-serif";
+            Chart.defaults.color = tone("--color-muted-foreground");
+            Chart.defaults.borderColor = tone("--color-border");
+            const smooth = (values, window) =>
+              values.map((_, i) => {
+                const from = Math.max(0, i - window + 1);
+                const slice = values.slice(from, i + 1);
+                return slice.reduce((s, v) => s + v, 0) / slice.length;
+              });
+            const labels = byCity.get("London").map((r) => r[DATE]);
+            new Chart(document.querySelector("#c-year"), {
+              type: "line",
+              data: { labels, datasets: CITIES.map((c, i) => ({
+                label: c,
+                data: smooth(byCity.get(c).map((r) => r[TMAX]), 7),
+                borderColor: tone(LINE[i]), backgroundColor: tone(LINE[i]),
+                borderWidth: 1.8, pointRadius: 0, tension: 0.25,
+              })) },
+              options: { responsive: true, maintainAspectRatio: false,
+                interaction: { mode: "index", intersect: false },
+                plugins: { legend: { position: "bottom" },
+                  tooltip: { callbacks: { label: (c) => c.dataset.label + " " + c.parsed.y.toFixed(1) + "°" } } },
+                scales: { x: { ticks: { maxTicksLimit: 12, callback(v) { return this.getLabelForValue(v).slice(0, 7); } } },
+                  y: { title: { display: true, text: "seven-day mean high, °C" } } } },
+            });
+            const barOptions = (unit) => ({
+              indexAxis: "y", responsive: true, maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: { x: { beginAtZero: true, title: { display: true, text: unit } } },
+            });
+            new Chart(document.querySelector("#c-rain"), {
+              type: "bar",
+              data: { labels: summary.map((s) => s.city),
+                datasets: [{ data: summary.map((s) => Math.round(s.rain)), backgroundColor: tone("--color-brand-500") }] },
+              options: barOptions("millimeters in the year"),
+            });
+            new Chart(document.querySelector("#c-wet"), {
+              type: "bar",
+              data: { labels: summary.map((s) => s.city),
+                datasets: [{ data: summary.map((s) => s.wetDays), backgroundColor: tone("--color-brand-300") }] },
+              options: barOptions("days with a millimeter or more"),
+            });
+          }
+
+          // ---- The breakdown.
+          const GROUPS = {
+            city: ["City", "city"],
+            month: ["Month", "substr(date, 1, 7)"],
+            season: ["Quarter", "'Q' || CAST((CAST(substr(date, 6, 2) AS INTEGER) + 2) / 3 AS TEXT)"],
+          };
+          const MEASURES = {
+            meanhigh: ["Mean daily high, °C", "round(avg(high), 1)"],
+            meanlow: ["Mean daily low, °C", "round(avg(low), 1)"],
+            rain: ["Total rain, mm", "round(sum(rain))"],
+            wet: ["Days over 1 mm", "sum(CASE WHEN rain >= 1 THEN 1 ELSE 0 END)"],
+            hot: ["Days over 25 °C", "sum(CASE WHEN high > 25 THEN 1 ELSE 0 END)"],
+          };
+          const pvStatus = document.querySelector("#pv-status");
+          const fill = (sel, obj) => {
+            document.querySelector(sel).innerHTML = Object.entries(obj)
+              .map(([k, v]) => '<option value="' + k + '">' + v[0] + "</option>").join("");
+          };
+          fill("#pv-group", GROUPS);
+          fill("#pv-measure", MEASURES);
+
+          let db = null, pvChart = null;
+          function summarize() {
+            if (!db) return;
+            const g = GROUPS[document.querySelector("#pv-group").value];
+            const m = MEASURES[document.querySelector("#pv-measure").value];
+            const sql = "SELECT " + g[1] + " AS label, " + m[1] +
+              " AS value FROM days GROUP BY label ORDER BY value DESC LIMIT 14;";
+            document.querySelector("#pv-sql").textContent = sql;
+            let res;
+            try {
+              const started = performance.now();
+              res = db.exec(sql);
+              pvStatus.textContent = "answered in " + (performance.now() - started).toFixed(1) + " ms";
+            } catch (err) {
+              pvStatus.textContent = String(err.message || err);
+              return;
+            }
+            const rows = res.length ? res[0].values : [];
+            document.querySelector("#pv-table").innerHTML =
+              '<table class="w-full text-left text-sm"><thead><tr class="border-b border-border text-xs tracking-[0.08em] text-muted-foreground uppercase">' +
+              '<th class="py-2 pr-3 font-medium">' + g[0] + '</th><th class="py-2 text-right font-medium">' + m[0] +
+              '</th></tr></thead><tbody class="divide-y divide-border">' +
+              rows.map((r) =>
+                '<tr><td class="py-1.5 pr-3">' + r[0] + '</td><td class="py-1.5 text-right font-mono text-xs">' +
+                (r[1] === null ? "—" : Number(r[1]).toLocaleString()) + "</td></tr>").join("") + "</tbody></table>";
+            if (typeof Chart === "undefined") return;
+            const labels = rows.map((r) => String(r[0]));
+            const values = rows.map((r) => Number(r[1]) || 0);
+            if (pvChart) {
+              pvChart.data.labels = labels;
+              pvChart.data.datasets[0].data = values;
+              pvChart.update();
+              return;
+            }
+            pvChart = new Chart(document.querySelector("#pv-chart"), {
+              type: "bar",
+              data: { labels, datasets: [{ data: values, backgroundColor: tone("--color-brand-500") }] },
+              options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } },
+            });
+          }
+          document.querySelector("#pv-group").addEventListener("change", summarize);
+          document.querySelector("#pv-measure").addEventListener("change", summarize);
+
+          if (typeof initSqlJs === "undefined") {
+            pvStatus.textContent = "The database engine did not load; the grid below still holds every row.";
+          } else {
+            initSqlJs({ locateFile: (f) => "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/" + f })
+              .then((SQL) => {
+                db = new SQL.Database();
+                db.run("CREATE TABLE days (city TEXT, date TEXT, high REAL, low REAL, rain REAL);");
+                const stmt = db.prepare("INSERT INTO days VALUES (?,?,?,?,?)");
+                db.run("BEGIN");
+                for (const r of W) stmt.run([r[CITY], r[DATE], r[TMAX], r[TMIN], r[RAIN]]);
+                db.run("COMMIT");
+                stmt.free();
+                summarize();
+              })
+              .catch(() => {
+                pvStatus.textContent = "The database engine did not load; the grid below still holds every row.";
+              });
+          }
+        })();
+      </script>
+    </main>
+    <!-- shell:start -->
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+        icon.onerror = () => icon.remove();
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) icon.remove();
+        };
+        link.prepend(icon);
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

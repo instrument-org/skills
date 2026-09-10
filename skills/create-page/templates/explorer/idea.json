@@ -1,0 +1,18 @@
+{
+  "title": "Data explorer",
+  "tagline": "The dataset itself, on a page anyone can question.",
+  "when": "You have more rows than anyone will read and the rows are the point: the shape of the whole set, what it turns out to say, and a grid the reader can sort, filter and take away.",
+  "tags": ["learn"],
+  "order": 25,
+  "needs": [],
+  "cover": "earthquakes",
+  "sections": [
+    "What this is",
+    "The whole set at a glance",
+    "What the data says",
+    "Break it down",
+    "Every row",
+    "Method"
+  ],
+  "sketch": ["k", "T", "c4", "b", "m", "p"]
+}

@@ -1,11 +1,11 @@
 ---
 name: create-page
-description: "Makes one self-contained HTML page in the house style, in whichever form the material calls for: FAQ, timeline, how-to, checklist, itinerary, comparison, scorecard, brief, memo, one-pager, case study, explainer, pro-con, recommendation. Use when the answer wants to be a document the reader can keep, print, or send on."
+description: "Makes one self-contained HTML page in the house style, in whichever form the material calls for: FAQ, timeline, how-to, checklist, itinerary, comparison, data explorer, scorecard, brief, memo, one-pager, case study, explainer, pro-con, recommendation. Use when the answer wants to be a document the reader can keep, print, or send on."
 ---
 
 # Create page
 
-One self-contained HTML file that a reader can open, keep, print, and send on. Sixteen templates cover the document kinds people actually ask for; each names a set of slots and the intent behind each one, and all of them share the look, the method, and the refusals below.
+One self-contained HTML file that a reader can open, keep, print, and send on. Seventeen templates cover the document kinds people actually ask for; each names a set of slots and the intent behind each one, and all of them share the look, the method, and the refusals below.
 
 The page is the answer. When a reply would be long, structured, or worth keeping, a page beats a wall of chat: it can be scanned, linked into, printed, and handed to someone who was not in the conversation.
 
@@ -20,6 +20,7 @@ Read the row that fits, then read that template's `template.md` in full before w
 | [Checklist](templates/checklist/template.md)                                  | A process is about to run where forgetting one step is expensive, and every item wants to be grouped, tickable, and printable.                   |
 | [Comparison matrix](templates/comparison-matrix/template.md)                  | Several options need measuring on the same attributes side by side, before deciding what matters.                                                |
 | [Recommendation with criteria](templates/criteria-recommendation/template.md) | The winner is wanted along with the arithmetic: named criteria, stated weights, scored options, and what would flip the answer.                  |
+| [Data explorer](templates/explorer/template.md)                               | There are more rows than anyone will read and the rows are the point: the whole set, what it turns out to say, and a grid to sort, filter and take away.        |
 | [Explainer](templates/explainer/template.md)                                  | A mental model of a concept, a system, or a topic is needed before deciding or digging deeper.                                                   |
 | [FAQ](templates/faq/template.md)                                              | The same questions keep arriving about one topic, and each wants answering once, in a block that can be found, skimmed, or sent.                 |
 | [How-to guide](templates/how-to/template.md)                                  | Something has to get done in order, with the tools listed, the traps marked, and a way to know when it is finished.                              |

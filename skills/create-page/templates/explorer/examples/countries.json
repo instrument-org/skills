@@ -1,0 +1,8 @@
+{
+  "title": "Everyone, sorted into 217 boxes",
+  "variant": "No map, no clock: the smallest shape the template makes",
+  "prompt": "Give me population and income data for every country so I can slice it myself.",
+  "model": "claude-opus-5",
+  "note": "The plainest of the three, and included to show the template with the spectacle removed: no map, no globe, no time axis, 17 KB of data and 217 rows. What is left is the argument for the shape itself, which is that the breakdown control does the work a chart cannot: region and income group are two different cuts of the same rows and the page says outright that region is a filing system rather than a size, since South Asia is six countries and Sub-Saharan Africa is forty-eight. The scatter uses a log axis because the range runs four orders of magnitude, and says so under the chart rather than leaving the reader to notice.",
+  "html_sha256": "e2ea64884b4cd095870d4ca8bd0fc85468332f12e49d86b30ec87bfed8a18648"
+}

@@ -12,6 +12,12 @@ locale = "en-us"
 # Abbreviated git hashes, which docs and comments cite constantly. Without this
 # every `1242ba1` reads as a misspelled `by`.
 extend-ignore-identifiers-re = ["\\b[0-9a-f]{7,40}\\b"]
+# The explorer examples carry their dataset inline as one array literal, and a
+# world feed is full of real place names that collide with corrections: Ende on
+# Flores, Viet Nam as the World Bank spells it, and a new one every refresh.
+# The array is the only thing skipped; every word of prose around it is still
+# checked, which is what an outright file exclude would have cost.
+extend-ignore-re = ["(?s)const [A-Z] = \\[\\[.*?\\]\\];"]
 
 # Third-party surface the skills quote verbatim. These sit here rather than
 # under extend-words so each matches a whole token only, which leaves
@@ -32,6 +38,9 @@ colours = "colours"
 drawCentredString = "drawCentredString"
 # A plural acronym, which splits into `PN` and `Gs`.
 PNGs = "PNGs"
+# A town on Flores, Indonesia, named in prose by an explorer example because
+# the largest earthquake of that month was next to it.
+Ende = "Ende"
 
 [files]
 # Dotted directories are content too: workflows, agent config, editor config.

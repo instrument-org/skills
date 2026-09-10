@@ -84,7 +84,7 @@ const ALLOWED_SOURCES = [
   // argument. Each is pinned to an exact version in the URL, each is small
   // against what the page already spends on type and icons, and none of them
   // may be the only copy of anything: the offline test in SKILL.md is what
-  // keeps this list from becoming a licence to build pages that need the
+  // keeps this list from becoming a license to build pages that need the
   // network. The path prefix ends in `@` so an unpinned URL cannot match.
   { origin: "https://cdn.jsdelivr.net", path: "/npm/chart.js@" },
   { origin: "https://cdn.jsdelivr.net", path: "/npm/leaflet@" },
