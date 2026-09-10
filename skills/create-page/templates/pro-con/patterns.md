@@ -117,8 +117,8 @@ Describe readers, not features: a person the pros win for, a person the cons win
 The position, its condition, and the next step. Dark ground when the page has been light and quiet; a bordered box when the page carries serif headings; a left-bordered band for a dense page.
 
 ```html
-<div class="rounded-xl bg-gray-900 p-6 text-white">
-  <p class="text-xs font-medium tracking-[0.12em] text-brand-300 uppercase">
+<div class="rounded-xl bg-foreground p-6 text-background">
+  <p class="text-xs font-medium tracking-[0.12em] text-background/70 uppercase">
     Bottom line
   </p>
   <p class="mt-2 text-lg leading-7 font-semibold">

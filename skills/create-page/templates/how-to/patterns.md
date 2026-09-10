@@ -94,7 +94,7 @@ One per step. The number is the landmark, the action line is what the reader loo
 <li class="rounded-xl border border-border bg-card p-5 shadow-sm">
   <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
     <span
-      class="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+      class="flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-sm text-background"
       >3</span
     >
     <h3 class="text-base font-semibold">Free the old faucet from underneath</h3>
@@ -119,7 +119,7 @@ For a wide screen: the numbers in a gutter to the left of the steps, joined by a
 >
   <li class="lg:grid lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-4">
     <span
-      class="relative z-10 flex size-9 items-center justify-center rounded-full bg-gray-900 font-mono text-sm text-white"
+      class="relative z-10 flex size-9 items-center justify-center rounded-full bg-foreground font-mono text-sm text-background"
       >1</span
     >
     <div
@@ -183,13 +183,13 @@ The condition under which the reader should not continue and who to call instead
 
 ## Code block
 
-Console commands, settings values, and scripts the reader can paste or copy field by field. Dark ground, monospace, no line numbers. A comment on the right explains, a highlighted token names what to change.
+Console commands, settings values, and scripts the reader can paste or copy field by field. The code well, monospace, no line numbers. A comment on the right explains, a highlighted token names what to change.
 
 ```html
 <pre
-  class="mt-3 overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-[13px] leading-6 text-gray-100"
-><code>VLAN ID        <span class="text-brand-300">20</span>
-Gateway        192.168.20.1/24   <span class="text-gray-500"># pick a subnet you do not use</span></code></pre>
+  class="mt-3 overflow-x-auto rounded-lg bg-code p-4 font-mono text-[13px] leading-6 text-code-foreground"
+><code>VLAN ID        <span class="text-code-accent">20</span>
+Gateway        192.168.20.1/24   <span class="text-code-muted"># pick a subnet you do not use</span></code></pre>
 ```
 
 Prose, menu paths in a sentence, and anything the reader cannot paste stay out of code blocks.

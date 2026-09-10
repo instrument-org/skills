@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Airy and light: a serif title, a brand-green verdict strip first so the pick and its price are on screen before anything else, and the four picks as a two-by-two card grid with only the top pick bordered. Most sections sit directly on the background with a kicker and no chrome, because a reader deciding this week skims for the verdict and the flaws and reads the rest only if the pick surprises them. A pick bar appears once the verdict scrolls away, as progressive enhancement. A photo sits on every pick card and beside the verdict, sized to one aspect ratio so the grid stays even; they are representative of the category because the research is illustrative.",
   "illustrative": true,
-  "html_sha256": "294f1b7c7f1ee6aece4f1d46073473406d8b2fa19f1aadf213992d85f448741c"
+  "html_sha256": "c77001c9ec62954c2f213c0cb9bc5bd18c7d36f4ef9a782bcb267c1cbf8199f1"
 }

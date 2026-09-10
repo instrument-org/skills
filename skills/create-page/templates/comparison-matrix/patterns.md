@@ -213,7 +213,7 @@ Swatches that match the cell tones exactly, plus the mark and the superscript, i
     >A real weakness</span
   >
   <span class="inline-flex items-center gap-2"
-    ><span class="text-brand-600">★</span>Best in the row; no star for a
+    ><span class="text-brand-700">★</span>Best in the row; no star for a
     tie</span
   >
   <span class="inline-flex items-center gap-2"

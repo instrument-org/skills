@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "One airy column with a headline that states the verdict in two sentences, because the reader is a founder who wants to know in ten seconds whether to worry, and the answer is mostly no. The bullets are a plain list with bold lead-ins so the page reads top to bottom like a newsletter item; the one figure is a dates table, since the material is a calendar, and the do and do not pair sits at the bottom as the exit.",
   "illustrative": true,
-  "html_sha256": "e23706645cd98f8bb77614a60834ecfb0efd4bb675d75ae8cc03267f437fa182"
+  "html_sha256": "cf153a75318da1b0a255ba110490291166fd4cd30480bafbac1c17b3c9f8768f"
 }

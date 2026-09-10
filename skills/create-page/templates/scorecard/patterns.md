@@ -38,7 +38,7 @@ The biggest thing on the page. A square badge carrying the grade, the scale besi
 </div>
 ```
 
-For a number, the badge reads `7.8` with a smaller `/ 10` beside it: `<span class="text-5xl">7.8</span><span class="ml-1 text-lg text-white/70">/10</span>`. Badge tones: `bg-brand-600` for the top of the scale, `bg-warning-500` for the middle, `bg-error-500` for the bottom; a `bg-gray-900` badge is the neutral choice when the page wants the color spent elsewhere.
+For a number, the badge reads `7.8` with a smaller `/ 10` beside it: `<span class="text-5xl">7.8</span><span class="ml-1 text-lg text-white/75">/10</span>`. Badge tones: `bg-brand-600` for the top of the scale, `bg-brand-500` just under it, `bg-error-500` for the bottom; a `bg-foreground` badge with `text-background` is the neutral choice when the page wants the color spent elsewhere. A warm middle band cannot be solid, because no warm step holds white: it takes `bg-warning-100 text-warning-900`.
 
 ## Dimension row with a bar
 
@@ -140,12 +140,12 @@ Every dimension in one wide bar, each segment toned by its score, labels beneath
     82
   </div>
   <div
-    class="flex h-12 flex-1 items-center justify-center bg-brand-300 font-mono text-sm font-medium text-white"
+    class="flex h-12 flex-1 items-center justify-center bg-brand-500 font-mono text-sm font-medium text-white"
   >
     71
   </div>
   <div
-    class="flex h-12 flex-1 items-center justify-center bg-warning-300 font-mono text-sm font-medium text-warning-900"
+    class="flex h-12 flex-1 items-center justify-center bg-warning-100 font-mono text-sm font-medium text-warning-900"
   >
     58
   </div>
@@ -163,7 +163,7 @@ Every dimension in one wide bar, each segment toned by its score, labels beneath
 </div>
 ```
 
-Tones on a 100-point scale: 75 and up `bg-brand-600`, 60 to 74 `bg-brand-300`, 45 to 59 `bg-warning-300`, under 45 `bg-error-300`.
+Tones on a 100-point scale: 75 and up `bg-brand-600`, 60 to 74 `bg-brand-500`, 45 to 59 `bg-warning-100` with `text-warning-900`, under 45 `bg-error-500`.
 
 ## Strengths and weaknesses columns
 

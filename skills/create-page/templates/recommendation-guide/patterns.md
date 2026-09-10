@@ -62,7 +62,7 @@ For a dense page: the picks as rows rather than cards. Rank circle, name, price,
 ```html
 <li class="flex items-start gap-3 border-b border-border py-3">
   <span
-    class="flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+    class="flex size-7 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs text-background"
     >1</span
   >
   <div class="min-w-0 flex-1">

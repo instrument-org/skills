@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Leads with a warning-toned block badge beside the reasoning, because the honest answer is that the shape of the refinance matters more than whether, and the reader needs the two shapes named before anything else. The persona grid is three cards keyed to how long the reader stays, each with its own chip, and a month-by-month table under them carries the break-even and the crossover so the reader can find their own row; the FAQ is a two-column definition list rather than disclosures so every answer is visible on a laptop screen.",
   "illustrative": true,
-  "html_sha256": "e10ac8bc6a97280953a0dd2200f96ad92f32c053fe5a3b9c30ba5650ee6cc570"
+  "html_sha256": "718e0bda9f96cd0546dc11437c6418cfa16f062143b8529c9097fc8f6e2b0b92"
 }

@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
-      /* The one look every idea shares: Studio's light theme as Tailwind tokens, plus
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
          the one element these pages style directly, the link.
          A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
          and scripts/check-ideas.ts fails when a starter's copy has drifted.
@@ -22,6 +22,18 @@
          nothing and the fill falls back to black. */
       @import "tailwindcss";
 
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
       @theme static {
         --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
         --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
@@ -33,90 +45,104 @@
         --radius-lg: var(--radius);
         --radius-xl: calc(var(--radius) + 4px);
 
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
         --shadow-sm:
-          0 2px 4px 0 rgb(10 13 18 / 0.04), 0 1px 2px -1px rgb(10 13 18 / 0.06),
-          0 0 0 1px rgb(10 13 18 / 0.06);
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
         --shadow-xl:
-          0 12px 24px -4px rgb(10 13 18 / 0.07),
-          0 6px 10px -6px rgb(10 13 18 / 0.07), 0 0 0 1px rgb(10 13 18 / 0.06);
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
 
-        --color-gray-25: #fdfdfc;
-        --color-gray-50: #fafaf9;
-        --color-gray-100: #f5f5f4;
-        --color-gray-200: #e7e5e4;
-        --color-gray-300: #d7d3d0;
-        --color-gray-400: #a9a29d;
-        --color-gray-500: #79716b;
-        --color-gray-600: #57534e;
-        --color-gray-700: #44403c;
-        --color-gray-800: #292524;
-        --color-gray-900: #1c1917;
-        --color-gray-950: #171412;
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
 
-        --color-brand-25: #f1f4f2;
-        --color-brand-50: #e2eae7;
-        --color-brand-100: #c5d5d0;
-        --color-brand-200: #9dbfb6;
-        --color-brand-300: #6ca89c;
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
         --color-brand-400: #338c81;
         --color-brand-500: #0e7869;
         --color-brand-600: #0b6056;
-        --color-brand-700: #0a4a42;
-        --color-brand-800: #093a34;
-        --color-brand-900: #082c28;
-        --color-brand-950: #051b18;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
 
-        --color-error-50: #fbeef0;
-        --color-error-100: #f8e4e8;
-        --color-error-300: #e197a6;
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
         --color-error-500: #b4324f;
-        --color-error-700: #7a1f30;
-        --color-error-900: #3f121a;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
 
-        --color-warning-50: #fffaeb;
-        --color-warning-100: #fef0c7;
-        --color-warning-300: #fec84b;
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
         --color-warning-500: #f79009;
-        --color-warning-700: #b54708;
-        --color-warning-900: #7a2e0e;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
 
-        --color-success-50: #e9f5eb;
-        --color-success-100: #d9f1db;
-        --color-success-300: #7dcb87;
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
         --color-success-500: #29a845;
-        --color-success-700: #176229;
-        --color-success-900: #0b3216;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
 
-        --color-yellow-50: #fdf6e2;
-        --color-yellow-100: #fbebc9;
-        --color-yellow-300: #f1cc8e;
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
         --color-yellow-500: #d58f4f;
-        --color-yellow-700: #b26747;
-        --color-yellow-900: #59301e;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
 
-        --color-brown-50: #fcfbf8;
-        --color-brown-100: #f6f4f0;
-        --color-brown-300: #e8e3da;
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
         --color-brown-500: #bbaa8e;
-        --color-brown-700: #937b5b;
-        --color-brown-900: #564538;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
 
-        --color-background: #fafaf9;
-        --color-foreground: #171412;
-        --color-card: #ffffff;
-        --color-popover: #ffffff;
-        --color-primary: #171412;
-        --color-primary-foreground: #ffffff;
-        --color-secondary: #f5f5f4;
-        --color-secondary-foreground: #292524;
-        --color-muted: #f5f5f4;
-        --color-muted-foreground: #79716b;
-        --color-accent: #e7e5e4;
-        --color-accent-foreground: #292524;
-        --color-destructive: #b4324f;
-        --color-border: #e7e5e4;
-        --color-input: #e7e5e4;
-        --color-ring: #a9a29d;
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
       }
 
       /* A page that names something living at a URL links it, so a link is house
@@ -125,15 +151,49 @@
          photo credit that stays muted. Color and underline only, never weight or
          size, so a link inside a heading or a table cell keeps the type it sits in. */
       @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
         a {
           color: var(--color-brand-700);
           text-decoration-line: underline;
-          text-decoration-color: var(--color-brand-300);
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
           text-underline-offset: 2px;
         }
 
         a:hover {
-          text-decoration-color: var(--color-brand-600);
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
         }
       }
       /* skin:end */
@@ -285,7 +345,7 @@
             </div>
           </li>
           <li class="flex items-start gap-3 border-b border-border py-3">
-            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white">2</span>
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs text-background">2</span>
             <div class="min-w-0 flex-1">
               <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
                 Runner-up
@@ -303,7 +363,7 @@
             </div>
           </li>
           <li class="flex items-start gap-3 border-b border-border py-3">
-            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white">3</span>
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs text-background">3</span>
             <div class="min-w-0 flex-1">
               <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
                 Budget
@@ -321,7 +381,7 @@
             </div>
           </li>
           <li class="flex items-start gap-3 py-3">
-            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white">4</span>
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs text-background">4</span>
             <div class="min-w-0 flex-1">
               <p class="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase">
                 Upgrade

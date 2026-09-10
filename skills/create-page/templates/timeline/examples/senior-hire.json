@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Time runs left to right as weeks in columns, with the company's steps on one row and the candidate's view of the same week under it, because a plan is read by the people inside it and the second row is what a delay costs. Serif headings and wide margins keep it airy, owners are small chips rather than a column, the current week is the one toned column with a brand top rule where past weeks are dark and future weeks light, and the three decisions that set the pace are flagged in their cells and repeated below the grid.",
   "illustrative": true,
-  "html_sha256": "ec6dc2df47caa6fa0d699ca4d8197fac0e8f4aaf20df1f1ac1982e7c9d3db656"
+  "html_sha256": "4fd2b1fb9e1ca3c77eea80602171211c51477db7201f0717bef14d988d56c3c0"
 }

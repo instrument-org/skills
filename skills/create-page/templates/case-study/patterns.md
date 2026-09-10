@@ -103,7 +103,7 @@ Numbered, three to six, each one sentence the reader could act on. A page that h
 <ol class="space-y-3 text-sm leading-6">
   <li class="flex items-start gap-3">
     <span
-      class="flex size-6 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+      class="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs text-background"
       >1</span
     >
     <span
