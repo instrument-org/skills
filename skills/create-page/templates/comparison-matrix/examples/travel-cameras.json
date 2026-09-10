@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Compact and collapsible: a photo of each body sits in a sticky header table, and each attribute band is a details element holding its own table with a shared colgroup, so the page reads short with one band open and opens deep. A star marks the best cell in every row where there is no tie, because a traveler counts wins in the rows that match the trip rather than reading the whole grid; the type is a size smaller than the other examples to fit five columns with photos at laptop width. Photos are representative of each maker's line because the research is illustrative, and the footer credits them.",
   "illustrative": true,
-  "html_sha256": "3eed82e17457b5f80a25ab012ba42386458c432b19b302b552eb4ddb5a64331a"
+  "html_sha256": "540e8052369a3869564a76d9948d30d78dd0392bdda46872df7824c242a2416d"
 }
