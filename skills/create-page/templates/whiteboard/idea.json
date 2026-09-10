@@ -1,7 +1,7 @@
 {
   "title": "Whiteboard",
   "tagline": "Notes, a plan, or a map, laid out on a surface you move around.",
-  "when": "What you have is spatial, a wall of sorted notes, a plan of a real place, or things placed on two axes, and putting it in a list would lose the point.",
+  "when": "What you have is spatial: a wall of sorted notes, a plan of a real place, or things placed on two axes, and putting it in a list would lose the point.",
   "tags": ["layout"],
   "order": 35,
   "needs": [],
