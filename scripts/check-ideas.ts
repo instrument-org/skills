@@ -411,7 +411,9 @@ function checkIdea(idea: Idea, shell: string[]): string[] {
   if (idea.meta.sketch) {
     for (const mark of idea.meta.sketch) {
       if (!SKETCH_MARKS.has(mark)) {
-        errors.push(`idea.json sketch mark "${mark}" is not one the site can draw`);
+        errors.push(
+          `idea.json sketch mark "${mark}" is not one the site can draw`,
+        );
       }
     }
     if (idea.meta.sketch.length !== 1) {
