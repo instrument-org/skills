@@ -9,7 +9,12 @@
     <script async src="https://tryinstrument.com/page.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500&display=swap" rel="stylesheet" />
+    <!-- Weights are asked for the cheap way, and the difference is large. A range
+         (`400..700`) is one variable file covering every weight in it; a list
+         (`400;500;600;700`) is one static file each. And naming an axis, as
+         `opsz,wght@8..144,400` does, buys the whole optical-size range at 144 KB
+         a weight where a plain weight costs 64. Same type, 196 KB instead of 497. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" />
     <style type="text/tailwindcss">
