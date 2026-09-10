@@ -67,14 +67,14 @@ Theme tokens only, one shape. Coin the label vocabulary per page (shipped/infere
 >
 ```
 
-On a dark banner: `bg-amber-400/20 text-amber-300` is the established flag-pill look; keep it for dark surfaces only.
+On a solid brand banner, where the block already supplies white ink: `bg-white/15 text-white` is the flag-pill look, since a wash-and-ink pill would fight the banner underneath it.
 
 ## Step circle and numbered rail
 
 ```html
 <li class="flex gap-3">
   <span
-    class="flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+    class="flex size-7 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs text-background"
     >1</span
   >
   <span class="text-sm leading-6"
@@ -83,7 +83,7 @@ On a dark banner: `bg-amber-400/20 text-amber-300` is the established flag-pill 
 </li>
 ```
 
-Swap `bg-gray-900` for `bg-brand-600`/`bg-error-500`/`bg-success-700` when the step itself carries status.
+Swap `bg-foreground` for `bg-brand-600`, `bg-brand-500`, or `bg-error-500` when the step itself carries status. Those three are the solid steps that hold white in both themes; a warm or green band takes the wash-and-ink pair instead, `bg-warning-100 text-warning-900`, which flips together.
 
 ## Icon-led list
 
@@ -150,7 +150,7 @@ For claims the reader will say out loud: tenets, rules, a plan's steps. The step
 ```html
 <li class="flex gap-3">
   <span
-    class="flex size-7 shrink-0 items-center justify-center rounded-full bg-gray-900 font-mono text-xs text-white"
+    class="flex size-7 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs text-background"
     >1</span
   ><span class="text-[15px] leading-7 font-medium"
     >One agent, and you never take turns with it.</span
@@ -179,25 +179,27 @@ Most sections need no card at all: SKILL.md's volume rule outranks every spellin
 
 ## Terminal block
 
-One dialect. Dark ground `bg-gray-950`, light text, gray prompt, status colors from the theme's 300 range (they read on dark).
+One dialect, and the only surface on a page that does not follow the reader's theme: a transcript is a well cut into the paper, and half of it would disappear in one theme if its colors moved. The skin gives it five tokens that hold still, so nothing here is picked off a ramp.
+
+`bg-code` is the ground, `text-code-foreground` the output, `text-code-muted` the prompt and comments, `text-code-accent` a value worth the eye, `text-code-flag` a warning.
 
 ```html
 <div
-  class="overflow-x-auto rounded-lg bg-gray-950 p-4 font-mono text-xs leading-6 text-gray-100"
+  class="overflow-x-auto rounded-lg bg-code p-4 font-mono text-xs leading-6 text-code-foreground"
 >
-  <pre><span class="text-gray-500">$</span> agent-reference status
-wire-format  <span class="text-warning-300">folder</span> · ready
-<span class="text-success-300">&#10003; 6 references resolved</span></pre>
+  <pre><span class="text-code-muted">$</span> agent-reference status
+wire-format  <span class="text-code-flag">folder</span> · ready
+<span class="text-code-accent">&#10003; 6 references resolved</span></pre>
 </div>
 ```
 
 ## Code excerpt
 
-Terminal output is a bare `<pre>` with hand-placed spans (above). Real code is `<pre><code class="language-x">` on the same dark surface; nothing highlights it for you, so keep the spans few and structural rather than trying to color a whole language:
+Terminal output is a bare `<pre>` with hand-placed spans (above). Real code is `<pre><code class="language-x">` on the same well; nothing highlights it for you, so keep the spans few and structural rather than trying to color a whole language:
 
 ```html
 <pre
-  class="overflow-x-auto rounded-lg bg-gray-950 p-4 text-xs leading-6 text-gray-100"
+  class="overflow-x-auto rounded-lg bg-code p-4 text-xs leading-6 text-code-foreground"
 ><code class="language-ts">const spy = new IntersectionObserver(onSee, { rootMargin: "-15% 0px -75% 0px" });</code></pre>
 ```
 

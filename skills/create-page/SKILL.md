@@ -53,7 +53,9 @@ Fixed, because every page shares one look: the skin block in the starter, the ty
 
 Free, and expected to differ between two pages made a day apart: the layout and column count, the density, the register, the components, the way a slot is realized, and any interaction, which must be progressive so the page reads with scripts off. Each template names what varies most in its own case.
 
-The look is one light theme, on purpose. A page may choose a darker surface within the palette, and that choice renders the same everywhere; it never switches with the reader's system theme, because a page that has to look right in two themes is a page that looks wrong in one of them.
+The look follows the reader's system theme, and you never choose between them. Write the page once against the tokens and both come out right: a step on a ramp names distance from the paper rather than a lightness, so 25 is the faintest wash and 950 the darkest ink in either theme, and what changes is which end of the spectrum each lands on. The saturated middle, 400 through 600, holds still in both. That is the whole rule for white: it rides the middle and nowhere else, because every other step moves out from under it. Never hand-pick a ground for the page, and never write a `dark:` variant; `bg-background`, `bg-card`, `bg-muted`, `text-foreground` and `text-muted-foreground` already say what you mean. The one exception is a terminal or code listing, which is a well cut into the paper and keeps its own colors in both themes: `bg-code` with the four `text-code-*` inks.
+
+`pnpm check:contrast` reads both palettes out of the skin and every page for what sits on what, so a page that fails WCAG AA in either theme fails the build. It is the reason nobody has to open the page twice.
 
 The starter also carries three behaviors every page gets, and none of them need doing by hand: every external link wears the icon of the site it points at, footnote markers and their notes link both ways and light up when jumped to, and the page prints with sane margins. A page wider than a portrait sheet adds `@page { size: landscape }` in its own style block.
 

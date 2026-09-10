@@ -84,7 +84,7 @@ Every diagram: `viewBox`, full width with a minimum, inside a scroll wrapper, la
 
 ## Swimlanes and sequences
 
-Lanes are horizontal bands (`rect` at full width, `fill-muted` at low opacity, lane label at the left edge); actors sit in lanes; time flows left to right with marker arrows for messages. Number the arrows with small circles in the step-circle idiom (`fill-gray-900`, white 10px mono text) and put the narration in a matching ordered list beside or below the figure rather than cramming clauses into the SVG.
+Lanes are horizontal bands (`rect` at full width, `fill-muted` at low opacity, lane label at the left edge); actors sit in lanes; time flows left to right with marker arrows for messages. Number the arrows with small circles in the step-circle idiom (`fill-foreground`, `fill-background` 10px mono text) and put the narration in a matching ordered list beside or below the figure rather than cramming clauses into the SVG.
 
 ## Parallel routes
 
