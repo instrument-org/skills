@@ -44,18 +44,15 @@ Render the plain table first, from the same array, and let the library replace i
 
 Column definitions carry their own filter. `headerFilter: "number"` with `headerFilterFunc: ">="` gives a threshold box, `"input"` a contains-match, and `"list"` with `headerFilterParams: { valuesLookup: true, clearable: true }` builds its dropdown from the data so it cannot drift from it.
 
-Spreadsheet-style selection is four options rather than any code, and it is what makes a grid feel like a place you can take something out of: drag across cells, shift-click to extend, and copy with the usual keys.
+Spreadsheet-style range selection (`selectableRange`) is four options and it is **not** worth turning on as things stand. It works halfway: cells get `user-select: none` so the browser's own text selection stops inside the grid, but Tabulator binds its copy handler to the table element and nothing focuses the table holder when a range is dragged, so the copy event never arrives and the keys do nothing. What the reader gets is a highlight they cannot copy, plus page text outside the grid catching the same drag. Leave it off and the cells select and copy the way every other table on the web does, which is the behavior nobody has to be taught.
+
+The way out of the grid is the download button, which is one line and always works:
 
 ```js
-selectableRange: true,
-selectableRangeColumns: true,   // click a heading to take the column
-selectableRangeRows: true,      // and the row numbers for a whole row
-clipboard: "copy",              // copy only; these pages are never edited
-clipboardCopyRowRange: "range",
-clipboardCopyConfig: { columnHeaders: false },
+document
+  .querySelector("#grid-csv")
+  .addEventListener("click", () => table.download("csv", "rows.csv"));
 ```
-
-Leave `selectableRangeClearCells` off. It lets Delete blank a cell, which on a page whose whole point is that it carries the data is a way to lose rows with no way back.
 
 Always show a live count beside the grid, because a filtered grid with no count quietly lies about how much there is. Take it from the rows `dataFiltered` hands you rather than asking the table: `tableBuilt` can fire before your handler is attached, and `getDataCount` on a table that is not built yet returns zero, which reads as an empty grid.
 
@@ -127,22 +124,6 @@ The stylesheet is structural and cosmetic at once, and its colors are hardcoded 
     letter-spacing: 0.04em;
     text-transform: uppercase;
     font-size: 11px;
-  }
-  /* Range selection draws in the library's own blue. */
-  .tabulator-range-overlay .tabulator-range {
-    border: 1px solid var(--color-brand-500);
-  }
-  .tabulator-range-overlay .tabulator-range.tabulator-range-active:after {
-    background-color: var(--color-brand-500);
-  }
-  .tabulator-range-highlight {
-    background-color: var(--color-accent) !important;
-    color: var(--color-foreground) !important;
-  }
-  .tabulator-cell.tabulator-range-selected:not(
-      .tabulator-range-only-cell-selected
-    ) {
-    background-color: var(--color-brand-50) !important;
   }
   .tabulator .tabulator-col-resize-guide {
     background-color: var(--color-brand-500);
