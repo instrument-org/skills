@@ -1,6 +1,6 @@
 ---
 name: create-page
-description: "Makes one self-contained HTML page in the house style, in whichever form the material calls for: FAQ, timeline, how-to, checklist, itinerary, comparison, dashboard, data explorer, scorecard, brief, memo, case study, explainer, recommendation, wireframe, whiteboard, or a small working tool. Use when the answer wants to be a page the reader can keep, print, send on, or use."
+description: "Use when the answer wants to be a page the reader can keep, print, send on, or use. Makes one self-contained HTML page in the house style, in whichever form the material calls for: FAQ, timeline, how-to, checklist, itinerary, comparison, dashboard, data explorer, scorecard, brief, memo, case study, explainer, recommendation, wireframe, whiteboard, or a small working tool."
 ---
 
 # Create page
