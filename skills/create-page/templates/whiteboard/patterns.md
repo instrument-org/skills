@@ -27,12 +27,12 @@ Two things about `<main>`: `relative` is what the minimap and the zoom controls 
 
 ## Attributes carry everything
 
-| Attribute         | What it does                                                                |
-| ----------------- | --------------------------------------------------------------------------- |
-| `data-region`     | Backdrop, rule or ink. Hidden when the page prints; handwriting is not.     |
-| `data-mini`       | Include this card as a block in the small map.                              |
-| `data-drag="id"`  | The reader may move it, and where they put it is remembered under that id.  |
-| `data-from="0.6"` | Fade in only once the board is at that scale or larger.                     |
+| Attribute         | What it does                                                                            |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| `data-region`     | Backdrop, rule or ink. Hidden when the page prints; handwriting is not.                 |
+| `data-mini`       | Include this card as a block in the small map.                                          |
+| `data-drag="id"`  | The reader may move it, and where they put it is remembered under that id.              |
+| `data-from="0.6"` | Fade in only once the board is at that scale or larger.                                 |
 | `data-ink="…"`    | Draw a marker stroke into this box: `lasso`, `arrow`, `underline`, `bracket`, `strike`. |
 
 A card that carries none of them sits still, is not on the map, and is always visible, which is the right default for most of them.
@@ -51,7 +51,7 @@ Three weights, and the difference between them is how much the thing has to say.
   style="left:96px; top:130px; width:196px"
 >
   <p class="marker text-[19px] leading-[1.12]">What someone actually said</p>
-  <p class="mt-1.5 text-[10px] tracking-wide text-muted-foreground uppercase">
+  <p class="mt-1.5 text-[10px] tracking-wide text-gray-600 uppercase">
     who, and how many
   </p>
 </div>
@@ -59,7 +59,10 @@ Three weights, and the difference between them is how much the thing has to say.
 <!-- Marker: a heading, or a finding, written where the finding is. No
      data-region on handwriting: it is content, and on paper a cluster
      heading is the only thing holding the printed list together. -->
-<p class="marker absolute text-[30px] text-foreground" style="left:80px; top:52px">
+<p
+  class="marker absolute text-[30px] text-foreground"
+  style="left:80px; top:52px"
+>
   What this corner is
 </p>
 
@@ -171,6 +174,8 @@ A ruler is the same idea in one dimension: a label at each interval and a dashed
 `muted` and `card` resolve to the same value in the dark palette, so a `bg-muted` region behind `bg-card` cards is invisible there. Use `bg-background` for the ground under cards and `bg-accent` for a chip or a well **on** a card. This is the one palette trap that bites a board harder than an ordinary page, because a board is mostly surfaces.
 
 Sticky fills come off the ramps at 100 (`bg-warning-100`, `bg-brand-100`, `bg-error-100`), which invert to dark tints and stay distinguishable from each other. Ink tones are the saturated middles, which hold still in both.
+
+One consequence worth knowing before `pnpm check:contrast` tells you: `bg-brand-100` is the darkest of those three in the light theme, and `text-muted-foreground` on it comes to 3.75:1. A sticky's second line takes `text-gray-600`, which is quiet enough to read as secondary and passes on all three fills in both themes.
 
 ## Printing
 
