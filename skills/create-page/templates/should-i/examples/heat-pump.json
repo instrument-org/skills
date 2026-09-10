@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "A long read in a narrow column with a centered serif title and a success-toned pill badge, because the reader is a homeowner who will read the whole page once and wants it to feel like an article rather than a memo; the body sits at 16 pixels with generous leading and section spacing. The factors are a branching list, each row an \"if your house is… then…\" pair with the second branch in muted type, the situations are stacked rows with a chip in the heading instead of cards, and the FAQ uses native details and summary so the page ends compact and opens where the reader taps.",
   "illustrative": true,
-  "html_sha256": "3ab3831d6832102b6102296a866880376395230fb23474cc3854122bdba3e6eb"
+  "html_sha256": "94ebd49cf8f77208be01b2e6c0563e538ba4d7a2bef0cefae62076e75d9f8730"
 }

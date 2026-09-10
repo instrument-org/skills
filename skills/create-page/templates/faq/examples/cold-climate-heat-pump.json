@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Compact and sans on purpose: sixteen closed details/summary items in four groups under a row of pill links, so the whole list of questions fits on a laptop screen and the reader scans for theirs before reading a word. Sources sit under every answer as small links into a numbered footer, because the running-cost answers depend on which source you trust and the page says which it followed; a few lines of script open a question when a link lands on it, and the page reads the same without them.",
   "illustrative": true,
-  "html_sha256": "52e09b3eccdd9effa0baf9ab8026e006f695b82c1c60f3df6140ddd21135f18d"
+  "html_sha256": "5ccadf88627e617f133c6ab48df49a64ba9b52152e6adfd7c651c0df8827d4fd"
 }

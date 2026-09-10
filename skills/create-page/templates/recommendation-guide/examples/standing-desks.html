@@ -238,6 +238,13 @@
         box-shadow: 0 0 0 1px var(--color-gray-200);
       }
 
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
       @media print {
         @page {
           margin: 12mm;
@@ -586,11 +593,34 @@
         icon.src =
           "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
           encodeURIComponent(new URL(link.href).origin);
-        icon.onerror = () => icon.remove();
-        icon.onload = () => {
-          if (icon.naturalWidth <= ABSENT) icon.remove();
+
+        // A line may break between an image and the text beside it, so the icon
+        // and the first word it leads go in a span that cannot break. A link
+        // with no text of its own takes the icon at the front of the link.
+        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+        let text = walker.nextNode();
+        while (text && !text.data.trim()) text = walker.nextNode();
+        let host = link;
+        if (text) {
+          const at = text.data.search(/\S/);
+          const word = at > 0 ? text.splitText(at) : text;
+          const space = word.data.search(/\s/);
+          if (space > 0) word.splitText(space); // The rest of the text stays put.
+          host = document.createElement("span");
+          host.className = "site-icon-word";
+          word.replaceWith(host);
+          host.append(word);
+        }
+
+        const drop = () => {
+          icon.remove();
+          if (host !== link) host.replaceWith(...host.childNodes);
         };
-        link.prepend(icon);
+        icon.onerror = drop;
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) drop();
+        };
+        host.prepend(icon);
       }
     </script>
     <!-- shell:end -->

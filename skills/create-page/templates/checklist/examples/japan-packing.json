@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Reads like a magazine sidebar: a centered serif title on a warm brown-50 ground, a narrow column, and one Phosphor icon leading each group heading with items in two short columns beneath it so every item stays one line. The onsen group is the one shaded panel because it is things to know rather than things to pack, the priority pill is a warm yellow 'Before you fly' on the seven items that cannot be fixed after landing, a leave-at-home list with x marks closes the page since a packing list owes the reader what to skip, and the counter is a serif italic line under the intro that counts both packed and read.",
   "illustrative": true,
-  "html_sha256": "8941d56227679e34a7d2fd858cf9135fb697aa32d39fc5745f62177bb6c9bdba"
+  "html_sha256": "5bdb280321d8bd0147beb1e7575efa50e8d76edd9b14c9423a561f8ad153e241"
 }

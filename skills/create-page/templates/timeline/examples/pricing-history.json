@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "A changelog rather than a spine, because a sales lead needs to look a date up, not read a story: one row per change with the date in mono, what changed, why, and the revenue effect in words, with the three turning points marked by a brand rule on the row instead of a card. An inline SVG span chart above the table shows which plans existed in which year, so the renames and the grandfathered stretch are visible before the rows explain them, and the page ends in the prices as they stand today.",
   "illustrative": true,
-  "html_sha256": "6f6c1035b94f561aadb24173b52c4a5e208254079a8bb58c2d0c9cf46dc4d972"
+  "html_sha256": "5684708cdd3df2f6d533fc9bac3a6a57682d44ec435666f0cce538218743a3d9"
 }
