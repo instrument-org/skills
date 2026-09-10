@@ -4,5 +4,5 @@
   "prompt": "Wireframe the flow for freezing a lost bank card on mobile. The problem we keep hearing about is that people think a freeze stops everything, and it doesn't.",
   "model": "claude-opus-5",
   "note": "The sequence axis at its most literal: six phone frames, 390x844, one tap between each. It was chosen as the cover because the tall narrow frames make the grid read instantly as a flow rather than as a gallery, and because the argument lives in a single frame (3) that the caption names as such, which is the shape this template wants. The kit here is cut down to what a phone needs -- no window, no browser, no sidebar -- which is the deletion rule in practice. Frame 6 is a different size on purpose, to show that a file may mix them. Every merchant, amount and date is invented, and the reading notes say so rather than letting a plausible-looking $18.99 pass as research.",
-  "html_sha256": "97dd3790f24530b9ff2370778724f2a2fc51108240c1f627db3377286a203bd2"
+  "html_sha256": "1b1c5545a12c7e923e67b3c817c167a6b7514aa7966bff947cedb10e9f1f17f8"
 }
