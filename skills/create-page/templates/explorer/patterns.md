@@ -84,7 +84,9 @@ The stylesheet is structural and cosmetic at once, and its colors are hardcoded 
     background: transparent;
     border-right: 1px solid var(--color-border);
   }
-  .tabulator .tabulator-header .tabulator-col.tabulator-sortable.tabulator-col-sorter-element:hover {
+  .tabulator
+    .tabulator-header
+    .tabulator-col.tabulator-sortable.tabulator-col-sorter-element:hover {
     background-color: var(--color-accent);
   }
   .tabulator .tabulator-col-sorter .tabulator-arrow {
@@ -137,7 +139,9 @@ The stylesheet is structural and cosmetic at once, and its colors are hardcoded 
     background-color: var(--color-accent) !important;
     color: var(--color-foreground) !important;
   }
-  .tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected) {
+  .tabulator-cell.tabulator-range-selected:not(
+      .tabulator-range-only-cell-selected
+    ) {
     background-color: var(--color-brand-50) !important;
   }
   .tabulator .tabulator-col-resize-guide {
@@ -153,14 +157,20 @@ A reader with a dataset has questions and not a language. Give them a dimension 
 ```js
 const GROUPS = {
   region: ["Region", "region"],
-  depthband: ["Depth band", "CASE WHEN depth < 70 THEN 'shallow' ELSE 'deep' END"],
+  depthband: [
+    "Depth band",
+    "CASE WHEN depth < 70 THEN 'shallow' ELSE 'deep' END",
+  ],
 };
 const MEASURES = {
   events: ["Number of events", "count(*)"],
   avgmag: ["Average magnitude", "round(avg(mag), 2)"],
 };
 const sql =
-  "SELECT " + g[1] + " AS label, " + m[1] +
+  "SELECT " +
+  g[1] +
+  " AS label, " +
+  m[1] +
   " AS value FROM rows GROUP BY label ORDER BY value DESC LIMIT 14;";
 ```
 
@@ -171,10 +181,14 @@ Answer it with a horizontal bar chart and the same numbers as a table beside it.
 The engine comes from the CDN; the rows are already in the file. Build the table at load and never fetch a database.
 
 ```js
-initSqlJs({ locateFile: (f) => "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/" + f })
+initSqlJs({
+  locateFile: (f) => "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/" + f,
+})
   .then((SQL) => {
     db = new SQL.Database();
-    db.run("CREATE TABLE rows (mag REAL, place TEXT, region TEXT, depth REAL);");
+    db.run(
+      "CREATE TABLE rows (mag REAL, place TEXT, region TEXT, depth REAL);",
+    );
     const stmt = db.prepare("INSERT INTO rows VALUES (?,?,?,?)");
     db.run("BEGIN");
     for (const q of Q) stmt.run([q[MAG], q[PLACE], regionOf(q), q[DEP]]);
@@ -192,8 +206,13 @@ Wrap the inserts in one transaction: without it, two thousand rows take seconds 
 The list of places goes inside the map element as its own content, styled to be read. The library empties it on success. Nothing else on the page has to know whether the map arrived.
 
 ```html
-<div id="map" class="h-[30rem] overflow-auto rounded-xl border border-border bg-card p-5 print:hidden">
-  <p class="text-sm text-muted-foreground">The map needs the network. Here is the same route as a list.</p>
+<div
+  id="map"
+  class="h-[30rem] overflow-auto rounded-xl border border-border bg-card p-5 print:hidden"
+>
+  <p class="text-sm text-muted-foreground">
+    The map needs the network. Here is the same route as a list.
+  </p>
   <ol id="fallback-places" class="mt-3 space-y-1.5 text-sm"></ol>
 </div>
 ```
@@ -209,7 +228,9 @@ table.on("rowClick", (event, row) => {
   const d = row.getData();
   if (!map) return;
   map.setView([d.lat, d.lon], Math.max(map.getZoom(), 5));
-  document.querySelector("#map").scrollIntoView({ behavior: "smooth", block: "center" });
+  document
+    .querySelector("#map")
+    .scrollIntoView({ behavior: "smooth", block: "center" });
 });
 ```
 
