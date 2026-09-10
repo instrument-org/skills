@@ -186,7 +186,19 @@ When the subject is shipped UI or rendered output, capture the real thing into `
 
 ## Click to enlarge
 
-A figure legible at page width but better at full width gets a native `<dialog>`: a labeled button, `showModal()`, click or Esc closes, `backdrop:` tint via Tailwind. Ten lines, no dependencies, and the inline figure stays fully readable for whoever never clicks.
+A figure legible at page width but better at full width gets a native `<dialog>`: a labeled button, `showModal()`, click or Esc closes. Ten lines, no dependencies, and the inline figure stays fully readable for whoever never clicks.
+
+**Paint the scrim on the dialog, not on `::backdrop`.** A pseudo-element has no parent to inherit custom properties from, so `backdrop:bg-gray-950/85` compiles to a `background-color` built out of a `var()` that resolves to nothing there, and the rule silently does nothing: the page shows through at full brightness and any white text in the dialog lands on it. Make the dialog itself the full-viewport surface, give it a literal color, and keep the backdrop rule as well for the browsers that do honor it:
+
+```html
+<dialog
+  class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 backdrop:bg-[rgb(0_0_0/0.92)] open:flex open:flex-col"
+></dialog>
+```
+
+A literal rather than a token on purpose: a modal scrim is a physical dimming and reads the same in both themes, where `gray-950` is the darkest ink in one and the lightest paper in the other and would give a dark reader a white flash.
+
+Lay the dialog out as a column with the caption and controls **before** the figure is sized, so a long caption shrinks the drawing rather than pushing it off the bottom of the screen. And give it a control row along the bottom edge rather than a close button in a corner: on a phone there is no hover and no Escape key.
 
 ## details/summary: use sparingly
 

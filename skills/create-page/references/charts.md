@@ -142,8 +142,42 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
 
 Same for any other JavaScript that takes a color string rather than setting CSS. Two notes: the saturated middle of each ramp (400 through 600) is one value in both themes and so survives being read raw, which is exactly why a page that only uses those looks fine until the first gray is drawn; and `getComputedStyle(probe).color` returns `rgb(…)`, so build a translucent variant with `replace` into `rgba(…)` rather than appending hex digits.
 
-## No charting library
+## Reaching for a charting library
 
-A page loads the fonts, the icon set, and the pinned Tailwind build, and nothing else; `check:ideas` fails a page that reaches anywhere further. So there is no Chart.js here and the recipes above are the whole charting story. For axis-heavy needs, generate labeled SVG -- ticks as a text row at computed offsets, gridlines as low-opacity lines -- which the sparkline recipe extends to naturally.
+Everything above needs nothing but the page, and most pages should stop there: a set of bar rows or a generated sparkline says what a chart would and costs nothing. Where the material is genuinely a dataset, `SKILL.md`'s load rule allows two, pinned to an exact version, and the test is never whether they load but what happens when they do not. **The numbers a chart draws are on the page as a table too, always rendered, directly beneath it.** Not in a tooltip, not behind a `details` the reader has to open, not only inside the library's own DOM. Pull the network and the page loses a picture and no facts.
 
-A chart is also the easiest place to imply precision the research does not have. Draw a value at its own size or not at all, name the base beside the marks, and prefer a coarse scale to a decimal that was never measured.
+|                   | Chart.js                   | Observable Plot                                          |
+| ----------------- | -------------------------- | -------------------------------------------------------- |
+| Wire cost         | 210 KB, self-contained     | 210 KB **plus d3's 280 KB**, in two script tags          |
+| Draws             | canvas                     | SVG                                                      |
+| Theme tokens      | need the probe above       | `fill: "var(--color-brand-500)"` works directly          |
+| Prints            | as a bitmap                | as vector, at any size                                   |
+| Small multiples   | build them yourself        | `facet: { data, x: "category" }`                         |
+| Reach for it when | one or two ordinary charts | facets, distributions, regressions, anything statistical |
+
+Plot's UMD bundle does not carry d3 despite its size, and a page that loads only Plot gets a silent `undefined` inside the library rather than an error you can see. Load d3 first, always.
+
+Plot also paints its own white card and black type unless told otherwise, which on a dark page is a white rectangle. One wrapper fixes it and is worth writing once at the top of any page that uses it:
+
+```js
+const PLOT = {
+  style: {
+    background: "transparent",
+    color: "currentColor",
+    fontFamily: "inherit",
+    fontSize: "12px",
+  },
+};
+const chart = (id, options) => {
+  if (typeof Plot === "undefined") return; // The host already holds a sentence and a table.
+  document
+    .querySelector("#" + id)
+    .replaceChildren(Plot.plot({ ...PLOT, ...options }));
+};
+```
+
+`templates/dashboard/patterns.md` has the rest: the band-scale ordering trap, filtering inside a facet, grouped bars, and when a log axis is flattering the data.
+
+## Precision
+
+A chart is the easiest place to imply precision the research does not have. Draw a value at its own size or not at all, name the base beside the marks, and prefer a coarse scale to a decimal that was never measured.
