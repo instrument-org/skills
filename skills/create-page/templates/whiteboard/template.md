@@ -10,25 +10,27 @@ Reach for it when the material has two dimensions of its own and flattening them
 
 - **A wall.** Many small things sorted into groups by hand: survey answers, quotes, ideas, findings, cards from a workshop. The grouping is a judgment, and the reader should be able to argue with it by moving something.
 - **A plan.** Something that is already spatial: a floor, a site, a garden, a room, a route. Distance on the page is distance in the world, and the questions worth asking are questions about distance.
-- **A canvas.** Heterogeneous evidence placed against two real axes, most often time across and who-or-what down. Two things in a vertical line happened together, and a wide gap is a long gap.
+- **A map.** Things placed against two measured axes: cost against urgency, effort against value, price against range. **A board is a scatter plot whose points are legible.** Twenty labeled cards you can read beat twenty dots and a key, and once they are cards you can also ring a group, draw an arrow between two of them, and cross one out, which is the part no chart does.
 
 "Put it all on one board", "lay this out", "where does everything go", "what's near what", "cluster these", "map this out" are the phrases. Reach for it unprompted when a page you are writing keeps saying "meanwhile" and "at the same time", or when a list you are making has an order you keep having to apologize for.
 
-Do not reach for it when the content is a sequence with one dimension: that is a timeline, and a timeline is easier to read. Do not reach for it for boxes joined by arrows, which is an explainer's diagram and belongs in the column with the prose. Do not reach for it when the reader wants to filter and sort rather than to look, which is a [data explorer](../explorer/template.md). And do not reach for it because a board looks impressive: **if you cannot say in one sentence what position means, there is no board here**, only a list that has been scattered.
+Do not reach for it when the content is a sequence with one dimension: that is a timeline, and a timeline is easier to read. Nor when one axis is a real quantity and the other is a count, which is a chart and belongs on a [dashboard](../dashboard/template.md); the board earns its place when both axes are readings **and** the labels have to stay legible. Do not reach for it for boxes joined by arrows, which is an explainer's diagram and belongs in the column with the prose. Do not reach for it when the reader wants to filter and sort rather than to look, which is a [data explorer](../explorer/template.md). And do not reach for it because a board looks impressive: **if you cannot say in one sentence what position means, there is no board here**, only a list that has been scattered.
 
 ## The shape
 
-Each slot is an intent. Answer it in whatever form suits the material.
+**The page is the board.** It takes the whole window and there is no prose column on it, because a board read through a letterbox under three paragraphs is a picture of a board. There are two slots and one of them is a line.
 
-- **What this board is.** Two or three sentences: what is on it, how it is arranged, and what the arrangement shows that the same things in a list would not.
-- **How to read it.** The legend, and it is not decoration. What the axes are, or what the regions are; what color says; what size says if it says anything. On a board, position is meaning, and a reader who has to infer the meaning will infer a different one.
-- **The board.**
-- **What the arrangement says.** Two to four readings, each one checkable by looking, each naming the part of the board it comes from. The board is evidence; this is the argument. A board with no findings is a filing cabinet.
-- **Where this came from.** What the placement rests on, what is measured and what is judgment, what is missing from the board, and what it is not a picture of.
+- **A title bar.** A name, one line, and the legend. The line has a job the other templates' openers do not: **it says what position means**, because a reader who does not know that is looking at a picture. The legend is what color, size or shape say, in as few words as it takes.
+- **The board.** Everything else.
+
+The two things a prose section used to carry go onto the board itself, which is where a person would have put them:
+
+- **What the arrangement says** is written in marker, next to the thing it is about. "Not one shopkeeper in this ring" beside the ring is a finding a reader can check by looking down; the same sentence in a section below the board is one they meet three screens after the evidence, having lost the ring. Two to four of these, each anchored.
+- **Where this came from** is a card in a corner of the board: what the placement rests on, what is measured and what is judgment, what is missing, and what the board is not a picture of.
 
 ## What varies here
 
-Free, and expected to differ between two pages made a day apart: the size and aspect of the board; whether it has regions, axes, lanes, or nothing but placement; whether cards are draggable; whether there is a minimap, jump chips, or a numbered tour; what appears only at higher zoom; the density; and the kind of thing a card is, which may be a sticky note, a desk, a photograph, a log excerpt, a small chart or a quote, and may differ card to card on the same board.
+Free, and expected to differ between two pages made a day apart: the size and aspect of the board; whether it has regions, axes, lanes, or nothing but placement; whether cards are draggable; what appears only at higher zoom; the density; how much marker there is; and the kind of thing a card is, which may be a sticky note, a desk, a photograph, a log excerpt, a small chart or a quote, and may differ card to card on the same board.
 
 ## The rules that make a board work
 
@@ -40,7 +42,9 @@ Free, and expected to differ between two pages made a day apart: the size and as
 
 **Zoom may reveal detail; it may never hide a fact.** `data-from` is for a desk's occupant, a room's capacity, a second line under a label. If the page's argument depends on something, it is legible at the size the board opens at, or it is written in the prose below.
 
-**Say where what the reader moves is kept.** Which is: in that browser, and nowhere else. The file is unchanged, so a copy they forward arrives arranged the way it was written. That is a fine thing for a board to offer as long as nobody is surprised by it.
+**Say where what the reader moves is kept.** Which is: in that browser, and nowhere else. The file is unchanged, so a copy they forward arrives arranged the way it was written. That is a fine thing for a board to offer as long as nobody is surprised by it, and it is the reason `data-drag` belongs only on cards whose position is an opinion. On a plan, whose positions are measurements, a card the reader can move has broken the page's only claim.
+
+**Draw on it.** A board that is cards on a grid is a slide with panning. What makes it read as a board is marker over the top: a ring round a group, an arrow from a thing to what it causes, a heading in handwriting, a job crossed out. Every stroke is `data-ink`, drawn by the script into a box you placed, and every one is commentary rather than content -- it carries `data-region`, so it does not print and does not survive the script, and nothing on the board may depend on it. **Anything you would be sorry to lose is a card, not a stroke.**
 
 ## What it may load, and what has to survive without it
 
@@ -50,7 +54,7 @@ Small drawings on the board are inline SVG. An image is inline data, like anywhe
 
 ## Refusals
 
-A board where position means nothing, which is a list with extra steps. A legend that is missing, or that explains the colors and not the axes. Boxes joined by arrows. Content that can only be reached by zooming or dragging. A plan drawn out of scale. A canvas whose cards are spaced for the layout rather than by the axis they claim. A board with no findings under it. A reader who has to drag before they can read. Cards generated in script, so the page is blank without it. Persistence that is implied to travel with the file. More than about a hundred cards, past which nobody is reading a board, they are scanning a dataset and should have been given a grid.
+A board where position means nothing, which is a list with extra steps. **Prose sections before or after it**; the page is the board. A legend that is missing, or that explains the colors and not the axes. Boxes joined by arrows. Content that can only be reached by zooming or dragging. A plan drawn out of scale. A card nudged off the value it claims so it would fit. A board with no marker on it saying what it shows. A reader who has to drag before they can read. Cards generated in script, so the page is blank without it. A fact that lives in a stroke of ink. Draggable cards on a plan. Persistence that is implied to travel with the file. More than about a hundred cards, past which nobody is reading a board, they are scanning a dataset and should have been given a grid.
 
 ## Honesty about the arrangement
 

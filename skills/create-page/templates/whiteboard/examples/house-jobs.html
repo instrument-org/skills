@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fifty minutes, laid out end to end</title>
+    <title>Twenty jobs on the house, and the order they want doing in</title>
     <!-- Lineage: the template that made this file. Set it to the template name. -->
     <meta name="instrument:idea" content="whiteboard@1" />
     <!-- shell:start -->
@@ -261,12 +261,22 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-[92rem] px-5 py-10 sm:px-8 sm:py-14">
+    <main class="relative flex h-dvh flex-col overflow-hidden">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" />
+
 <style>
+        .marker {
+          font-family: "Caveat", ui-rounded, cursive;
+        }
+
         /* On paper there is no panning, so the board stops being a canvas and
            becomes what it always was underneath: cards in document order. That
            is the reason DOM order has to be reading order. */
         @media print {
+          main {
+            height: auto !important;
+            overflow: visible !important;
+          }
           #stage {
             height: auto !important;
             overflow: visible !important;
@@ -279,15 +289,25 @@
           }
           /* Everything inside a card too, not only the cards: a label pinned
              to the bottom of a fixed-height card has nothing to pin to once
-             the card is in the flow, and goes missing from the paper. */
+             the card is in the flow, and goes missing from the paper. A tilted
+             sticky straightens up for the same reason, and it takes both
+             properties, because Tailwind's rotate utilities set `rotate` and
+             not `transform`. */
           #board *,
           #board > * {
             position: static !important;
+            transform: none !important;
+            rotate: none !important;
           }
           #board > * {
             width: auto !important;
             height: auto !important;
             margin-bottom: 0.5rem;
+          }
+          /* A heading in marker is the only thing holding the printed list
+             together, so it gets the air a heading needs. */
+          #board > .marker {
+            margin-top: 1.25rem;
           }
           #board > [data-region],
           #board-controls,
@@ -297,251 +317,152 @@
         }
       </style>
 
-      <header class="mx-auto max-w-3xl">
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Whiteboard &middot; Sign-in outage, 21:14 to 22:04
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          Fifty minutes, laid out end to end
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          The same evidence a post-mortem document would carry &mdash; log lines, a
-          graph, what support was hearing, what we said to each other &mdash; but
-          placed at the minute it happened and in the lane it belongs to. The
-          argument the layout makes and a document cannot is about the gaps: five
-          minutes between the first failure and the first alert, twenty-two between
-          the alert and anyone opening the right graph, and a rollback at 21:38
-          sitting directly above the moment it doubled the failure rate.
-        </p>
+      <header class="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-border px-4 py-2.5 sm:px-5">
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">Twenty jobs on the house, and the order they want doing in</h1>
+          <p class="truncate text-[12px] text-muted-foreground">Left to right is what it costs. Top to bottom is how fast it gets worse if you leave it. Prices are invented; the shape is the argument.</p>
+        </div>
+        <div class="flex shrink-0 flex-wrap items-center gap-x-3.5 gap-y-1 text-[11px] text-muted-foreground">
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-brand-300"></span>a weekend</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-warning-300"></span>get someone in</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-error-300"></span>needs looking at first</span>
+        </div>
       </header>
 
-      <section id="legend" class="mx-auto mt-8 max-w-3xl">
-        <div class="rounded-xl border border-border bg-card p-5">
-          <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
-            How to read the canvas
-          </p>
-          <div class="mt-3 grid gap-4 sm:grid-cols-2">
-            <div>
-              <p class="text-sm font-medium">Across is the clock, down is who</p>
-              <p class="mt-1 text-sm leading-6 text-muted-foreground">
-                Twelve pixels a minute, 21:00 on the left. Three lanes: what the
-                systems did, what we did, what customers saw. Two cards in a
-                vertical line happened at the same moment, which is the whole point
-                of the format.
-              </p>
-            </div>
-            <div>
-              <p class="text-sm font-medium">Fill is how it turned out</p>
-              <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-border bg-card"></span> Just what happened</span>
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-warning-300 bg-warning-50"></span> Made it slower</span>
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-error-300 bg-error-100"></span> Made it worse</span>
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-brand-200 bg-brand-50"></span> Made it better</span>
-              </div>
-            </div>
+      <div id="stage" class="relative flex-1 overflow-auto bg-background">
+        <div id="board" class="relative origin-top-left" style="width: 2560px; height: 1700px">
+<div data-region class="absolute rounded-2xl border border-border bg-card" style="left:460px; top:130px; width:2010px; height:1320px"></div>
+          <div data-region class="absolute border-l-2 border-dashed border-border" style="left:1510px; top:160px; height:1260px"></div>
+          <div data-region class="absolute border-t-2 border-dashed border-border" style="left:490px; top:800px; width:1950px"></div>
+          <p data-region class="absolute -translate-x-1/2 text-center text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:700px; top:1472px">under £100</p>
+          <p data-region class="absolute -translate-x-1/2 text-center text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:1090px; top:1472px">£100 to £500</p>
+          <p data-region class="absolute -translate-x-1/2 text-center text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:1460px; top:1472px">£500 to £2,000</p>
+          <p data-region class="absolute -translate-x-1/2 text-center text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:1880px; top:1472px">£2,000 to £10,000</p>
+          <p data-region class="absolute -translate-x-1/2 text-center text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:2250px; top:1472px">over £10,000</p>
+          <p data-region class="absolute text-right text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:210px; top:300px; width:250px">gets worse in months</p>
+          <p data-region class="absolute text-right text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:210px; top:800px; width:250px">gets worse over years</p>
+          <p data-region class="absolute text-right text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase" style="left:210px; top:1290px; width:250px">will keep as it is</p>
+          <p class="marker absolute text-[30px] text-foreground" style="left:482px; top:146px">cheap, and getting worse</p>
+          <p class="marker absolute text-[30px] text-foreground" style="left:1550px; top:146px">dear, and getting worse</p>
+          <p class="marker absolute text-[30px] text-muted-foreground" style="left:482px; top:1384px">cheap, and it can wait</p>
+          <p class="marker absolute text-[30px] text-muted-foreground" style="left:1550px; top:1384px">dear, and it can wait</p>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:592px; top:285px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Clear the gutters and downpipes</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">a ladder</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:618px; top:438px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Clear the drain gully at the back</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">an afternoon</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:662px; top:539px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Refix the loose gutter bracket</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£8 and a ladder</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:646px; top:362px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Reseal around the bath</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£12 of sealant</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:980px; top:304px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Replace the slipped roof slate</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">about £150</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-error-100 px-3 py-2 shadow-sm" style="left:930px; top:373px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Damp survey on the back wall</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£200 to £350</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:945px; top:511px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Service the boiler</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">about £110</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:1407px; top:303px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Chimney flashing and pot</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£1,800 quoted</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:1384px; top:497px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Replace the rotten window sill</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£600 a window</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:1733px; top:349px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Repoint the north gable</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£2,400 quoted</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:2140px; top:513px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Re-roof the back extension</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£11,000 quoted</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:582px; top:911px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Bleed and balance the radiators</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">an evening</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:598px; top:1116px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Fix the fence panel</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£40</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:626px; top:993px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Draught-proof the sash windows</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£60</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:935px; top:1187px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Redecorate the hall</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£120 of paint</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-brand-100 px-3 py-2 shadow-sm" style="left:1030px; top:1016px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Re-hang the shed door</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">an hour</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:1320px; top:885px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Insulate the loft to current depth</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£700 after grant</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:1288px; top:1094px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Replaster the back bedroom</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£1,400</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-error-100 px-3 py-2 shadow-sm" style="left:1762px; top:944px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Rewire, first floor and up</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£6,000 to £9,000</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:1749px; top:1222px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">Underfloor insulation</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£3,500</p>
+          </div>
+          <div data-mini class="absolute rounded-lg bg-warning-100 px-3 py-2 shadow-sm" style="left:2157px; top:1191px; width:206px">
+            <p class="text-[13px] leading-[1.25] font-medium">New kitchen</p>
+            <p class="mt-1 font-mono text-[10px] text-muted-foreground">£14,000 and up</p>
+          </div>
+          <span data-ink="lasso" data-tone="green" data-region class="absolute" style="left:473px; top:217px; width:832px; height:463px"></span>
+          <p class="marker absolute text-[28px] text-brand-700" style="left:669px; top:685px">7 jobs, four Saturdays, and about £500 all in</p>
+          <span data-ink="arrow" data-dir="ne" data-tone="red" data-region class="absolute" style="left:1129px; top:388px; width:622px; height:19px"></span>
+          <p class="marker absolute text-[26px] text-error-700" style="left:1140px; top:267px">survey first, or you repoint over the damp</p>
+          <span data-ink="arrow" data-dir="sw" data-tone="red" data-region class="absolute" style="left:1468px; top:1010px; width:301px; height:95px"></span>
+          <p class="marker absolute text-[26px] text-error-700" style="left:1428px; top:1118px">rewire before you replaster, not after</p>
+          <span data-ink="strike" data-tone="red" data-region class="absolute" style="left:2163px; top:1197px; width:194px; height:60px"></span>
+          <p class="marker absolute text-[26px] text-error-700" style="left:1857px; top:1277px">not until the back wall is settled</p>
+          <div data-mini class="absolute rounded-xl border border-border bg-card p-4 shadow-sm" style="left:560px; top:1540px; width:760px">
+            <p class="text-[13px] font-semibold">About this board</p>
+            <p class="mt-1 text-[12px] leading-5 text-muted-foreground">An invented house, written to show what a two-axis board is for. Each job sits in the price column its own label names, so the picture cannot drift from the figures; the row is a judgment about how fast it gets worse, and that one is a judgment. Every price here was made up, and a real one comes from a quote. What the board argues is the shape: that the urgent corner is the cheap one, and that two of the dear jobs have an order.</p>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section id="canvas" class="mt-8">
-        <div class="mx-auto mb-3 flex max-w-3xl flex-wrap items-center gap-2 print:hidden">
-          <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Walk it</span>
-          <div id="board-jumps" class="flex flex-wrap gap-1.5"></div>
+<div id="minimap-wrap" class="absolute bottom-3 left-3 rounded-lg border border-border bg-card/90 p-1.5 shadow-sm backdrop-blur print:hidden">
+        <div id="minimap" class="relative w-36 cursor-pointer overflow-hidden rounded bg-muted">
+          <span id="minimap-view" class="absolute rounded-[2px] border border-brand-500 bg-brand-500/10"></span>
         </div>
-        <div class="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <!-- Without the script this is an ordinary scrolling box at 1:1, and
-               every log line, quote and number on it is still readable. -->
-          <div id="stage" class="relative overflow-auto bg-background" style="height: min(72vh, 700px)">
-            <div id="board" class="relative origin-top-left" style="width: 3900px; height: 1320px">
-<!-- Time, at twelve pixels a minute. -->
-        <div data-region class="absolute border-b border-border" style="left:0; top:60px; width:3900px; height:1px"></div>
-        <p class="absolute font-mono text-[13px] font-medium text-muted-foreground" style="left:220px; top:32px">21:00</p>
-        <div data-region class="absolute border-l border-dashed border-border" style="left:220px; top:60px; width:1px; height:1220px"></div>
-        <p class="absolute font-mono text-[13px] font-medium text-muted-foreground" style="left:940px; top:32px">22:00</p>
-        <div data-region class="absolute border-l border-dashed border-border" style="left:940px; top:60px; width:1px; height:1220px"></div>
-        <p class="absolute font-mono text-[13px] font-medium text-muted-foreground" style="left:1660px; top:32px">23:00</p>
-        <div data-region class="absolute border-l border-dashed border-border" style="left:1660px; top:60px; width:1px; height:1220px"></div>
-        <p class="absolute font-mono text-[13px] font-medium text-muted-foreground" style="left:2380px; top:32px">00:00</p>
-        <div data-region class="absolute border-l border-dashed border-border" style="left:2380px; top:60px; width:1px; height:1220px"></div>
-        <p class="absolute font-mono text-[13px] font-medium text-muted-foreground" style="left:3100px; top:32px">01:00</p>
-        <div data-region class="absolute border-l border-dashed border-border" style="left:3100px; top:60px; width:1px; height:1220px"></div>
-        <p class="absolute font-mono text-[13px] font-medium text-muted-foreground" style="left:3820px; top:32px">02:00</p>
-        <div data-region class="absolute border-l border-dashed border-border" style="left:3820px; top:60px; width:1px; height:1220px"></div>
+      </div>
 
-        <!-- What the systems did -->
-        <p id="lane-systems" class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:24px; top:150px; width:180px">
-          <i class="ph ph-hard-drives text-lg text-muted-foreground"></i>What the systems did
-        </p>
-
-        <!-- What we did -->
-        <p id="lane-us" class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:24px; top:560px; width:180px">
-          <i class="ph ph-users-three text-lg text-muted-foreground"></i>What we did
-        </p>
-
-        <!-- What customers saw -->
-        <p id="lane-them" class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:24px; top:940px; width:180px">
-          <i class="ph ph-user-focus text-lg text-muted-foreground"></i>What customers saw
-        </p>
-        <div data-stop="1" data-mini class="absolute rounded-xl border p-4 shadow-sm border-border bg-card" style="left:388px; top:150px; width:300px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:14</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">Nightly index rebuild starts</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5 text-muted-foreground">Scheduled, uneventful for 400-odd nights. It takes a write lock on <code class="rounded bg-accent px-1 font-mono text-[11px]">sessions</code> for about ninety seconds.</p></div>
-        </div>
-        <div data-stop="1" data-mini class="absolute rounded-xl border p-4 shadow-sm border-warning-300 bg-warning-50" style="left:412px; top:280px; width:340px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:16</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">The lock is still held at 21:16</p>
-          <div class="mt-1.5"><pre class="mt-1 overflow-hidden rounded-lg bg-code px-3 py-2 font-mono text-[11px] leading-5 text-code-foreground">21:14:02 rebuild.begin table=sessions
-21:15:31 rebuild.progress 41%
-<span class="text-code-flag">21:16:44 lock.wait  waiters=1,204</span></pre></div>
-        </div>
-        <div data-stop="2" data-mini class="absolute rounded-xl border p-4 shadow-sm border-error-300 bg-error-100" style="left:448px; top:940px; width:300px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:19</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">Sign-in starts failing</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5">The lock queue reaches the connection pool. Anyone signing in gets a spinner and then a generic error. Sessions already open keep working, which is why nobody in the building noticed.</p></div>
-        </div>
-        <div data-stop="2" data-mini class="absolute rounded-xl border p-4 shadow-sm border-border bg-card" style="left:496px; top:560px; width:280px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:23</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">First alert fires</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5 text-muted-foreground">Error rate above 2% for 4 minutes. Paged the on-call. Nine minutes after the first failed sign-in.</p></div>
-        </div>
-        <div data-stop="3" data-mini class="absolute rounded-xl border p-4 shadow-sm border-warning-300 bg-warning-50" style="left:592px; top:690px; width:320px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:31</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">Wrong first hypothesis</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5">The graph everyone opens shows the API, and the API was fine. Twenty-two minutes went into the load balancer before anyone looked at the database.</p><p class="mt-2 border-l-2 border-warning-300 pl-2.5 text-[12px] italic leading-5">&ldquo;LB looks healthy. Rolling back the 20:40 deploy to be safe.&rdquo;</p></div>
-        </div>
-        <div data-stop="3" data-mini class="absolute rounded-xl border p-4 shadow-sm border-border bg-card" style="left:676px; top:410px; width:300px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:38</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">The rollback made it worse</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5 text-muted-foreground">Rolling back cycled every application node, so every in-flight connection re-queued behind the same lock. Failure rate went from 40% to 91% in two minutes, and held there for sixteen.</p></div>
-        </div>
-        <div data-stop="4" data-mini class="absolute rounded-xl border p-4 shadow-sm border-error-300 bg-error-100" style="left:748px; top:1070px; width:320px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:44</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">Support queue triples</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5">31 tickets in eleven minutes, all saying the same thing in different words. Support had no way to know an incident was open.</p><p class="mt-2 border-l-2 border-error-300 pl-2.5 text-[12px] italic leading-5">&ldquo;Is it just me or is login down? Third try.&rdquo;</p></div>
-        </div>
-        <div data-stop="5" data-mini class="absolute rounded-xl border p-4 shadow-sm border-brand-200 bg-brand-50" style="left:856px; top:560px; width:300px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:53</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">Someone opens the database dashboard</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5">Thirty seconds later the cause is obvious. Total time from the first alert to the right graph: thirty minutes, and none of it was hard.</p></div>
-        </div>
-        <div data-stop="5" data-mini class="absolute rounded-xl border p-4 shadow-sm border-brand-200 bg-brand-50" style="left:892px; top:280px; width:300px">
-          <p class="font-mono text-[11px] text-muted-foreground">21:56</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">Rebuild killed</p>
-          <div class="mt-1.5"><pre class="mt-1 overflow-hidden rounded-lg bg-code px-3 py-2 font-mono text-[11px] leading-5 text-code-foreground">21:56:10 rebuild.cancel by=oncall
-<span class="text-code-accent">21:56:12 lock.released waiters=0</span>
-21:56:40 error_rate 91% -> 3%</pre></div>
-        </div>
-        <div data-stop="6" data-mini class="absolute rounded-xl border p-4 shadow-sm border-brand-200 bg-brand-50" style="left:988px; top:940px; width:280px">
-          <p class="font-mono text-[11px] text-muted-foreground">22:04</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">Sign-in normal</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5">42 minutes of failing sign-ins, 91% at the worst. Nobody lost data and no session was ended early.</p></div>
-        </div>
-        <div data-stop="6" data-mini class="absolute rounded-xl border p-4 shadow-sm border-border bg-card" style="left:1180px; top:560px; width:340px">
-          <p class="font-mono text-[11px] text-muted-foreground">22:20</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">The shape of the outage</p>
-          <div class="mt-1.5"><p class="mb-2 text-[12px] leading-5 text-muted-foreground">Failed sign-ins as a share of attempts, 21:10 to 22:10.</p><svg viewBox="0 0 300 74" class="w-full" role="img" aria-label="Failure rate rising to 91% at 21:40 and falling to near zero by 22:04"><polyline fill="none" style="stroke: var(--color-error-500)" stroke-width="2" points="0,72 30,71 55,44 80,40 110,38 135,8 165,7 195,9 215,66 245,71 300,72" /><line x1="0" y1="72" x2="300" y2="72" style="stroke: var(--color-border)" stroke-width="1" /></svg><p class="mt-1 flex justify-between font-mono text-[10px] text-muted-foreground"><span>21:10</span><span>91% at 21:40</span><span>22:10</span></p></div>
-        </div>
-        <div data-stop="7" data-mini class="absolute rounded-xl border p-4 shadow-sm border-brand-200 bg-brand-50" style="left:1780px; top:560px; width:340px">
-          <p class="font-mono text-[11px] text-muted-foreground">23:10</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">What we changed the same night</p>
-          <div class="mt-1.5"><ul class="space-y-1.5 text-[12px] leading-5"><li class="flex gap-2"><i class="ph ph-check mt-0.5 text-brand-600"></i>Rebuild moved behind a lock timeout of 20 seconds.</li><li class="flex gap-2"><i class="ph ph-check mt-0.5 text-brand-600"></i>Database saturation added to the first-response dashboard.</li><li class="flex gap-2"><i class="ph ph-check mt-0.5 text-brand-600"></i>Support gets the incident channel automatically.</li></ul></div>
-        </div>
-        <div data-stop="7" data-mini class="absolute rounded-xl border p-4 shadow-sm border-warning-300 bg-warning-50" style="left:1780px; top:720px; width:300px">
-          <p class="font-mono text-[11px] text-muted-foreground">23:10</p>
-          <p class="mt-0.5 text-[14px] leading-5 font-semibold tracking-[-0.01em]">What we did not change</p>
-          <div class="mt-1.5"><p class="text-[12px] leading-5">Rolling back a deploy is still the first reflex, and on this night it doubled the blast radius. Nobody has a proposal for that yet, and it is the most likely cause of the next one.</p></div>
-        </div>
-            </div>
-          </div>
-
-          <div id="minimap-wrap" class="absolute bottom-3 left-3 rounded-lg border border-border bg-card/90 p-1.5 shadow-sm backdrop-blur print:hidden">
-            <div id="minimap" class="relative w-44 cursor-pointer overflow-hidden rounded bg-muted">
-              <span id="minimap-view" class="absolute rounded-[2px] border border-brand-500 bg-brand-500/10"></span>
-            </div>
-          </div>
-
-          <div id="board-controls" class="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur print:hidden">
-            <button data-zoom="0.8" title="Zoom out" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-minus"></i></button>
-            <span id="zoom-level" class="min-w-11 text-center font-mono text-[11px] text-muted-foreground">100%</span>
-            <button data-zoom="1.25" title="Zoom in" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-plus"></i></button>
-            <span class="mx-0.5 h-5 w-px bg-border"></span>
-            <button data-fit title="Fit the whole night" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-corners-out"></i></button>
-          </div>
-        </div>
-        <p class="mx-auto mt-3 max-w-3xl text-xs leading-6 text-muted-foreground">
-          Drag to move, pinch or hold <span class="rounded bg-accent px-1 py-0.5 font-mono text-[10px]">&#8984;</span> and scroll to zoom, or take the seven stops in order. Fitted, the canvas is unreadable and that is deliberate: at that size it is a shape, and the shape is the finding.
-        </p>
-      </section>
-
-      <section id="says" class="mx-auto mt-14 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">
-          Four things you can only see by looking across the lanes
-        </h2>
-        <div class="mt-5 space-y-4">
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">Customers were failing for nine minutes before anything paged</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              The bottom lane starts at 21:19 and the middle lane starts at 21:23,
-              and there is nothing above either of them until 21:16. The alert
-              threshold is a four-minute average of a rate that took five minutes
-              to climb, which means the detector is structurally about nine minutes
-              behind the experience. That is not a tuning problem, it is the wrong
-              signal.
-            </p>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">The rollback sits directly above the worst two minutes</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              21:31 in the middle lane, 21:38 in the top. Cycling every node put
-              every connection back in the same queue and took failures from 40% to
-              91%. On a written timeline these are two bullet points seven minutes
-              apart. Stacked, the causation is the layout.
-            </p>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">Twenty-two minutes went into the wrong graph</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              21:31 to 21:53 in the middle lane is a single hypothesis, and the
-              thing that ended it was somebody opening a dashboard nobody had
-              opened all night. Thirty seconds after that, the cause was obvious
-              and the fix took four minutes. The expensive part of this outage was
-              not the failure and not the fix.
-            </p>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">Support found out from customers</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              31 tickets by 21:44 and no card anywhere in the middle lane telling
-              them an incident was open. Of the three changes made that night, the
-              cheapest is the one that would have taken the most weight off the
-              people who were not in the room.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="method" class="mx-auto mt-12 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">What this is made of</h2>
-        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">The incident is illustrative.</span> The log lines, timestamps, ticket counts, failure rates and quotes were written for this page to show what an incident looks like when it is laid out rather than written down. No real outage is described.</li>
-          <li><span class="font-medium text-foreground">Time is to scale and that is load-bearing.</span> Twelve pixels a minute everywhere, so a wide gap is a long gap. A canvas that spaces cards for the layout rather than by the clock reads identically and means nothing, which is the way this format goes wrong.</li>
-          <li><span class="font-medium text-foreground">Nothing is placed by feel.</span> Every card sits at a timestamp printed on its own face, so a reader who thinks a card is in the wrong place can check it against its own label rather than trusting the drawing.</li>
-          <li><span class="font-medium text-foreground">Not on the canvas:</span> the deploy at 20:40 that got rolled back, anything about who was on call, and the cost. The first belongs here and is missing because the log was rotated before anyone looked.</li>
-        </ul>
-      </section>
+      <div id="board-controls" class="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur print:hidden">
+        <button data-zoom="0.8" title="Zoom out" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-minus"></i></button>
+        <span id="zoom-level" class="min-w-11 text-center font-mono text-[11px] text-muted-foreground">100%</span>
+        <button data-zoom="1.25" title="Zoom in" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-plus"></i></button>
+        <span class="mx-0.5 h-5 w-px bg-border"></span>
+        <button data-fit title="Fit the whole board" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-corners-out"></i></button>
+        <!-- Only where cards carry data-drag. -->
+        <button data-reset title="Put everything back where it started" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-arrow-counter-clockwise"></i></button>
+      </div>
 
       <script>
-        // The tour is built from the cards, so a stop cannot outlive the card it
-        // points at and a card added at a new stop gets a button for free.
-        const stops = [...new Set([...document.querySelectorAll("#board [data-stop]")].map((c) => c.dataset.stop))].sort();
-        document.querySelector("#board-jumps").innerHTML = stops
-          .map(
-            (stop) =>
-              `<button data-go='[data-stop="${stop}"]' data-scale="0.95" class="grid size-7 place-items-center rounded-full border border-border bg-card text-[12px] font-medium hover:bg-accent">${stop}</button>`,
-          )
-          .join("");
-
-// ---- the canvas ------------------------------------------------------
+        // ---- the canvas ------------------------------------------------------
         // The board is a fixed-size surface and every card is absolutely placed
         // on it, in the HTML above. Without this script the stage is an ordinary
         // scrolling box at 1:1 and every card is still there to be read; with it,
@@ -614,15 +535,111 @@
           apply();
         };
 
-        /** Puts a named region in the middle at a readable scale. */
-        const goTo = (selector, scale = 1) => {
-          const target = board.querySelector(selector);
-          if (!target) return;
-          k = clamp(scale, MIN_K, MAX_K);
-          tx = stage.clientWidth / 2 - (target.offsetLeft + target.offsetWidth / 2) * k;
-          ty = stage.clientHeight / 2 - (target.offsetTop + target.offsetHeight / 2) * k;
-          apply();
+        // ---- ink -------------------------------------------------------------
+        // Marker over the top of the board: a lasso around things that belong
+        // together, an arrow from a cause to what it causes, an underline, a
+        // bracket, a crossing-out. Every one of them is drawn INTO a box you
+        // placed, so the position is in the HTML and only the stroke is here.
+        //
+        // Ink is commentary, never content. It carries data-region, so it does
+        // not print and is not on the map, and a page whose script never runs
+        // loses the marker and keeps every word. Anything you would be sorry to
+        // lose is a card, not a stroke.
+
+        const INK_TONE = {
+          ink: "currentColor",
+          red: "#b4324f",
+          green: "#0e7869",
+          orange: "#f79009",
         };
+
+        /** A repeatable wobble, so a mark drawn twice is the same mark. */
+        const wobbler = (seed) => {
+          let s = seed % 2147483647 || 1;
+          return () => ((s = (s * 48271) % 2147483647) / 2147483647 - 0.5) * 2;
+        };
+
+        /** Points to a path that curves through them rather than bending at
+         *  them, which is most of what separates a drawn line from a plotted
+         *  one. */
+        const through = (points) => {
+          let d = `M ${points[0][0].toFixed(1)} ${points[0][1].toFixed(1)}`;
+          for (let i = 1; i < points.length - 1; i++) {
+            const [x, y] = points[i];
+            const [nx, ny] = points[i + 1];
+            d += ` Q ${x.toFixed(1)} ${y.toFixed(1)} ${((x + nx) / 2).toFixed(1)} ${((y + ny) / 2).toFixed(1)}`;
+          }
+          const last = points[points.length - 1];
+          return `${d} L ${last[0].toFixed(1)} ${last[1].toFixed(1)}`;
+        };
+
+        const STROKES = {
+          /** Round the whole box, overshooting the start the way a hand does. */
+          lasso: (w, h, rnd) => {
+            const points = [];
+            const steps = 26;
+            for (let i = 0; i <= steps + 3; i++) {
+              const angle = (i / steps) * Math.PI * 2 - 0.7;
+              const off = 1 + rnd() * 0.045;
+              points.push([w / 2 + Math.cos(angle) * (w / 2 - 4) * off, h / 2 + Math.sin(angle) * (h / 2 - 4) * off]);
+            }
+            return [through(points)];
+          },
+          /** Corner to corner of the box you placed, bent, with a two-stroke
+           *  head. data-dir picks which corner it ends at: se, ne, sw, nw. */
+          arrow: (w, h, rnd, dir) => {
+            const CORNERS = { se: [0, 0, w, h], ne: [0, h, w, 0], sw: [w, 0, 0, h], nw: [w, h, 0, 0] };
+            const [x1, y1, x2, y2] = CORNERS[dir] || CORNERS.se;
+            const mx = (x1 + x2) / 2 + (y1 - y2) * 0.16;
+            const my = (y1 + y2) / 2 + (x2 - x1) * 0.16;
+            const angle = Math.atan2(y2 - my, x2 - mx);
+            const head = Math.min(16, Math.hypot(w, h) / 5);
+            const barb = (turn) => `M ${x2.toFixed(1)} ${y2.toFixed(1)} L ${(x2 - Math.cos(angle + turn) * head).toFixed(1)} ${(y2 - Math.sin(angle + turn) * head).toFixed(1)}`;
+            return [
+              `M ${x1} ${y1} Q ${(mx + rnd() * 4).toFixed(1)} ${(my + rnd() * 4).toFixed(1)} ${x2} ${y2}`,
+              barb(0.42),
+              barb(-0.42),
+            ];
+          },
+          /** Twice, because once reads as a border. */
+          underline: (w, h, rnd) => [0, 1].map((pass) => through(
+            Array.from({ length: 7 }, (_, i) => [(i / 6) * w, h - 4 + pass * 2.5 + rnd() * 1.6]),
+          )),
+          /** These, together: a square bracket down the left edge. */
+          bracket: (w, h, rnd) => [
+            through([
+              [w, 2 + rnd()],
+              [4, 8 + rnd() * 2],
+              [2, h / 2],
+              [4, h - 8 + rnd() * 2],
+              [w, h - 2 + rnd()],
+            ]),
+          ],
+          /** Not this. */
+          strike: (w, h, rnd) => [
+            through(Array.from({ length: 5 }, (_, i) => [(i / 4) * w, (i / 4) * h + rnd() * 3])),
+          ],
+        };
+
+        for (const mark of board.querySelectorAll("[data-ink]")) {
+          const draw = STROKES[mark.dataset.ink];
+          if (!draw) continue;
+          const w = mark.offsetWidth;
+          const h = mark.offsetHeight;
+          // The seed is the position, so a mark keeps its own wobble across
+          // reloads and two marks side by side do not come out identical.
+          const rnd = wobbler(Math.round(mark.offsetLeft * 31 + mark.offsetTop * 7) + 1);
+          // Written as markup rather than built element by element: parsing
+          // `<svg>` inside HTML puts it in the right namespace on its own, and
+          // the style is inline because this arrives after Tailwind has run and
+          // a stroke is not worth depending on a rescan for.
+          mark.innerHTML =
+            `<svg viewBox="0 0 ${w} ${h}" fill="none" stroke="${INK_TONE[mark.dataset.tone] || INK_TONE.ink}"` +
+            ` stroke-width="${mark.dataset.weight || 2.5}" stroke-linecap="round" stroke-linejoin="round"` +
+            ` style="width:100%; height:100%; pointer-events:none; overflow:visible; opacity:0.82">` +
+            draw(w, h, rnd, mark.dataset.dir).map((d) => `<path d="${d}"/>`).join("") +
+            `</svg>`;
+        }
 
         // ---- what the reader moved -------------------------------------------
         // Positions live in this browser and nowhere else. A board someone
@@ -748,7 +765,6 @@
           if (!button) return;
           if (button.dataset.zoom) zoomCenter(Number(button.dataset.zoom));
           if (button.dataset.fit !== undefined) fit();
-          if (button.dataset.go) goTo(button.dataset.go, Number(button.dataset.scale || 1));
           if (button.dataset.reset !== undefined) {
             try {
               localStorage.removeItem(MEMORY);
@@ -759,10 +775,10 @@
           }
         });
 
-        // Arrows pan, plus and minus zoom, 0 fits -- only while the board has
-        // focus, so the page still scrolls normally everywhere else.
-        stage.tabIndex = 0;
-        stage.addEventListener("keydown", (event) => {
+        // Arrows pan, plus and minus zoom, 0 fits. The board is the page here,
+        // so it takes the keys without needing to be focused first.
+        document.addEventListener("keydown", (event) => {
+          if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
           const step = event.shiftKey ? 240 : 80;
           const moves = {
             ArrowLeft: () => (tx += step),
@@ -801,15 +817,6 @@
         new ResizeObserver(apply).observe(stage);
         fit();
       </script>
-
-      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        An illustrative incident: every timestamp, log line, count and quote on
-        this canvas was written for the page rather than taken from an outage, and
-        the four findings are readings of the drawing rather than conclusions
-        anyone reached. What is real is the claim about the format &mdash; that the
-        expensive parts of an incident are gaps between lanes, and that a document
-        written in paragraphs has nowhere to put a gap.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

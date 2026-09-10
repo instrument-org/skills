@@ -1,17 +1,11 @@
 {
   "title": "Whiteboard",
   "tagline": "A place, not a list. Move around it.",
-  "when": "The material has two dimensions of its own -- a wall of sorted notes, a plan of somewhere real, evidence laid against time and lane -- and flattening it into an order throws the interesting part away.",
+  "when": "The material has two dimensions of its own -- a wall of sorted notes, a plan of somewhere real, twenty things placed against two measured axes -- and flattening it into an order throws the interesting part away.",
   "tags": ["learn"],
   "order": 35,
   "needs": [],
-  "cover": "feedback-wall",
-  "sections": [
-    "What this board is",
-    "How to read it",
-    "The board",
-    "What the arrangement says",
-    "Where this came from"
-  ],
-  "sketch": ["k", "T", "p", "s", "c3", "2"]
+  "cover": "high-street",
+  "sections": ["A title bar", "The board"],
+  "sketch": ["t", "c4", "d", "c3", "c4", "c2"]
 }

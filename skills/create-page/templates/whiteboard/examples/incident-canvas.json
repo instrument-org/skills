@@ -1,8 +1,0 @@
-{
-  "title": "Fifty minutes, laid out end to end",
-  "variant": "Two real axes: twelve pixels a minute across, three lanes down",
-  "prompt": "Write up last night's sign-in outage. I don't want a wall of paragraphs -- I want to see how long the gaps were.",
-  "model": "claude-opus-5",
-  "note": "The canvas shape, and the widest board of the three at 3,900 pixels, which is deliberate: fitted it is illegible, and the page says so, because at that size the finding is the shape and reading is what the seven-stop tour is for. Cards are heterogeneous on purpose -- a log excerpt in a code well, a hand-drawn SVG line chart, a support quote, a checklist -- which is the argument for a canvas over a timeline component. Every card prints its own timestamp on its face, so a reader who thinks something is in the wrong place can check the drawing against its own label rather than trusting it.",
-  "html_sha256": "40fd9384c90b83edbf8cac49375b0c89dbfd737681525765061b3b7b6236a212"
-}

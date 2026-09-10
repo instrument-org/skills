@@ -261,12 +261,22 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-[92rem] px-5 py-10 sm:px-8 sm:py-14">
+    <main class="relative flex h-dvh flex-col overflow-hidden">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" />
+
 <style>
+        .marker {
+          font-family: "Caveat", ui-rounded, cursive;
+        }
+
         /* On paper there is no panning, so the board stops being a canvas and
            becomes what it always was underneath: cards in document order. That
            is the reason DOM order has to be reading order. */
         @media print {
+          main {
+            height: auto !important;
+            overflow: visible !important;
+          }
           #stage {
             height: auto !important;
             overflow: visible !important;
@@ -279,15 +289,25 @@
           }
           /* Everything inside a card too, not only the cards: a label pinned
              to the bottom of a fixed-height card has nothing to pin to once
-             the card is in the flow, and goes missing from the paper. */
+             the card is in the flow, and goes missing from the paper. A tilted
+             sticky straightens up for the same reason, and it takes both
+             properties, because Tailwind's rotate utilities set `rotate` and
+             not `transform`. */
           #board *,
           #board > * {
             position: static !important;
+            transform: none !important;
+            rotate: none !important;
           }
           #board > * {
             width: auto !important;
             height: auto !important;
             margin-bottom: 0.5rem;
+          }
+          /* A heading in marker is the only thing holding the printed list
+             together, so it gets the air a heading needs. */
+          #board > .marker {
+            margin-top: 1.25rem;
           }
           #board > [data-region],
           #board-controls,
@@ -297,68 +317,30 @@
         }
       </style>
 
-      <header class="mx-auto max-w-3xl">
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Whiteboard &middot; Second floor, from 6 January
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          Where everyone sits after the move
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          The whole floor, to scale, with all 118 desks and every name on them.
-          Zoom out and it is six zones and a count; zoom past about sixty per cent
-          and the names appear. This exists because the seating plan has been a spreadsheet
-          for three weeks and nobody can tell from a spreadsheet that the two teams
-          who pair the most now sit at opposite corners.
-        </p>
+      <header class="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-border px-4 py-2.5 sm:px-5">
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">Where everyone sits after the move</h1>
+          <p class="truncate text-[12px] text-muted-foreground">The second floor to scale, all 72 desks. A desk here is where that desk is in the building. Zoom past 60% and the names appear.</p>
+        </div>
+        <div class="flex shrink-0 flex-wrap items-center gap-x-3.5 gap-y-1 text-[11px] text-muted-foreground">
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm border border-brand-200 bg-brand-50"></span>Engineering</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm border border-warning-300 bg-warning-50"></span>Sales</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm border border-yellow-300 bg-yellow-50"></span>Design</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm border border-border bg-accent"></span>Support</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm border border-dashed border-gray-400"></span>free</span>
+        </div>
       </header>
 
-      <section id="legend" class="mx-auto mt-8 max-w-3xl">
-        <div class="rounded-xl border border-border bg-card p-5">
-          <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
-            How to read the floor
-          </p>
-          <div class="mt-3 grid gap-4 sm:grid-cols-2">
-            <div>
-              <p class="text-sm font-medium">Position is the actual position</p>
-              <p class="mt-1 text-sm leading-6 text-muted-foreground">
-                The plan is drawn to scale from the landlord&rsquo;s floor drawing.
-                A desk on this page is where that desk is in the building, and the
-                distance between two of them is a real distance.
-              </p>
-            </div>
-            <div>
-              <p class="text-sm font-medium">Fill is the team, dashes are nobody</p>
-              <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-brand-200 bg-brand-50"></span> Engineering</span>
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-warning-300 bg-warning-50"></span> Sales</span>
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-yellow-300 bg-yellow-50"></span> Design</span>
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-border bg-accent"></span> Support</span>
-                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-dashed border-gray-400"></span> Unassigned &mdash; 8</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="floor" class="mt-8">
-        <div class="mx-auto mb-3 flex max-w-3xl flex-wrap items-center gap-2 print:hidden">
-          <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Jump to</span>
-          <div id="board-jumps" class="flex flex-wrap gap-1.5"></div>
-        </div>
-        <div class="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <!-- Without the script this is an ordinary scrolling box at 1:1, and
-               every desk and name is still there. The script makes it a viewport. -->
-          <div id="stage" class="relative overflow-auto bg-muted" style="height: min(78vh, 780px)">
-            <div id="board" class="relative origin-top-left" style="width: 2400px; height: 1320px">
+      <div id="stage" class="relative flex-1 overflow-auto bg-muted">
+        <div id="board" class="relative origin-top-left" style="width: 2400px; height: 1400px">
 <!-- The floor itself. Everything else sits on it. -->
         <div data-region class="absolute rounded-2xl border-2 border-border bg-card" style="left:40px; top:40px; width:2280px; height:1240px"></div>
-        <p class="absolute text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase" style="left:60px; top:52px">Second floor &middot; 118 desks in, 96 people</p>
+        <p class="absolute text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase" style="left:60px; top:52px">Second floor &middot; 72 desks in, 64 of them taken</p>
 
         <!-- Engineering -->
         <div id="zone-engineering" data-region data-mini class="absolute rounded-xl border border-dashed border-border bg-background" style="left:80px; top:90px; width:880px; height:560px"></div>
         <p class="absolute text-[15px] font-semibold tracking-[-0.01em]" style="left:98px; top:104px">Engineering
-          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">24 desks &middot; 21 assigned</span>
+          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">24 desks &middot; 21 taken</span>
         </p>
         <div data-mini class="absolute rounded-lg border bg-brand-50 border-brand-200 p-2" style="left:98px; top:152px; width:130px; height:109px">
           <span class="block text-[10px] text-muted-foreground">ENG-01</span>
@@ -457,7 +439,7 @@
         <!-- Sales -->
         <div id="zone-sales" data-region data-mini class="absolute rounded-xl border border-dashed border-border bg-background" style="left:1000px; top:90px; width:560px; height:560px"></div>
         <p class="absolute text-[15px] font-semibold tracking-[-0.01em]" style="left:1018px; top:104px">Sales
-          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">12 desks &middot; 12 assigned</span>
+          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">12 desks &middot; 12 taken</span>
         </p>
         <div data-mini class="absolute rounded-lg border bg-warning-50 border-warning-300 p-2" style="left:1018px; top:152px; width:122px; height:150px">
           <span class="block text-[10px] text-muted-foreground">SAL-01</span>
@@ -517,7 +499,7 @@
         <!-- Design -->
         <div id="zone-design" data-region data-mini class="absolute rounded-xl border border-dashed border-border bg-background" style="left:80px; top:690px; width:560px; height:560px"></div>
         <p class="absolute text-[15px] font-semibold tracking-[-0.01em]" style="left:98px; top:704px">Design
-          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">12 desks &middot; 9 assigned</span>
+          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">12 desks &middot; 9 taken</span>
         </p>
         <div data-mini class="absolute rounded-lg border bg-yellow-50 border-yellow-300 p-2" style="left:98px; top:752px; width:122px; height:150px">
           <span class="block text-[10px] text-muted-foreground">DES-01</span>
@@ -568,7 +550,7 @@
         <!-- Support -->
         <div id="zone-support" data-region data-mini class="absolute rounded-xl border border-dashed border-border bg-background" style="left:680px; top:690px; width:880px; height:560px"></div>
         <p class="absolute text-[15px] font-semibold tracking-[-0.01em]" style="left:698px; top:704px">Support
-          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">24 desks &middot; 22 assigned</span>
+          <span class="ml-1.5 text-[11px] font-normal text-muted-foreground">24 desks &middot; 22 taken</span>
         </p>
         <div data-mini class="absolute rounded-lg border bg-accent border-border p-2" style="left:698px; top:752px; width:130px; height:109px">
           <span class="block text-[10px] text-muted-foreground">SUP-01</span>
@@ -714,88 +696,36 @@
           <p class="text-[13px] font-medium">Booth 4</p>
           <p data-from="0.6" class="mt-0.5 text-[11px] text-muted-foreground transition-opacity duration-150">1 seat</p>
         </div>
-            </div>
-          </div>
-
-          <div id="minimap-wrap" class="absolute bottom-3 left-3 rounded-lg border border-border bg-card/90 p-1.5 shadow-sm backdrop-blur print:hidden">
-            <div id="minimap" class="relative w-36 cursor-pointer overflow-hidden rounded bg-muted">
-              <span id="minimap-view" class="absolute rounded-[2px] border border-brand-500 bg-brand-500/10"></span>
-            </div>
-          </div>
-
-          <div id="board-controls" class="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur print:hidden">
-            <button data-zoom="0.8" title="Zoom out" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-minus"></i></button>
-            <span id="zoom-level" class="min-w-11 text-center font-mono text-[11px] text-muted-foreground">100%</span>
-            <button data-zoom="1.25" title="Zoom in" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-plus"></i></button>
-            <span class="mx-0.5 h-5 w-px bg-border"></span>
-            <button data-fit title="Fit the whole floor" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-corners-out"></i></button>
-          </div>
+        <span data-ink="arrow" data-dir="se" data-tone="red" data-region class="absolute" style="left:520px; top:370px; width:600px; height:600px"></span>
+        <p class="marker absolute text-[30px] text-error-700" style="left:1160px; top:930px">34 m and two zones apart,</p>
+        <p class="marker absolute text-[26px] text-error-700" style="left:1160px; top:972px">and they escalate all day</p>
+        <span data-ink="bracket" data-tone="orange" data-region class="absolute" style="left:1566px; top:84px; width:28px; height:572px"></span>
+        <p class="marker absolute text-[28px] text-warning-700" style="left:1640px; top:38px">every room is on this side of the floor</p>
+        <span data-ink="lasso" data-tone="green" data-region class="absolute" style="left:437px; top:498px; width:588px; height:155px"></span>
+        <span data-ink="lasso" data-tone="green" data-region class="absolute" style="left:150px; top:1048px; width:554px; height:213px"></span>
+        <span data-ink="lasso" data-tone="green" data-region class="absolute" style="left:1209px; top:1098px; width:386px; height:155px"></span>
+        <p class="marker absolute text-[26px] text-brand-700" style="left:96px; top:1272px">the 8 free desks are in three corners nobody asked for</p>
         </div>
-        <p class="mx-auto mt-3 max-w-3xl text-xs leading-6 text-muted-foreground">
-          Drag to move, pinch or hold <span class="rounded bg-accent px-1 py-0.5 font-mono text-[10px]">&#8984;</span> and scroll to zoom, click the small map to jump. Names appear once the floor is at about sixty per cent or larger; nothing is hidden that is not also written in the seating list below.
-        </p>
-      </section>
+      </div>
 
-      <section id="says" class="mx-auto mt-14 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">
-          Three things the drawing makes obvious and the spreadsheet did not
-        </h2>
-        <div class="mt-5 space-y-4">
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">Support and Engineering are as far apart as the floor allows</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              Engineering is the top-left block; Support runs along the bottom
-              middle. The two teams that escalate to each other several times a day
-              are now separated by the full width of the floor and by the kitchen.
-              Nothing in the spreadsheet said this, because a spreadsheet has no
-              geometry. Swapping Support with Sales would cost twelve moves and fix
-              it.
-            </p>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">Every hybrid-capable room is on the same side</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              The Long Room and the Kiln are the only two rooms with a screen and a
-              camera, and both are in the top-right block. Anyone in Design taking a
-              call with the New York office crosses the whole floor to do it, past
-              the two teams whose work is loudest.
-            </p>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">The eight unassigned desks are all in one corner</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              Three in Engineering, three in Design, two in Support, and every one
-              of them at the outer edge of its block. If those are meant to be the
-              hot desks for the people who come in twice a week, they are the worst
-              seats in the building and they are also the ones nobody chose.
-              Scattering them through the blocks costs nothing now and cannot be
-              done once the furniture is bolted down.
-            </p>
-          </div>
+<div id="minimap-wrap" class="absolute bottom-3 left-3 rounded-lg border border-border bg-card/90 p-1.5 shadow-sm backdrop-blur print:hidden">
+        <div id="minimap" class="relative w-36 cursor-pointer overflow-hidden rounded bg-muted">
+          <span id="minimap-view" class="absolute rounded-[2px] border border-brand-500 bg-brand-500/10"></span>
         </div>
-      </section>
+      </div>
 
-      <section id="method" class="mx-auto mt-12 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">What this is drawn from</h2>
-        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">The plan is illustrative.</span> The floor, the zones, the room names and all 96 people on it were written to show what a seating plan looks like when it is drawn rather than tabulated. No real office is described and none of these are real people.</li>
-          <li><span class="font-medium text-foreground">Drawn to scale, or it is worthless.</span> The single thing this format offers over a list is that distance means distance. A plan whose blocks are sized for the layout rather than for the building looks the same and tells you nothing, which is worse than a spreadsheet because it looks authoritative.</li>
-          <li><span class="font-medium text-foreground">Names appear at about sixty per cent and above.</span> That is a rendering choice, not a secret: the same names are in the file whether or not the page is zoomed in, and a reader with no script gets the whole floor at full size with every label showing.</li>
-          <li><span class="font-medium text-foreground">Not drawn:</span> the first floor, the stairs and lift core, fire exits, and anything about desk heights or accessibility. The last of those has to be on the plan before it is agreed, and its absence here is a gap rather than a decision.</li>
-        </ul>
-      </section>
+      <div id="board-controls" class="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur print:hidden">
+        <button data-zoom="0.8" title="Zoom out" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-minus"></i></button>
+        <span id="zoom-level" class="min-w-11 text-center font-mono text-[11px] text-muted-foreground">100%</span>
+        <button data-zoom="1.25" title="Zoom in" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-plus"></i></button>
+        <span class="mx-0.5 h-5 w-px bg-border"></span>
+        <button data-fit title="Fit the whole board" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-corners-out"></i></button>
+        <!-- Only where cards carry data-drag. -->
+        <button data-reset title="Put everything back where it started" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-arrow-counter-clockwise"></i></button>
+      </div>
 
       <script>
-        // The jump chips are built from the zones themselves, so a zone added to
-        // the plan gets a chip and one removed cannot leave a dead button.
-        document.querySelector("#board-jumps").innerHTML = [...document.querySelectorAll("#board [id^='zone-']")]
-          .map((zone) => {
-            const label = zone.nextElementSibling.firstChild.textContent.trim();
-            return `<button data-go="#${zone.id}" data-scale="0.62" class="rounded-full border border-border bg-card px-2.5 py-1 text-[12px] font-medium hover:bg-accent">${label}</button>`;
-          })
-          .join("");
-
-// ---- the canvas ------------------------------------------------------
+        // ---- the canvas ------------------------------------------------------
         // The board is a fixed-size surface and every card is absolutely placed
         // on it, in the HTML above. Without this script the stage is an ordinary
         // scrolling box at 1:1 and every card is still there to be read; with it,
@@ -868,15 +798,111 @@
           apply();
         };
 
-        /** Puts a named region in the middle at a readable scale. */
-        const goTo = (selector, scale = 1) => {
-          const target = board.querySelector(selector);
-          if (!target) return;
-          k = clamp(scale, MIN_K, MAX_K);
-          tx = stage.clientWidth / 2 - (target.offsetLeft + target.offsetWidth / 2) * k;
-          ty = stage.clientHeight / 2 - (target.offsetTop + target.offsetHeight / 2) * k;
-          apply();
+        // ---- ink -------------------------------------------------------------
+        // Marker over the top of the board: a lasso around things that belong
+        // together, an arrow from a cause to what it causes, an underline, a
+        // bracket, a crossing-out. Every one of them is drawn INTO a box you
+        // placed, so the position is in the HTML and only the stroke is here.
+        //
+        // Ink is commentary, never content. It carries data-region, so it does
+        // not print and is not on the map, and a page whose script never runs
+        // loses the marker and keeps every word. Anything you would be sorry to
+        // lose is a card, not a stroke.
+
+        const INK_TONE = {
+          ink: "currentColor",
+          red: "#b4324f",
+          green: "#0e7869",
+          orange: "#f79009",
         };
+
+        /** A repeatable wobble, so a mark drawn twice is the same mark. */
+        const wobbler = (seed) => {
+          let s = seed % 2147483647 || 1;
+          return () => ((s = (s * 48271) % 2147483647) / 2147483647 - 0.5) * 2;
+        };
+
+        /** Points to a path that curves through them rather than bending at
+         *  them, which is most of what separates a drawn line from a plotted
+         *  one. */
+        const through = (points) => {
+          let d = `M ${points[0][0].toFixed(1)} ${points[0][1].toFixed(1)}`;
+          for (let i = 1; i < points.length - 1; i++) {
+            const [x, y] = points[i];
+            const [nx, ny] = points[i + 1];
+            d += ` Q ${x.toFixed(1)} ${y.toFixed(1)} ${((x + nx) / 2).toFixed(1)} ${((y + ny) / 2).toFixed(1)}`;
+          }
+          const last = points[points.length - 1];
+          return `${d} L ${last[0].toFixed(1)} ${last[1].toFixed(1)}`;
+        };
+
+        const STROKES = {
+          /** Round the whole box, overshooting the start the way a hand does. */
+          lasso: (w, h, rnd) => {
+            const points = [];
+            const steps = 26;
+            for (let i = 0; i <= steps + 3; i++) {
+              const angle = (i / steps) * Math.PI * 2 - 0.7;
+              const off = 1 + rnd() * 0.045;
+              points.push([w / 2 + Math.cos(angle) * (w / 2 - 4) * off, h / 2 + Math.sin(angle) * (h / 2 - 4) * off]);
+            }
+            return [through(points)];
+          },
+          /** Corner to corner of the box you placed, bent, with a two-stroke
+           *  head. data-dir picks which corner it ends at: se, ne, sw, nw. */
+          arrow: (w, h, rnd, dir) => {
+            const CORNERS = { se: [0, 0, w, h], ne: [0, h, w, 0], sw: [w, 0, 0, h], nw: [w, h, 0, 0] };
+            const [x1, y1, x2, y2] = CORNERS[dir] || CORNERS.se;
+            const mx = (x1 + x2) / 2 + (y1 - y2) * 0.16;
+            const my = (y1 + y2) / 2 + (x2 - x1) * 0.16;
+            const angle = Math.atan2(y2 - my, x2 - mx);
+            const head = Math.min(16, Math.hypot(w, h) / 5);
+            const barb = (turn) => `M ${x2.toFixed(1)} ${y2.toFixed(1)} L ${(x2 - Math.cos(angle + turn) * head).toFixed(1)} ${(y2 - Math.sin(angle + turn) * head).toFixed(1)}`;
+            return [
+              `M ${x1} ${y1} Q ${(mx + rnd() * 4).toFixed(1)} ${(my + rnd() * 4).toFixed(1)} ${x2} ${y2}`,
+              barb(0.42),
+              barb(-0.42),
+            ];
+          },
+          /** Twice, because once reads as a border. */
+          underline: (w, h, rnd) => [0, 1].map((pass) => through(
+            Array.from({ length: 7 }, (_, i) => [(i / 6) * w, h - 4 + pass * 2.5 + rnd() * 1.6]),
+          )),
+          /** These, together: a square bracket down the left edge. */
+          bracket: (w, h, rnd) => [
+            through([
+              [w, 2 + rnd()],
+              [4, 8 + rnd() * 2],
+              [2, h / 2],
+              [4, h - 8 + rnd() * 2],
+              [w, h - 2 + rnd()],
+            ]),
+          ],
+          /** Not this. */
+          strike: (w, h, rnd) => [
+            through(Array.from({ length: 5 }, (_, i) => [(i / 4) * w, (i / 4) * h + rnd() * 3])),
+          ],
+        };
+
+        for (const mark of board.querySelectorAll("[data-ink]")) {
+          const draw = STROKES[mark.dataset.ink];
+          if (!draw) continue;
+          const w = mark.offsetWidth;
+          const h = mark.offsetHeight;
+          // The seed is the position, so a mark keeps its own wobble across
+          // reloads and two marks side by side do not come out identical.
+          const rnd = wobbler(Math.round(mark.offsetLeft * 31 + mark.offsetTop * 7) + 1);
+          // Written as markup rather than built element by element: parsing
+          // `<svg>` inside HTML puts it in the right namespace on its own, and
+          // the style is inline because this arrives after Tailwind has run and
+          // a stroke is not worth depending on a rescan for.
+          mark.innerHTML =
+            `<svg viewBox="0 0 ${w} ${h}" fill="none" stroke="${INK_TONE[mark.dataset.tone] || INK_TONE.ink}"` +
+            ` stroke-width="${mark.dataset.weight || 2.5}" stroke-linecap="round" stroke-linejoin="round"` +
+            ` style="width:100%; height:100%; pointer-events:none; overflow:visible; opacity:0.82">` +
+            draw(w, h, rnd, mark.dataset.dir).map((d) => `<path d="${d}"/>`).join("") +
+            `</svg>`;
+        }
 
         // ---- what the reader moved -------------------------------------------
         // Positions live in this browser and nowhere else. A board someone
@@ -1002,7 +1028,6 @@
           if (!button) return;
           if (button.dataset.zoom) zoomCenter(Number(button.dataset.zoom));
           if (button.dataset.fit !== undefined) fit();
-          if (button.dataset.go) goTo(button.dataset.go, Number(button.dataset.scale || 1));
           if (button.dataset.reset !== undefined) {
             try {
               localStorage.removeItem(MEMORY);
@@ -1013,10 +1038,10 @@
           }
         });
 
-        // Arrows pan, plus and minus zoom, 0 fits -- only while the board has
-        // focus, so the page still scrolls normally everywhere else.
-        stage.tabIndex = 0;
-        stage.addEventListener("keydown", (event) => {
+        // Arrows pan, plus and minus zoom, 0 fits. The board is the page here,
+        // so it takes the keys without needing to be focused first.
+        document.addEventListener("keydown", (event) => {
+          if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
           const step = event.shiftKey ? 240 : 80;
           const moves = {
             ArrowLeft: () => (tx += step),
@@ -1055,15 +1080,6 @@
         new ResizeObserver(apply).observe(stage);
         fit();
       </script>
-
-      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        An illustrative plan. The floor, the teams, the rooms and every name on it
-        were written for this page rather than taken from a building, and the three
-        findings are arguments the drawing supports rather than measurements
-        anyone took. What is real is the method: a seating plan is a spatial
-        document, and the questions worth asking about one are questions about
-        distance that a table of names cannot be asked.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as
