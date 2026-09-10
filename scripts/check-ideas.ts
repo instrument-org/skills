@@ -38,26 +38,29 @@ const MIN_EXAMPLES = 3;
 // longer opens in a mail client or a chat.
 const EXAMPLE_MAX_BYTES = 1_500_000;
 const INLINE_IMAGE_MAX_BYTES = 200_000;
-// The rows a sketch may carry; the website draws them. See AGENTS.md, Ideas.
-const SKETCH_ROWS = new Set([
-  "k",
-  "t",
-  "T",
-  "p",
-  "s",
-  "c2",
-  "c3",
-  "c4",
-  "l",
-  "m",
-  "g",
-  "d",
-  "b",
-  "v",
-  "q",
-  "x",
-  "n",
-  "2",
+// The marks a sketch may name; the website draws them. See AGENTS.md, Ideas.
+const SKETCH_MARKS = new Set([
+  "board",
+  "compute",
+  "days",
+  "flow",
+  "fork",
+  "frames",
+  "grade",
+  "grid",
+  "memo",
+  "qa",
+  "quote",
+  "rank",
+  "sheet",
+  "short",
+  "spine",
+  "split",
+  "stats",
+  "steps",
+  "table",
+  "ticks",
+  "weights",
 ]);
 const IDEA_KEYS = [
   "title",
@@ -406,16 +409,14 @@ function checkIdea(idea: Idea, shell: string[]): string[] {
     errors.push("idea.json needs at least one tag");
   }
   if (idea.meta.sketch) {
-    for (const row of idea.meta.sketch) {
-      if (!SKETCH_ROWS.has(row)) {
-        errors.push(
-          `idea.json sketch row "${row}" is not one the site can draw`,
-        );
+    for (const mark of idea.meta.sketch) {
+      if (!SKETCH_MARKS.has(mark)) {
+        errors.push(`idea.json sketch mark "${mark}" is not one the site can draw`);
       }
     }
-    if (idea.meta.sketch.length > 7) {
+    if (idea.meta.sketch.length !== 1) {
       errors.push(
-        "idea.json sketch has more than seven rows; a tile has room for six",
+        `idea.json sketch names ${idea.meta.sketch.length} marks; a tile draws one`,
       );
     }
   }
