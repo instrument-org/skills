@@ -43,13 +43,13 @@
   "devDependencies": {
     "@instrument-org/agent-hooks": "github:instrument-org/agent-hooks",
     "@types/node": "24.13.1",
-    "actions-up": "^1.17.1",
+    "actions-up": "^1.18.0",
     "jscodeshift": "^17.4.0",
-    "knip": "^5.88.1",
-    "oxfmt": "0.57.0",
+    "knip": "^6.34.0",
+    "oxfmt": "0.61.0",
     "syncpack": "14.2.0",
     "tokenx": "^1.6.0",
-    "turbo": "^2.10.11",
+    "turbo": "^2.10.12",
     "typescript": "^5.9.3",
     "vitest": "^4.1.11"
   },
