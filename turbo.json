@@ -104,10 +104,9 @@
     },
     "//#check:ideas": {
       "inputs": [
-        "skills/*/SKILL.md",
-        "skills/*/idea.json",
-        "skills/*/starter.html",
-        "skills/*/examples/**",
+        "skills/create-page/SKILL.md",
+        "skills/create-page/starter.html",
+        "skills/create-page/templates/**",
         "captures/**",
         "skin/theme.css",
         "scripts/check-ideas.ts",
@@ -118,8 +117,8 @@
     },
     "//#check:contrast": {
       "inputs": [
-        "skills/*/starter.html",
-        "skills/*/examples/**",
+        "skills/create-page/starter.html",
+        "skills/create-page/templates/**",
         "skin/theme.css",
         "scripts/check-contrast.ts",
         "scripts/ideas.ts"

@@ -41,7 +41,7 @@ When none of them fit, say so and write the page anyway, using the nearest templ
 1. Read the chosen template's `template.md` in full, and its `idea.json` for the page's stated purpose.
 2. Read the two examples in that template's `examples/` whose situation is nearest the user's. Each has a sidecar `.json` with a design note saying what that example chose and why; read the notes, not only the pages. Never take the first example as the target.
 3. Write a three-line brief before any HTML: who reads this and what they will do next, the one thing the page has to settle for them, and the one distinctive move this page makes that the two examples did not.
-4. Copy `starter.html` to `output/<slug>.html`, set its `instrument:idea` meta to the template's name, and paste the template's `main.html` inside `<main>`. The starter carries the skin, the fonts, the icon set, and the page behavior; keep the skin block untouched, and everything under `<main>` is yours.
+4. Copy `starter.html` to `output/<slug>.html`, set its `instrument:idea` meta to the template's name, and paste the template's `main.html` inside `<main>`. The starter carries the tab icon, the skin, the fonts, the icon set, and the page behavior, each inside a `shell:start` … `shell:end` pair; leave those regions as they are, and everything under `<main>` is yours. Your own CSS goes in the gap the starter leaves between them.
 5. Fill the slots with the research. Sections may be reordered, merged, renamed, or rebuilt, but every intent the template names must be answered somewhere on the page.
 6. Check it against the refusals below and the template's own, open it, and look at it once at a laptop width. Fix what you see, then stop.
 

@@ -6,6 +6,8 @@
     <title>Four payroll providers for twenty people in two states</title>
     <!-- Lineage, so a future share button knows which idea made this file. -->
     <meta name="instrument:idea" content="comparison-matrix@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
     <script async src="https://tryinstrument.com/page.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -199,10 +201,16 @@
       /* skin:end */
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
+    <!-- shell:start -->
     <style>
-      /* A link wears the icon of the site it goes to, so a reader can see where
-         it lands before clicking. The square is reserved whether or not an icon
-         arrives, so a line does not reflow when one does. */
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
       [id^="fn-"]:target,
       [id^="fnref-"]:target {
         background: var(--color-brand-50);
@@ -215,29 +223,9 @@
         scroll-margin-top: 4rem;
       }
 
-      @media print {
-        /* A matrix is wider than a portrait page, and the scroll container that
-           saves it on screen is what clips it on paper. Give it the sheet's
-           long edge, let the type shrink, and keep a block off a fold. */
-        @page {
-          size: landscape;
-          margin: 12mm;
-        }
-
-        /* The width that earns a scrollbar on screen is the width that runs
-           off the sheet, so let the table fall back to the page. */
-        .matrix {
-          min-width: 0;
-          font-size: 9px;
-        }
-
-        /* Only blocks small enough to move whole. A whole section is not. */
-        footer,
-        .note > div {
-          break-inside: avoid;
-        }
-      }
-
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
       .site-icon {
         display: inline-block;
         width: 0.8em;
@@ -248,7 +236,19 @@
         background: var(--color-gray-100);
         box-shadow: 0 0 0 1px var(--color-gray-200);
       }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
     </style>
+    <!-- shell:end -->
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
@@ -439,6 +439,7 @@
         </p>
       </footer>
     </main>
+    <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as
          it does now and nothing shifts. Only the origin is ever sent, never the
          path, so a link's query string is not handed over to draw an icon. -->
@@ -458,5 +459,6 @@
         link.prepend(icon);
       }
     </script>
+    <!-- shell:end -->
   </body>
 </html>

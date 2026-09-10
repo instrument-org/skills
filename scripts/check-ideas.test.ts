@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   checkExampleMeta,
+  checkPageIcon,
   checkPageWidget,
   checkSelfContained,
+  checkShell,
 } from "./check-ideas.ts";
 import type { ExampleMeta } from "./ideas.ts";
 
@@ -194,5 +196,84 @@ describe("checkPageWidget", () => {
         "page.html: the page widget tag is modified; it must be exactly <script async src="https://tryinstrument.com/page.js"></script>, byte for byte, or the page publishes to a different address",
       ]
     `);
+  });
+});
+
+describe("checkPageIcon", () => {
+  function iconErrors(html: string): string[] {
+    const errors: string[] = [];
+    checkPageIcon("page.html", html, errors);
+    return errors;
+  }
+
+  it("passes an inline icon", () => {
+    expect(
+      iconErrors(
+        `<head><link rel="icon" href="data:image/svg+xml,%3Csvg/%3E" /></head>`,
+      ),
+    ).toEqual([]);
+  });
+
+  it("reports a page with no icon", () => {
+    expect(iconErrors("<head></head>")).toMatchInlineSnapshot(`
+      [
+        "page.html: no inline icon; every page carries \`<link rel="icon" href="data:image/svg+xml,…">\`, so a tab wears the mark with nothing to fetch",
+      ]
+    `);
+  });
+
+  // The whole point of inlining it: a page opened from a folder, offline, still
+  // wears the mark. An icon fetched from anywhere does not.
+  it("reports an icon that went remote", () => {
+    expect(
+      iconErrors(
+        `<head><link rel="icon" href="https://tryinstrument.com/favicon.svg" /></head>`,
+      ),
+    ).toMatchInlineSnapshot(`
+      [
+        "page.html: no inline icon; every page carries \`<link rel="icon" href="data:image/svg+xml,…">\`, so a tab wears the mark with nothing to fetch",
+      ]
+    `);
+  });
+});
+
+describe("checkShell", () => {
+  const shell = ["<link rel='icon' />", "<style>a{}</style>"];
+
+  function shellErrors(html: string): string[] {
+    const errors: string[] = [];
+    checkShell("page.html", html, shell, errors);
+    return errors;
+  }
+
+  const wrap = (...blocks: string[]) =>
+    blocks
+      .map((b) => `<!-- shell:start -->${b}<!-- shell:end -->`)
+      .join("<p>the page's own</p>");
+
+  it("passes a page carrying the starter's regions", () => {
+    expect(shellErrors(wrap(...shell))).toEqual([]);
+  });
+
+  it("names which region drifted", () => {
+    expect(shellErrors(wrap(shell[0]!, "<style>a{color:red}</style>")))
+      .toMatchInlineSnapshot(`
+      [
+        "page.html: shared region 2 differs from starter.html; run \`pnpm fix:shell\`",
+      ]
+    `);
+  });
+
+  it("reports a page missing a region entirely", () => {
+    expect(shellErrors(wrap(shell[0]!))).toMatchInlineSnapshot(`
+      [
+        "page.html: has 1 shared region(s) where the starter has 2; run \`pnpm fix:shell\`",
+      ]
+    `);
+  });
+
+  it("ignores what a page puts between the regions", () => {
+    const html = `${wrap(shell[0]!, shell[1]!)}<style>.mine{}</style>`;
+    expect(shellErrors(html)).toEqual([]);
   });
 });

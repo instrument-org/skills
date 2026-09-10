@@ -18,7 +18,9 @@ import {
   listIdeas,
   normalizedSkin,
   PAGE_SKILL_DIR,
+  pageShell,
   sha256,
+  shellBlocksOf,
   skinBlockOf,
   STARTER_PATH,
 } from "./ideas.ts";
@@ -86,6 +88,11 @@ const ALLOWED_SOURCES = [
 // the widget deploys, and a script that 404s leaves the page exactly as it is.
 const PAGE_WIDGET_TAG =
   '<script async src="https://tryinstrument.com/page.js"></script>';
+// The Instrument mark. Checked by its opening rather than in full because the
+// shell comparison already holds every page to the starter byte for byte; what
+// this catches is the starter itself losing the icon, which would otherwise
+// propagate to all of them as an absence nothing reports.
+const PAGE_ICON_OPENING = '<link rel="icon" href="data:image/svg+xml,';
 // The one remote address a script on these pages may build. A link wears the
 // icon of the site it points at, and no CSS can read a host out of an href, so
 // the icon's URL is assembled at runtime and is invisible to the scan below.
@@ -186,6 +193,39 @@ export function checkPageWidget(file: string, html: string, errors: string[]) {
   );
 }
 
+export function checkPageIcon(file: string, html: string, errors: string[]) {
+  if (html.includes(PAGE_ICON_OPENING)) return;
+  errors.push(
+    `${file}: no inline icon; every page carries \`${PAGE_ICON_OPENING}…">\`, so a tab wears the mark with nothing to fetch`,
+  );
+}
+
+/**
+ * A page against the starter's shared regions. The starter owns them, so this
+ * is the check that stops a page-wide line from reaching some pages and not
+ * others, which is how the type and the page behavior drifted before.
+ */
+export function checkShell(
+  file: string,
+  html: string,
+  shell: string[],
+  errors: string[],
+) {
+  const blocks = shellBlocksOf(html);
+  if (blocks.length !== shell.length) {
+    errors.push(
+      `${file}: has ${blocks.length} shared region(s) where the starter has ${shell.length}; run \`pnpm fix:shell\``,
+    );
+    return;
+  }
+  const at = blocks.findIndex((block, index) => block !== shell[index]);
+  if (at !== -1) {
+    errors.push(
+      `${file}: shared region ${at + 1} differs from starter.html; run \`pnpm fix:shell\``,
+    );
+  }
+}
+
 export function checkSelfContained(
   file: string,
   html: string,
@@ -274,11 +314,17 @@ function checkPageSkill(): string[] {
   }
   checkSelfContained("starter.html", starter, errors);
   checkPageWidget("starter.html", starter, errors);
+  checkPageIcon("starter.html", starter, errors);
+  if (shellBlocksOf(starter).length === 0) {
+    errors.push(
+      "starter.html has no shell:start … shell:end pair; the shared regions are what every page is held to",
+    );
+  }
 
   return errors;
 }
 
-function checkIdea(idea: Idea): string[] {
+function checkIdea(idea: Idea, shell: string[]): string[] {
   const errors: string[] = [];
   if (!existsSync(join(idea.dir, "template.md"))) {
     errors.push("template.md is missing");
@@ -327,6 +373,8 @@ function checkIdea(idea: Idea): string[] {
     const html = readFileSync(example.htmlPath, "utf-8");
     checkSelfContained(`${label}.html`, html, errors);
     checkPageWidget(`${label}.html`, html, errors);
+    checkPageIcon(`${label}.html`, html, errors);
+    checkShell(`${label}.html`, html, shell, errors);
     checkSize(`${label}.html`, html, errors);
     if (skinBlockOf(html) !== normalizedSkin()) {
       errors.push(
@@ -378,8 +426,10 @@ function main() {
   } else if (!only) {
     console.log("✅ create-page");
   }
+  // Read once: every page is compared against the same starter.
+  const shell = pageShell();
   for (const idea of ideas) {
-    const errors = checkIdea(idea);
+    const errors = checkIdea(idea, shell);
     if (errors.length === 0) {
       console.log(`✅ ${idea.name}`);
       continue;

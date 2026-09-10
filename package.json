@@ -30,7 +30,7 @@
     "check:types": "tsc --noEmit",
     "fix": "node scripts/fix.ts",
     "fix:format": "oxfmt --disable-nested-config .",
-    "fix:skin": "node scripts/fix-skin.ts",
+    "fix:shell": "node scripts/fix-shell.ts",
     "fix:spelling": "node scripts/typos.ts --write-changes",
     "fix:syncpack": "syncpack fix",
     "test": "turbo run test",

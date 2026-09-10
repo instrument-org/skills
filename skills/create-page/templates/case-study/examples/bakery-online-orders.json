@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Magazine feature on a warm brown-50 ground: a centered serif title and standfirst, body text in serif at two columns, and three large serif pull quotes at full width that break the columns, each attributed to a role over a short brand rule. Results are told in words with the caveats inline rather than as a strip, because the shop measured almost nothing and the page refuses to invent the figures; the before/after pair is two short matched columns in one bordered card, the lessons are a ruled two-column serif list, and the apply-this box is brown-tinted so the only brand green on the page is in the kickers, the rules, and the check marks.",
   "illustrative": true,
-  "html_sha256": "5dce4c3d8e52ec67180885762bcb96ff0fb46dbd5256379205c28d36bf5d957e"
+  "html_sha256": "22c3c38938cc4b63403c8c82a72b552e9816d0ea5f24cb5da5248c124dcc210f"
 }

@@ -129,3 +129,42 @@ export function skinBlockOf(html: string): string | null {
   if (start === -1 || end === -1 || end < start) return null;
   return normalize(html.slice(start + "/* skin:start */".length, end));
 }
+
+export const SHELL_START = "<!-- shell:start -->";
+export const SHELL_END = "<!-- shell:end -->";
+/** A note for whoever edits the starter, dropped on the way to a page. */
+const SHELL_NOTE = /^[ \t]*<!-- shell:note[\s\S]*?-->[ \t]*\n/gm;
+
+/**
+ * The shared regions a page carries, in document order. There are several
+ * rather than one because a page may put its own CSS between the framework and
+ * the shared behavior, so the shared parts are not contiguous.
+ */
+export function shellBlocksOf(html: string): string[] {
+  const blocks: string[] = [];
+  let from = 0;
+  for (;;) {
+    const start = html.indexOf(SHELL_START, from);
+    if (start === -1) return blocks;
+    const end = html.indexOf(SHELL_END, start);
+    if (end === -1) return blocks;
+    blocks.push(html.slice(start + SHELL_START.length, end));
+    from = end + SHELL_END.length;
+  }
+}
+
+/**
+ * The starter's shell as a page must carry it, which is to say without the
+ * notes. A note records why a line reads the way it does, which is worth having
+ * where the shell is edited and is noise in the finished pages copied from it.
+ * Comments inside the skin are CSS and survive, being no part of the HTML.
+ */
+export function pageShell(): string[] {
+  const blocks = shellBlocksOf(readFileSync(STARTER_PATH, "utf-8"));
+  if (blocks.length === 0) {
+    throw new Error(
+      `starter.html has no ${SHELL_START} … ${SHELL_END} pair, so there is no shell to copy.`,
+    );
+  }
+  return blocks.map((block) => block.replaceAll(SHELL_NOTE, ""));
+}

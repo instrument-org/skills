@@ -6,10 +6,21 @@
     <title>TITLE</title>
     <!-- Lineage: the template that made this file. Set it to the template name. -->
     <meta name="instrument:idea" content="TEMPLATE@1" />
+    <!-- shell:start -->
+    <!-- shell:note Everything inside a shell:start … shell:end pair is shared by
+         every page and owned by this file. Edit it here, then `pnpm fix:shell`
+         to carry it to the examples and `pnpm capture` to reshoot them. A
+         shell:note is the exception that stays behind: the pages get the lines,
+         not the reasons. Anything a page may vary goes outside the pairs. -->
+    <!-- shell:note The Instrument mark, white on brand-600, the pair the app
+         itself ships. Inline because a page is a file someone opens from a
+         folder, offline or years later, and a URL is a thing that stops
+         resolving. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
     <script async src="https://tryinstrument.com/page.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Weights are asked for the cheap way, and the difference is large. A range
+    <!-- shell:note Weights are asked for the cheap way, and the difference is large. A range
          (`400..700`) is one variable file covering every weight in it; a list
          (`400;500;600;700`) is one static file each. And naming an axis, as
          `opsz,wght@8..144,400` does, buys the whole optical-size range at 144 KB
@@ -204,7 +215,13 @@
       /* skin:end */
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
 
+    <!-- shell:note A page's own CSS goes here, between the framework above and
+         the shared behavior below: outside the pairs, so fix:shell leaves it
+         alone. Several examples carry print rules or a rating scale here. -->
+
+    <!-- shell:start -->
     <style>
       /* Page behavior every template gets. Nothing here is decoration a reader
          would miss offline; each rule degrades to exactly what the page does
@@ -250,6 +267,7 @@
         }
       }
     </style>
+    <!-- shell:end -->
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
@@ -259,6 +277,7 @@
            restyle and rebuild them freely. Delete every placeholder and every
            comment like this one before you are done. -->
     </main>
+    <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as
          it does now and nothing shifts. Only the origin is ever sent, never the
          path, so a link's query string is not handed over to draw an icon. -->
@@ -278,5 +297,6 @@
         link.prepend(icon);
       }
     </script>
+    <!-- shell:end -->
   </body>
 </html>
