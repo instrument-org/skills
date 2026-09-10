@@ -90,6 +90,12 @@ const ALLOWED_SOURCES = [
   { origin: "https://cdn.jsdelivr.net", path: "/npm/leaflet@" },
   { origin: "https://cdn.jsdelivr.net", path: "/npm/sql.js@" },
   { origin: "https://cdn.jsdelivr.net", path: "/npm/tabulator-tables@" },
+  // Observable Plot draws SVG rather than canvas, which is why it is here
+  // alongside Chart.js rather than instead of it: a mark can take a theme token
+  // straight from CSS, and the result prints and scales. Its UMD bundle does not
+  // carry d3, so both files are needed and both are listed.
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/@observablehq/plot@" },
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/d3@" },
 ];
 // The share widget, carried by every page. Byte identity is the whole rule: the
 // widget hashes the page as the browser serialized it and that hash is the
