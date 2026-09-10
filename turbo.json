@@ -115,6 +115,16 @@
         "scripts/check-skill.ts"
       ],
       "outputs": []
+    },
+    "//#check:contrast": {
+      "inputs": [
+        "skills/*/starter.html",
+        "skills/*/examples/**",
+        "skin/theme.css",
+        "scripts/check-contrast.ts",
+        "scripts/ideas.ts"
+      ],
+      "outputs": []
     }
   }
 }
