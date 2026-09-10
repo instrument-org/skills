@@ -110,6 +110,38 @@ Label at least the endpoints and the peak with small `<text>` marks, or the line
 
 Rows sharing one time axis: a relative container per row, absolutely positioned bars with `left`/`width` percentages computed from the shared span, and the span named in the caption. Ticks are a top row of mono labels absolutely positioned at the same percentage offsets. Same honesty rule.
 
+## Theme colors in a canvas
+
+SVG takes theme colors directly, through a `fill-*`/`stroke-*` class or `style="fill: var(--color-…)"`, because both are CSS and CSS resolves the token. A `<canvas>` does not: `ctx.fillStyle` wants a color string, and every token in the skin is a `light-dark(a, b)` pair, so reading one back hands you that function as text.
+
+```js
+getComputedStyle(document.body).getPropertyValue("--color-gray-100");
+// "light-dark(#f5f5f4, #1c1917)" -- not a color canvas can use
+```
+
+The trap is what happens next. Assigning an unparseable value to `fillStyle` throws nothing and logs nothing; the context silently keeps whatever it had, so a drawing comes out entirely in the last color that happened to parse and the only symptom is that it looks wrong. Resolve through a real property instead, where the browser does the work:
+
+```js
+const probe = document.createElement("span");
+probe.style.display = "none";
+document.body.appendChild(probe);
+let tones = new Map();
+const tone = (name) => {
+  if (!tones.has(name)) {
+    probe.style.color = "var(" + name + ")";
+    tones.set(name, getComputedStyle(probe).color); // "rgb(245, 245, 244)"
+  }
+  return tones.get(name);
+};
+// The reader can switch theme with the page open, so the cache goes with it.
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+  tones = new Map();
+  draw();
+});
+```
+
+Same for any other JavaScript that takes a color string rather than setting CSS. Two notes: the saturated middle of each ramp (400 through 600) is one value in both themes and so survives being read raw, which is exactly why a page that only uses those looks fine until the first gray is drawn; and `getComputedStyle(probe).color` returns `rgb(…)`, so build a translucent variant with `replace` into `rgba(…)` rather than appending hex digits.
+
 ## No charting library
 
 A page loads the fonts, the icon set, and the pinned Tailwind build, and nothing else; `check:ideas` fails a page that reaches anywhere further. So there is no Chart.js here and the recipes above are the whole charting story. For axis-heavy needs, generate labeled SVG -- ticks as a text row at computed offsets, gridlines as low-opacity lines -- which the sparkline recipe extends to naturally.
