@@ -13,16 +13,18 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseFrontmatter } from "./check-skill.ts";
 import {
-  type ExampleMeta,
-  type Idea,
   listIdeas,
   normalizedSkin,
   PAGE_SKILL_DIR,
   pageShell,
   sha256,
+  SHELL_END,
+  SHELL_START,
   shellBlocksOf,
   skinBlockOf,
   STARTER_PATH,
+  type ExampleMeta,
+  type Idea,
 } from "./ideas.ts";
 
 // The one description the whole family routes on. It shares the agent's skill
@@ -229,6 +231,38 @@ export function checkPageIcon(file: string, html: string, errors: string[]) {
 }
 
 /**
+ * A page's own inline scripts are modules. The shell keeps a copy of the page
+ * for the share widget as the parser reaches the last script in the body, and
+ * a module script waits for the parser to finish, so it runs after that copy is
+ * taken and a published page carries the file rather than what the script drew.
+ * A plain inline script runs where it stands, and whatever it changes ships.
+ * The shell's own scripts are the starter's, held by checkShell, so they are
+ * left out here.
+ */
+export function checkPageScripts(file: string, html: string, errors: string[]) {
+  const own = html.replaceAll(
+    new RegExp(`${SHELL_START}[\\s\\S]*?${SHELL_END}`, "g"),
+    "",
+  );
+  for (const [tag] of own.matchAll(/<script\b[^>]*>/gi)) {
+    if (/\ssrc\s*=/i.test(tag)) continue;
+    const type = /\stype\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/i.exec(tag);
+    const kind = (type?.[1] ?? type?.[2] ?? type?.[3] ?? "")
+      .trim()
+      .toLowerCase();
+    // No type is JavaScript, and so is any JavaScript MIME type; a data block
+    // or an import map never runs, so it has nothing to defer.
+    const runs =
+      kind === "" ||
+      /javascript|ecmascript|^text\/(jscript|livescript)$/.test(kind);
+    if (!runs || kind === "module") continue;
+    errors.push(
+      `${file}: \`${tag}\` runs while the page is still parsing, before the shell keeps its copy for sharing, so what it draws would publish; a page's own scripts are \`<script type="module">\``,
+    );
+  }
+}
+
+/**
  * A page against the starter's shared regions. The starter owns them, so this
  * is the check that stops a page-wide line from reaching some pages and not
  * others, which is how the type and the page behavior drifted before.
@@ -402,6 +436,7 @@ function checkIdea(idea: Idea, shell: string[]): string[] {
     checkSelfContained(`${label}.html`, html, errors);
     checkPageWidget(`${label}.html`, html, errors);
     checkPageIcon(`${label}.html`, html, errors);
+    checkPageScripts(`${label}.html`, html, errors);
     checkShell(`${label}.html`, html, shell, errors);
     checkSize(`${label}.html`, html, errors);
     if (skinBlockOf(html) !== normalizedSkin()) {

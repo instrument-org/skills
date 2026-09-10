@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   checkExampleMeta,
   checkPageIcon,
+  checkPageScripts,
   checkPageWidget,
   checkSelfContained,
   checkShell,
@@ -291,5 +292,56 @@ describe("checkShell", () => {
   it("ignores what a page puts between the regions", () => {
     const html = `${wrap(shell[0]!, shell[1]!)}<style>.mine{}</style>`;
     expect(shellErrors(html)).toEqual([]);
+  });
+});
+
+describe("checkPageScripts", () => {
+  function errorsFor(html: string): string[] {
+    const errors: string[] = [];
+    checkPageScripts("page.html", html, errors);
+    return errors;
+  }
+
+  it.each([
+    ["a module script", `<script type="module">draw();</script>`],
+    [
+      "a module script, quoted the other way",
+      `<script type='module'>draw();</script>`,
+    ],
+    [
+      "an external script",
+      `<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>`,
+    ],
+    ["a data block", `<script type="application/json">{"a":1}</script>`],
+    ["an import map", `<script type="importmap">{"imports":{}}</script>`],
+    [
+      "a plain script inside a shared region",
+      `<!-- shell:start --><script>keep();</script><!-- shell:end -->`,
+    ],
+    ["a page with no script", `<main><p>Words.</p></main>`],
+  ])("passes %s", (_name, html) => {
+    expect(errorsFor(html)).toEqual([]);
+  });
+
+  it.each([
+    ["a plain script", `<script>draw();</script>`],
+    [
+      "a script typed as JavaScript",
+      `<script type="text/javascript">draw();</script>`,
+    ],
+    [
+      "a plain script after a shared region",
+      `<!-- shell:start --><script>keep();</script><!-- shell:end --><script>draw();</script>`,
+    ],
+  ])("rejects %s", (_name, html) => {
+    expect(errorsFor(html)).toHaveLength(1);
+  });
+
+  it("says what to do instead", () => {
+    expect(errorsFor(`<script>draw();</script>`)).toMatchInlineSnapshot(`
+      [
+        "page.html: \`<script>\` runs while the page is still parsing, before the shell keeps its copy for sharing, so what it draws would publish; a page's own scripts are \`<script type="module">\`",
+      ]
+    `);
   });
 });
