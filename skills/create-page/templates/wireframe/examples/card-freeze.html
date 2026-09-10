@@ -261,121 +261,40 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-[92rem] px-5 py-10 sm:px-8 sm:py-14">
-      <header class="mx-auto max-w-3xl">
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Wireframe &middot; Card controls, mobile
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          Freezing a card, and the payments it does not stop
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          Freezing a card is a two-tap feature with a one-sentence description, and
-          the sentence is wrong: a freeze declines new authorizations but does not
-          reverse a pending charge, does not cancel a subscription, and on most
-          networks does not stop a merchant that already holds a stored credential.
-          People find that out from a declined gym payment three days later. These
-          six frames put it on the screen where the decision is made, and make the
-          three exceptions actionable in the same breath.
-        </p>
+    <main class="flex min-h-dvh flex-col px-4 pb-8 sm:px-6">
+      <style>
+        /* The rings and their tags are the one thing on these frames that is
+           not the design, so the reader can take them off. The rule hangs off
+           the body, which is what puts the enlarged copy of a frame under it
+           too: one button, both views, no second piece of state. */
+        body[data-marks="off"] .ann {
+          display: none;
+        }
+      </style>
+
+      <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">Freezing a card, and the payments it does not stop</h1>
+          <p class="truncate text-[12px] text-muted-foreground">Six frames putting the three exceptions on the screen where the decision is made, rather than in a support conversation three days later.</p>
+        </div>
+
+        <div id="legend" class="flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground">
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#ea580c"></span>tap</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#8b5cf6"></span>changed</span>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-1.5 print:hidden">
+          <button id="marks" title="Hide the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+            <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
+          </button>
+          <div id="views" class="flex items-center gap-0.5 rounded-lg bg-accent p-0.5"></div>
+        </div>
       </header>
 
-      <section id="frames" class="mt-10">
-        <div class="mx-auto flex max-w-3xl items-baseline justify-between gap-4">
-          <h2 class="text-sm font-medium">
-            <span id="count"></span>, in the order they happen
-          </h2>
-          <div id="views" class="flex shrink-0 items-center gap-0.5 rounded-lg bg-accent p-0.5 print:hidden"></div>
-        </div>
-        <div id="rack" class="mt-5 grid gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
-      </section>
+      <div id="rack" class="grid flex-1 content-start gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
 
-      <section id="open" class="mx-auto mt-14 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">
-          The drawing has already decided four things
-        </h2>
-        <div class="mt-5 grid gap-5 sm:grid-cols-2">
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
-              Settled by the frames
-            </p>
-            <ul class="mt-3 space-y-3 text-sm leading-6">
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">The exceptions appear before the button, not after it.</span> Frame 3 is the whole proposal. Moving that list to a confirmation screen makes it an apology.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">Each exception is named, priced and dated.</span> &ldquo;Some recurring payments may continue&rdquo; is what we have now, and it is the reason the screen does not work.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">A freeze is reversible in one tap and a replacement is not.</span> The two paths are drawn side by side in frame 6 rather than nested behind a menu.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">A declined charge says why.</span> Frame 5 attributes the decline to the freeze, which is the difference between a notification and a support ticket.</span>
-              </li>
-            </ul>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
-              Still open
-            </p>
-            <ul class="mt-3 space-y-3 text-sm leading-6">
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">Where the subscription list comes from.</span> The frames assume we can identify recurring merchants on this card. If that is a guess rather than a fact, the copy has to say &ldquo;we think&rdquo; and the list has to be editable.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">Whether frame 5 is a push or an in-app row.</span> Drawn as both. A push about a decline the person caused is arguably noise.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">The pending-charge case.</span> Frame 3 mentions it in one line. If pending charges are common at freeze time it deserves its own row, with amounts.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">Digital wallet behavior.</span> Drawn as stopped. Worth confirming per network before the copy commits to it.</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      <p id="source" class="mt-5 text-[11px] leading-5 text-muted-foreground">A proposal, not a record: no product was measured, and every merchant, amount and date is invented to give a row the right shape. Grey bars are copy nobody has written yet; every label, warning and button is the copy being proposed.</p>
 
-      <section id="notes" class="mx-auto mt-12 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">Reading these</h2>
-        <p class="mt-3 text-sm leading-7 text-muted-foreground">
-          Frames are drawn at 390&times;844, the size of the phone most of this
-          audience carries, at the real type scale. Tap one to open it; arrow keys
-          and swipe move between them.
-        </p>
-        <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-          <span class="flex items-center gap-2">
-            <span class="inline-block size-3.5 rounded-sm outline-2 outline-dashed" style="outline-color:#ea580c"></span>
-            <span class="text-muted-foreground">What is being tapped</span>
-          </span>
-          <span class="flex items-center gap-2">
-            <span class="inline-block size-3.5 rounded-sm outline-2 outline-dashed" style="outline-color:#8b5cf6"></span>
-            <span class="text-muted-foreground">What appeared or changed</span>
-          </span>
-          <span class="flex items-center gap-2">
-            <span class="inline-block h-1.5 w-8 rounded-full bg-gray-300"></span>
-            <span class="text-muted-foreground">Copy that is not the point yet</span>
-          </span>
-        </div>
-        <ul class="mt-5 space-y-2 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">The copy on the freeze sheet, the decline notice and the two exit paths is final-quality.</span> Everything drawn as a grey bar is a paragraph nobody has written yet and nobody needs to read to judge this.</li>
-          <li><span class="font-medium text-foreground">Every merchant, amount and date is invented to fill a row.</span> Three subscriptions at those prices on those dates is a plausible shape, not a figure from anyone&rsquo;s data. The design question is whether three named rows fit and read, and they do.</li>
-          <li><span class="font-medium text-foreground">Nothing here is drawn against a real screen.</span> There is no measured product behind these; they are a proposal, and the chrome is generic on purpose so nobody argues about the tab bar.</li>
-          <li><span class="font-medium text-foreground">Not drawn:</span> onboarding, the card list when someone holds more than one, and the whole replacement-card flow past its first screen. All three are real and none of them change this argument.</li>
-        </ul>
-      </section>
-
-      <!-- The enlarged view. Caption and controls take their space first and the
-           frame is scaled into what is left, so a long caption shrinks the
-           drawing rather than sliding off the bottom of the screen. -->
       <dialog
         id="viewer"
         class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)] open:flex open:flex-col"
@@ -384,7 +303,9 @@
         <div class="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <p id="viewer-caption" class="mx-auto max-h-[30vh] max-w-3xl overflow-y-auto text-center text-sm leading-5 text-white"></p>
           <div id="viewer-controls" class="mx-auto mt-3 grid max-w-3xl grid-cols-3 items-center">
-            <span></span>
+            <button data-marks title="Hide the annotations (A)" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
+              <i class="ph ph-circle-dashed"></i>
+            </button>
             <div class="flex items-center gap-2 justify-self-center">
               <button data-step="-1" title="Previous frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
                 <i class="ph ph-caret-left"></i>
@@ -400,6 +321,7 @@
           </div>
         </div>
       </dialog>
+
 
       <script>
         // Every frame is drawn once at the size the thing really is, then shown
@@ -491,7 +413,7 @@
         // For the reader, not the product. Orange is a tap; violet is what
         // appeared or changed. One tap per frame, and never a green row or a
         // check mark standing in for either, because those look like the design.
-        const cursor = `<i class="ph-fill ph-hand-tap pointer-events-none absolute -right-3 -bottom-3 z-30 text-xl" style="color:#c2410c; filter: drop-shadow(0 0 2px rgba(255,255,255,0.95))"></i>`;
+        const cursor = `<i class="ann ph-fill ph-hand-tap pointer-events-none absolute -right-3 -bottom-3 z-30 text-xl" style="color:#c2410c; filter: drop-shadow(0 0 2px rgba(255,255,255,0.95))"></i>`;
 
         const TONE = {
           click: { line: "#ea580c", tag: "#c2410c" },
@@ -499,8 +421,8 @@
         };
 
         const ann = (label, tone = "click") =>
-          `<span class="pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
-          `<span class="pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
+          `<span class="ann pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
+          `<span class="ann pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
 
         const noted = (inner, label, tone = "click", { pointer = false, cls = "" } = {}) =>
           `<div class="relative ${cls}">${inner}${ann(label, tone)}${pointer ? cursor : ""}</div>`;
@@ -697,8 +619,6 @@
           )
           .join("");
 
-        document.querySelector("#count").textContent = `${states.length} frames`;
-
         // ---- density ---------------------------------------------------------
         // Fit as many tiles per row as the width allows, then derive each frame's
         // scale from the tile. Nothing ever renders above its true size.
@@ -756,6 +676,29 @@
           layout();
         });
 
+        // ---- annotations on and off ------------------------------------------
+        // One attribute on the body, so the grid and the enlarged copy of a frame
+        // answer to the same switch and there is no second state to keep in step.
+        // The frames underneath are the design; this is what was said about them.
+        const marksButton = document.querySelector("#marks");
+        const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent";
+        const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
+
+        const paintMarks = () => {
+          const on = document.body.dataset.marks !== "off";
+          marksButton.className = on ? ON : OFF;
+          marksButton.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
+          document.querySelector("#legend").style.opacity = on ? "1" : "0.3";
+        };
+
+        const flipMarks = () => {
+          document.body.dataset.marks = document.body.dataset.marks === "off" ? "on" : "off";
+          paintMarks();
+        };
+
+        marksButton.addEventListener("click", flipMarks);
+        paintMarks();
+
         // ---- enlarge ---------------------------------------------------------
         // Everything is reachable by tap as well as by key: prev and next
         // buttons, a horizontal swipe, an explicit close. On a phone there is no
@@ -803,6 +746,7 @@
         document.querySelector("#viewer-controls").addEventListener("click", (event) => {
           const button = event.target.closest("button");
           if (!button) return;
+          if (button.dataset.marks !== undefined) return flipMarks();
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
@@ -833,13 +777,17 @@
         });
 
         document.addEventListener("keydown", (event) => {
+          if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+          if (event.key === "a" || event.key === "A") {
+            event.preventDefault();
+            return flipMarks();
+          }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole
           // set can be walked from the keyboard without reaching for a pointer.
           // Nothing sits behind that frame, so left has nothing to do there.
           if (!viewer.open) {
             if (event.key === "ArrowLeft") return;
-            if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
             event.preventDefault();
             return showFrame(0);
           }
@@ -855,14 +803,6 @@
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
       </script>
-
-      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        A proposal, not a record. Nothing here is drawn against an existing
-        screen, no product was measured, and every merchant, amount and date is
-        invented to give a row something to hold. What the frames argue about is
-        the sequence and the copy; what they cannot tell you is whether the
-        subscription list is available to build.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

@@ -261,94 +261,39 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-[92rem] px-5 py-10 sm:px-8 sm:py-14">
-      <header class="mx-auto max-w-3xl">
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Wireframe &middot; One panel, six states
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          The calendar connection, in every state it can actually be in
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          We designed two states and shipped six. The four nobody drew &mdash; expired,
-          half-granted, provider down, and revoked from the other end &mdash; are
-          where every support conversation about this feature comes from, and each
-          of them currently renders the same grey box saying &ldquo;Not
-          connected&rdquo;. This is the same panel six times, at the same size, so
-          the only thing that changes between frames is the thing being argued
-          about: what the panel says when it is not working, and what it offers to
-          do about it.
-        </p>
+    <main class="flex min-h-dvh flex-col px-4 pb-8 sm:px-6">
+      <style>
+        /* The rings and their tags are the one thing on these frames that is
+           not the design, so the reader can take them off. The rule hangs off
+           the body, which is what puts the enlarged copy of a frame under it
+           too: one button, both views, no second piece of state. */
+        body[data-marks="off"] .ann {
+          display: none;
+        }
+      </style>
+
+      <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">The calendar connection, in every state it can actually be in</h1>
+          <p class="truncate text-[12px] text-muted-foreground">One panel, six states, one size. We designed two and shipped six, and the four nobody drew are where the support conversations come from.</p>
+        </div>
+
+        <div id="legend" class="flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground">
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#8b5cf6"></span>what this state says that the others do not</span>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-1.5 print:hidden">
+          <button id="marks" title="Hide the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+            <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
+          </button>
+          <div id="views" class="flex items-center gap-0.5 rounded-lg bg-accent p-0.5"></div>
+        </div>
       </header>
 
-      <section id="frames" class="mt-10">
-        <div class="mx-auto flex max-w-3xl items-baseline justify-between gap-4">
-          <h2 class="text-sm font-medium">
-            <span id="count"></span>, side by side rather than in sequence
-          </h2>
-          <div id="views" class="flex shrink-0 items-center gap-0.5 rounded-lg bg-accent p-0.5 print:hidden"></div>
-        </div>
-        <div id="rack" class="mt-5 grid gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
-      </section>
+      <div id="rack" class="grid flex-1 content-start gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
 
-      <section id="rules" class="mx-auto mt-14 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">
-          Three rules the six frames are an argument for
-        </h2>
-        <div class="mt-5 space-y-4">
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">Name the moment it broke, not the fact that it is broken.</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              &ldquo;Reconnect your calendar&rdquo; asks a person to act with no idea
-              what it cost them. &ldquo;Nothing has synced since Tuesday, and 6
-              meetings were missed&rdquo; is the same request with the reason
-              attached, and it is the difference between an ignored banner and a
-              click. Frames 4 and 6 both carry a date and a count.
-            </p>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">Say which feature stopped, in the words of the feature.</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              A missing scope is not a permissions problem to the person holding
-              it; it is the reason the thing they wanted does not happen. Frame 5
-              never uses the word scope. It says that we can read the calendar and
-              cannot write to it, so holds do not appear, and offers exactly the
-              one permission that fixes exactly that.
-            </p>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[15px] font-semibold">When it is not their fault, do not draw it as their problem.</p>
-            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
-              Frame 6 has no button. An outage at the provider is not something a
-              retry loop fixes, and offering one teaches people to distrust every
-              button in the panel. What it has instead is the last successful
-              sync, so the person knows how stale they are, and a note that we
-              will pick it back up on our own.
-            </p>
-          </div>
-        </div>
-      </section>
+      <p id="source" class="mt-5 text-[11px] leading-5 text-muted-foreground">A proposal, not a record: the panel size is the one Settings uses today and everything inside it is new. The account, the dates and every count are invented, and the counts in frames 4 and 5 have to be numbers we can produce before the copy claiming them ships.</p>
 
-      <section id="notes" class="mx-auto mt-12 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">Reading these</h2>
-        <p class="mt-3 text-sm leading-7 text-muted-foreground">
-          Every frame is 520&times;400, the real size of this panel in Settings,
-          drawn at the real type scale. That is deliberate: when the axis is
-          conditions rather than moments, one frame differing in size would read as
-          a difference in the design rather than a difference in the state. Click
-          any frame to open it.
-        </p>
-        <ul class="mt-5 space-y-2 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">Every word in these frames is final-quality.</span> There are no grey bars, because on a panel this size copy is the whole design and a placeholder would hide the only thing worth reviewing.</li>
-          <li><span class="font-medium text-foreground">The account name, the dates and the counts are invented.</span> &ldquo;6 meetings missed&rdquo; is a shape, not a measurement. What has to be true before we ship this is that we can compute a number like it; if we cannot, the copy has to drop to something we can stand behind.</li>
-          <li><span class="font-medium text-foreground">No provider is named or drawn.</span> The panel says &ldquo;your calendar&rdquo; throughout, and the marks in the frames are neutral, because the same six states have to hold for every provider we support and drawing one of them invites a design that fits only it.</li>
-          <li><span class="font-medium text-foreground">Not drawn:</span> the provider&rsquo;s own consent screen, which is theirs and not ours to design; the multi-account case; and the admin-disabled state, which is a seventh and probably belongs here.</li>
-        </ul>
-      </section>
-
-      <!-- The enlarged view. Caption and controls take their space first and the
-           frame is scaled into what is left, so a long caption shrinks the
-           drawing rather than sliding off the bottom of the screen. -->
       <dialog
         id="viewer"
         class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)] open:flex open:flex-col"
@@ -357,7 +302,9 @@
         <div class="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <p id="viewer-caption" class="mx-auto max-h-[30vh] max-w-3xl overflow-y-auto text-center text-sm leading-5 text-white"></p>
           <div id="viewer-controls" class="mx-auto mt-3 grid max-w-3xl grid-cols-3 items-center">
-            <span></span>
+            <button data-marks title="Hide the annotations (A)" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
+              <i class="ph ph-circle-dashed"></i>
+            </button>
             <div class="flex items-center gap-2 justify-self-center">
               <button data-step="-1" title="Previous frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
                 <i class="ph ph-caret-left"></i>
@@ -373,6 +320,7 @@
           </div>
         </div>
       </dialog>
+
 
       <script>
         const W = 520;
@@ -428,8 +376,8 @@
         const TONE = { new: { line: "#8b5cf6", tag: "#6d28d9" } };
 
         const ann = (label, tone = "new") =>
-          `<span class="pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
-          `<span class="pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
+          `<span class="ann pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
+          `<span class="ann pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
 
         const fresh = (inner, label = "new", cls = "") => `<div class="relative ${cls}">${inner}${ann(label)}</div>`;
 
@@ -572,8 +520,6 @@
           )
           .join("");
 
-        document.querySelector("#count").textContent = `${states.length} frames`;
-
         // ---- density ---------------------------------------------------------
         // Fit as many tiles per row as the width allows, then derive each frame's
         // scale from the tile. Nothing ever renders above its true size.
@@ -631,6 +577,29 @@
           layout();
         });
 
+        // ---- annotations on and off ------------------------------------------
+        // One attribute on the body, so the grid and the enlarged copy of a frame
+        // answer to the same switch and there is no second state to keep in step.
+        // The frames underneath are the design; this is what was said about them.
+        const marksButton = document.querySelector("#marks");
+        const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent";
+        const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
+
+        const paintMarks = () => {
+          const on = document.body.dataset.marks !== "off";
+          marksButton.className = on ? ON : OFF;
+          marksButton.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
+          document.querySelector("#legend").style.opacity = on ? "1" : "0.3";
+        };
+
+        const flipMarks = () => {
+          document.body.dataset.marks = document.body.dataset.marks === "off" ? "on" : "off";
+          paintMarks();
+        };
+
+        marksButton.addEventListener("click", flipMarks);
+        paintMarks();
+
         // ---- enlarge ---------------------------------------------------------
         // Everything is reachable by tap as well as by key: prev and next
         // buttons, a horizontal swipe, an explicit close. On a phone there is no
@@ -678,6 +647,7 @@
         document.querySelector("#viewer-controls").addEventListener("click", (event) => {
           const button = event.target.closest("button");
           if (!button) return;
+          if (button.dataset.marks !== undefined) return flipMarks();
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
@@ -708,13 +678,17 @@
         });
 
         document.addEventListener("keydown", (event) => {
+          if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+          if (event.key === "a" || event.key === "A") {
+            event.preventDefault();
+            return flipMarks();
+          }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole
           // set can be walked from the keyboard without reaching for a pointer.
           // Nothing sits behind that frame, so left has nothing to do there.
           if (!viewer.open) {
             if (event.key === "ArrowLeft") return;
-            if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
             event.preventDefault();
             return showFrame(0);
           }
@@ -730,16 +704,6 @@
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
       </script>
-
-      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        A proposal, not a record. No screen was measured for these; the panel size
-        is the one Settings uses today and everything inside it is new. The
-        account, the dates and every count are invented to give the copy something
-        the right shape to hold, and the copy is the thing under review. Before
-        any of it ships, the counts in frames 4 and 5 have to be numbers we can
-        actually produce &mdash; if they are not, the sentences have to shrink to
-        what we can stand behind rather than the other way round.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

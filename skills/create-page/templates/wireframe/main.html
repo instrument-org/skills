@@ -1,50 +1,51 @@
-      <!-- This template needs the page to be wider than a column of prose, so
-           <main> is opened up: `mx-auto max-w-[92rem] px-5 py-10 sm:px-8`.
-           Prose sections inside it keep their own `max-w-3xl`. -->
+      <!-- This page is the drawing. <main> fills the window and carries no prose
+           column: `flex min-h-dvh flex-col px-4 pb-8 sm:px-6`. The top padding
+           is the title bar's own, so the bar can pin flush to the top edge. -->
 
-      <header class="mx-auto max-w-3xl">
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Wireframe &middot; WHAT PART OF THE PRODUCT
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          TITLE
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          ONE PARAGRAPH: what is being proposed, who it is for, and what these
-          frames are meant to settle. Someone who reads only this and looks only
-          at the first frame should already know what the argument is.
-        </p>
-      </header>
+      <style>
+        /* The rings and their tags are the one thing on these frames that is
+           not the design, so the reader can take them off. The rule hangs off
+           the body, which is what puts the enlarged copy of a frame under it
+           too: one button, both views, no second piece of state. */
+        body[data-marks="off"] .ann {
+          display: none;
+        }
+      </style>
 
-      <section id="frames" class="mt-10">
-        <div class="mx-auto flex max-w-3xl items-baseline justify-between gap-4">
-          <h2 class="text-sm font-medium">
-            <span id="count"></span>, in the order they happen
-          </h2>
+      <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
+        <!-- A name and, at most, one line. Everything a reader needs before
+             looking goes in the line; everything they need after it goes in the
+             captions. There is no thesis paragraph on this page. -->
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">TITLE</h1>
+          <p class="truncate text-[12px] text-muted-foreground">ONE LINE: what is being proposed and what these frames are meant to settle.</p>
+        </div>
+
+        <!-- The legend, which is two words because the marks are two colors. -->
+        <div id="legend" class="flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground">
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#ea580c"></span>click</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#8b5cf6"></span>changed</span>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-1.5 print:hidden">
+          <button id="marks" title="Hide the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+            <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
+          </button>
           <!-- Below two columns both modes draw the same thing, so this hides
                itself rather than sitting there as a dead target. -->
-          <div id="views" class="flex shrink-0 items-center gap-0.5 rounded-lg bg-accent p-0.5 print:hidden"></div>
+          <div id="views" class="flex items-center gap-0.5 rounded-lg bg-accent p-0.5"></div>
         </div>
-        <div id="rack" class="mt-5 grid gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
-      </section>
+      </header>
 
-      <section id="open" class="mx-auto mt-14 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">
-          WHAT THE DRAWING SETTLES, AND WHAT IT DOES NOT
-        </h2>
-        <!-- Two short lists, or a two-column ledger. On the left, decisions the
-             frames have already made and are asking to be accepted. On the
-             right, the ones still genuinely open. A wireframe read without this
-             gets agreed to in full or argued with in full, and neither is what
-             was wanted. -->
-      </section>
+      <div id="rack" class="grid flex-1 content-start gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
 
-      <section id="notes" class="mx-auto mt-12 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">Reading these</h2>
-        <!-- What is real and what is placeholder; what is deliberately not
-             drawn and why; anything measured from the real thing rather than
-             invented. Keep the annotation legend here. -->
-      </section>
+      <!-- One line, small, after the frames: what they are drawn against, and
+           anything invented to fill a row. Not a section, not an essay. Delete
+           it when there is nothing true to put in it. -->
+      <p id="source" class="mt-5 text-[11px] leading-5 text-muted-foreground">
+        Drawn against WHAT, on WHEN. Grey bars are placeholder text; every label,
+        button and warning is the copy being proposed.
+      </p>
 
       <!-- The enlarged view. Caption and controls take their space first and the
            frame is scaled into what is left, so a long caption shrinks the
@@ -57,7 +58,9 @@
         <div class="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <p id="viewer-caption" class="mx-auto max-h-[30vh] max-w-3xl overflow-y-auto text-center text-sm leading-5 text-white"></p>
           <div id="viewer-controls" class="mx-auto mt-3 grid max-w-3xl grid-cols-3 items-center">
-            <span></span>
+            <button data-marks title="Hide the annotations (A)" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
+              <i class="ph ph-circle-dashed"></i>
+            </button>
             <div class="flex items-center gap-2 justify-self-center">
               <button data-step="-1" title="Previous frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
                 <i class="ph ph-caret-left"></i>
@@ -90,7 +93,7 @@
         // down the whole grid even where frames mix aspect ratios. Keep it close
         // to what most frames in this file measure: too tall and a short frame
         // floats in dead padding.
-        const SLOT_H = 220;
+        const SLOT_H = 260;
         // Narrowest a tile may be before the grid drops a column.
         const TILE_MIN = 330;
 
@@ -234,9 +237,13 @@
         // result; when the clicked thing survives into the result, put the click
         // there instead. One click per frame, and never a green row or a check
         // mark standing in for either, because those look like the design.
+        //
+        // Everything a reader may switch off carries `ann`, and nothing else
+        // does. A ring drawn without that class is a ring that stays on when
+        // they asked for the drawing on its own.
 
         /** The pointer, on the bottom-right of a `relative` parent. */
-        const cursor = `<i class="ph-fill ph-cursor pointer-events-none absolute -right-2.5 -bottom-2.5 z-30 text-lg" style="color:#c2410c; filter: drop-shadow(0 0 2px rgba(255,255,255,0.95))"></i>`;
+        const cursor = `<i class="ann ph-fill ph-cursor pointer-events-none absolute -right-2.5 -bottom-2.5 z-30 text-lg" style="color:#c2410c; filter: drop-shadow(0 0 2px rgba(255,255,255,0.95))"></i>`;
 
         const TONE = {
           click: { line: "#ea580c", tag: "#c2410c" },
@@ -245,8 +252,8 @@
 
         /** The ring and its tag. Drop it inside any `relative` element. */
         const ann = (label, tone = "click") =>
-          `<span class="pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
-          `<span class="pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
+          `<span class="ann pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
+          `<span class="ann pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
 
         /** Wraps a block so it can be ringed: a row, a card, a page section. */
         const noted = (inner, label, tone = "click", { pointer = false, cls = "" } = {}) =>
@@ -294,8 +301,6 @@
           </figure>`,
           )
           .join("");
-
-        document.querySelector("#count").textContent = `${states.length} frames`;
 
         // ---- density ---------------------------------------------------------
         // Fit as many tiles per row as the width allows, then derive each frame's
@@ -354,6 +359,29 @@
           layout();
         });
 
+        // ---- annotations on and off ------------------------------------------
+        // One attribute on the body, so the grid and the enlarged copy of a frame
+        // answer to the same switch and there is no second state to keep in step.
+        // The frames underneath are the design; this is what was said about them.
+        const marksButton = document.querySelector("#marks");
+        const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent";
+        const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
+
+        const paintMarks = () => {
+          const on = document.body.dataset.marks !== "off";
+          marksButton.className = on ? ON : OFF;
+          marksButton.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
+          document.querySelector("#legend").style.opacity = on ? "1" : "0.3";
+        };
+
+        const flipMarks = () => {
+          document.body.dataset.marks = document.body.dataset.marks === "off" ? "on" : "off";
+          paintMarks();
+        };
+
+        marksButton.addEventListener("click", flipMarks);
+        paintMarks();
+
         // ---- enlarge ---------------------------------------------------------
         // Everything is reachable by tap as well as by key: prev and next
         // buttons, a horizontal swipe, an explicit close. On a phone there is no
@@ -401,6 +429,7 @@
         document.querySelector("#viewer-controls").addEventListener("click", (event) => {
           const button = event.target.closest("button");
           if (!button) return;
+          if (button.dataset.marks !== undefined) return flipMarks();
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
@@ -431,13 +460,17 @@
         });
 
         document.addEventListener("keydown", (event) => {
+          if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+          if (event.key === "a" || event.key === "A") {
+            event.preventDefault();
+            return flipMarks();
+          }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole
           // set can be walked from the keyboard without reaching for a pointer.
           // Nothing sits behind that frame, so left has nothing to do there.
           if (!viewer.open) {
             if (event.key === "ArrowLeft") return;
-            if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
             event.preventDefault();
             return showFrame(0);
           }
@@ -453,8 +486,3 @@
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
       </script>
-
-      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs text-muted-foreground">
-        <!-- What this rests on: the screens measured, the version drawn against,
-             the date. A wireframe drawn from memory of a product says so. -->
-      </footer>

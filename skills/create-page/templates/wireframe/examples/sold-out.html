@@ -261,121 +261,40 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-[92rem] px-5 py-10 sm:px-8 sm:py-14">
-      <header class="mx-auto max-w-3xl">
-        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
-          Wireframe &middot; Ticket checkout, web
-        </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          When it sells out while you are typing your card in
-        </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
-          Today a checkout that loses its hold shows a red box, empties the form
-          and sends you back to the event page, where the button now says Sold
-          out. It is the single worst thirty seconds we ship, and it happens most
-          to the people who were quickest. These five frames keep the form, name
-          what actually happened, and turn the dead end into the only two things
-          that are still true: a waitlist with a real hold window, and the other
-          dates.
-        </p>
+    <main class="flex min-h-dvh flex-col px-4 pb-8 sm:px-6">
+      <style>
+        /* The rings and their tags are the one thing on these frames that is
+           not the design, so the reader can take them off. The rule hangs off
+           the body, which is what puts the enlarged copy of a frame under it
+           too: one button, both views, no second piece of state. */
+        body[data-marks="off"] .ann {
+          display: none;
+        }
+      </style>
+
+      <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">When it sells out while you are typing your card in</h1>
+          <p class="truncate text-[12px] text-muted-foreground">Five frames that keep the form, name what actually happened, and end at the two things still true instead of a red box.</p>
+        </div>
+
+        <div id="legend" class="flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground">
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#ea580c"></span>click</span>
+          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#8b5cf6"></span>changed</span>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-1.5 print:hidden">
+          <button id="marks" title="Hide the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+            <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
+          </button>
+          <div id="views" class="flex items-center gap-0.5 rounded-lg bg-accent p-0.5"></div>
+        </div>
       </header>
 
-      <section id="frames" class="mt-10">
-        <div class="mx-auto flex max-w-3xl items-baseline justify-between gap-4">
-          <h2 class="text-sm font-medium">
-            <span id="count"></span>, in the order they happen
-          </h2>
-          <div id="views" class="flex shrink-0 items-center gap-0.5 rounded-lg bg-accent p-0.5 print:hidden"></div>
-        </div>
-        <div id="rack" class="mt-5 grid gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
-      </section>
+      <div id="rack" class="grid flex-1 content-start gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
 
-      <section id="open" class="mx-auto mt-14 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">
-          What the frames settle, and what they do not
-        </h2>
-        <div class="mt-5 grid gap-5 sm:grid-cols-2">
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
-              Settled by the frames
-            </p>
-            <ul class="mt-3 space-y-3 text-sm leading-6">
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">The form survives.</span> Frame 3 keeps every field the person filled in, including the card, because retyping it is the part they will tell people about.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">The failure is explained in the place it happened.</span> No redirect back to the event page. The person stays on the screen they were on, which is where their attention already is.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">The waitlist promises a number, not a feeling.</span> Frame 4 commits to a ten-minute hold and a position. &ldquo;We&rsquo;ll let you know&rdquo; is what we have and it is why nobody joins.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-check text-base text-brand-600"></i>
-                <span><span class="font-medium">Other dates are an offer, not a consolation.</span> They sit beside the waitlist at equal weight, because for half of these people a different night is the better answer.</span>
-              </li>
-            </ul>
-          </div>
-          <div class="rounded-xl border border-border bg-card p-5">
-            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
-              Still open
-            </p>
-            <ul class="mt-3 space-y-3 text-sm leading-6">
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">Whether we can hold a card without charging it.</span> Frame 3 assumes the entered details are still in the session and re-submittable. If they are tokenized and one-shot, frame 4 needs a re-entry step and the argument gets weaker.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">Ten minutes, at 11pm.</span> Drawn as ten because that is what fits on the screen. Whether it is the right number at the hour releases actually happen is a question for whoever has the data.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">Position in queue.</span> Shown as &ldquo;4th&rdquo;. If the queue is not actually ordered, do not draw a number; an honest &ldquo;we don&rsquo;t promise an order&rdquo; beats an invented one.</span>
-              </li>
-              <li class="flex gap-2.5">
-                <i class="ph ph-question text-base text-muted-foreground"></i>
-                <span><span class="font-medium">Partial availability.</span> These frames assume four tickets or none. Two of four is the harder case and is not drawn.</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      <p id="source" class="mt-5 text-[11px] leading-5 text-muted-foreground">A proposal, not a record: no existing screen was measured, and the venue, the performer, the dates and the prices are invented. The one-in-twelve return rate in frame 4 is the one figure that has to come from real data before it is printed on a page.</p>
 
-      <section id="notes" class="mx-auto mt-12 max-w-3xl">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">Reading these</h2>
-        <p class="mt-3 text-sm leading-7 text-muted-foreground">
-          Frames 1 to 4 are drawn at 1280&times;800, a laptop browser. Frame 5 is
-          480&times;320, because a release notice is a small surface and drawing it
-          the size of a window would misrepresent it. Click any frame to open it.
-        </p>
-        <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-          <span class="flex items-center gap-2">
-            <span class="inline-block size-3.5 rounded-sm outline-2 outline-dashed" style="outline-color:#ea580c"></span>
-            <span class="text-muted-foreground">What is being clicked</span>
-          </span>
-          <span class="flex items-center gap-2">
-            <span class="inline-block size-3.5 rounded-sm outline-2 outline-dashed" style="outline-color:#8b5cf6"></span>
-            <span class="text-muted-foreground">What appeared or changed</span>
-          </span>
-          <span class="flex items-center gap-2">
-            <span class="inline-block h-1.5 w-8 rounded-full bg-gray-300"></span>
-            <span class="text-muted-foreground">Copy that is not the point yet</span>
-          </span>
-        </div>
-        <ul class="mt-5 space-y-2 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">The banner in frame 3, the waitlist copy in frame 4 and the release notice in frame 5 are final-quality.</span> The event description, the venue blurb and the footer are grey bars, and staying out of them is the point of drawing them that way.</li>
-          <li><span class="font-medium text-foreground">The venue, the artist, the dates and the prices are invented.</span> They exist so the rows have something the right length in them. Nothing here is a claim about any real event or any real price.</li>
-          <li><span class="font-medium text-foreground">Drawn against nothing.</span> No current screen was measured. The browser chrome is generic so the conversation stays on the flow.</li>
-          <li><span class="font-medium text-foreground">Not drawn:</span> the queue page people wait in before checkout opens, the accessible-seating path, and anything about refunds. The first of those probably deserves its own set.</li>
-        </ul>
-      </section>
-
-      <!-- The enlarged view. Caption and controls take their space first and the
-           frame is scaled into what is left, so a long caption shrinks the
-           drawing rather than sliding off the bottom of the screen. -->
       <dialog
         id="viewer"
         class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)] open:flex open:flex-col"
@@ -384,7 +303,9 @@
         <div class="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <p id="viewer-caption" class="mx-auto max-h-[30vh] max-w-3xl overflow-y-auto text-center text-sm leading-5 text-white"></p>
           <div id="viewer-controls" class="mx-auto mt-3 grid max-w-3xl grid-cols-3 items-center">
-            <span></span>
+            <button data-marks title="Hide the annotations (A)" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
+              <i class="ph ph-circle-dashed"></i>
+            </button>
             <div class="flex items-center gap-2 justify-self-center">
               <button data-step="-1" title="Previous frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
                 <i class="ph ph-caret-left"></i>
@@ -400,6 +321,7 @@
           </div>
         </div>
       </dialog>
+
 
       <script>
         const W = 1280;
@@ -463,7 +385,7 @@
           `<div class="flex items-baseline justify-between py-1.5 text-[13px] ${cls}"><span>${label}</span><span class="font-medium">${value}</span></div>`;
 
         // ---- annotations -----------------------------------------------------
-        const cursor = `<i class="ph-fill ph-cursor pointer-events-none absolute -right-2.5 -bottom-2.5 z-30 text-lg" style="color:#c2410c; filter: drop-shadow(0 0 2px rgba(255,255,255,0.95))"></i>`;
+        const cursor = `<i class="ann ph-fill ph-cursor pointer-events-none absolute -right-2.5 -bottom-2.5 z-30 text-lg" style="color:#c2410c; filter: drop-shadow(0 0 2px rgba(255,255,255,0.95))"></i>`;
 
         const TONE = {
           click: { line: "#ea580c", tag: "#c2410c" },
@@ -471,8 +393,8 @@
         };
 
         const ann = (label, tone = "click") =>
-          `<span class="pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
-          `<span class="pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
+          `<span class="ann pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
+          `<span class="ann pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
 
         const noted = (inner, label, tone = "click", { pointer = false, cls = "" } = {}) =>
           `<div class="relative ${cls}">${inner}${ann(label, tone)}${pointer ? cursor : ""}</div>`;
@@ -675,8 +597,6 @@
           )
           .join("");
 
-        document.querySelector("#count").textContent = `${states.length} frames`;
-
         // ---- density ---------------------------------------------------------
         // Fit as many tiles per row as the width allows, then derive each frame's
         // scale from the tile. Nothing ever renders above its true size.
@@ -734,6 +654,29 @@
           layout();
         });
 
+        // ---- annotations on and off ------------------------------------------
+        // One attribute on the body, so the grid and the enlarged copy of a frame
+        // answer to the same switch and there is no second state to keep in step.
+        // The frames underneath are the design; this is what was said about them.
+        const marksButton = document.querySelector("#marks");
+        const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent";
+        const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
+
+        const paintMarks = () => {
+          const on = document.body.dataset.marks !== "off";
+          marksButton.className = on ? ON : OFF;
+          marksButton.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
+          document.querySelector("#legend").style.opacity = on ? "1" : "0.3";
+        };
+
+        const flipMarks = () => {
+          document.body.dataset.marks = document.body.dataset.marks === "off" ? "on" : "off";
+          paintMarks();
+        };
+
+        marksButton.addEventListener("click", flipMarks);
+        paintMarks();
+
         // ---- enlarge ---------------------------------------------------------
         // Everything is reachable by tap as well as by key: prev and next
         // buttons, a horizontal swipe, an explicit close. On a phone there is no
@@ -781,6 +724,7 @@
         document.querySelector("#viewer-controls").addEventListener("click", (event) => {
           const button = event.target.closest("button");
           if (!button) return;
+          if (button.dataset.marks !== undefined) return flipMarks();
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
@@ -811,13 +755,17 @@
         });
 
         document.addEventListener("keydown", (event) => {
+          if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+          if (event.key === "a" || event.key === "A") {
+            event.preventDefault();
+            return flipMarks();
+          }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole
           // set can be walked from the keyboard without reaching for a pointer.
           // Nothing sits behind that frame, so left has nothing to do there.
           if (!viewer.open) {
             if (event.key === "ArrowLeft") return;
-            if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
             event.preventDefault();
             return showFrame(0);
           }
@@ -833,15 +781,6 @@
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
       </script>
-
-      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        A proposal, not a record. No existing screen was measured for these, and
-        the venue, the performer, the dates, the prices and the one-in-twelve
-        return rate are all invented to give the frames something the right shape
-        to hold. What the drawing argues is the sequence and the copy; the return
-        rate in frame 4 is exactly the kind of number that has to come from
-        someone&rsquo;s data before it is printed on a page.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

@@ -65,6 +65,16 @@ noted(someRow, "3 of 5", "new"); // any label you like
 
 The rings are `outline`, not `border`, so they sit outside the element and never change its size. `-inset-1.5` gives them a little air; on a dense row use `-inset-1`.
 
+Every one of them carries the class `ann`, and that is what the marks button switches off:
+
+```css
+body[data-marks="off"] .ann {
+  display: none;
+}
+```
+
+One rule on the body covers the grid and the enlarged copy of a frame both, because the enlarged copy is a clone that lands inside the same body. So a mark you draw by hand rather than through the kit needs that class or it survives being switched off, which is worse than not offering the switch. A callout the reader should never lose is not an annotation and belongs inside the frame as real interface.
+
 ## Bars
 
 ```js
