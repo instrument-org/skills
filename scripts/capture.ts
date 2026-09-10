@@ -46,7 +46,7 @@ function findChrome(): string {
 }
 
 /**
- * Shoot the page as a reader sees it, minus the share widget's own affordance.
+ * Shoot the page in its light theme, minus the share widget's own affordance.
  *
  * The widget draws nothing when it is told a viewer is already wrapping the
  * page, and a capture is a tile on the website rather than a page someone is
@@ -55,18 +55,26 @@ function findChrome(): string {
  * bytes the widget hashes, and only the throwaway differs. These pages are
  * self-contained by rule, so moving one to a temporary directory cannot break a
  * relative path -- there are none to break.
+ *
+ * The scheme rides in the same way. A page follows the reader's setting, and a
+ * capture has no reader: it is a tile on a website that is light, shot on
+ * whatever machine happens to run it. Pinning the scheme is what makes the PNG
+ * the same on a dark laptop and on a CI runner, rather than trusting a default
+ * that neither of them promises.
  */
 function capture(chrome: string, htmlPath: string, pngPath: string) {
   mkdirSync(dirname(pngPath), { recursive: true });
   const scratch = mkdtempSync(join(tmpdir(), "capture-"));
   // As early in the head as possible: the widget's tag is async and may run as
-  // soon as it lands, so a flag set after it is a flag set too late.
+  // soon as it lands, so a flag set after it is a flag set too late. The style
+  // is unlayered, so it wins over the skin's `color-scheme` however late the
+  // skin's own block is parsed.
   const shot = join(scratch, "page.html");
   writeFileSync(
     shot,
     readFileSync(htmlPath, "utf-8").replace(
       "<head>",
-      "<head>\n    <script>window.__instrumentViewer = true;</script>",
+      "<head>\n    <script>window.__instrumentViewer = true;</script>\n    <style>:root { color-scheme: only light }</style>",
     ),
   );
   const result = spawnSync(
