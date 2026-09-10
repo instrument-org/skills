@@ -2,7 +2,7 @@
   "title": "Itinerary",
   "tagline": "The day-by-day trip plan travel sites publish, made for your trip.",
   "when": "You have a destination and a span of days and want them planned into mornings, afternoons, and evenings you can follow from a phone.",
-  "tags": ["do"],
+  "tags": ["steps"],
   "order": 120,
   "needs": [],
   "cover": "lisbon-toddler",

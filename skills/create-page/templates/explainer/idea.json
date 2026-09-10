@@ -2,7 +2,7 @@
   "title": "Explainer",
   "tagline": "The how-it-works article news sites publish, written for your question.",
   "when": "You need a mental model of a concept, a system, or a topic before you decide or dig deeper.",
-  "tags": ["learn"],
+  "tags": ["explain"],
   "order": 90,
   "needs": [],
   "cover": "heat-pumps",

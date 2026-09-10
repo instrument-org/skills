@@ -2,7 +2,7 @@
   "title": "Whiteboard",
   "tagline": "A place, not a list. Move around it.",
   "when": "The material has two dimensions of its own -- a wall of sorted notes, a plan of somewhere real, twenty things placed against two measured axes -- and flattening it into an order throws the interesting part away.",
-  "tags": ["learn"],
+  "tags": ["layout"],
   "order": 35,
   "needs": [],
   "cover": "high-street",

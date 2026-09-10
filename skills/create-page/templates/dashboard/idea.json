@@ -2,7 +2,7 @@
   "title": "Dashboard",
   "tagline": "How the period went, and what the headline hides.",
   "when": "A period has ended and someone has to know what happened in it: four or five figures each with the thing to compare it against, two or three pictures, and the finding underneath the headline.",
-  "tags": ["learn"],
+  "tags": ["data"],
   "order": 26,
   "needs": [],
   "cover": "bookshop",

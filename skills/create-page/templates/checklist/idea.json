@@ -2,7 +2,7 @@
   "title": "Checklist",
   "tagline": "The printable checklist the web is full of, made for you.",
   "when": "You are about to run a process where forgetting one step is expensive and want every item grouped, tickable, and printed on a sheet.",
-  "tags": ["do"],
+  "tags": ["steps"],
   "order": 110,
   "needs": [],
   "cover": "moving-out",

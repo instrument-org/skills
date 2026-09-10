@@ -2,7 +2,7 @@
   "title": "Tool",
   "tagline": "One small thing that computes.",
   "when": "The answer has a parameter in it: it turns on numbers only the reader has, or on data they should not hand to anyone, and the useful thing is either the feel of how the answer moves or the fact that nothing left their machine.",
-  "tags": ["do"],
+  "tags": ["data"],
   "order": 45,
   "needs": [],
   "cover": "desk-cover",

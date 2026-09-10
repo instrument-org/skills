@@ -2,7 +2,7 @@
   "title": "How-to guide",
   "tagline": "The step-by-step tutorial you find on the web, made for you.",
   "when": "You need to get something done in order, with the tools listed, the traps marked, and a way to know when you are finished.",
-  "tags": ["do"],
+  "tags": ["steps"],
   "order": 100,
   "needs": [],
   "cover": "iot-vlan",
