@@ -119,7 +119,7 @@ getComputedStyle(document.body).getPropertyValue("--color-gray-100");
 // "light-dark(#f5f5f4, #1c1917)" -- not a color canvas can use
 ```
 
-The trap is what happens next. Assigning an unparseable value to `fillStyle` throws nothing and logs nothing; the context silently keeps whatever it had, so a drawing comes out entirely in the last color that happened to parse and the only symptom is that it looks wrong. Resolve through a real property instead, where the browser does the work:
+The trap is what happens next. Assigning an unparsable value to `fillStyle` throws nothing and logs nothing; the context silently keeps whatever it had, so a drawing comes out entirely in the last color that happened to parse and the only symptom is that it looks wrong. Resolve through a real property instead, where the browser does the work:
 
 ```js
 const probe = document.createElement("span");
