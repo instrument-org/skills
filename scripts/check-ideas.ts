@@ -80,6 +80,16 @@ const ALLOWED_SOURCES = [
   { origin: "https://cdn.jsdelivr.net", path: "/npm/@tailwindcss/browser@" },
   { origin: "https://cdn.jsdelivr.net", path: "/npm/@phosphor-icons/web@" },
   { origin: "https://tryinstrument.com", path: "/page.js" },
+  // What a page may reach for when the material is a dataset rather than an
+  // argument. Each is pinned to an exact version in the URL, each is small
+  // against what the page already spends on type and icons, and none of them
+  // may be the only copy of anything: the offline test in SKILL.md is what
+  // keeps this list from becoming a licence to build pages that need the
+  // network. The path prefix ends in `@` so an unpinned URL cannot match.
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/chart.js@" },
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/leaflet@" },
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/sql.js@" },
+  { origin: "https://cdn.jsdelivr.net", path: "/npm/tabulator-tables@" },
 ];
 // The share widget, carried by every page. Byte identity is the whole rule: the
 // widget hashes the page as the browser serialized it and that hash is the
@@ -93,13 +103,25 @@ const PAGE_WIDGET_TAG =
 // this catches is the starter itself losing the icon, which would otherwise
 // propagate to all of them as an absence nothing reports.
 const PAGE_ICON_OPENING = '<link rel="icon" href="data:image/svg+xml,';
-// The one remote address a script on these pages may build. A link wears the
-// icon of the site it points at, and no CSS can read a host out of an href, so
-// the icon's URL is assembled at runtime and is invisible to the scan below.
-// It is allowed because it is decoration: offline the icons never arrive and
-// every page reads exactly as it does with them. Anything else a script
-// reaches for is a load this file cannot see and must not have.
-const SCRIPT_BUILT_ORIGIN = "https://t0.gstatic.com";
+// The addresses a script on these pages may build, which the scan below cannot
+// see because they are assembled at runtime. Every one is decoration or a
+// pinned asset of something already in ALLOWED_SOURCES, and every one is
+// absent-safe: with the network off the page reads exactly as it does with it.
+// Anything else a script reaches for is a load this file cannot see and must
+// not have.
+const SCRIPT_BUILT_PREFIXES = [
+  // A link wears the icon of the site it points at, and no CSS can read a host
+  // out of an href, so the URL is built from the link.
+  "https://t0.gstatic.com",
+  // sql.js is handed its own wasm path through `locateFile`, so the engine's
+  // second file is named in script rather than in a tag.
+  "https://cdn.jsdelivr.net/npm/sql.js@",
+  // Map tiles are a URL template a map library fills in per tile. A page whose
+  // tiles never arrive still carries its places as a list, which is the rule
+  // the map template is built around.
+  "https://tile.openstreetmap.org/",
+  "https://www.openstreetmap.org/copyright",
+];
 // Tags that fetch what they name, and the attributes they fetch it through.
 const LOADER_TAGS = ["link", "script"];
 const MEDIA_TAGS = ["img", "video", "audio", "iframe", "source", "embed"];
@@ -266,9 +288,9 @@ export function checkSelfContained(
   // A script builds its addresses at runtime, where nothing above can see them.
   for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
     for (const match of (script[1] ?? "").matchAll(/https?:\/\/[^\s"'`]+/g)) {
-      if (!match[0].startsWith(SCRIPT_BUILT_ORIGIN)) {
+      if (!SCRIPT_BUILT_PREFIXES.some((p) => match[0].startsWith(p))) {
         errors.push(
-          `${file}: a script reaches ${match[0].slice(0, 80)}; only ${SCRIPT_BUILT_ORIGIN} may be built at runtime`,
+          `${file}: a script reaches ${match[0].slice(0, 80)}; only ${SCRIPT_BUILT_PREFIXES.join(", ")} may be built at runtime`,
         );
       }
     }
