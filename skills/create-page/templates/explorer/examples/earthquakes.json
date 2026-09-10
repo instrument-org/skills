@@ -4,5 +4,5 @@
   "prompt": "Show me every earthquake in the last month and let me dig around in it.",
   "model": "claude-opus-5",
   "note": "Position is the whole finding here, so the page opens on a hand-drawn orthographic globe with no coastlines: the Ring of Fire assembles itself from 2,223 dots and says more than any basemap would. The flat Leaflet map comes second, for zooming rather than for seeing. Depth is the color on both, magnitude is the size, and the third finding is about the collection rather than the earthquakes: a third of the world's events are in Alaska because Alaska is instrumented, and the magnitude-2 band is smaller than the magnitude-4 band because the network cannot hear that far. Clicking a grid row flies the map to it, which is the moment the four views read as one page.",
-  "html_sha256": "0019bfcfa7c3ec26b7343c3cf8cceebbe555170358ccd44276a198d143e6069e"
+  "html_sha256": "01df61581d4d19571cc434d6b9ad20975ba350e66dbf48b23acfd356d4c83bf7"
 }

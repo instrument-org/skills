@@ -44,6 +44,19 @@ Render the plain table first, from the same array, and let the library replace i
 
 Column definitions carry their own filter. `headerFilter: "number"` with `headerFilterFunc: ">="` gives a threshold box, `"input"` a contains-match, and `"list"` with `headerFilterParams: { valuesLookup: true, clearable: true }` builds its dropdown from the data so it cannot drift from it.
 
+Spreadsheet-style selection is four options rather than any code, and it is what makes a grid feel like a place you can take something out of: drag across cells, shift-click to extend, and copy with the usual keys.
+
+```js
+selectableRange: true,
+selectableRangeColumns: true,   // click a heading to take the column
+selectableRangeRows: true,      // and the row numbers for a whole row
+clipboard: "copy",              // copy only; these pages are never edited
+clipboardCopyRowRange: "range",
+clipboardCopyConfig: { columnHeaders: false },
+```
+
+Leave `selectableRangeClearCells` off. It lets Delete blank a cell, which on a page whose whole point is that it carries the data is a way to lose rows with no way back.
+
 Always show a live count beside the grid, because a filtered grid with no count quietly lies about how much there is. Take it from the rows `dataFiltered` hands you rather than asking the table: `tableBuilt` can fire before your handler is attached, and `getDataCount` on a table that is not built yet returns zero, which reads as an empty grid.
 
 ## Tabulator wears its own look, so restate the surfaces
@@ -112,6 +125,20 @@ The stylesheet is structural and cosmetic at once, and its colors are hardcoded 
     letter-spacing: 0.04em;
     text-transform: uppercase;
     font-size: 11px;
+  }
+  /* Range selection draws in the library's own blue. */
+  .tabulator-range-overlay .tabulator-range {
+    border: 1px solid var(--color-brand-500);
+  }
+  .tabulator-range-overlay .tabulator-range.tabulator-range-active:after {
+    background-color: var(--color-brand-500);
+  }
+  .tabulator-range-highlight {
+    background-color: var(--color-accent) !important;
+    color: var(--color-foreground) !important;
+  }
+  .tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected) {
+    background-color: var(--color-brand-50) !important;
   }
   .tabulator .tabulator-col-resize-guide {
     background-color: var(--color-brand-500);
