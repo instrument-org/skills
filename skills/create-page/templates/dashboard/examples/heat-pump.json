@@ -1,0 +1,8 @@
+{
+  "title": "The bill fell 30%, and a third of that was the weather",
+  "variant": "The headline and the same number with its confounder removed",
+  "prompt": "We've had the heat pump a year. Was it worth it?",
+  "model": "claude-opus-5",
+  "note": "The template's confounder rule, made the whole page: the headline saving and the weather-corrected saving sit in adjacent tiles at the same size, and the title says both. The scatter is the argument -- daily energy against outside temperature, with a regression per year -- because the slope is the measurement and the total is the anecdote, and a slope is the only part of one household's year that could be compared with anyone else's. It is also the example that admits its own scatter is generated rather than measured, in the caption and again in the footer, since the alternative is a page that looks like it has 480 readings behind it.",
+  "html_sha256": "33bb4f3c1dc49fa101cbbe65405d99e1f6756c497e60521ca3f98d0043768f58"
+}

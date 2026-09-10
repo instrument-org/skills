@@ -1,0 +1,16 @@
+{
+  "title": "Wireframe",
+  "tagline": "Draw the thing, then point at it.",
+  "when": "An interface is being proposed, argued about, or misunderstood, and the fastest way to settle it is a sequence of frames with a caption under each saying what it proves.",
+  "tags": ["persuade"],
+  "order": 15,
+  "needs": [],
+  "cover": "card-freeze",
+  "sections": [
+    "What this proposes",
+    "The sequence",
+    "What the drawing settles, and what it does not",
+    "Reading these"
+  ],
+  "sketch": ["k", "T", "p", "c3", "c3", "2"]
+}

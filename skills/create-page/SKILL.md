@@ -1,11 +1,11 @@
 ---
 name: create-page
-description: "Makes one self-contained HTML page in the house style, in whichever form the material calls for: FAQ, timeline, how-to, checklist, itinerary, comparison, data explorer, scorecard, brief, memo, one-pager, case study, explainer, pro-con, recommendation. Use when the answer wants to be a document the reader can keep, print, or send on."
+description: "Makes one self-contained HTML page in the house style, in whichever form the material calls for: FAQ, timeline, how-to, checklist, itinerary, comparison, dashboard, data explorer, scorecard, brief, memo, case study, explainer, recommendation, wireframe, whiteboard, or a small working tool. Use when the answer wants to be a page the reader can keep, print, send on, or use."
 ---
 
 # Create page
 
-One self-contained HTML file that a reader can open, keep, print, and send on. Seventeen templates cover the document kinds people actually ask for; each names a set of slots and the intent behind each one, and all of them share the look, the method, and the refusals below.
+One self-contained HTML file that a reader can open, keep, print, send on, and in a few cases use. Twenty-one templates cover the kinds of page people actually ask for; each names a set of slots and the intent behind each one, and all of them share the look, the method, and the refusals below.
 
 The page is the answer. When a reply would be long, structured, or worth keeping, a page beats a wall of chat: it can be scanned, linked into, printed, and handed to someone who was not in the conversation.
 
@@ -20,6 +20,7 @@ Read the row that fits, then read that template's `template.md` in full before w
 | [Checklist](templates/checklist/template.md)                                  | A process is about to run where forgetting one step is expensive, and every item wants to be grouped, tickable, and printable.                           |
 | [Comparison matrix](templates/comparison-matrix/template.md)                  | Several options need measuring on the same attributes side by side, before deciding what matters.                                                        |
 | [Recommendation with criteria](templates/criteria-recommendation/template.md) | The winner is wanted along with the arithmetic: named criteria, stated weights, scored options, and what would flip the answer.                          |
+| [Dashboard](templates/dashboard/template.md)                                  | A period has ended and someone has to know how it went: the figures with what to compare them against, and the thing the headline hides.                 |
 | [Data explorer](templates/explorer/template.md)                               | There are more rows than anyone will read and the rows are the point: the whole set, what it turns out to say, and a grid to sort, filter and take away. |
 | [Explainer](templates/explainer/template.md)                                  | A mental model of a concept, a system, or a topic is needed before deciding or digging deeper.                                                           |
 | [FAQ](templates/faq/template.md)                                              | The same questions keep arriving about one topic, and each wants answering once, in a block that can be found, skimmed, or sent.                         |
@@ -32,8 +33,13 @@ Read the row that fits, then read that template's `template.md` in full before w
 | [Should I…?](templates/should-i/template.md)                                  | A should-I, is-it-worth-it, or do-I-need question wants a plain answer that shows what it turns on.                                                      |
 | [Timeline](templates/timeline/template.md)                                    | Change over time is the explanation: the order of events says why things are as they are, or what happens next.                                          |
 | [TLDR brief](templates/tldr-brief/template.md)                                | The research is done, and the reader wants only the takeaways, on one screen.                                                                            |
+| [Tool](templates/tool/template.md)                                            | The answer is a function rather than a fact: a calculator, converter, checker or planner that opens with a real example already in it.                   |
+| [Whiteboard](templates/whiteboard/template.md)                                | The material has two dimensions of its own and an order throws them away: a wall of sorted notes, a plan of somewhere real, evidence against time.       |
+| [Wireframe](templates/wireframe/template.md)                                  | An interface is being proposed or argued about, and the fastest way to settle it is a sequence of frames that each prove something.                      |
 
-When two rows both fit, the tie-breaker is what the reader does next. A page that ends in a decision is a brief, a should-I, or a recommendation; a page that ends in an action is a how-to, a checklist, or an itinerary; a page that ends in understanding is an explainer, a timeline, or an FAQ.
+When two rows both fit, the tie-breaker is what the reader does next. A page that ends in a decision is a brief, a should-I, or a recommendation; a page that ends in an action is a how-to, a checklist, or an itinerary; a page that ends in understanding is an explainer, a timeline, or an FAQ; and a page the reader keeps open and comes back to is a tool, a whiteboard, or an explorer.
+
+Three of these are a family of their own, in that the page does something rather than only saying something: a wireframe draws a proposed interface, a whiteboard is a surface the reader moves around, and a tool computes. They obey every rule below, including the one about the network, and each says in its own `template.md` what that costs it.
 
 When none of them fit, say so and write the page anyway, using the nearest template's slots as a starting point and this file's method as the rule. A page whose shape had to be invented is a better answer than the wrong template filled in obediently.
 

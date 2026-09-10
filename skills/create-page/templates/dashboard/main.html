@@ -1,0 +1,112 @@
+      <header>
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Dashboard &middot; WHAT PERIOD, READ WHEN
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          TITLE: the finding, not the subject
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          ONE PARAGRAPH: how it went, in the reader's terms, and the one thing
+          underneath the headline that the headline hides. A dashboard whose
+          opening paragraph could be written before the numbers arrived has not
+          read its own numbers.
+        </p>
+      </header>
+
+      <section id="numbers" class="mt-9">
+        <!-- Four or five figures, each with the thing it should be compared
+             against. A number with no baseline is decoration: say what it was
+             last period, or what it was meant to be, or what it is a share of.
+             Tint the one that is a problem; leave the rest plain. -->
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-xl border border-border bg-card p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Label</p>
+            <p class="mt-1 text-[28px] font-semibold tracking-[-0.02em]">0</p>
+            <p class="mt-0.5 flex items-center gap-1.5 text-[12px]">
+              <i class="ph ph-trend-up text-sm text-brand-600"></i><span class="font-medium text-brand-700">+0%</span><span class="text-muted-foreground">against what</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="shape" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">WHAT MOVED, AND WHAT IT LOOKS LIKE</h2>
+        <!-- Two or three views, each answering a question the tiles raised. Every
+             chart carries the same numbers as a table, always rendered, right
+             beneath it: with the network off the reader loses a picture and no
+             facts. -->
+        <div id="chart" class="mt-5 rounded-xl border border-border bg-card p-4">
+          <p class="text-sm text-muted-foreground">What this chart shows. The same figures are in the table below.</p>
+        </div>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-right text-[13px]"><thead id="t-head"></thead><tbody id="t-body"></tbody></table>
+        </div>
+      </section>
+
+      <section id="wrong" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">WHAT IS ACTUALLY GOING WRONG</h2>
+        <!-- Two to four findings, each a sentence the reader could check against
+             the charts above, each naming the thing to do or the question to ask.
+             At least one should be about the measurement rather than the subject:
+             what the headline hides, what the average conceals, what a confounder
+             took. That is the difference between a readout and a report. -->
+      </section>
+
+      <section id="method" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">HOW THIS WAS COUNTED</h2>
+        <!-- The basis: what is netted off, what a category means, which period the
+             comparison is against and why, what is excluded. End with the date it
+             was read and the fact that it will not update. -->
+      </section>
+
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
+      <script>
+        // The figures, inline and once. Every chart and every table on the page is
+        // drawn from these arrays, so a picture and the numbers under it cannot
+        // disagree.
+        const MONTHS = ["Jan", "Feb", "Mar"];
+        const VALUES = [10, 14, 12];
+
+        // ---- charts ----------------------------------------------------------
+        // Plot draws SVG, so a mark can take a theme token straight from CSS and
+        // both palettes come out right with no probe and no redraw on a theme
+        // change. What it will not do is inherit: its own default is a white
+        // background and black type, so the wrapper below hands it `transparent`
+        // and `currentColor` and lets the page decide.
+        const PLOT = {
+          style: { background: "transparent", color: "currentColor", fontFamily: "inherit", fontSize: "12px" },
+          marginLeft: 52,
+          marginRight: 16,
+        };
+        const GREEN = "var(--color-brand-500)";
+        const GREY = "var(--color-gray-400)";
+
+        /** Draws into `id`, or leaves whatever is already there if Plot never
+         *  arrived. Every caller has a table under it either way. */
+        const chart = (id, options) => {
+          if (typeof Plot === "undefined") return;
+          const host = document.querySelector("#" + id);
+          host.replaceChildren(Plot.plot({ ...PLOT, ...options }));
+        };
+
+        chart("chart", {
+          height: 280,
+          x: { domain: MONTHS, label: null },
+          y: { label: "value", grid: true },
+          marks: [
+            Plot.barY(MONTHS.map((month, i) => ({ month, value: VALUES[i] })), { x: "month", y: "value", fill: GREEN }),
+            Plot.ruleY([0], { stroke: "var(--color-border)" }),
+          ],
+        });
+
+        document.querySelector("#t-head").innerHTML =
+          `<tr class="border-b border-border text-[10px] tracking-wide text-muted-foreground uppercase"><th class="py-1.5 text-left">Month</th>${MONTHS.map((m) => `<th class="py-1.5">${m}</th>`).join("")}</tr>`;
+        document.querySelector("#t-body").innerHTML =
+          `<tr class="border-b border-border/60"><td class="py-1.5 text-left font-medium">Value</td>${VALUES.map((v) => `<td class="py-1.5 font-mono">${v}</td>`).join("")}</tr>`;
+      </script>
+
+      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+        <!-- Where the figures came from and when they were read. Say which ones
+             are illustrative before anyone quotes one. -->
+      </footer>

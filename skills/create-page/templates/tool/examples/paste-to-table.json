@@ -1,0 +1,8 @@
+{
+  "title": "Paste something that used to be a table",
+  "variant": "Text in, four formats out, and it says which guess it made",
+  "prompt": "I keep copying tables out of PDFs and getting a mess of spaces. Give me something that turns that back into a table.",
+  "model": "claude-opus-5",
+  "note": "The text-reshaping shape, and the example that opens on the hard case on purpose: its heading contains a space, so anything splitting on whitespace turns four columns into five and ruins the header row. The rule it uses instead -- pick the separator whose column count varies least -- is one a reader can check in a sentence, which is why it is printed above the result. Rows that do not fit are marked rather than padded, because a padded row hides the one you needed to see, and nothing is type-coerced, since guessing types is where importers eat leading zeros. The privacy line is load-bearing here rather than decorative: the text people most need to reshape is the text they least want to paste into a website.",
+  "html_sha256": "37a1a560bb4aaa1e48a0df61a079d34aa5793bf37afe78050e38a43113b147ec"
+}

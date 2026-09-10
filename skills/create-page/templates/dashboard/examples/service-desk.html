@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The average is twenty-one minutes and one ticket in ten waits nine hours</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="dashboard@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
+
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Dashboard &middot; Service desk, quarter to 31 December
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          The average is twenty-one minutes and one ticket in ten waits nine hours
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          Every number we report on this team is a mean, and the mean is the one
+          statistic this distribution defeats: most tickets are answered almost
+          immediately and a long thin tail waits most of a working day. Nobody
+          experiences twenty-one minutes. Half of the tail is one queue and most of
+          the rest arrived between six in the evening and eight in the morning,
+          which are both fixable and neither of which the average has ever shown.
+        </p>
+      </header>
+
+      <section id="numbers" class="mt-9">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-xl border border-border bg-card p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Tickets</p>
+            <p class="mt-1 text-[28px] font-semibold tracking-[-0.02em]">4,318</p>
+            <p class="mt-0.5 flex items-center gap-1.5 text-[12px]"><i class="ph ph-trend-up text-sm text-muted-foreground"></i><span class="font-medium">+6%</span><span class="text-muted-foreground">on last quarter</span></p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Median first reply</p>
+            <p class="mt-1 text-[28px] font-semibold tracking-[-0.02em]">6 min</p>
+            <p class="mt-0.5 text-[12px] text-muted-foreground">the typical experience</p>
+          </div>
+          <div class="rounded-xl border border-warning-300 bg-warning-50 p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-warning-900 uppercase">90th percentile</p>
+            <p class="mt-1 text-[28px] font-semibold tracking-[-0.02em]">9h 10m</p>
+            <p class="mt-0.5 text-[12px] text-warning-900">432 tickets waited longer</p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-4">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Open over 7 days</p>
+            <p class="mt-1 text-[28px] font-semibold tracking-[-0.02em]">37</p>
+            <p class="mt-0.5 flex items-center gap-1.5 text-[12px]"><i class="ph ph-trend-up text-sm text-warning-700"></i><span class="font-medium text-warning-900">+14</span><span class="text-muted-foreground">on last quarter</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="shape" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">What the mean is hiding</h2>
+        <p class="mt-2 text-sm leading-7 text-muted-foreground">
+          Every ticket in the quarter, by how long it waited for a first human
+          reply. The bar at the far left is 61% of them. The mean of 21 minutes
+          falls in a bucket almost nobody is in.
+        </p>
+        <div id="dist" class="mt-5 rounded-xl border border-border bg-card p-4">
+          <p class="text-sm text-muted-foreground">Tickets by first-reply time. The same figures are in the table below.</p>
+        </div>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-right text-[13px]"><thead id="d-head"></thead><tbody id="d-body"></tbody></table>
+        </div>
+      </section>
+
+      <section id="hour" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">Half the tail arrives when nobody is here</h2>
+        <div class="mt-5 grid gap-5 lg:grid-cols-[3fr_2fr]">
+          <div id="hours" class="rounded-xl border border-border bg-card p-4">
+            <p class="text-sm text-muted-foreground">Median first-reply time by the hour a ticket arrived.</p>
+          </div>
+          <div>
+            <p class="text-[13px] leading-6 text-muted-foreground">
+              Inside the shift the median never leaves single-digit minutes. Outside
+              it, a ticket waits until the next morning, and 38% of the quarter&rsquo;s
+              tickets arrive outside it &mdash; the desk covers 08:00 to 18:00 and a
+              third of the company does not.
+            </p>
+            <p class="mt-3 text-[13px] leading-6 text-muted-foreground">
+              This is the whole reason to read a distribution rather than an average.
+              The fix is a rota question, not a performance question, and no amount
+              of pressure on the median will find it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="wrong" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">Three things to act on</h2>
+        <div class="mt-5 space-y-4">
+          <div class="rounded-xl border border-warning-300 bg-warning-50 p-5">
+            <p class="text-[15px] font-semibold text-warning-900">Stop reporting the mean</p>
+            <p class="mt-1.5 text-sm leading-6 text-warning-900">
+              21 minutes describes nobody. The median (6 minutes) is the typical
+              experience and the 90th percentile (9h 10m) is the one people complain
+              about. Reporting both costs one extra column and ends an argument we
+              have had every quarter for two years.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[15px] font-semibold">The out-of-hours tail is a rota, not an effort problem</p>
+            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
+              38% of tickets arrive outside 08:00&ndash;18:00 and account for 71% of
+              everything past four hours. Two hours of staggered cover at either end
+              would move the 90th percentile more than anything the team can do
+              inside the shift.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[15px] font-semibold">The backlog is old, not big</p>
+            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
+              37 tickets open past a week, out of 4,318. As a share it is a rounding
+              error and it went up by 14 anyway, which is the direction that matters.
+              Nothing in the first-reply numbers touches this: a ticket answered in
+              four minutes and then left for three weeks scores perfectly on every
+              chart above.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="method" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">How this was counted</h2>
+        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
+          <li><span class="font-medium text-foreground">The desk is illustrative.</span> Every figure here was written to show what a service readout looks like when it reports a distribution instead of an average. No real team is described.</li>
+          <li><span class="font-medium text-foreground">First reply means the first message from a person.</span> Auto-acknowledgements are excluded, which is why these numbers are larger than the ones in the vendor&rsquo;s own dashboard. Counting the robot would put the median at four seconds and mean nothing.</li>
+          <li><span class="font-medium text-foreground">The clock runs in real time, not business time.</span> A ticket arriving at 19:00 and answered at 08:10 waited thirteen hours, not ten minutes. Business-hours clocks make an out-of-hours problem invisible by definition, which is the problem this page is about.</li>
+          <li><span class="font-medium text-foreground">Percentiles are over tickets, not over customers.</span> One customer who filed 90 tickets is 2% of the quarter. Nothing here is weighted for that and it should be before anyone draws a conclusion about how customers experience the desk.</li>
+          <li><span class="font-medium text-foreground">A snapshot, dated.</span> Read on 6 January and it will not update. There are no filters on this page: if the question is which queue, or which customer, that needs the export and a grid rather than this.</li>
+        </ul>
+      </section>
+
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
+      <script>
+        // The figures, inline. Every chart and table below is drawn from these.
+        const BANDS = [
+          ["under 5 min", 2634],
+          ["5 to 15 min", 631],
+          ["15 to 60 min", 402],
+          ["1 to 2 h", 168],
+          ["2 to 4 h", 141],
+          ["4 to 8 h", 174],
+          ["8 to 12 h", 118],
+          ["over 12 h", 50],
+        ];
+        // Median first reply in minutes, by the hour the ticket arrived.
+        const BY_HOUR = [
+          [0, 486], [1, 432], [2, 378], [3, 322], [4, 268], [5, 214],
+          [6, 158], [7, 96], [8, 7], [9, 5], [10, 4], [11, 6],
+          [12, 11], [13, 6], [14, 5], [15, 6], [16, 8], [17, 14],
+          [18, 62], [19, 720], [20, 664], [21, 610], [22, 558], [23, 542],
+        ];
+        const SHIFT = [8, 18];
+
+// ---- charts ----------------------------------------------------------
+        // Plot draws SVG, so a mark can take a theme token straight from CSS and
+        // both palettes come out right with no probe and no redraw on a theme
+        // change. What it will not do is inherit: its own default is a white
+        // background and black type, so the wrapper below hands it `transparent`
+        // and `currentColor` and lets the page decide.
+        const PLOT = {
+          style: { background: "transparent", color: "currentColor", fontFamily: "inherit", fontSize: "12px" },
+          marginLeft: 52,
+          marginRight: 16,
+        };
+        const GREEN = "var(--color-brand-500)";
+        const GREY = "var(--color-gray-400)";
+
+        /** Draws into `id`, or leaves whatever is already there if Plot never
+         *  arrived. Every caller has a table under it either way. */
+        const chart = (id, options) => {
+          if (typeof Plot === "undefined") return;
+          const host = document.querySelector("#" + id);
+          host.replaceChildren(Plot.plot({ ...PLOT, ...options }));
+        };
+
+        const total = BANDS.reduce((a, [, n]) => a + n, 0);
+
+        chart("dist", {
+          height: 280,
+          marginLeft: 96,
+          // Room for the count printed at the end of the longest bar. Without it
+          // the label on the biggest value is the one that gets clipped, which is
+          // the one the chart exists to show.
+          marginRight: 104,
+          marginBottom: 36,
+          x: { label: "tickets →", grid: true },
+          y: { label: null, domain: BANDS.map((d) => d[0]) },
+          marks: [
+            Plot.barX(BANDS, { y: (d) => d[0], x: (d) => d[1], fill: (d, i) => (i >= 5 ? "var(--color-warning-500)" : GREY) }),
+            Plot.text(BANDS, {
+              y: (d) => d[0],
+              x: (d) => d[1],
+              text: (d) => `${d[1].toLocaleString("en-GB")}  ·  ${Math.round((d[1] / total) * 100)}%`,
+              dx: 46,
+              fill: "currentColor",
+              fontSize: 11,
+            }),
+            Plot.ruleX([0], { stroke: "var(--color-border)" }),
+          ],
+        });
+
+        document.querySelector("#d-head").innerHTML =
+          `<tr class="border-b border-border text-[10px] tracking-wide text-muted-foreground uppercase"><th class="py-1.5 text-left">First reply within</th><th class="py-1.5">Tickets</th><th class="py-1.5">Share</th><th class="py-1.5">Running total</th></tr>`;
+        let running = 0;
+        document.querySelector("#d-body").innerHTML = BANDS.map(([label, n]) => {
+          running += n;
+          return `<tr class="border-b border-border/60"><td class="py-1.5 text-left">${label}</td><td class="py-1.5 font-mono">${n.toLocaleString("en-GB")}</td><td class="py-1.5 font-mono text-muted-foreground">${Math.round((n / total) * 100)}%</td><td class="py-1.5 font-mono">${Math.round((running / total) * 100)}%</td></tr>`;
+        }).join("");
+
+        chart("hours", {
+          height: 300,
+          marginBottom: 36,
+          x: { label: "hour the ticket arrived →", domain: BY_HOUR.map((d) => d[0]), tickFormat: (h) => (h % 3 === 0 ? String(h).padStart(2, "0") : "") },
+          // Linear, in minutes, and the working day comes out as a row of
+          // slivers. That is the finding rather than a rendering problem: a log
+          // axis would flatter it, and bars cannot sit on a log baseline anyway
+          // because a log scale has no zero to start from.
+          y: {
+            label: "median wait →",
+            grid: true,
+            ticks: [0, 120, 240, 360, 480, 600, 720],
+            tickFormat: (v) => (v === 0 ? "0" : v / 60 + "h"),
+          },
+          marks: [
+            Plot.barY(BY_HOUR, {
+              x: (d) => d[0],
+              y: (d) => d[1],
+              fill: (d) => (d[0] >= SHIFT[0] && d[0] < SHIFT[1] ? GREEN : "var(--color-warning-500)"),
+            }),
+            Plot.ruleY([60], { stroke: "var(--color-gray-400)", strokeDasharray: "3,3" }),
+            Plot.text([{ h: 8, y: 60 }], { x: "h", y: "y", text: ["one hour"], dy: -8, textAnchor: "start", fill: "var(--color-muted-foreground)", fontSize: 11 }),
+          ],
+        });
+      </script>
+
+      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+        An illustrative readout. Every count and every median was written for this
+        page rather than measured, and no real service desk is described. What is
+        worth copying is the argument the shape makes: when a distribution has a
+        long thin tail, the mean is the one summary that describes nobody in it,
+        and a readout that reports only the mean will keep the tail invisible for
+        as long as it is read.
+      </footer>
+    </main>
+    <!-- shell:start -->
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+
+        // A line may break between an image and the text beside it, so the icon
+        // and the first word it leads go in a span that cannot break. A link
+        // with no text of its own takes the icon at the front of the link.
+        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+        let text = walker.nextNode();
+        while (text && !text.data.trim()) text = walker.nextNode();
+        let host = link;
+        if (text) {
+          const at = text.data.search(/\S/);
+          const word = at > 0 ? text.splitText(at) : text;
+          const space = word.data.search(/\s/);
+          if (space > 0) word.splitText(space); // The rest of the text stays put.
+          host = document.createElement("span");
+          host.className = "site-icon-word";
+          word.replaceWith(host);
+          host.append(word);
+        }
+
+        const drop = () => {
+          icon.remove();
+          if (host !== link) host.replaceWith(...host.childNodes);
+        };
+        icon.onerror = drop;
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) drop();
+        };
+        host.prepend(icon);
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

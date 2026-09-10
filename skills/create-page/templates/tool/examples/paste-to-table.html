@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paste something that used to be a table</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="tool@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
+
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
+      <header>
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Tool &middot; Nothing leaves this page
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Paste something that used to be a table
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          Text copied out of a PDF, an email, a terminal or a slide arrives as
+          columns held together by spaces, and every tool that wants a table wants
+          commas. This guesses how the columns were separated, says which guess it
+          made and why, and hands the result back as Markdown, CSV, TSV or JSON. It
+          opens with a paste already in it, so you can see what it does before you
+          give it anything.
+        </p>
+      </header>
+
+      <section id="tool" class="mt-9">
+        <div class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <label class="block">
+            <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Paste it here</span>
+            <textarea id="input" rows="9" spellcheck="false" class="mt-2 block w-full rounded-lg border border-input bg-background p-3 font-mono text-[12px] leading-5 outline-none focus:border-ring">River          Length (km)   Outflow             Basin countries
+Nile                  6650   Mediterranean Sea   11
+Amazon                6400   Atlantic Ocean      7
+Yangtze               6300   East China Sea      1
+Mississippi           6275   Gulf of Mexico      2
+Yenisei               5539   Kara Sea            2
+Yellow River          5464   Bohai Sea           1
+Ob                    5410   Gulf of Ob          2
+Paraná                4880   Rio de la Plata     4
+Congo                 4700   Atlantic Ocean      9
+Amur                  4444   Sea of Okhotsk      3</textarea>
+          </label>
+
+          <div class="mt-4 flex flex-wrap items-end gap-4">
+            <label class="block">
+              <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Split columns on</span>
+              <select id="split" class="mt-2 block rounded-lg border border-input bg-background px-3 py-2 text-sm">
+                <option value="auto" selected>Whatever it looks like</option>
+                <option value="tab">Tabs</option>
+                <option value="comma">Commas</option>
+                <option value="pipe">Pipes</option>
+                <option value="spaces">Two or more spaces</option>
+              </select>
+            </label>
+            <label class="flex items-center gap-2 pb-2.5 text-sm">
+              <input id="header" type="checkbox" checked class="size-4 accent-brand-600" />
+              First row is the heading
+            </label>
+            <div class="ml-auto flex items-center gap-1 rounded-lg bg-accent p-0.5" id="formats"></div>
+          </div>
+
+          <div id="note" class="mt-4"></div>
+
+          <div class="mt-4 overflow-x-auto rounded-lg border border-border">
+            <table class="w-full text-left text-[13px]"><thead id="head"></thead><tbody id="body"></tbody></table>
+          </div>
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between">
+              <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Take it away</p>
+              <button id="copy" class="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 text-[13px] font-semibold text-background">
+                <i class="ph ph-copy text-base"></i>Copy
+              </button>
+            </div>
+            <pre id="out" class="mt-2 max-h-64 overflow-auto rounded-lg bg-code p-3 font-mono text-[11px] leading-5 text-code-foreground"></pre>
+          </div>
+        </div>
+
+        <p class="mt-3 text-xs leading-6 text-muted-foreground">
+          Everything runs in this page. Nothing you paste is sent anywhere, stored,
+          or kept when the tab closes, which is the point of a page like this
+          existing at all: the text people most need to reshape is usually the text
+          they least want to hand to a website.
+        </p>
+      </section>
+
+      <section id="worked" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">Why the example is the example</h2>
+        <p class="mt-3 text-sm leading-7 text-muted-foreground">
+          The paste it opens with is the hard case, not the easy one. Its columns
+          are separated by runs of spaces, and one of its headings &mdash;
+          <span class="font-mono text-[13px]">Length (km)</span> &mdash; contains a
+          single space, so a tool that splits on whitespace turns four columns into
+          five and quietly ruins the header row. Splitting on <b class="text-foreground">two
+          or more</b> spaces gets it right, and that is the rule the guess uses. It
+          is also why the tool tells you which separator it picked instead of just
+          producing a table: when the guess is wrong, the output looks plausible,
+          and a plausible wrong table is worse than an obvious failure.
+        </p>
+      </section>
+
+      <section id="how" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">How it guesses, and when it will be wrong</h2>
+        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
+          <li><span class="font-medium text-foreground">It picks the separator that gives every row the same number of columns.</span> Each candidate is tried on every line; the one whose column count varies least, and is greater than one, wins. Consistency beats frequency, which is why a comma inside one cell does not win an argument against eleven tabs.</li>
+          <li><span class="font-medium text-foreground">Ragged rows are shown, not silently padded.</span> If a row comes out with the wrong number of cells it is marked, and the count is on the page. A tool that pads to fit hides exactly the row you needed to look at.</li>
+          <li><span class="font-medium text-foreground">Quoted CSV is not fully handled.</span> A comma inside quotes will split the cell. For anything that came out of a real spreadsheet, copy the cells rather than the file and you will get tabs, which have no such problem.</li>
+          <li><span class="font-medium text-foreground">Nothing is coerced.</span> Numbers stay strings, dates stay strings, and blank cells stay blank. In JSON that means every value is quoted, which is the honest thing for text of unknown provenance: guessing types is where importers eat leading zeros and turn identifiers into floats.</li>
+          <li><span class="font-medium text-foreground">Nothing leaves the page.</span> No request is made from this file at all.</li>
+        </ul>
+      </section>
+
+      <script>
+        // Everything below runs in the page. There is no network call in this file.
+
+        const $ = (id) => document.querySelector("#" + id);
+        let format = "markdown";
+
+        const FORMATS = [
+          ["markdown", "Markdown"],
+          ["csv", "CSV"],
+          ["tsv", "TSV"],
+          ["json", "JSON"],
+        ];
+
+        // Candidate separators, in the order a tie is broken. Two or more spaces
+        // comes before a single space because a heading like "Length (km)" has one
+        // space inside it, and splitting on that turns four columns into five.
+        const SPLITTERS = {
+          tab: { label: "tabs", re: /\t/ },
+          pipe: { label: "pipes", re: /\s*\|\s*/ },
+          comma: { label: "commas", re: /\s*,\s*/ },
+          spaces: { label: "runs of two or more spaces", re: / {2,}/ },
+        };
+
+        /** Splits `lines` on `re` and reports how consistent the result is. */
+        const tryOne = (lines, re) => {
+          const rows = lines.map((line) => line.split(re).map((cell) => cell.trim()));
+          const counts = rows.map((row) => row.length);
+          const width = counts.sort((a, b) => counts.filter((c) => c === a).length - counts.filter((c) => c === b).length).pop();
+          return { rows, width, ragged: rows.filter((row) => row.length !== width).length };
+        };
+
+        /** The separator whose columns come out most consistently. Consistency
+         *  rather than frequency: one comma inside a cell should not outvote
+         *  eleven tabs that line up perfectly. */
+        const guess = (lines) => {
+          let best = null;
+          for (const [key, { re }] of Object.entries(SPLITTERS)) {
+            const attempt = { key, ...tryOne(lines, re) };
+            if (attempt.width < 2) continue;
+            if (!best || attempt.ragged < best.ragged || (attempt.ragged === best.ragged && attempt.width > best.width)) {
+              best = attempt;
+            }
+          }
+          return best;
+        };
+
+        const escapeHtml = (text) => text.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+        const csvCell = (cell) => (/[",\n]/.test(cell) ? `"${cell.replaceAll('"', '""')}"` : cell);
+
+        const render = () => {
+          const lines = $("input").value.split("\n").map((line) => line.replace(/\s+$/, "")).filter((line) => line.trim());
+          const choice = $("split").value;
+          const picked = choice === "auto" ? guess(lines) : { key: choice, ...tryOne(lines, SPLITTERS[choice].re) };
+
+          if (!lines.length || !picked) {
+            $("note").innerHTML = `<p class="rounded-lg border border-border bg-background p-3 text-[13px] text-muted-foreground">Nothing to split yet. Paste some rows above.</p>`;
+            $("head").innerHTML = "";
+            $("body").innerHTML = "";
+            $("out").textContent = "";
+            return;
+          }
+
+          const hasHeader = $("header").checked;
+          const heading = hasHeader ? picked.rows[0] : picked.rows[0].map((_, i) => `column ${i + 1}`);
+          const body = hasHeader ? picked.rows.slice(1) : picked.rows;
+
+          // ---- what it decided, said out loud ----
+          const trouble = picked.ragged > 0;
+          $("note").innerHTML = `
+            <div class="flex items-start gap-2.5 rounded-lg border ${trouble ? "border-warning-300 bg-warning-50" : "border-brand-200 bg-brand-50"} p-3">
+              <i class="ph ${trouble ? "ph-warning" : "ph-check-circle"} mt-0.5 text-base ${trouble ? "text-warning-700" : "text-brand-600"}"></i>
+              <p class="text-[13px] leading-5 ${trouble ? "text-warning-900" : "text-brand-700"}">
+                Split on <b>${SPLITTERS[picked.key].label}</b>${choice === "auto" ? ", which gave the most consistent columns" : ", because you asked for it"}.
+                <b>${body.length}</b> rows &times; <b>${picked.width}</b> columns${hasHeader ? ", first row used as the heading" : ""}.
+                ${trouble ? `<b>${picked.ragged}</b> row${picked.ragged === 1 ? " does" : "s do"} not have ${picked.width} cells &mdash; marked below. Try a different separator, or fix those rows.` : ""}
+              </p>
+            </div>`;
+
+          // ---- the table ----
+          $("head").innerHTML = `<tr class="border-b border-border bg-background">${heading
+            .map((cell) => `<th class="px-3 py-2 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">${escapeHtml(cell)}</th>`)
+            .join("")}</tr>`;
+          $("body").innerHTML = body
+            .map(
+              (row) =>
+                `<tr class="border-b border-border/60 ${row.length !== picked.width ? "bg-warning-50" : ""}">${Array.from(
+                  { length: picked.width },
+                  (_, i) => `<td class="px-3 py-1.5">${escapeHtml(row[i] ?? "")}</td>`,
+                ).join("")}</tr>`,
+            )
+            .join("");
+
+          // ---- the output ----
+          const grid = [heading, ...body].map((row) => Array.from({ length: picked.width }, (_, i) => row[i] ?? ""));
+          const outputs = {
+            markdown: () => {
+              const widths = grid[0].map((_, i) => Math.max(...grid.map((row) => row[i].length)));
+              const line = (row) => `| ${row.map((cell, i) => cell.padEnd(widths[i])).join(" | ")} |`;
+              return [line(grid[0]), `|${widths.map((w) => "-".repeat(w + 2)).join("|")}|`, ...grid.slice(1).map(line)].join("\n");
+            },
+            csv: () => grid.map((row) => row.map(csvCell).join(",")).join("\n"),
+            tsv: () => grid.map((row) => row.join("\t")).join("\n"),
+            json: () =>
+              JSON.stringify(
+                body.map((row) => Object.fromEntries(heading.map((key, i) => [key, row[i] ?? ""]))),
+                null,
+                2,
+              ),
+          };
+          $("out").textContent = outputs[format]();
+        };
+
+        const paintFormats = () => {
+          $("formats").innerHTML = FORMATS.map(
+            ([key, label]) =>
+              `<button data-format="${key}" class="rounded-md px-2.5 py-1 text-[12px] font-medium ${
+                key === format ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+              }">${label}</button>`,
+          ).join("");
+        };
+
+        $("formats").addEventListener("click", (event) => {
+          const button = event.target.closest("[data-format]");
+          if (!button) return;
+          format = button.dataset.format;
+          paintFormats();
+          render();
+        });
+
+        $("copy").addEventListener("click", async (event) => {
+          const button = event.currentTarget;
+          try {
+            await navigator.clipboard.writeText($("out").textContent);
+            button.innerHTML = '<i class="ph ph-check text-base"></i>Copied';
+            setTimeout(() => (button.innerHTML = '<i class="ph ph-copy text-base"></i>Copy'), 1600);
+          } catch {
+            // Clipboard access is refused in some frames. The text is already on
+            // screen and selectable, so say so rather than failing silently.
+            button.innerHTML = '<i class="ph ph-selection-all text-base"></i>Select it below';
+          }
+        });
+
+        $("input").addEventListener("input", render);
+        for (const control of document.querySelectorAll("#split, #header")) control.addEventListener("change", render);
+
+        paintFormats();
+        render();
+      </script>
+
+      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+        The example paste is a small table of long rivers, chosen because the
+        figures are widely published and because its heading contains a space,
+        which is the case that breaks naive splitting. The lengths are the
+        commonly cited ones and are disputed by tens of kilometers depending on
+        where a river is said to start; nothing here depends on them being right,
+        since the tool is about the shape of the text rather than the truth of it.
+      </footer>
+    </main>
+    <!-- shell:start -->
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+
+        // A line may break between an image and the text beside it, so the icon
+        // and the first word it leads go in a span that cannot break. A link
+        // with no text of its own takes the icon at the front of the link.
+        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+        let text = walker.nextNode();
+        while (text && !text.data.trim()) text = walker.nextNode();
+        let host = link;
+        if (text) {
+          const at = text.data.search(/\S/);
+          const word = at > 0 ? text.splitText(at) : text;
+          const space = word.data.search(/\s/);
+          if (space > 0) word.splitText(space); // The rest of the text stays put.
+          host = document.createElement("span");
+          host.className = "site-icon-word";
+          word.replaceWith(host);
+          host.append(word);
+        }
+
+        const drop = () => {
+          icon.remove();
+          if (host !== link) host.replaceWith(...host.childNodes);
+        };
+        icon.onerror = drop;
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) drop();
+        };
+        host.prepend(icon);
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

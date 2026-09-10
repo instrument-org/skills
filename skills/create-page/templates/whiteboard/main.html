@@ -1,0 +1,387 @@
+      <!-- This template needs the page to be wider than a column of prose, so
+           <main> is opened up: `mx-auto max-w-[92rem] px-5 py-10 sm:px-8`.
+           Prose sections inside it keep their own `max-w-3xl`. -->
+
+      <style>
+        /* On paper there is no panning, so the board stops being a canvas and
+           becomes what it always was underneath: cards in document order. That
+           is the reason DOM order has to be reading order. */
+        @media print {
+          #stage {
+            height: auto !important;
+            overflow: visible !important;
+          }
+          #board {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            transform: none !important;
+          }
+          /* Everything inside a card too, not only the cards: a label pinned
+             to the bottom of a fixed-height card has nothing to pin to once
+             the card is in the flow, and goes missing from the paper. */
+          #board *,
+          #board > * {
+            position: static !important;
+          }
+          #board > * {
+            width: auto !important;
+            height: auto !important;
+            margin-bottom: 0.5rem;
+          }
+          #board > [data-region],
+          #board-controls,
+          #minimap-wrap {
+            display: none !important;
+          }
+        }
+      </style>
+
+      <header class="mx-auto max-w-3xl">
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Whiteboard &middot; WHAT IS ON IT
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          TITLE
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          ONE PARAGRAPH: what is on the board, how it is arranged, and what the
+          arrangement is meant to show that a list of the same things would not.
+        </p>
+      </header>
+
+      <section id="legend" class="mx-auto mt-8 max-w-3xl">
+        <!-- Not decoration. On a board, position is meaning, so the page has to
+             say what position means before the reader looks: what the axes are,
+             or what the regions are, and what color and size say if they say
+             anything. A board with no legend is a picture. -->
+      </section>
+
+      <section id="board-wrap" class="mt-8">
+        <!-- Optional: chips that jump to a region, or the stops of a tour. Build
+             them from the board itself so one cannot outlive what it points at. -->
+        <div class="mx-auto mb-3 flex max-w-3xl flex-wrap items-center gap-2 print:hidden">
+          <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Jump to</span>
+          <div id="board-jumps" class="flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <div class="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <!-- Without the script this is an ordinary scrolling box at 1:1 and
+               every card on it is still there to read. The script turns it into a
+               viewport. That is the whole degradation story and it costs nothing. -->
+          <div id="stage" class="relative overflow-auto bg-background" style="height: min(76vh, 740px)">
+            <div id="board" class="relative origin-top-left" style="width: 2400px; height: 1400px">
+              <!-- Every card is absolutely placed, in board coordinates, written
+                   here rather than generated: this is the content of the page.
+                   DOM ORDER IS READING ORDER, because printing collapses the
+                   board to exactly this sequence.
+                     data-region  a backdrop or rule, hidden when printed
+                     data-mini    include this card in the small map
+                     data-drag=id the reader may move it, and it is remembered
+                     data-from=k  fade in only once the board is at scale k -->
+              <div data-mini class="absolute rounded-xl border border-border bg-card p-4 shadow-sm" style="left:80px; top:80px; width:260px">
+                <p class="text-[14px] font-semibold">A card</p>
+                <p class="mt-1 text-[12px] leading-5 text-muted-foreground">Where it sits is part of what it says.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="minimap-wrap" class="absolute bottom-3 left-3 rounded-lg border border-border bg-card/90 p-1.5 shadow-sm backdrop-blur print:hidden">
+            <div id="minimap" class="relative w-36 cursor-pointer overflow-hidden rounded bg-muted">
+              <span id="minimap-view" class="absolute rounded-[2px] border border-brand-500 bg-brand-500/10"></span>
+            </div>
+          </div>
+
+          <div id="board-controls" class="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur print:hidden">
+            <button data-zoom="0.8" title="Zoom out" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-minus"></i></button>
+            <span id="zoom-level" class="min-w-11 text-center font-mono text-[11px] text-muted-foreground">100%</span>
+            <button data-zoom="1.25" title="Zoom in" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-plus"></i></button>
+            <span class="mx-0.5 h-5 w-px bg-border"></span>
+            <button data-fit title="Fit the whole board" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-corners-out"></i></button>
+            <!-- Only where cards carry data-drag. -->
+            <button data-reset title="Put everything back where it started" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          </div>
+        </div>
+        <p class="mx-auto mt-3 max-w-3xl text-xs leading-6 text-muted-foreground">
+          Say how to move it, and say where anything the reader changes is kept.
+        </p>
+      </section>
+
+      <section id="says" class="mx-auto mt-14 max-w-3xl">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">WHAT THE ARRANGEMENT SAYS</h2>
+        <!-- The board is evidence; this is the argument. Two to four readings a
+             reader can check by looking, each naming the place on the board it
+             comes from. A board with no findings is a filing cabinet. -->
+      </section>
+
+      <section id="method" class="mx-auto mt-12 max-w-3xl">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">WHERE THIS CAME FROM</h2>
+        <!-- What the placement is drawn from, what is measured and what is
+             judgment, what is missing, and what the board is not a picture of. -->
+      </section>
+
+      <script>
+        // ---- the canvas ------------------------------------------------------
+        // The board is a fixed-size surface and every card is absolutely placed
+        // on it, in the HTML above. Without this script the stage is an ordinary
+        // scrolling box at 1:1 and every card is still there to be read; with it,
+        // the same surface pans and zooms. Nothing here is the only copy of
+        // anything.
+
+        const stage = document.querySelector("#stage");
+        const board = document.querySelector("#board");
+        const zoomLabel = document.querySelector("#zoom-level");
+        const minimap = document.querySelector("#minimap");
+        const viewbox = document.querySelector("#minimap-view");
+
+        const BOARD_W = board.offsetWidth;
+        const BOARD_H = board.offsetHeight;
+        const MIN_K = 0.1;
+        const MAX_K = 2.5;
+        const miniScale = minimap.clientWidth / BOARD_W;
+
+        let k = 1;
+        let tx = 0;
+        let ty = 0;
+        let topCard = 20;
+
+        const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
+
+        /** The viewport rectangle, drawn over the minimap in board coordinates. */
+        const paintMinimap = () => {
+          viewbox.style.cssText = `left:${(-tx / k) * miniScale}px; top:${(-ty / k) * miniScale}px; width:${(stage.clientWidth / k) * miniScale}px; height:${(stage.clientHeight / k) * miniScale}px`;
+        };
+
+        const apply = () => {
+          board.style.transform = `translate(${tx}px, ${ty}px) scale(${k})`;
+          // Semantic zoom: anything carrying data-from fades in once the board is
+          // at least that scale. It is detail, never a fact the page needs.
+          for (const el of board.querySelectorAll("[data-from]")) {
+            el.style.opacity = k >= Number(el.dataset.from) ? "1" : "0";
+          }
+          zoomLabel.textContent = `${Math.round(k * 100)}%`;
+          paintMinimap();
+        };
+
+        /** Keeps the board point under (clientX, clientY) still while scaling. */
+        const zoomAt = (clientX, clientY, factor) => {
+          const rect = stage.getBoundingClientRect();
+          const px = clientX - rect.left;
+          const py = clientY - rect.top;
+          const next = clamp(k * factor, MIN_K, MAX_K);
+          const ratio = next / k;
+          tx = px - (px - tx) * ratio;
+          ty = py - (py - ty) * ratio;
+          k = next;
+          apply();
+        };
+
+        const zoomCenter = (factor) => {
+          const rect = stage.getBoundingClientRect();
+          zoomAt(rect.left + stage.clientWidth / 2, rect.top + stage.clientHeight / 2, factor);
+        };
+
+        /** The whole board, centered, with a margin. Also the reset. */
+        const fit = () => {
+          const pad = 28;
+          k = clamp(
+            Math.min((stage.clientWidth - pad * 2) / BOARD_W, (stage.clientHeight - pad * 2) / BOARD_H),
+            MIN_K,
+            MAX_K,
+          );
+          tx = (stage.clientWidth - BOARD_W * k) / 2;
+          ty = (stage.clientHeight - BOARD_H * k) / 2;
+          apply();
+        };
+
+        /** Puts a named region in the middle at a readable scale. */
+        const goTo = (selector, scale = 1) => {
+          const target = board.querySelector(selector);
+          if (!target) return;
+          k = clamp(scale, MIN_K, MAX_K);
+          tx = stage.clientWidth / 2 - (target.offsetLeft + target.offsetWidth / 2) * k;
+          ty = stage.clientHeight / 2 - (target.offsetTop + target.offsetHeight / 2) * k;
+          apply();
+        };
+
+        // ---- what the reader moved -------------------------------------------
+        // Positions live in this browser and nowhere else. A board someone
+        // rearranged is theirs; the file they were sent is unchanged, and saying
+        // so on the page is the honest version of offering the drag at all.
+        // Storage throws outright inside a sandboxed frame, so every touch of it
+        // is guarded and a failure costs the reader nothing.
+        const MEMORY = `board:${document.title}`;
+
+        const remember = () => {
+          try {
+            const moved = {};
+            for (const card of board.querySelectorAll("[data-drag]")) {
+              moved[card.dataset.drag] = [card.offsetLeft, card.offsetTop];
+            }
+            localStorage.setItem(MEMORY, JSON.stringify(moved));
+          } catch {
+            /* Private window, sandboxed frame, storage turned off. */
+          }
+        };
+
+        const recall = () => {
+          try {
+            const moved = JSON.parse(localStorage.getItem(MEMORY) || "{}");
+            for (const card of board.querySelectorAll("[data-drag]")) {
+              const at = moved[card.dataset.drag];
+              if (!at) continue;
+              card.style.left = `${at[0]}px`;
+              card.style.top = `${at[1]}px`;
+            }
+          } catch {
+            /* The board keeps the positions it was written with. */
+          }
+        };
+
+        // The script is here, so the stage stops being a scroller and becomes a
+        // viewport. Doing that from script rather than in the class list is what
+        // leaves the no-script reading intact.
+        stage.classList.remove("overflow-auto");
+        stage.classList.add("overflow-hidden", "cursor-grab", "touch-none");
+        recall();
+
+        // ---- wheel, drag, pinch ----------------------------------------------
+        // A trackpad pinch arrives as a wheel event with ctrlKey set, which is how
+        // every canvas on the web tells the two apart. Everything else is a pan.
+        stage.addEventListener(
+          "wheel",
+          (event) => {
+            event.preventDefault();
+            if (event.ctrlKey || event.metaKey) {
+              zoomAt(event.clientX, event.clientY, Math.exp(-event.deltaY / 180));
+              return;
+            }
+            tx -= event.deltaX;
+            ty -= event.deltaY;
+            apply();
+          },
+          { passive: false },
+        );
+
+        // Two live pointers pinch; one drags. A card that opts in with data-drag
+        // takes the pointer first and moves itself instead of the board.
+        const pointers = new Map();
+        let pinchGap = 0;
+        let dragging = null;
+
+        stage.addEventListener("pointerdown", (event) => {
+          stage.setPointerCapture(event.pointerId);
+          pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          const card = event.target.closest("[data-drag]");
+          if (card && pointers.size === 1) {
+            dragging = { card, left: card.offsetLeft, top: card.offsetTop, x: event.clientX, y: event.clientY };
+            card.style.zIndex = String(++topCard);
+            card.classList.add("shadow-xl");
+            return;
+          }
+          stage.classList.replace("cursor-grab", "cursor-grabbing");
+        });
+
+        stage.addEventListener("pointermove", (event) => {
+          const previous = pointers.get(event.pointerId);
+          if (!previous) return;
+          pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+          if (pointers.size === 2) {
+            const [a, b] = [...pointers.values()];
+            const gap = Math.hypot(a.x - b.x, a.y - b.y);
+            if (pinchGap) zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, gap / pinchGap);
+            pinchGap = gap;
+            return;
+          }
+
+          if (dragging) {
+            // Screen pixels are board pixels divided by the scale, which is the
+            // one line that makes a card follow the pointer at every zoom.
+            dragging.card.style.left = `${dragging.left + (event.clientX - dragging.x) / k}px`;
+            dragging.card.style.top = `${dragging.top + (event.clientY - dragging.y) / k}px`;
+            paintMinimap();
+            return;
+          }
+
+          tx += event.clientX - previous.x;
+          ty += event.clientY - previous.y;
+          apply();
+        });
+
+        const endPointer = (event) => {
+          pointers.delete(event.pointerId);
+          if (pointers.size < 2) pinchGap = 0;
+          if (dragging) {
+            dragging.card.classList.remove("shadow-xl");
+            remember();
+            dragging = null;
+          }
+          stage.classList.replace("cursor-grabbing", "cursor-grab");
+        };
+        stage.addEventListener("pointerup", endPointer);
+        stage.addEventListener("pointercancel", endPointer);
+
+        // ---- controls --------------------------------------------------------
+        document.querySelector("#board-controls").addEventListener("click", (event) => {
+          const button = event.target.closest("button");
+          if (!button) return;
+          if (button.dataset.zoom) zoomCenter(Number(button.dataset.zoom));
+          if (button.dataset.fit !== undefined) fit();
+          if (button.dataset.go) goTo(button.dataset.go, Number(button.dataset.scale || 1));
+          if (button.dataset.reset !== undefined) {
+            try {
+              localStorage.removeItem(MEMORY);
+            } catch {
+              /* Nothing was stored, so nothing has to be removed. */
+            }
+            location.reload();
+          }
+        });
+
+        // Arrows pan, plus and minus zoom, 0 fits -- only while the board has
+        // focus, so the page still scrolls normally everywhere else.
+        stage.tabIndex = 0;
+        stage.addEventListener("keydown", (event) => {
+          const step = event.shiftKey ? 240 : 80;
+          const moves = {
+            ArrowLeft: () => (tx += step),
+            ArrowRight: () => (tx -= step),
+            ArrowUp: () => (ty += step),
+            ArrowDown: () => (ty -= step),
+          };
+          if (moves[event.key]) {
+            event.preventDefault();
+            moves[event.key]();
+            return apply();
+          }
+          if (event.key === "0") return event.preventDefault(), fit();
+          if (event.key === "+" || event.key === "=") return event.preventDefault(), zoomCenter(1.25);
+          if (event.key === "-") return event.preventDefault(), zoomCenter(0.8);
+        });
+
+        // ---- minimap ---------------------------------------------------------
+        // Drawn from the cards themselves rather than from a second copy of the
+        // layout, so it cannot drift from the board it describes.
+        minimap.style.height = `${Math.round(BOARD_H * miniScale)}px`;
+        for (const card of board.querySelectorAll("[data-mini]")) {
+          const dot = document.createElement("span");
+          dot.className = "absolute rounded-[1px] bg-gray-400";
+          dot.style.cssText = `left:${card.offsetLeft * miniScale}px; top:${card.offsetTop * miniScale}px; width:${Math.max(2, card.offsetWidth * miniScale)}px; height:${Math.max(2, card.offsetHeight * miniScale)}px`;
+          minimap.append(dot);
+        }
+
+        minimap.addEventListener("pointerdown", (event) => {
+          const rect = minimap.getBoundingClientRect();
+          tx = stage.clientWidth / 2 - ((event.clientX - rect.left) / miniScale) * k;
+          ty = stage.clientHeight / 2 - ((event.clientY - rect.top) / miniScale) * k;
+          apply();
+        });
+
+        new ResizeObserver(apply).observe(stage);
+        fit();
+      </script>
+
+      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+        <!-- What this rests on and when it was read. -->
+      </footer>

@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Freezing a card, and the payments it does not stop</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="wireframe@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
+
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-[92rem] px-5 py-10 sm:px-8 sm:py-14">
+      <header class="mx-auto max-w-3xl">
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Wireframe &middot; Card controls, mobile
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Freezing a card, and the payments it does not stop
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          Freezing a card is a two-tap feature with a one-sentence description, and
+          the sentence is wrong: a freeze declines new authorizations but does not
+          reverse a pending charge, does not cancel a subscription, and on most
+          networks does not stop a merchant that already holds a stored credential.
+          People find that out from a declined gym payment three days later. These
+          six frames put it on the screen where the decision is made, and make the
+          three exceptions actionable in the same breath.
+        </p>
+      </header>
+
+      <section id="frames" class="mt-10">
+        <div class="mx-auto flex max-w-3xl items-baseline justify-between gap-4">
+          <h2 class="text-sm font-medium">
+            <span id="count"></span>, in the order they happen
+          </h2>
+          <div id="views" class="flex shrink-0 items-center gap-0.5 rounded-lg bg-accent p-0.5 print:hidden"></div>
+        </div>
+        <div id="rack" class="mt-5 grid gap-5 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
+      </section>
+
+      <section id="open" class="mx-auto mt-14 max-w-3xl">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">
+          The drawing has already decided four things
+        </h2>
+        <div class="mt-5 grid gap-5 sm:grid-cols-2">
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
+              Settled by the frames
+            </p>
+            <ul class="mt-3 space-y-3 text-sm leading-6">
+              <li class="flex gap-2.5">
+                <i class="ph ph-check text-base text-brand-600"></i>
+                <span><span class="font-medium">The exceptions appear before the button, not after it.</span> Frame 3 is the whole proposal. Moving that list to a confirmation screen makes it an apology.</span>
+              </li>
+              <li class="flex gap-2.5">
+                <i class="ph ph-check text-base text-brand-600"></i>
+                <span><span class="font-medium">Each exception is named, priced and dated.</span> &ldquo;Some recurring payments may continue&rdquo; is what we have now, and it is the reason the screen does not work.</span>
+              </li>
+              <li class="flex gap-2.5">
+                <i class="ph ph-check text-base text-brand-600"></i>
+                <span><span class="font-medium">A freeze is reversible in one tap and a replacement is not.</span> The two paths are drawn side by side in frame 6 rather than nested behind a menu.</span>
+              </li>
+              <li class="flex gap-2.5">
+                <i class="ph ph-check text-base text-brand-600"></i>
+                <span><span class="font-medium">A declined charge says why.</span> Frame 5 attributes the decline to the freeze, which is the difference between a notification and a support ticket.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
+              Still open
+            </p>
+            <ul class="mt-3 space-y-3 text-sm leading-6">
+              <li class="flex gap-2.5">
+                <i class="ph ph-question text-base text-muted-foreground"></i>
+                <span><span class="font-medium">Where the subscription list comes from.</span> The frames assume we can identify recurring merchants on this card. If that is a guess rather than a fact, the copy has to say &ldquo;we think&rdquo; and the list has to be editable.</span>
+              </li>
+              <li class="flex gap-2.5">
+                <i class="ph ph-question text-base text-muted-foreground"></i>
+                <span><span class="font-medium">Whether frame 5 is a push or an in-app row.</span> Drawn as both. A push about a decline the person caused is arguably noise.</span>
+              </li>
+              <li class="flex gap-2.5">
+                <i class="ph ph-question text-base text-muted-foreground"></i>
+                <span><span class="font-medium">The pending-charge case.</span> Frame 3 mentions it in one line. If pending charges are common at freeze time it deserves its own row, with amounts.</span>
+              </li>
+              <li class="flex gap-2.5">
+                <i class="ph ph-question text-base text-muted-foreground"></i>
+                <span><span class="font-medium">Digital wallet behavior.</span> Drawn as stopped. Worth confirming per network before the copy commits to it.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="notes" class="mx-auto mt-12 max-w-3xl">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">Reading these</h2>
+        <p class="mt-3 text-sm leading-7 text-muted-foreground">
+          Frames are drawn at 390&times;844, the size of the phone most of this
+          audience carries, at the real type scale. Tap one to open it; arrow keys
+          and swipe move between them.
+        </p>
+        <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+          <span class="flex items-center gap-2">
+            <span class="inline-block size-3.5 rounded-sm outline-2 outline-dashed" style="outline-color:#ea580c"></span>
+            <span class="text-muted-foreground">What is being tapped</span>
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="inline-block size-3.5 rounded-sm outline-2 outline-dashed" style="outline-color:#8b5cf6"></span>
+            <span class="text-muted-foreground">What appeared or changed</span>
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="inline-block h-1.5 w-8 rounded-full bg-gray-300"></span>
+            <span class="text-muted-foreground">Copy that is not the point yet</span>
+          </span>
+        </div>
+        <ul class="mt-5 space-y-2 text-sm leading-7 text-muted-foreground">
+          <li><span class="font-medium text-foreground">The copy on the freeze sheet, the decline notice and the two exit paths is final-quality.</span> Everything drawn as a grey bar is a paragraph nobody has written yet and nobody needs to read to judge this.</li>
+          <li><span class="font-medium text-foreground">Every merchant, amount and date is invented to fill a row.</span> Three subscriptions at those prices on those dates is a plausible shape, not a figure from anyone&rsquo;s data. The design question is whether three named rows fit and read, and they do.</li>
+          <li><span class="font-medium text-foreground">Nothing here is drawn against a real screen.</span> There is no measured product behind these; they are a proposal, and the chrome is generic on purpose so nobody argues about the tab bar.</li>
+          <li><span class="font-medium text-foreground">Not drawn:</span> onboarding, the card list when someone holds more than one, and the whole replacement-card flow past its first screen. All three are real and none of them change this argument.</li>
+        </ul>
+      </section>
+
+      <!-- The enlarged view. Caption and controls take their space first and the
+           frame is scaled into what is left, so a long caption shrinks the
+           drawing rather than sliding off the bottom of the screen. -->
+      <dialog
+        id="viewer"
+        class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-transparent p-0 [overscroll-behavior:contain] backdrop:bg-black/85 open:flex open:flex-col"
+      >
+        <div id="stage" autofocus tabindex="-1" class="flex min-h-0 flex-1 p-4 focus:outline-none *:m-auto *:flex-none"></div>
+        <div class="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <p id="viewer-caption" class="mx-auto max-h-[30vh] max-w-3xl overflow-y-auto text-center text-sm leading-5 text-white"></p>
+          <div id="viewer-controls" class="mx-auto mt-3 grid max-w-3xl grid-cols-3 items-center">
+            <span></span>
+            <div class="flex items-center gap-2 justify-self-center">
+              <button data-step="-1" title="Previous frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
+                <i class="ph ph-caret-left"></i>
+              </button>
+              <span id="viewer-counter" class="min-w-12 text-center font-mono text-xs text-white/70"></span>
+              <button data-step="1" title="Next frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
+                <i class="ph ph-caret-right"></i>
+              </button>
+            </div>
+            <button id="viewer-close" title="Close" class="grid size-11 place-items-center justify-self-end rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
+              <i class="ph ph-x"></i>
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <script>
+        // Every frame is drawn once at the size the thing really is, then shown
+        // at whatever scale fits. `transform` composites a box laid out once,
+        // where `zoom` would re-run layout at the smaller size and let the text
+        // re-wrap, so the miniature would stop matching the thing it depicts.
+        const W = 390;
+        const H = 844;
+        const SLOT_H = 400;
+        const TILE_MIN = 215;
+
+        // ---- the kit -------------------------------------------------------
+        // Write class names out whole: a class assembled by interpolation
+        // (`bg-${tone}-500`) is invisible to Tailwind's scanner.
+
+        /** Placeholder prose. Widths are CSS lengths. */
+        const bars = (...widths) =>
+          widths.map((w) => `<div class="h-2 rounded-full bg-gray-300" style="width:${w}"></div>`).join("");
+
+        /** A phone, at 390x844. */
+        const phone = (inner, { time = "9:41" } = {}) => `
+          <div class="flex h-full flex-col bg-background">
+            <div class="flex h-11 shrink-0 items-center justify-between px-6 pt-1 text-[13px] font-medium">
+              <span>${time}</span>
+              <span class="flex items-center gap-1 text-xs"><i class="ph ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-full"></i></span>
+            </div>
+            <div class="relative min-h-0 flex-1 overflow-hidden">${inner}</div>
+            <div class="flex h-6 shrink-0 items-end justify-center pb-2"><span class="h-1 w-32 rounded-full bg-gray-400"></span></div>
+          </div>`;
+
+        /** The bar across the top of a screen. */
+        const appbar = (title, { back = false, action = "" } = {}) => `
+          <div class="flex h-12 items-center gap-3 border-b border-border bg-card px-4">
+            ${back ? `<i class="ph ph-caret-left text-lg"></i>` : ""}
+            <span class="flex-1 truncate text-[15px] font-semibold">${title}</span>
+            ${action}
+          </div>`;
+
+        /** The card itself, as the app draws it. */
+        const cardFace = ({ frozen = false } = {}) => `
+          <div class="relative overflow-hidden rounded-2xl bg-code p-4 text-code-foreground ${frozen ? "opacity-60" : ""}">
+            <div class="flex items-start justify-between">
+              <span class="text-[11px] tracking-[0.14em] text-code-muted uppercase">Everyday</span>
+              ${frozen ? `<span class="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase">Frozen</span>` : `<i class="ph ph-wifi-high rotate-90 text-sm text-code-muted"></i>`}
+            </div>
+            <p class="mt-6 font-mono text-[15px] tracking-[0.18em]">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4417</p>
+            <div class="mt-3 flex items-end justify-between">
+              <span class="text-[11px] text-code-muted">Debit &middot; 08/29</span>
+              <span class="text-lg font-semibold">$1,284.10</span>
+            </div>
+          </div>`;
+
+        /** A transaction row. */
+        const txn = (merchant, when, amount, { icon = "ph-storefront", tone = "", sub = "" } = {}) => `
+          <div class="flex items-center gap-3 px-4 py-2.5">
+            <span class="grid size-9 shrink-0 place-items-center rounded-full bg-accent"><i class="ph ${icon} text-base text-muted-foreground"></i></span>
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-[14px] font-medium">${merchant}</span>
+              <span class="block truncate text-[11px] text-muted-foreground">${sub || when}</span>
+            </span>
+            <span class="shrink-0 text-[14px] font-medium ${tone}">${amount}</span>
+          </div>`;
+
+        /** A bottom sheet over a dimmed screen. */
+        const sheet = (behind, inner) => `
+          <div class="absolute inset-0">
+            <div class="h-full opacity-40">${behind}</div>
+            <div class="absolute inset-0 bg-black/50"></div>
+            <div class="absolute inset-x-0 bottom-0 rounded-t-3xl border-t border-border bg-card px-5 pt-3 pb-6">
+              <div class="mx-auto mb-4 h-1 w-9 rounded-full bg-gray-300"></div>
+              ${inner}
+            </div>
+          </div>`;
+
+        /** A button. Pass the finished classes, not a tone name. */
+        const btn = (label, { cls = "bg-foreground text-background", icon = "" } = {}) => `
+          <button class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-[15px] font-semibold ${cls}">
+            ${icon ? `<i class="ph ${icon} text-base"></i>` : ""}${label}
+          </button>`;
+
+        /** One line in the stops / does-not-stop lists. */
+        const consequence = (icon, iconCls, text) => `
+          <div class="flex items-start gap-2.5 py-1.5">
+            <i class="ph ${icon} mt-0.5 shrink-0 text-base ${iconCls}"></i>
+            <span class="text-[13px] leading-5">${text}</span>
+          </div>`;
+
+        // ---- annotations -----------------------------------------------------
+        // For the reader, not the product. Orange is a tap; violet is what
+        // appeared or changed. One tap per frame, and never a green row or a
+        // check mark standing in for either, because those look like the design.
+        const cursor = `<i class="ph-fill ph-hand-tap pointer-events-none absolute -right-3 -bottom-3 z-30 text-xl" style="color:#c2410c; filter: drop-shadow(0 0 2px rgba(255,255,255,0.95))"></i>`;
+
+        const TONE = {
+          click: { line: "#ea580c", tag: "#c2410c" },
+          new: { line: "#8b5cf6", tag: "#6d28d9" },
+        };
+
+        const ann = (label, tone = "click") =>
+          `<span class="pointer-events-none absolute -inset-1.5 rounded-md outline-2 outline-dashed" style="outline-color:${TONE[tone].line}"></span>` +
+          `<span class="pointer-events-none absolute -top-5 left-0 z-30 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide whitespace-nowrap text-white uppercase" style="background:${TONE[tone].tag}">${label}</span>`;
+
+        const noted = (inner, label, tone = "click", { pointer = false, cls = "" } = {}) =>
+          `<div class="relative ${cls}">${inner}${ann(label, tone)}${pointer ? cursor : ""}</div>`;
+        const clickable = (inner, cls = "") => noted(inner, "tap", "click", { pointer: true, cls });
+        const fresh = (inner, cls = "") => noted(inner, "new", "new", { cls });
+
+        // ---- the frames ------------------------------------------------------
+        const home = (opts = {}) => `
+          <div class="h-full overflow-hidden bg-background">
+            ${appbar("Accounts")}
+            <div class="p-4">${cardFace(opts)}</div>
+            <p class="px-4 pb-1 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Recent</p>
+            ${txn("Ironwood Coffee", "Today", "&minus;$6.40")}
+            ${txn("Transit &mdash; Metro", "Today", "&minus;$2.90", { icon: "ph-train" })}
+            ${txn("Sunrise Grocery", "Yesterday", "&minus;$54.18", { icon: "ph-shopping-cart" })}
+          </div>`;
+
+        const states = [
+          {
+            title: "A charge nobody recognizes",
+            note: "The flow starts from a row in the list rather than from a settings screen, because that is where the person is when they notice.",
+            body: phone(`
+              <div class="h-full overflow-hidden bg-background">
+                ${appbar("Accounts")}
+                <div class="p-4">${cardFace()}</div>
+                <p class="px-4 pb-1 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Recent</p>
+                <div class="px-2">${clickable(txn("PDX*HELIOSMEDIA", "Pending &middot; 04:12", "&minus;$189.00", { icon: "ph-question", tone: "text-error-700", sub: "Pending &middot; 04:12" }), "rounded-lg")}</div>
+                ${txn("Ironwood Coffee", "Today", "&minus;$6.40")}
+                ${txn("Transit &mdash; Metro", "Today", "&minus;$2.90", { icon: "ph-train" })}
+                ${txn("Sunrise Grocery", "Yesterday", "&minus;$54.18", { icon: "ph-shopping-cart" })}
+              </div>`),
+          },
+          {
+            title: "One button, not a menu",
+            note: "The detail screen offers exactly one thing to do about a charge you do not recognize. Reporting and freezing are the same intent and should not be two decisions.",
+            body: phone(`
+              <div class="h-full bg-card">
+                ${appbar("Transaction", { back: true })}
+                <div class="p-5 text-center">
+                  <span class="mx-auto grid size-12 place-items-center rounded-full bg-accent"><i class="ph ph-question text-xl text-muted-foreground"></i></span>
+                  <p class="mt-3 text-2xl font-semibold">&minus;$189.00</p>
+                  <p class="mt-1 text-[13px] text-muted-foreground">PDX*HELIOSMEDIA</p>
+                  <span class="mt-2 inline-block rounded-full bg-warning-100 px-2 py-0.5 text-[10px] font-medium text-warning-900">Pending</span>
+                </div>
+                <div class="mx-5 divide-y divide-border rounded-xl border border-border">
+                  <div class="flex justify-between px-3.5 py-2.5 text-[13px]"><span class="text-muted-foreground">When</span><span>Today, 04:12</span></div>
+                  <div class="flex justify-between px-3.5 py-2.5 text-[13px]"><span class="text-muted-foreground">Card</span><span>Everyday &bull;&bull;&bull;&bull; 4417</span></div>
+                  <div class="flex justify-between px-3.5 py-2.5 text-[13px]"><span class="text-muted-foreground">Where</span><span>Online</span></div>
+                </div>
+                <div class="mt-6 px-5">
+                  ${clickable(btn("I don&rsquo;t recognize this", { cls: "bg-foreground text-background", icon: "ph-shield-warning" }), "rounded-xl")}
+                  <p class="mt-3 text-center text-[12px] leading-5 text-muted-foreground">We&rsquo;ll freeze the card first. Nothing is disputed yet.</p>
+                </div>
+              </div>`),
+          },
+          {
+            title: "The whole proposal is this sheet",
+            note: "Two lists before the button, and the second one is the reason this page exists. A freeze that silently lets three subscriptions through is the support ticket we keep getting.",
+            body: phone(
+              sheet(
+                home(),
+                `<p class="text-[19px] font-semibold">Freeze this card?</p>
+                 <p class="mt-1 text-[13px] leading-5 text-muted-foreground">You can unfreeze it any time, and your card number does not change.</p>
+                 <div class="mt-4 rounded-xl border border-border bg-background p-3">
+                   <p class="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">Freezing stops</p>
+                   ${consequence("ph-check", "text-brand-600", "New card payments in shops and online")}
+                   ${consequence("ph-check", "text-brand-600", "Cash withdrawals")}
+                   ${consequence("ph-check", "text-brand-600", "Apple&nbsp;Pay and Google&nbsp;Pay on this card")}
+                 </div>
+                 <div class="mt-3 rounded-xl border border-warning-300 bg-warning-50 p-3">
+                   <p class="text-[11px] font-semibold tracking-[0.08em] text-warning-900 uppercase">Freezing does not stop</p>
+                   ${consequence("ph-arrow-clockwise", "text-warning-700", "<b>3 subscriptions</b> that bill this card. Next: Helios Media $18.99 on the 14th.")}
+                   ${consequence("ph-clock", "text-warning-700", "The <b>$189.00</b> charge already pending. Freeze first, then dispute it.")}
+                   ${consequence("ph-truck", "text-warning-700", "Refunds coming back to this card &mdash; those still arrive.")}
+                 </div>
+                 <div class="mt-4 space-y-2">
+                   ${clickable(btn("Freeze card", { cls: "bg-error-500 text-white", icon: "ph-snowflake" }), "rounded-xl")}
+                   ${btn("Not now", { cls: "bg-accent text-foreground" })}
+                 </div>`,
+              ),
+            ),
+          },
+          {
+            title: "Frozen, with the exceptions still on screen",
+            note: "The three subscriptions become a list you can act on rather than a warning you already dismissed. This is the same information as frame 3, kept.",
+            body: phone(`
+              <div class="h-full overflow-hidden bg-background">
+                ${appbar("Accounts")}
+                <div class="p-4">${cardFace({ frozen: true })}</div>
+                <div class="px-4">
+                  ${fresh(
+                    `<div class="rounded-xl border border-warning-300 bg-warning-50 p-3">
+                       <p class="text-[13px] font-semibold text-warning-900">3 subscriptions will still be charged</p>
+                       <div class="mt-2 space-y-1.5">
+                         <div class="flex items-center justify-between text-[12px]"><span>Helios Media</span><span class="text-muted-foreground">$18.99 &middot; 14 Mar</span></div>
+                         <div class="flex items-center justify-between text-[12px]"><span>Northgate Fitness</span><span class="text-muted-foreground">$45.00 &middot; 1 Apr</span></div>
+                         <div class="flex items-center justify-between text-[12px]"><span>Cascade Internet</span><span class="text-muted-foreground">$72.00 &middot; 3 Apr</span></div>
+                       </div>
+                       <p class="mt-2.5 text-[12px] font-medium text-warning-900">Block them individually &rsaquo;</p>
+                     </div>`,
+                    "rounded-xl",
+                  )}
+                </div>
+                <p class="px-4 pt-4 pb-1 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Recent</p>
+                ${txn("PDX*HELIOSMEDIA", "Pending", "&minus;$189.00", { icon: "ph-question", tone: "text-error-700", sub: "Disputed &middot; under review" })}
+                ${txn("Ironwood Coffee", "Today", "&minus;$6.40")}
+              </div>`),
+          },
+          {
+            title: "A decline that says why",
+            note: "Attributing the decline to the freeze is what turns this from a support call into a tap. The recovery is in the notice, not three screens away.",
+            body: phone(`
+              <div class="h-full overflow-hidden bg-background">
+                ${appbar("Accounts")}
+                <div class="p-4">${cardFace({ frozen: true })}</div>
+                <div class="px-4">
+                  ${fresh(
+                    `<div class="rounded-xl border border-border bg-card p-3.5 shadow-sm">
+                       <div class="flex items-start gap-2.5">
+                         <i class="ph ph-snowflake mt-0.5 text-base text-error-700"></i>
+                         <div class="min-w-0">
+                           <p class="text-[13px] font-semibold">Northgate Fitness was declined</p>
+                           <p class="mt-0.5 text-[12px] leading-5 text-muted-foreground">$45.00 &middot; 2 minutes ago. Your card is frozen, so we turned it away. Gyms usually retry within 48 hours.</p>
+                           <div class="mt-2.5 flex gap-2">
+                             <span class="rounded-lg bg-foreground px-3 py-1.5 text-[12px] font-semibold text-background">Allow this one</span>
+                             <span class="rounded-lg bg-accent px-3 py-1.5 text-[12px] font-semibold">Keep declining</span>
+                           </div>
+                         </div>
+                       </div>
+                     </div>`,
+                    "rounded-xl",
+                  )}
+                </div>
+                <p class="px-4 pt-4 pb-1 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Recent</p>
+                ${txn("Northgate Fitness", "2 min ago", "Declined", { icon: "ph-x-circle", tone: "text-muted-foreground", sub: "Card frozen" })}
+                ${txn("PDX*HELIOSMEDIA", "Pending", "&minus;$189.00", { icon: "ph-question", tone: "text-error-700", sub: "Disputed &middot; under review" })}
+              </div>`),
+          },
+          {
+            title: "Two ways out, and only one is reversible",
+            note: "Drawn side by side because the difference is the whole decision. A replacement kills the stored credentials the freeze could not reach, and that is a cost, not a feature.",
+            w: 390,
+            h: 560,
+            body: `
+              <div class="grid h-full place-items-center bg-background p-5">
+                <div class="w-full rounded-2xl border border-border bg-card p-5 shadow-xl">
+                  <p class="text-[17px] font-semibold">This card is frozen</p>
+                  <p class="mt-1 text-[13px] text-muted-foreground">Frozen since Tuesday, 09:14.</p>
+                  <div class="mt-4 space-y-3">
+                    <div class="rounded-xl border border-border p-3.5">
+                      <div class="flex items-center gap-2">
+                        <i class="ph ph-play text-base text-brand-600"></i>
+                        <span class="text-[14px] font-semibold">Unfreeze</span>
+                        <span class="ml-auto rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700">Reversible</span>
+                      </div>
+                      <p class="mt-1.5 text-[12px] leading-5 text-muted-foreground">Same number, same expiry. Everything works again immediately, including the pending $189.00 if it has not been reversed.</p>
+                    </div>
+                    <div class="rounded-xl border border-border p-3.5">
+                      <div class="flex items-center gap-2">
+                        <i class="ph ph-credit-card text-base text-error-700"></i>
+                        <span class="text-[14px] font-semibold">Order a replacement</span>
+                        <span class="ml-auto rounded-full bg-error-100 px-2 py-0.5 text-[10px] font-medium text-error-700">Permanent</span>
+                      </div>
+                      <p class="mt-1.5 text-[12px] leading-5 text-muted-foreground">New number in 3&ndash;5 days. This is what actually stops the 3 subscriptions &mdash; and it will also break any other saved card details, including anything on file for travel.</p>
+                    </div>
+                  </div>
+                  <div class="mt-4">${btn("Not yet", { cls: "bg-accent text-foreground" })}</div>
+                </div>
+              </div>`,
+          },
+        ];
+
+// ---- render ----------------------------------------------------------
+        const rack = document.querySelector("#rack");
+
+        rack.innerHTML = states
+          .map(
+            (state, i) => `
+          <figure class="m-0 flex flex-col overflow-hidden rounded-xl border border-border bg-card p-3 shadow-sm break-inside-avoid">
+            <div class="slot flex h-[var(--slot-h)] items-center justify-center" style="--slot-h:${SLOT_H}px">
+              <div
+                class="frame w-[calc(var(--w)*var(--s))] cursor-zoom-in overflow-hidden rounded-lg ring-1 ring-border h-[calc(var(--h)*var(--s))]"
+                data-w="${state.w || W}"
+                data-h="${state.h || H}"
+                style="--w:${state.w || W}px; --h:${state.h || H}px; --s:0.2"
+              >
+                <div class="w-[var(--w)] origin-top-left scale-[var(--s)] h-[var(--h)]">${state.body}</div>
+              </div>
+            </div>
+            <figcaption class="mt-3 text-xs leading-5 text-muted-foreground">
+              <span class="mr-1.5 rounded bg-accent px-1.5 py-0.5 font-mono text-[10px] text-foreground">${i + 1}</span><span class="font-medium text-foreground">${state.title}.</span> ${state.note}
+            </figcaption>
+          </figure>`,
+          )
+          .join("");
+
+        document.querySelector("#count").textContent = `${states.length} frames`;
+
+        // ---- density ---------------------------------------------------------
+        // Fit as many tiles per row as the width allows, then derive each frame's
+        // scale from the tile. Nothing ever renders above its true size.
+        const GAP = 20;
+        const PAD = 26; // tile padding plus its border
+        let single = false;
+
+        const layout = () => {
+          const avail = rack.clientWidth;
+          if (avail <= 0) return;
+          const natural = Math.max(1, Math.floor((avail + GAP) / (TILE_MIN + GAP)));
+          document.querySelector("#views").hidden = natural < 2;
+          const columns = single ? 1 : natural;
+          const inner = (avail - GAP * (columns - 1)) / columns - PAD;
+          rack.style.setProperty("--cols", columns);
+          for (const frame of rack.querySelectorAll(".frame")) {
+            // In the grid every tile shares one row height, so a tall frame is
+            // capped by SLOT_H to keep the row even. One column has no row to
+            // keep even, so the frame scales by width alone and the slot shrinks
+            // to match rather than centering it in a height sized for the grid.
+            const fit = single
+              ? Math.min(inner / Number(frame.dataset.w), 1)
+              : Math.min(inner / Number(frame.dataset.w), SLOT_H / Number(frame.dataset.h), 1);
+            const s = Math.max(0.05, fit);
+            frame.style.setProperty("--s", s);
+            frame.closest(".slot").style.setProperty("--slot-h", `${single ? Number(frame.dataset.h) * s : SLOT_H}px`);
+          }
+        };
+
+        new ResizeObserver(layout).observe(rack);
+        layout();
+
+        // ---- view mode -------------------------------------------------------
+        const VIEWS = [
+          ["grid", "ph-squares-four", "Grid"],
+          ["single", "ph-rows", "One per row"],
+        ];
+        const viewBox = document.querySelector("#views");
+
+        const paintViews = () => {
+          viewBox.innerHTML = VIEWS.map(
+            ([key, icon, title]) => `
+            <button data-view="${key}" title="${title}" class="grid size-7 place-items-center rounded-md ${
+              (key === "single") === single ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+            }"><i class="ph ${icon}"></i></button>`,
+          ).join("");
+        };
+        paintViews();
+
+        viewBox.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-view]");
+          if (!button) return;
+          single = button.dataset.view === "single";
+          paintViews();
+          layout();
+        });
+
+        // ---- enlarge ---------------------------------------------------------
+        // Everything is reachable by tap as well as by key: prev and next
+        // buttons, a horizontal swipe, an explicit close. On a phone there is no
+        // hover and no Escape to fall back on.
+        const viewer = document.querySelector("#viewer");
+        const stage = document.querySelector("#stage");
+        const viewerCaption = document.querySelector("#viewer-caption");
+        const viewerCounter = document.querySelector("#viewer-counter");
+        let openIndex = -1;
+
+        /** Fits the enlarged frame to the stage, which measured itself after the
+         *  caption took its space. */
+        const fitFrame = () => {
+          const frame = stage.firstElementChild;
+          if (!frame) return;
+          const fit = Math.min(
+            (stage.clientWidth - 32) / Number(frame.dataset.w),
+            (stage.clientHeight - 32) / Number(frame.dataset.h),
+          );
+          frame.style.setProperty("--s", Math.max(0.05, fit));
+        };
+
+        const showFrame = (index) => {
+          const state = states[index];
+          const tile = rack.querySelectorAll(".frame")[index];
+          if (!tile) return;
+          openIndex = index;
+          stage.replaceChildren(tile.cloneNode(true));
+          viewerCaption.innerHTML =
+            `<span class="mr-1.5 rounded bg-white/15 px-1.5 py-0.5 font-mono text-[10px] text-white/80">${index + 1}</span>` +
+            `<span class="font-medium">${state.title}.</span> <span class="text-white/80">${state.note}</span>`;
+          viewerCounter.textContent = `${index + 1} / ${states.length}`;
+          if (!viewer.open) viewer.showModal();
+          fitFrame(); // The dialog is laid out by now, so the stage measures true.
+        };
+
+        const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
+
+        rack.addEventListener("click", (event) => {
+          const frame = event.target.closest(".frame");
+          if (!frame) return;
+          showFrame([...rack.querySelectorAll(".frame")].indexOf(frame));
+        });
+
+        document.querySelector("#viewer-controls").addEventListener("click", (event) => {
+          const button = event.target.closest("button");
+          if (!button) return;
+          if (button.dataset.step) return step(Number(button.dataset.step));
+          if (button.id === "viewer-close") viewer.close();
+        });
+
+        // A tap in the space around the frame dismisses; a horizontal drag moves
+        // on. The flag stops the click ending a swipe from also closing.
+        let swipeX = 0;
+        let swipeY = 0;
+        let swiped = false;
+
+        stage.addEventListener("pointerdown", (event) => {
+          swipeX = event.clientX;
+          swipeY = event.clientY;
+          swiped = false;
+        });
+
+        stage.addEventListener("pointerup", (event) => {
+          if (states.length < 2) return;
+          const dx = event.clientX - swipeX;
+          if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(event.clientY - swipeY) * 1.5) return;
+          swiped = true;
+          step(dx < 0 ? 1 : -1);
+        });
+
+        stage.addEventListener("click", (event) => {
+          if (swiped || event.target.closest(".frame")) return;
+          viewer.close();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          // From the rack, right opens the set at its first frame, so the whole
+          // set can be walked from the keyboard without reaching for a pointer.
+          // Nothing sits behind that frame, so left has nothing to do there.
+          if (!viewer.open) {
+            if (event.key === "ArrowLeft") return;
+            if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+            event.preventDefault();
+            return showFrame(0);
+          }
+          event.preventDefault();
+          step(event.key === "ArrowRight" ? 1 : -1);
+        });
+
+        // The stage, not the window: this also catches the page being laid out
+        // for the first time after being hidden, which fires no resize event.
+        new ResizeObserver(() => {
+          if (viewer.open) fitFrame();
+        }).observe(stage);
+
+        for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
+      </script>
+
+      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+        A proposal, not a record. Nothing here is drawn against an existing
+        screen, no product was measured, and every merchant, amount and date is
+        invented to give a row something to hold. What the frames argue about is
+        the sequence and the copy; what they cannot tell you is whether the
+        subscription list is available to build.
+      </footer>
+    </main>
+    <!-- shell:start -->
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+
+        // A line may break between an image and the text beside it, so the icon
+        // and the first word it leads go in a span that cannot break. A link
+        // with no text of its own takes the icon at the front of the link.
+        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+        let text = walker.nextNode();
+        while (text && !text.data.trim()) text = walker.nextNode();
+        let host = link;
+        if (text) {
+          const at = text.data.search(/\S/);
+          const word = at > 0 ? text.splitText(at) : text;
+          const space = word.data.search(/\s/);
+          if (space > 0) word.splitText(space); // The rest of the text stays put.
+          host = document.createElement("span");
+          host.className = "site-icon-word";
+          word.replaceWith(host);
+          host.append(word);
+        }
+
+        const drop = () => {
+          icon.remove();
+          if (host !== link) host.replaceWith(...host.childNodes);
+        };
+        icon.onerror = drop;
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) drop();
+        };
+        host.prepend(icon);
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

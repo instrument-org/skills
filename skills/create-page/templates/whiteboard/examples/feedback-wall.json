@@ -1,0 +1,8 @@
+{
+  "title": "Why 36 subscribers left, on one wall",
+  "variant": "A wall you can re-sort, and it remembers where you put things",
+  "prompt": "Take the free-text answers from our cancellation survey and lay them out as an affinity board rather than summarizing them.",
+  "model": "claude-opus-5",
+  "note": "The workshop shape, and the cover because it is the one that reads as a whiteboard at a glance. Position is a judgment rather than a measurement, which is exactly why every note carries `data-drag`: a reader who disagrees with a placement can act on it instead of only noting it, and the page says outright that their arrangement lives in their browser and never in the file. Color is a second dimension that the clusters do not encode -- whether the person said they would come back -- so the wall answers a question a six-bar chart of the same survey cannot. The sixth region holds the four answers that would not sit anywhere, which the findings treat as a result rather than as leftovers.",
+  "html_sha256": "f7006ec4981d6678cf8d68717ef210eeab89c7a14cae60d1243014ce7431919f"
+}

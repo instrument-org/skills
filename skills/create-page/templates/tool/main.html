@@ -1,0 +1,95 @@
+      <header>
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Tool &middot; Nothing leaves this page
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          TITLE
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          ONE PARAGRAPH: what goes in, what comes out, and why this is worth a page
+          rather than a sentence. Say here that it opens with a real example in it,
+          because that is the thing that makes it usable without instructions.
+        </p>
+      </header>
+
+      <section id="tool" class="mt-9">
+        <div class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <!-- The controls come first and the output follows, in one card, with
+               no step between them: the tool recomputes as things change and
+               there is nothing to submit.
+
+               Every control starts at a value that produces a real answer. A tool
+               that opens blank is a tool the reader has to learn before it helps
+               them, and most of them will not. -->
+          <div class="grid gap-5 sm:grid-cols-3">
+            <label class="block">
+              <span class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">A control</span>
+              <div class="mt-2 flex items-center gap-2 rounded-lg border border-input bg-background px-3 py-2">
+                <input id="thing" type="number" value="0" class="w-full bg-transparent text-sm outline-none" />
+              </div>
+            </label>
+          </div>
+
+          <!-- The answer, big enough to be the reason the page exists. -->
+          <div id="answer" class="mt-6"></div>
+
+          <!-- Where a chart earns its place, the same numbers go in a table
+               directly under it, always rendered. Never in a tooltip, never
+               behind the library arriving. -->
+        </div>
+
+        <p class="mt-3 text-xs leading-6 text-muted-foreground">
+          Say plainly where what the reader types goes: nowhere. Nothing is sent,
+          nothing is stored, the file works offline. Where the answer depends on a
+          date, a rate or a version, say which one it used and why that matters.
+        </p>
+      </section>
+
+      <section id="worked" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">The answer it opens with</h2>
+        <!-- The default answer, written out in prose. This is what a reader who
+             never touches a control gets, what survives the page being printed,
+             and what makes the tool worth reading rather than only worth using.
+             Say what the answer turns on, not just what it is. -->
+      </section>
+
+      <section id="reading" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">HOW TO READ IT</h2>
+        <!-- Only when the output needs interpreting: a legend for a chart, what a
+             band means, what counts as good. Cut this section when the answer is
+             a number and the number speaks. -->
+      </section>
+
+      <section id="how" class="mt-12">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">What it does, and what it does not</h2>
+        <!-- The method in one line each, then the limits, and the limits are the
+             part that matters: what it assumes, where it is wrong, what it does
+             not know, and what it will not tell you. A tool that states no limits
+             is claiming it has none. End with where the data goes. -->
+      </section>
+
+      <script>
+        // Everything runs in the page. No request is made from this file.
+        const $ = (id) => document.querySelector("#" + id);
+
+        const draw = () => {
+          const thing = Number($("thing").value) || 0;
+          $("answer").innerHTML = `
+            <div class="rounded-xl border border-brand-200 bg-brand-50 p-4">
+              <p class="text-[11px] font-semibold tracking-[0.1em] text-brand-700 uppercase">What it works out to</p>
+              <p class="mt-1 text-[26px] font-semibold tracking-[-0.02em]">${thing}</p>
+            </div>`;
+        };
+
+        for (const input of document.querySelectorAll("#tool input, #tool select, #tool textarea")) {
+          input.addEventListener("input", draw);
+          input.addEventListener("change", draw);
+        }
+        draw();
+      </script>
+
+      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+        <!-- Where the defaults came from, and what they are not: an example rate
+             is not a rate anyone is offering, an example paste is not research.
+             Say which figures are illustrative before a reader acts on one. -->
+      </footer>

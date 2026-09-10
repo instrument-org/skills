@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why 36 subscribers left, on one wall</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="whiteboard@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <!-- shell:end -->
+
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-[92rem] px-5 py-10 sm:px-8 sm:py-14">
+<style>
+        /* On paper there is no panning, so the board stops being a canvas and
+           becomes what it always was underneath: cards in document order. That
+           is the reason DOM order has to be reading order. */
+        @media print {
+          #stage {
+            height: auto !important;
+            overflow: visible !important;
+          }
+          #board {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            transform: none !important;
+          }
+          /* Everything inside a card too, not only the cards: a label pinned
+             to the bottom of a fixed-height card has nothing to pin to once
+             the card is in the flow, and goes missing from the paper. */
+          #board *,
+          #board > * {
+            position: static !important;
+          }
+          #board > * {
+            width: auto !important;
+            height: auto !important;
+            margin-bottom: 0.5rem;
+          }
+          #board > [data-region],
+          #board-controls,
+          #minimap-wrap {
+            display: none !important;
+          }
+        }
+      </style>
+
+      <header class="mx-auto max-w-3xl">
+        <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
+          Whiteboard &middot; Cancellation survey, Q3
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Why 36 subscribers left, on one wall
+        </h1>
+        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+          Every free-text answer from the exit survey, one to a note, sorted into
+          the six things people were actually saying. Sorting is the whole
+          argument: a list of 36 quotes is unreadable and a bar chart of six
+          categories throws away the sentences that made the categories worth
+          having. Drag a note if you disagree with where it sits &mdash; several of
+          them are genuinely arguable, and the four in the last group would not sit
+          anywhere at all.
+        </p>
+      </header>
+
+      <section id="legend" class="mx-auto mt-8 max-w-3xl">
+        <div class="rounded-xl border border-border bg-card p-5">
+          <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
+            How to read the wall
+          </p>
+          <div class="mt-3 grid gap-4 sm:grid-cols-2">
+            <div>
+              <p class="text-sm font-medium">Where a note sits is the theme</p>
+              <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                Six dashed regions, each holding the notes that are making the same
+                point. A note in the middle of nothing is a note nobody could
+                place.
+              </p>
+            </div>
+            <div>
+              <p class="text-sm font-medium">What color it is answers one question</p>
+              <div class="mt-2 space-y-1.5 text-sm text-muted-foreground">
+                <span class="flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-brand-200 bg-brand-50"></span> Said they would consider coming back &mdash; 14</span>
+                <span class="mt-1.5 flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-border bg-card"></span> Said they would not &mdash; 7</span>
+                <span class="mt-1.5 flex items-center gap-2"><span class="inline-block size-3.5 rounded border border-warning-300 bg-warning-50"></span> Did not answer that question &mdash; 6</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="wall" class="mt-8">
+        <div class="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <!-- Without the script this is an ordinary scrolling box at 1:1 and
+               every note is still readable. The script turns it into a viewport. -->
+          <div id="stage" class="relative overflow-auto bg-background" style="height: min(76vh, 740px)">
+            <div id="board" class="relative origin-top-left" style="width: 2520px; height: 1220px">
+<!-- It got too expensive -->
+        <div data-region class="absolute rounded-2xl border-2 border-dashed border-border" style="left:60px; top:140px; width:760px; height:480px"></div>
+        <p class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:80px; top:158px">
+          <i class="ph ph-tag text-lg text-muted-foreground"></i>It got too expensive
+          <span class="rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground">9 people</span>
+        </p>
+        <div data-drag="n12" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:80px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Went from $19 to $24 with no email. Found out from the card statement.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#12 &middot; 19 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n31" data-mini class="absolute cursor-grab rounded-xl border bg-card border-border p-3.5 shadow-sm select-none" style="left:310px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Two bags a month is $58 with shipping. My local roaster is $34 and I can walk there.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-muted-foreground">#31 &middot; 7 months &middot; Would not</p>
+        </div>
+        <div data-drag="n44" data-mini class="absolute cursor-grab rounded-xl border bg-card border-border p-3.5 shadow-sm select-none" style="left:540px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">The intro price is the only honest one. Month four is the real price and it is a different product.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-muted-foreground">#44 &middot; 4 months &middot; Would not</p>
+        </div>
+        <div data-drag="n7" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:80px; top:380px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Not the money exactly. I could not tell what I was paying per cup and that bothered me.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#7 &middot; 22 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n58" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:310px; top:380px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Paused it during a tight month, and pausing turned into cancelling because restarting looked like signing up again.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#58 &middot; 11 months &middot; Would come back</p>
+        </div>
+        <!-- More coffee than we drink -->
+        <div data-region class="absolute rounded-2xl border-2 border-dashed border-border" style="left:880px; top:140px; width:760px; height:480px"></div>
+        <p class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:900px; top:158px">
+          <i class="ph ph-package text-lg text-muted-foreground"></i>More coffee than we drink
+          <span class="rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground">7 people</span>
+        </p>
+        <div data-drag="n3" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:900px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Four unopened bags in the cupboard. That is the whole reason.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#3 &middot; 14 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n22" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:1130px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Every three weeks would have been perfect. The options were two weeks or four.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#22 &middot; 9 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n39" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:1360px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">We went away for a month and came back to two deliveries on the step.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#39 &middot; 16 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n51" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:900px; top:380px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">It arrives whether or not I drank the last one. It should notice.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#51 &middot; 6 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n66" data-mini class="absolute cursor-grab rounded-xl border bg-warning-50 border-warning-300 p-3.5 shadow-sm select-none" style="left:1130px; top:380px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Bought a bigger grinder and started buying kilos. Not your fault.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-warning-900">#66 &middot; 25 months &middot; Did not say</p>
+        </div>
+        <!-- The coffee itself changed -->
+        <div data-region class="absolute rounded-2xl border-2 border-dashed border-border" style="left:1700px; top:140px; width:760px; height:480px"></div>
+        <p class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:1720px; top:158px">
+          <i class="ph ph-coffee text-lg text-muted-foreground"></i>The coffee itself changed
+          <span class="rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground">5 people</span>
+        </p>
+        <div data-drag="n17" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:1720px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">The Ethiopian I signed up for stopped appearing. Everything since has been a blend.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#17 &middot; 13 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n28" data-mini class="absolute cursor-grab rounded-xl border bg-card border-border p-3.5 shadow-sm select-none" style="left:1950px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Roast dates went from four days out to eleven. You can taste it.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-muted-foreground">#28 &middot; 20 months &middot; Would not</p>
+        </div>
+        <div data-drag="n35" data-mini class="absolute cursor-grab rounded-xl border bg-card border-border p-3.5 shadow-sm select-none" style="left:2180px; top:196px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Three months in a row of the same washed Colombian, described three different ways.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-muted-foreground">#35 &middot; 8 months &middot; Would not</p>
+        </div>
+        <div data-drag="n47" data-mini class="absolute cursor-grab rounded-xl border bg-warning-50 border-warning-300 p-3.5 shadow-sm select-none" style="left:1720px; top:380px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">It got darker. I do not know if that was deliberate but I did not order that.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-warning-900">#47 &middot; 15 months &middot; Did not say</p>
+        </div>
+        <!-- Life moved on -->
+        <div data-region class="absolute rounded-2xl border-2 border-dashed border-border" style="left:60px; top:680px; width:760px; height:480px"></div>
+        <p class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:80px; top:698px">
+          <i class="ph ph-house-line text-lg text-muted-foreground"></i>Life moved on
+          <span class="rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground">5 people</span>
+        </p>
+        <div data-drag="n9" data-mini class="absolute cursor-grab rounded-xl border bg-warning-50 border-warning-300 p-3.5 shadow-sm select-none" style="left:80px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Moved in with someone who does not drink coffee. Half the reason is gone.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-warning-900">#9 &middot; 18 months &middot; Did not say</p>
+        </div>
+        <div data-drag="n26" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:310px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">New baby. Everything with a monthly charge went at once.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#26 &middot; 12 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n42" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:540px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Office closed, so I am not making four cups a day any more.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#42 &middot; 21 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n61" data-mini class="absolute cursor-grab rounded-xl border bg-card border-border p-3.5 shadow-sm select-none" style="left:80px; top:920px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Gave it as a gift, the gift ended, I never meant to keep it.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-muted-foreground">#61 &middot; 3 months &middot; Would not</p>
+        </div>
+        <!-- A delivery went wrong -->
+        <div data-region class="absolute rounded-2xl border-2 border-dashed border-border" style="left:880px; top:680px; width:760px; height:480px"></div>
+        <p class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:900px; top:698px">
+          <i class="ph ph-truck text-lg text-muted-foreground"></i>A delivery went wrong
+          <span class="rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground">6 people</span>
+        </p>
+        <div data-drag="n5" data-mini class="absolute cursor-grab rounded-xl border bg-card border-border p-3.5 shadow-sm select-none" style="left:900px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Left on the step in the rain twice. The second bag was unusable.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-muted-foreground">#5 &middot; 10 months &middot; Would not</p>
+        </div>
+        <div data-drag="n19" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:1130px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">The tracking link said delivered nine days before it arrived.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#19 &middot; 5 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n33" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:1360px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Support fixed it quickly both times, which is why I stayed as long as I did.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#33 &middot; 17 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n48" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:900px; top:920px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Cannot change the address without cancelling and starting again.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#48 &middot; 6 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n55" data-mini class="absolute cursor-grab rounded-xl border bg-card border-border p-3.5 shadow-sm select-none" style="left:1130px; top:920px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Three weeks late at Christmas, which was the one time it mattered.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-muted-foreground">#55 &middot; 23 months &middot; Would not</p>
+        </div>
+        <!-- Would not sit anywhere -->
+        <div data-region class="absolute rounded-2xl border-2 border-dashed border-border" style="left:1700px; top:680px; width:760px; height:480px"></div>
+        <p class="absolute flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]" style="left:1720px; top:698px">
+          <i class="ph ph-question text-lg text-muted-foreground"></i>Would not sit anywhere
+          <span class="rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground">4 people</span>
+        </p>
+        <div data-drag="n14" data-mini class="absolute cursor-grab rounded-xl border bg-warning-50 border-warning-300 p-3.5 shadow-sm select-none" style="left:1720px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">The bags are beautiful and I felt bad throwing them out every month.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-warning-900">#14 &middot; 11 months &middot; Did not say</p>
+        </div>
+        <div data-drag="n37" data-mini class="absolute cursor-grab rounded-xl border bg-warning-50 border-warning-300 p-3.5 shadow-sm select-none" style="left:1950px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">I just stopped wanting a subscription. Any subscription. No complaint here.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-warning-900">#37 &middot; 15 months &middot; Did not say</p>
+        </div>
+        <div data-drag="n53" data-mini class="absolute cursor-grab rounded-xl border bg-brand-50 border-brand-200 p-3.5 shadow-sm select-none" style="left:2180px; top:736px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Someone else in the house cancelled it and I only found out later.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-brand-700">#53 &middot; 9 months &middot; Would come back</p>
+        </div>
+        <div data-drag="n64" data-mini class="absolute cursor-grab rounded-xl border bg-warning-50 border-warning-300 p-3.5 shadow-sm select-none" style="left:1720px; top:920px; width:210px; height:168px">
+          <p class="text-[13px] leading-5">Honestly cannot remember why. It was on the list of things to cancel.</p>
+          <p class="absolute bottom-3 left-3.5 text-[10px] text-warning-900">#64 &middot; 4 months &middot; Did not say</p>
+        </div>
+            </div>
+          </div>
+
+          <div id="minimap-wrap" class="pointer-events-auto absolute bottom-3 left-3 rounded-lg border border-border bg-card/90 p-1.5 shadow-sm backdrop-blur print:hidden">
+            <div id="minimap" class="relative w-36 cursor-pointer overflow-hidden rounded bg-muted">
+              <span id="minimap-view" class="absolute rounded-[2px] border border-brand-500 bg-brand-500/10"></span>
+            </div>
+          </div>
+
+          <div id="board-controls" class="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur print:hidden">
+            <button data-zoom="0.8" title="Zoom out" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-minus"></i></button>
+            <span id="zoom-level" class="min-w-11 text-center font-mono text-[11px] text-muted-foreground">100%</span>
+            <button data-zoom="1.25" title="Zoom in" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-plus"></i></button>
+            <span class="mx-0.5 h-5 w-px bg-border"></span>
+            <button data-fit title="Fit the whole wall" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-corners-out"></i></button>
+            <button data-reset title="Put every note back where it started" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          </div>
+        </div>
+        <p class="mx-auto mt-3 max-w-3xl text-xs leading-6 text-muted-foreground">
+          Drag the wall to move it, pinch or hold <span class="rounded bg-accent px-1 py-0.5 font-mono text-[10px]">&#8984;</span> and scroll to zoom, drag a note to re-sort it. Where you put things is remembered in this browser only: the file itself never changes, so a copy you forward arrives sorted the way it is written here.
+        </p>
+      </section>
+
+      <section id="says" class="mx-auto mt-14 max-w-3xl">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">
+          What the arrangement says that the six counts do not
+        </h2>
+        <div class="mt-5 space-y-4">
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[15px] font-semibold">The biggest group is also the most recoverable</p>
+            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
+              Nine people left over price, and every one of them who answered said
+              they would consider coming back. Read the notes rather than the
+              count and only two are about the number itself: the rest are about
+              finding out from a card statement, not knowing the per-cup cost, and
+              a pause that behaved like a cancellation. Three of those are
+              billing-page problems, not pricing problems.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[15px] font-semibold">The cadence group is one missing option</p>
+            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
+              Seven people said some version of &ldquo;too much coffee&rdquo;. Four of
+              their notes name a specific interval that does not exist, or a
+              delivery that should have noticed the last one was untouched. This is
+              the group where the fix is smallest and the wall makes that visible
+              in a way the category label hides.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[15px] font-semibold">Quality is small, and it is the one that does not come back</p>
+            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
+              Five notes, and it is the only region where the white notes
+              outnumber the green. People who leave over price are annoyed. People
+              who leave because the roast dates slipped from four days to eleven
+              have concluded something, and the survey suggests they do not
+              un-conclude it.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-card p-5">
+            <p class="text-[15px] font-semibold">Four notes would not sit anywhere, and that is a finding</p>
+            <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
+              Bottom right. Someone felt guilty about the packaging. Someone
+              cancelled every subscription they had. Someone did not know their
+              household had cancelled it. Someone could not remember. A tidy chart
+              would have distributed these four into the nearest category and
+              quietly overstated all six.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="method" class="mx-auto mt-12 max-w-3xl">
+        <h2 class="text-xl font-semibold tracking-[-0.02em]">Where these came from</h2>
+        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
+          <li><span class="font-medium text-foreground">The wall is illustrative.</span> The quotes, the subscriber numbers, the tenures and the counts on this page are invented for the purpose of showing what an exit survey looks like when it is sorted rather than counted. No real survey lies behind it and no real business is described.</li>
+          <li><span class="font-medium text-foreground">One note is one answer, quoted, not summarized.</span> That is the rule this format depends on: the moment notes become paraphrases the wall stops being evidence and becomes an opinion with a layout.</li>
+          <li><span class="font-medium text-foreground">Sorting is a judgment and several are arguable.</span> &ldquo;Bought a bigger grinder&rdquo; sits under cadence and could sit under life. &ldquo;Support fixed it quickly both times&rdquo; is filed under delivery and is arguably praise. The drag exists so a reader can act on disagreeing rather than only note it.</li>
+          <li><span class="font-medium text-foreground">Anyone who left without answering is not here.</span> Which is most of them. A wall of the people who did explain themselves is not a picture of everyone who left, and the six counts should never be read as shares of anything.</li>
+        </ul>
+      </section>
+
+      <script>
+// ---- the canvas ------------------------------------------------------
+        // The board is a fixed-size surface and every card is absolutely placed
+        // on it, in the HTML above. Without this script the stage is an ordinary
+        // scrolling box at 1:1 and every card is still there to be read; with it,
+        // the same surface pans and zooms. Nothing here is the only copy of
+        // anything.
+
+        const stage = document.querySelector("#stage");
+        const board = document.querySelector("#board");
+        const zoomLabel = document.querySelector("#zoom-level");
+        const minimap = document.querySelector("#minimap");
+        const viewbox = document.querySelector("#minimap-view");
+
+        const BOARD_W = board.offsetWidth;
+        const BOARD_H = board.offsetHeight;
+        const MIN_K = 0.1;
+        const MAX_K = 2.5;
+        const miniScale = minimap.clientWidth / BOARD_W;
+
+        let k = 1;
+        let tx = 0;
+        let ty = 0;
+        let topCard = 20;
+
+        const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
+
+        /** The viewport rectangle, drawn over the minimap in board coordinates. */
+        const paintMinimap = () => {
+          viewbox.style.cssText = `left:${(-tx / k) * miniScale}px; top:${(-ty / k) * miniScale}px; width:${(stage.clientWidth / k) * miniScale}px; height:${(stage.clientHeight / k) * miniScale}px`;
+        };
+
+        const apply = () => {
+          board.style.transform = `translate(${tx}px, ${ty}px) scale(${k})`;
+          // Semantic zoom: anything carrying data-from fades in once the board is
+          // at least that scale. It is detail, never a fact the page needs.
+          for (const el of board.querySelectorAll("[data-from]")) {
+            el.style.opacity = k >= Number(el.dataset.from) ? "1" : "0";
+          }
+          zoomLabel.textContent = `${Math.round(k * 100)}%`;
+          paintMinimap();
+        };
+
+        /** Keeps the board point under (clientX, clientY) still while scaling. */
+        const zoomAt = (clientX, clientY, factor) => {
+          const rect = stage.getBoundingClientRect();
+          const px = clientX - rect.left;
+          const py = clientY - rect.top;
+          const next = clamp(k * factor, MIN_K, MAX_K);
+          const ratio = next / k;
+          tx = px - (px - tx) * ratio;
+          ty = py - (py - ty) * ratio;
+          k = next;
+          apply();
+        };
+
+        const zoomCenter = (factor) => {
+          const rect = stage.getBoundingClientRect();
+          zoomAt(rect.left + stage.clientWidth / 2, rect.top + stage.clientHeight / 2, factor);
+        };
+
+        /** The whole board, centered, with a margin. Also the reset. */
+        const fit = () => {
+          const pad = 28;
+          k = clamp(
+            Math.min((stage.clientWidth - pad * 2) / BOARD_W, (stage.clientHeight - pad * 2) / BOARD_H),
+            MIN_K,
+            MAX_K,
+          );
+          tx = (stage.clientWidth - BOARD_W * k) / 2;
+          ty = (stage.clientHeight - BOARD_H * k) / 2;
+          apply();
+        };
+
+        /** Puts a named region in the middle at a readable scale. */
+        const goTo = (selector, scale = 1) => {
+          const target = board.querySelector(selector);
+          if (!target) return;
+          k = clamp(scale, MIN_K, MAX_K);
+          tx = stage.clientWidth / 2 - (target.offsetLeft + target.offsetWidth / 2) * k;
+          ty = stage.clientHeight / 2 - (target.offsetTop + target.offsetHeight / 2) * k;
+          apply();
+        };
+
+        // ---- what the reader moved -------------------------------------------
+        // Positions live in this browser and nowhere else. A board someone
+        // rearranged is theirs; the file they were sent is unchanged, and saying
+        // so on the page is the honest version of offering the drag at all.
+        // Storage throws outright inside a sandboxed frame, so every touch of it
+        // is guarded and a failure costs the reader nothing.
+        const MEMORY = `board:${document.title}`;
+
+        const remember = () => {
+          try {
+            const moved = {};
+            for (const card of board.querySelectorAll("[data-drag]")) {
+              moved[card.dataset.drag] = [card.offsetLeft, card.offsetTop];
+            }
+            localStorage.setItem(MEMORY, JSON.stringify(moved));
+          } catch {
+            /* Private window, sandboxed frame, storage turned off. */
+          }
+        };
+
+        const recall = () => {
+          try {
+            const moved = JSON.parse(localStorage.getItem(MEMORY) || "{}");
+            for (const card of board.querySelectorAll("[data-drag]")) {
+              const at = moved[card.dataset.drag];
+              if (!at) continue;
+              card.style.left = `${at[0]}px`;
+              card.style.top = `${at[1]}px`;
+            }
+          } catch {
+            /* The board keeps the positions it was written with. */
+          }
+        };
+
+        // The script is here, so the stage stops being a scroller and becomes a
+        // viewport. Doing that from script rather than in the class list is what
+        // leaves the no-script reading intact.
+        stage.classList.remove("overflow-auto");
+        stage.classList.add("overflow-hidden", "cursor-grab", "touch-none");
+        recall();
+
+        // ---- wheel, drag, pinch ----------------------------------------------
+        // A trackpad pinch arrives as a wheel event with ctrlKey set, which is how
+        // every canvas on the web tells the two apart. Everything else is a pan.
+        stage.addEventListener(
+          "wheel",
+          (event) => {
+            event.preventDefault();
+            if (event.ctrlKey || event.metaKey) {
+              zoomAt(event.clientX, event.clientY, Math.exp(-event.deltaY / 180));
+              return;
+            }
+            tx -= event.deltaX;
+            ty -= event.deltaY;
+            apply();
+          },
+          { passive: false },
+        );
+
+        // Two live pointers pinch; one drags. A card that opts in with data-drag
+        // takes the pointer first and moves itself instead of the board.
+        const pointers = new Map();
+        let pinchGap = 0;
+        let dragging = null;
+
+        stage.addEventListener("pointerdown", (event) => {
+          stage.setPointerCapture(event.pointerId);
+          pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          const card = event.target.closest("[data-drag]");
+          if (card && pointers.size === 1) {
+            dragging = { card, left: card.offsetLeft, top: card.offsetTop, x: event.clientX, y: event.clientY };
+            card.style.zIndex = String(++topCard);
+            card.classList.add("shadow-xl");
+            return;
+          }
+          stage.classList.replace("cursor-grab", "cursor-grabbing");
+        });
+
+        stage.addEventListener("pointermove", (event) => {
+          const previous = pointers.get(event.pointerId);
+          if (!previous) return;
+          pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+          if (pointers.size === 2) {
+            const [a, b] = [...pointers.values()];
+            const gap = Math.hypot(a.x - b.x, a.y - b.y);
+            if (pinchGap) zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, gap / pinchGap);
+            pinchGap = gap;
+            return;
+          }
+
+          if (dragging) {
+            // Screen pixels are board pixels divided by the scale, which is the
+            // one line that makes a card follow the pointer at every zoom.
+            dragging.card.style.left = `${dragging.left + (event.clientX - dragging.x) / k}px`;
+            dragging.card.style.top = `${dragging.top + (event.clientY - dragging.y) / k}px`;
+            paintMinimap();
+            return;
+          }
+
+          tx += event.clientX - previous.x;
+          ty += event.clientY - previous.y;
+          apply();
+        });
+
+        const endPointer = (event) => {
+          pointers.delete(event.pointerId);
+          if (pointers.size < 2) pinchGap = 0;
+          if (dragging) {
+            dragging.card.classList.remove("shadow-xl");
+            remember();
+            dragging = null;
+          }
+          stage.classList.replace("cursor-grabbing", "cursor-grab");
+        };
+        stage.addEventListener("pointerup", endPointer);
+        stage.addEventListener("pointercancel", endPointer);
+
+        // ---- controls --------------------------------------------------------
+        document.querySelector("#board-controls").addEventListener("click", (event) => {
+          const button = event.target.closest("button");
+          if (!button) return;
+          if (button.dataset.zoom) zoomCenter(Number(button.dataset.zoom));
+          if (button.dataset.fit !== undefined) fit();
+          if (button.dataset.go) goTo(button.dataset.go, Number(button.dataset.scale || 1));
+          if (button.dataset.reset !== undefined) {
+            try {
+              localStorage.removeItem(MEMORY);
+            } catch {
+              /* Nothing was stored, so nothing has to be removed. */
+            }
+            location.reload();
+          }
+        });
+
+        // Arrows pan, plus and minus zoom, 0 fits -- only while the board has
+        // focus, so the page still scrolls normally everywhere else.
+        stage.tabIndex = 0;
+        stage.addEventListener("keydown", (event) => {
+          const step = event.shiftKey ? 240 : 80;
+          const moves = {
+            ArrowLeft: () => (tx += step),
+            ArrowRight: () => (tx -= step),
+            ArrowUp: () => (ty += step),
+            ArrowDown: () => (ty -= step),
+          };
+          if (moves[event.key]) {
+            event.preventDefault();
+            moves[event.key]();
+            return apply();
+          }
+          if (event.key === "0") return event.preventDefault(), fit();
+          if (event.key === "+" || event.key === "=") return event.preventDefault(), zoomCenter(1.25);
+          if (event.key === "-") return event.preventDefault(), zoomCenter(0.8);
+        });
+
+        // ---- minimap ---------------------------------------------------------
+        // Drawn from the cards themselves rather than from a second copy of the
+        // layout, so it cannot drift from the board it describes.
+        minimap.style.height = `${Math.round(BOARD_H * miniScale)}px`;
+        for (const card of board.querySelectorAll("[data-mini]")) {
+          const dot = document.createElement("span");
+          dot.className = "absolute rounded-[1px] bg-gray-400";
+          dot.style.cssText = `left:${card.offsetLeft * miniScale}px; top:${card.offsetTop * miniScale}px; width:${Math.max(2, card.offsetWidth * miniScale)}px; height:${Math.max(2, card.offsetHeight * miniScale)}px`;
+          minimap.append(dot);
+        }
+
+        minimap.addEventListener("pointerdown", (event) => {
+          const rect = minimap.getBoundingClientRect();
+          tx = stage.clientWidth / 2 - ((event.clientX - rect.left) / miniScale) * k;
+          ty = stage.clientHeight / 2 - ((event.clientY - rect.top) / miniScale) * k;
+          apply();
+        });
+
+        new ResizeObserver(apply).observe(stage);
+        fit();
+      </script>
+
+      <footer class="mx-auto mt-14 max-w-3xl border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+        An illustrative wall: every quote, tenure and count on it was written to
+        show the shape of a sorted exit survey, not gathered from one. What the
+        page is really arguing is a method &mdash; that free-text answers should be
+        kept whole and placed, and that the notes which refuse to be placed are
+        worth more than the ones that fall neatly into a bucket.
+      </footer>
+    </main>
+    <!-- shell:start -->
+    <!-- Progressive: with scripts off, or offline, every link reads exactly as
+         it does now and nothing shifts. Only the origin is ever sent, never the
+         path, so a link's query string is not handed over to draw an icon. -->
+    <script>
+      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+      for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        const icon = document.createElement("img");
+        icon.alt = "";
+        icon.className = "site-icon";
+        icon.src =
+          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+          encodeURIComponent(new URL(link.href).origin);
+
+        // A line may break between an image and the text beside it, so the icon
+        // and the first word it leads go in a span that cannot break. A link
+        // with no text of its own takes the icon at the front of the link.
+        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+        let text = walker.nextNode();
+        while (text && !text.data.trim()) text = walker.nextNode();
+        let host = link;
+        if (text) {
+          const at = text.data.search(/\S/);
+          const word = at > 0 ? text.splitText(at) : text;
+          const space = word.data.search(/\s/);
+          if (space > 0) word.splitText(space); // The rest of the text stays put.
+          host = document.createElement("span");
+          host.className = "site-icon-word";
+          word.replaceWith(host);
+          host.append(word);
+        }
+
+        const drop = () => {
+          icon.remove();
+          if (host !== link) host.replaceWith(...host.childNodes);
+        };
+        icon.onerror = drop;
+        icon.onload = () => {
+          if (icon.naturalWidth <= ABSENT) drop();
+        };
+        host.prepend(icon);
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>
