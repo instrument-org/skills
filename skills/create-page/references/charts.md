@@ -31,7 +31,7 @@ A toned figure (`text-error-700`) marks the tile carrying the problem.
 
 ```html
 <div id="bars" class="space-y-2"></div>
-<script>
+<script type="module">
   const barData = [
     ["checkout", 42],
     ["search", 28],
@@ -80,7 +80,7 @@ The `flex-[n]` trick keeps segments proportional with no percentage math. Captio
   role="img"
   aria-label="What the line shows, including the peak"
 ></svg>
-<script>
+<script type="module">
   const PTS = [3, 1, 0, 5, 11, 14, 2, 8];
   const W = 560,
     H = 110,

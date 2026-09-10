@@ -7,5 +7,5 @@
   "needs": [],
   "cover": "desk-cover",
   "sections": ["A name and one line", "The tool", "The fine print"],
-  "sketch": ["t", "c3", "c3", "s", "b", "2"]
+  "sketch": ["compute"]
 }

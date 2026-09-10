@@ -97,7 +97,7 @@ One line that says how many are ticked. Written as a count of items so it reads 
 ```
 
 ```html
-<script>
+<script type="module">
   // Counts the ticked boxes. With scripts off the line reads as written and
   // the boxes still tick.
   const boxes = [...document.querySelectorAll("main input[type=checkbox]")];

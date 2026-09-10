@@ -135,7 +135,8 @@
         <button data-reset title="Put everything back where it started" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-arrow-counter-clockwise"></i></button>
       </div>
 
-      <script>
+      <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
+      <script type="module">
         // ---- the canvas ------------------------------------------------------
         // The board is a fixed-size surface and every card is absolutely placed
         // on it, in the HTML above. Without this script the stage is an ordinary

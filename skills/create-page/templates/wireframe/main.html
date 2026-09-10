@@ -77,7 +77,8 @@
         </div>
       </dialog>
 
-      <script>
+      <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
+      <script type="module">
         // Every frame is drawn once at the size the thing really is, then shown
         // at whatever scale fits. Nothing here is hand-shrunk and nothing sets a
         // scale: `transform` composites a box laid out once, where `zoom` would

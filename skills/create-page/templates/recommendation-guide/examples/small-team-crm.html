@@ -200,7 +200,7 @@
       }
       /* skin:end */
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
     <!-- shell:end -->
 
     <!-- shell:start -->
@@ -539,46 +539,61 @@
     </main>
 
     <!-- shell:start -->
-    <!-- Progressive: with scripts off, or offline, every link reads exactly as
-         it does now and nothing shifts. Only the origin is ever sent, never the
-         path, so a link's query string is not handed over to draw an icon. -->
+    <!-- The page as written, kept for the share widget before any script has
+         changed it. A page's own scripts are modules, and Tailwind is deferred,
+         so both run after this and a shared copy carries the markup rather than
+         what a script drew on it. -->
     <script>
-      const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
-      for (const link of document.querySelectorAll('a[href^="https://"]')) {
-        const icon = document.createElement("img");
-        icon.alt = "";
-        icon.className = "site-icon";
-        icon.src =
-          "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
-          encodeURIComponent(new URL(link.href).origin);
+      window.__instrumentSource = "<!doctype html>\n" + document.documentElement.outerHTML;
 
-        // A line may break between an image and the text beside it, so the icon
-        // and the first word it leads go in a span that cannot break. A link
-        // with no text of its own takes the icon at the front of the link.
-        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
-        let text = walker.nextNode();
-        while (text && !text.data.trim()) text = walker.nextNode();
-        let host = link;
-        if (text) {
-          const at = text.data.search(/\S/);
-          const word = at > 0 ? text.splitText(at) : text;
-          const space = word.data.search(/\s/);
-          if (space > 0) word.splitText(space); // The rest of the text stays put.
-          host = document.createElement("span");
-          host.className = "site-icon-word";
-          word.replaceWith(host);
-          host.append(word);
+      // Progressive: with scripts off, or offline, every link reads exactly as
+      // it does now and nothing shifts. Only the origin is ever sent, never the
+      // path, so a link's query string is not handed over to draw an icon.
+      // Waits for the page's module scripts, so a link one of them draws gets
+      // its icon like any other.
+      const decorate = () => {
+        const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+        for (const link of document.querySelectorAll('a[href^="https://"]')) {
+          const icon = document.createElement("img");
+          icon.alt = "";
+          icon.className = "site-icon";
+          icon.src =
+            "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+            encodeURIComponent(new URL(link.href).origin);
+
+          // A line may break between an image and the text beside it, so the icon
+          // and the first word it leads go in a span that cannot break. A link
+          // with no text of its own takes the icon at the front of the link.
+          const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+          let text = walker.nextNode();
+          while (text && !text.data.trim()) text = walker.nextNode();
+          let host = link;
+          if (text) {
+            const at = text.data.search(/\S/);
+            const word = at > 0 ? text.splitText(at) : text;
+            const space = word.data.search(/\s/);
+            if (space > 0) word.splitText(space); // The rest of the text stays put.
+            host = document.createElement("span");
+            host.className = "site-icon-word";
+            word.replaceWith(host);
+            host.append(word);
+          }
+
+          const drop = () => {
+            icon.remove();
+            if (host !== link) host.replaceWith(...host.childNodes);
+          };
+          icon.onerror = drop;
+          icon.onload = () => {
+            if (icon.naturalWidth <= ABSENT) drop();
+          };
+          host.prepend(icon);
         }
-
-        const drop = () => {
-          icon.remove();
-          if (host !== link) host.replaceWith(...host.childNodes);
-        };
-        icon.onerror = drop;
-        icon.onload = () => {
-          if (icon.naturalWidth <= ABSENT) drop();
-        };
-        host.prepend(icon);
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", decorate, { once: true });
+      } else {
+        decorate();
       }
     </script>
     <!-- shell:end -->

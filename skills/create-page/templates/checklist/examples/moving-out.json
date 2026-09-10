@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Grouped by time because a renter works the list in calendar order, so each window is its own card with a brand kicker naming the week and a heading naming what the week is about, and a sticky counter with a thin progress bar sits above the cards since the list runs six weeks and the reader wants to know how far along they are at a glance. Ticks persist in localStorage for the same reason, the pill marks only the seven items that touch the deposit or a bill so it stays meaningful, and tips sit under the item as a second dimmed line rather than in a column, which keeps the page calm and single-column at every width.",
   "illustrative": true,
-  "html_sha256": "c276ff8f04c5c66fc8a9f789b56ac51e81e63b14e5541ead78edf6a787e6c40d"
+  "html_sha256": "341346b77c17fa3b79f54b8530be7094632af8b9ba2f391ec1ba88bb64852398"
 }

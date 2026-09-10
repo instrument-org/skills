@@ -66,6 +66,8 @@ The look follows the reader's system theme, and you never choose between them. W
 
 The starter also carries three behaviors every page gets, and none of them need doing by hand: every external link wears the icon of the site it points at, footnote markers and their notes link both ways and light up when jumped to, and the page prints with sane margins. A page wider than a portrait sheet adds `@page { size: landscape }` in its own style block.
 
+A page's own logic is one `<script type="module">` at the end of `<main>`, never a plain `<script>`. The starter's last script keeps a copy of the page for sharing as the parser reaches it, and a module script runs after that, so a shared copy carries the markup as written rather than as the script changed it. Module scripts do not share top-level names, so keep the logic in one, and attach listeners in it rather than through `onclick` attributes.
+
 ## Refusals
 
 A page that could be any of the examples with the words swapped. A thing that lives at a URL named in plain text, or a link whose text describes the destination rather than naming the thing. Any image whose `src` is a URL or a relative path rather than inline data, any sibling file, and any relative fetch: the file has to open from a USB stick, arrive as an email attachment, and be served from a share host, and only one of those has an origin. A file over about 1.5 MB, or an inline image over 200 KB.

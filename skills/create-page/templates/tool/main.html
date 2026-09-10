@@ -75,7 +75,8 @@
         </p>
       </div>
 
-      <script>
+      <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
+      <script type="module">
         // Everything runs in the page. No request is made from this file.
         const $ = (id) => document.querySelector("#" + id);
 

@@ -4,5 +4,5 @@
   "prompt": "We only ever designed 'connected' and 'not connected' for the calendar integration. Draw every state it can really be in.",
   "model": "claude-opus-5",
   "note": "The comparative axis, which is the reason this template does not say 'a sequence' and stop. Six frames at an identical 520x400, because when the variable is the condition rather than the moment, a frame that differs in size reads as a difference in the design. There is no cursor anywhere in the file -- nothing is being clicked -- and the violet ring is repurposed to mark what each state adds that the resting state does not have. It also carries no grey bars at all: on a panel this size the copy is the design, so a placeholder would hide the only thing worth reviewing. The sixth frame's argument is that it has no button.",
-  "html_sha256": "368735da77d17bef4d9d9385a858cef12981e97293e2a6a868285576b3542606"
+  "html_sha256": "a90439b294b19dad62502c951ad728eb3d2e4dcc25419b51563d2b2ed38ea276"
 }

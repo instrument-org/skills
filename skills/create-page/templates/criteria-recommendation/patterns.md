@@ -237,7 +237,7 @@ Sensitivity is recomputed, never guessed. The static form is prose with the alte
     Growth mode
   </button>
 </div>
-<script>
+<script type="module">
   const grid = document.getElementById("matrix");
   const rows = [...grid.tBodies[0].rows];
   const totals = [...grid.tFoot.rows[0].querySelectorAll("[data-total]")];

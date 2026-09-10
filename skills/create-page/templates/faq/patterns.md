@@ -111,7 +111,7 @@ Native `details` and `summary`, so it opens with scripts off. The caret turns wi
 ```
 
 ```html
-<script>
+<script type="module">
   // A link to a question opens it; with scripts off the reader clicks once more.
   const openTarget = () => {
     const target = document.getElementById(location.hash.slice(1));

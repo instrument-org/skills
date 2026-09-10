@@ -7,7 +7,7 @@ Everything in `references/` still applies. These are the pieces only a page whos
 One array of arrays, not objects: at this size the key names would be most of the file. Name the column indices once and use the names.
 
 ```html
-<script>
+<script type="module">
   // [mag, lat, lon, depthKm, unixSeconds, place]
   const Q = [[7.8,-8.55,121.45,10,1786...,"84 km SSW of Nikolski, Alaska"], …];
   const MAG = 0, LAT = 1, LON = 2, DEP = 3, TIME = 4, PLACE = 5;
@@ -18,7 +18,7 @@ Round on the way in rather than on the way out: three decimal places of latitude
 
 ## The grid, with a table underneath it
 
-Render the plain table first, from the same array, and let the library replace it. The order matters: written this way the rows are on the page before the network is consulted, and a failed load costs the reader sorting rather than data.
+Render the plain table first, from the same array, and let the library replace it. Both fragments belong in the page's one module script, since module scripts do not share top-level names. The order matters: written this way the rows are on the page before the network is consulted, and a failed load costs the reader sorting rather than data.
 
 ```html
 <div id="grid-host">
@@ -26,7 +26,7 @@ Render the plain table first, from the same array, and let the library replace i
     <!-- filled by script with the most interesting hundred rows -->
   </div>
 </div>
-<script>
+<script type="module">
   if (typeof Tabulator !== "undefined") {
     document.querySelector("#grid-fallback").remove();
     const table = new Tabulator("#grid-host", {

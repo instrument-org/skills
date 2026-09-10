@@ -4,5 +4,5 @@
   "prompt": "Put together the quarterly numbers for the shop. Takings are up but something feels off about children's.",
   "model": "claude-opus-5",
   "note": "The cover, and the clearest case for small multiples: six categories on one shared scale, where children's has halved over a year and fiction grew by almost exactly what children's lost, so the total says nothing happened. Two Plot traps are visible in the source and worth copying -- the x domain is written out because a band scale would otherwise order 'Q4 24' through 'Q3 26' alphabetically and draw the line as a zigzag, and the last-quarter dots are filtered through the mark's own `filter` rather than by handing it a shorter array, which inside a facet would put them in the wrong panels. The basket histogram exists to make the same point twice: the average basket is £13.18 and almost nobody spends £13.",
-  "html_sha256": "208483b75074e5c66b7f9eb3ae1b69e042cad947b2c0b888f81747a9e0e9b5ec"
+  "html_sha256": "32d761a6fdceac342faa25b4cc17d0057cb748aaf4de8e75ab75895f3a2d8e32"
 }

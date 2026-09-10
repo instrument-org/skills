@@ -89,7 +89,7 @@ This is the most intricate pattern in the skill, so copy the complete working ex
   </div>
 </div>
 
-<script>
+<script type="module">
   (() => {
     document.head.insertAdjacentHTML(
       "beforeend",
@@ -251,7 +251,7 @@ Default to stacking content vertically. Tabs are justified only when the panels 
   <div data-panel="a" class="p-4 text-sm leading-6">…</div>
   <div data-panel="b" hidden class="p-4 text-sm leading-6">…</div>
 </div>
-<script>
+<script type="module">
   document.querySelectorAll("[data-tabs]").forEach((root) => {
     const tabs = root.querySelectorAll("[data-tab]");
     tabs.forEach((btn) =>

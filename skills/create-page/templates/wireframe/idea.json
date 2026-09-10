@@ -7,5 +7,5 @@
   "needs": [],
   "cover": "card-freeze",
   "sections": ["A title bar", "The frames", "One line underneath"],
-  "sketch": ["t", "c4", "c4", "c4", "c4", "c4"]
+  "sketch": ["frames"]
 }
