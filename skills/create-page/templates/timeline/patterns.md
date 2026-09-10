@@ -84,7 +84,7 @@ An entry after which things were different. It stays on the spine, so the reader
 </li>
 ```
 
-Two to four per page. In a table, the same idea is a row whose first cell carries `border-l-2 border-brand-500` and a small "Turning point" label under the date; in a grid of weeks, it is a flagged line at the foot of the cell with `ph-fill ph-flag`.
+Two to four per page. In a table, the same idea is a row whose first cell carries `border-l-2 border-brand-500` and a small "Turning point" label under the date; in a grid of weeks, it is a flagged line at the foot of the cell with `ph ph-flag`.
 
 ## Now marker
 
@@ -94,7 +94,7 @@ The present, on the spine. Everything above it has happened; everything below is
 <li class="relative border-l border-dashed border-brand-400 pb-7 pl-6">
   <span
     class="absolute top-0 left-[-9px] flex size-4 items-center justify-center rounded-full bg-brand-600 ring-4 ring-background"
-    ><i class="ph-fill ph-map-pin text-[10px] text-white"></i
+    ><i class="ph ph-map-pin text-[10px] text-white"></i
   ></span>
   <p
     class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white"

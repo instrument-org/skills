@@ -290,7 +290,7 @@ Commentary about a depicted thing (a slide, a UI, a transcript) sits outside the
     <!-- the depicted thing -->
   </div>
   <p class="mt-2 flex items-start gap-1.5 text-xs leading-5 text-warning-700">
-    <i class="ph-fill ph-hand-pointing mt-0.5"></i>
+    <i class="ph ph-hand-pointing mt-0.5"></i>
     <span>Annotation about the thing above, never inside it.</span>
   </p>
 </div>

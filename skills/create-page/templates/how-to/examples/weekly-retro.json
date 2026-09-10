@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "A playbook rather than a tutorial: tight sans, the goal as a small card beside the title, and the steps as a timeline with monospace minute marks in a left column and the script on the right, with the words to say out loud in italic quotation blocks so stage directions and lines are told apart at a glance. The three pitfalls sit at the minute where a first retro goes wrong, variations are three parallel columns for remote, in person, and later weeks, and the done checklist carries a small progressive tally.",
   "illustrative": true,
-  "html_sha256": "fbbde993e2d83e012c575940296fe889052677d61863539804cc6fcfa97ba5e8"
+  "html_sha256": "b7c8cf4b6718e2a44316e25957a2fbdd9af2422ec9ea2ae3e13e483749a57ac0"
 }

@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Community register: a serif headline and subhead, a narrow measure, and warm spacing, because a board of volunteers reads this on paper and a dense grid would feel like a vendor pitch. The problem and the proposal are two paragraphs with a small inline SVG landmark each rather than a band, the ask is one bordered card listing the three things the board can literally vote yes to, and the risks are a ruled list that says plainly what happens if nobody comes.",
   "illustrative": true,
-  "html_sha256": "36374ed4eb252e851d02e00d1c4a868f234e99c8266647066da43a65f7db21cf"
+  "html_sha256": "a183f0d1157e3edc165cfe5b1c9b9fda6ef00fbbdefc83a530e4ad291fecbef1"
 }

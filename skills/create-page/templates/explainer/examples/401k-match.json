@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "A compact walk-through in two columns on a wide screen: each numbered step carries a worked example in a bordered row using the offer letter's own formula and one stated salary, because the reader's question is really \"what does this sentence cost me\" and arithmetic over shown inputs answers it without inventing a figure. The vesting schedule is a small table inside step three rather than a chart, and the sidebar holds why-it-matters, a what-to-do-this-week box, and the example's inputs, so the actions stay in view while the reader scrolls the mechanism.",
   "illustrative": true,
-  "html_sha256": "028447e33bf5b21ae16c33bdfab7bf39a6aac9f964e0121dc1ae156b46a689d1"
+  "html_sha256": "862f27f59c01bb82afea6dd6533748bba9dc153d417f91202ad836588a183882"
 }

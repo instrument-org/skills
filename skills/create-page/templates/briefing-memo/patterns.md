@@ -56,7 +56,7 @@ The recommendation, the one reason, and the decision date, boxed so the eye land
 </div>
 ```
 
-The urgent variant spans the page above the title: `border-b-4 border-warning-500 bg-warning-50`, with the kicker in `text-warning-700` and a `ph-fill ph-warning` icon before it. Warning is a tone for time pressure, never for the recommendation itself.
+The urgent variant spans the page above the title: `border-b-4 border-warning-500 bg-warning-50`, with the kicker in `text-warning-700` and a `ph ph-warning` icon before it. Warning is a tone for time pressure, never for the recommendation itself.
 
 ## Numbered section heading
 

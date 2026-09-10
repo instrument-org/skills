@@ -70,7 +70,7 @@ The mark for the few items that cost money, cannot be undone, or block the rest.
 >
 ```
 
-A denser page uses a single glyph instead, with the same legend: `<i class="ph-fill ph-flag text-brand-600"></i>`. Either way the legend says what the mark means in a clause the reader can check the item against.
+A denser page uses a single glyph instead, with the same legend: `<i class="ph ph-flag text-brand-600"></i>`. Either way the legend says what the mark means in a clause the reader can check the item against.
 
 ## Tip line
 

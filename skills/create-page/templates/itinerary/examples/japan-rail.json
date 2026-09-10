@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "One vertical spine down the page with a node per day, a larger brand-colored marker at each city change, and the four train legs as thin mono rows carrying the operator, the duration, and a reserve-the-seat tag, because a rail trip is a sequence and the reader wants to see where the legs fall before reading any day. Dense on purpose, with a label column for morning, afternoon, and evening inside each day, no photos, and the places list in two columns so ten days fit in a page a traveler can scroll on a platform.",
   "illustrative": true,
-  "html_sha256": "02f3f8b70cc7ebedb0eb4a61987bebc5ac6bf7186f7e89a982947202d71856ed"
+  "html_sha256": "2aad2bc1c0c57b5ed9d7122a03cd5c2f0978db89b7ba89f1960230a0fc67806a"
 }

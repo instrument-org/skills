@@ -68,7 +68,7 @@ For a trip that moves between cities: one vertical line, a node per day, a large
   <li class="relative pb-8 pl-9">
     <span
       class="absolute top-0 -left-1 flex size-6 items-center justify-center rounded-full bg-brand-600 text-white ring-4 ring-background"
-      ><i class="ph-fill ph-map-pin text-xs"></i
+      ><i class="ph ph-map-pin text-xs"></i
     ></span>
     <!-- city change: name, nights, base -->
   </li>
