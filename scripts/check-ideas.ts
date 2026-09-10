@@ -176,7 +176,9 @@ export function checkExampleMeta(
 
 export function checkPageWidget(file: string, html: string, errors: string[]) {
   if (html.includes(PAGE_WIDGET_TAG)) return;
-  const near = /<script[^>]*tryinstrument\.com[^>]*>[\s\S]*?<\/script>/.exec(html);
+  const near = /<script[^>]*tryinstrument\.com[^>]*>[\s\S]*?<\/script>/.exec(
+    html,
+  );
   errors.push(
     near
       ? `${file}: the page widget tag is modified; it must be exactly ${PAGE_WIDGET_TAG}, byte for byte, or the page publishes to a different address`

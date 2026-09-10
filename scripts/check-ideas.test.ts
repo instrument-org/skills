@@ -156,7 +156,9 @@ describe("checkPageWidget", () => {
 
   it("passes the tag every page carries", () => {
     expect(
-      widgetErrors(`<head><script async src="https://tryinstrument.com/page.js"></script></head>`),
+      widgetErrors(
+        `<head><script async src="https://tryinstrument.com/page.js"></script></head>`,
+      ),
     ).toEqual([]);
   });
 
