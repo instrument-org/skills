@@ -1,7 +1,7 @@
 {
   "title": "Tool",
-  "tagline": "One small thing that computes.",
-  "when": "The answer has a parameter in it: it turns on numbers only the reader has, or on data they should not hand to anyone, and the useful thing is either the feel of how the answer moves or the fact that nothing left their machine.",
+  "tagline": "A small calculator or checker, built around your own numbers.",
+  "when": "The answer depends on numbers only you have, or on data you would rather not paste into a chat, and you want to change the inputs and watch the answer move.",
   "tags": ["data"],
   "order": 45,
   "needs": [],

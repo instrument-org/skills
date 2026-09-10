@@ -1,6 +1,6 @@
 {
   "title": "Everything said at the Bridge Street meeting",
-  "variant": "An affinity wall: six rings, and two notes that fell in two",
+  "variant": "An affinity wall of six clusters, and two notes that landed in two of them",
   "prompt": "We ran a public meeting about the high street and came away with about forty notes. Put them on a wall and tell me what they say.",
   "model": "claude-opus-5",
   "note": "The wall shape, and the one that has to justify itself hardest, because forty quotes clustered under six headings is a list and everybody knows it. Three things make it a board instead. The rings are drawn from the notes they hold rather than typed, so a lasso is an ellipse that actually contains its cluster; two notes are placed halfway between two ring centers, which puts them inside both ellipses in the middle and outside both at the corners, so the lines cross over the note and 'it went in two clusters' is a thing you can see rather than a footnote. And color is who spoke rather than what they said, which is a second dimension the position does not carry -- that is what makes the two marker notes readable, since 'not one shopkeeper in this ring' and 'nothing else in this one' are claims about a pattern of color inside a shape, and no list of the same forty quotes states them. The causal chain is three strokes of ink over the top: commentary, hidden when printed, and nothing on the board depends on it. Every quote and the street itself are invented.",

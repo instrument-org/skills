@@ -1,6 +1,6 @@
 {
   "title": "Timeline",
-  "tagline": "The timeline page history sites publish, drawn for your story.",
+  "tagline": "Events in order, for when the order is the explanation.",
   "when": "You need to show change over time, when the order of events explains why things are the way they are or what happens next.",
   "tags": ["explain"],
   "order": 130,

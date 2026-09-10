@@ -1,7 +1,7 @@
 {
   "title": "Dashboard",
-  "tagline": "How the period went, and what the headline hides.",
-  "when": "A period has ended and someone has to know what happened in it: four or five figures each with the thing to compare it against, two or three pictures, and the finding underneath the headline.",
+  "tagline": "The period's figures, each beside what it should be compared with.",
+  "when": "A period has ended and someone needs to know how it went: a few figures, each beside what it should be compared with, a chart or two, and whatever the headline total is hiding.",
   "tags": ["data"],
   "order": 26,
   "needs": [],

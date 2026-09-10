@@ -1,6 +1,6 @@
 {
   "title": "FAQ",
-  "tagline": "The FAQ page every help center has, written for your topic.",
+  "tagline": "The questions people keep asking about one topic, answered once.",
   "when": "The same questions keep arriving about one topic and the reader wants each answered once, in a block they can find, skim, or send.",
   "tags": ["explain"],
   "order": 140,

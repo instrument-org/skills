@@ -1,7 +1,7 @@
 {
   "title": "Wireframe",
-  "tagline": "Draw the thing, then point at it.",
-  "when": "An interface is being proposed, argued about, or misunderstood, and the fastest way to settle it is a sequence of frames with a caption under each saying what it proves.",
+  "tagline": "An interface drawn as a sequence of frames, with a caption under each.",
+  "when": "You are proposing an interface, or arguing about one, and a few drawn frames with a caption under each would settle it faster than a description.",
   "tags": ["layout"],
   "order": 15,
   "needs": [],

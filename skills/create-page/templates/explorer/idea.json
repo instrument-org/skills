@@ -1,7 +1,7 @@
 {
   "title": "Data explorer",
-  "tagline": "The dataset itself, on a page anyone can question.",
-  "when": "You have more rows than anyone will read and the rows are the point: the shape of the whole set, what it turns out to say, and a grid the reader can sort, filter and take away.",
+  "tagline": "A whole dataset on one page, with a grid you can sort and filter.",
+  "when": "You have more rows than anyone will read through and want to see the shape of the whole set, then sort it, filter it, and keep it.",
   "tags": ["data"],
   "order": 25,
   "needs": [],

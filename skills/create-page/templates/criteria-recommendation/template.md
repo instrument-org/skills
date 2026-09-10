@@ -1,4 +1,4 @@
-# Recommendation with criteria
+# Decision matrix
 
 One self-contained HTML page that picks an option by arithmetic the reader can check: the goal, the criteria and their weights with a reason for each weight, every option scored on every criterion, totals computed from the shown numbers, the winner called out, and a sensitivity pass that says which weights would change the answer. It reads like the "how we scored" methodology page a serious review site publishes, or the scorecard a procurement team attaches to a purchase. It is not a buying guide with a verdict up top and the reasoning below; here the reasoning is the page.
 

@@ -1,6 +1,6 @@
 {
-  "title": "Recommendation with criteria",
-  "tagline": "The scoring matrix procurement teams use, filled in for your decision.",
+  "title": "Decision matrix",
+  "tagline": "A winner, with the criteria, weights, and scores that picked it.",
   "when": "You want the winner and the arithmetic behind it: named criteria, stated weights, scored options, and what would change the answer.",
   "tags": ["decide"],
   "order": 40,
