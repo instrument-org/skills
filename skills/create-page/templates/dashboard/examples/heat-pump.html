@@ -261,15 +261,15 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+    <main class="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
       <header>
         <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
           Dashboard &middot; First year on the heat pump, to 31 March
         </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+        <h1 class="mt-1.5 text-[26px] font-semibold tracking-[-0.03em] sm:text-[30px]">
           The bill fell 30%, and a third of that was the weather
         </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+        <p class="mt-3 max-w-[68ch] text-[15px] leading-7 text-muted-foreground">
           Twelve months of meter readings against the twelve before them. The
           headline is a £532 saving, and the headline is not honest on its own: this
           winter was 11% milder than last, and correcting for that leaves about £375
@@ -279,7 +279,7 @@
         </p>
       </header>
 
-      <section id="numbers" class="mt-9">
+      <section id="numbers" class="mt-7">
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div class="rounded-xl border border-border bg-card p-4">
             <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Energy bill</p>
@@ -347,16 +347,17 @@
         </div>
       </section>
 
-      <section id="method" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">How this was worked out</h2>
-        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">The house is illustrative.</span> Every reading, price and temperature on this page was written to show what a before-and-after readout looks like when it takes its own confounder seriously. No real installation is described.</li>
-          <li><span class="font-medium text-foreground">Weather correction is heating degree days on a 15.5&deg;C base.</span> Last year came to 2,180 and this year 1,940, which is 11% milder; the corrected saving scales this year&rsquo;s use up by that ratio before comparing. It is the standard method and it is still only a correction, not a controlled experiment.</li>
-          <li><span class="font-medium text-foreground">Prices are held at this year&rsquo;s.</span> Both years are priced at 24.5p per kWh of electricity and 6.4p of gas, so none of the change is the tariff moving. A comparison at each year&rsquo;s own prices would show a different number and would be measuring the market rather than the house.</li>
-          <li><span class="font-medium text-foreground">The standing charges are in the total and not in the per-kWh figures.</span> Losing the gas meter removed £108 of standing charge on its own, which is 20% of the headline saving and nothing to do with how the pump performs.</li>
-          <li><span class="font-medium text-foreground">One house, one year, one winter.</span> Nothing here generalizes. It is a record of what happened at one address, and the reason for the scatter is that a slope is the only part of it that could be compared with anyone else&rsquo;s.</li>
-        </ul>
-      </section>
+      <!-- The basis, and all of it: what is netted off, what a category means,
+           which period the comparison is against, and the date it stopped being
+           true. Lines rather than sections, so a reader who wants it finds it in
+           one glance and a reader who does not is already looking at the charts. -->
+      <div class="mt-10 grid gap-x-8 gap-y-2 border-t border-border pt-5 text-[12px] leading-6 text-muted-foreground sm:grid-cols-2">
+        <p><b class="font-medium text-foreground">The house is illustrative.</b> Every reading, price and temperature on this page was written to show what a before-and-after readout looks like when it takes its own confounder seriously. No real installation is described.</p>
+        <p><b class="font-medium text-foreground">Weather correction is heating degree days on a 15.5&deg;C base.</b> Last year came to 2,180 and this year 1,940, which is 11% milder; the corrected saving scales this year&rsquo;s use up by that ratio before comparing. It is the standard method and it is still only a correction, not a controlled experiment.</p>
+        <p><b class="font-medium text-foreground">Prices are held at this year&rsquo;s.</b> Both years are priced at 24.5p per kWh of electricity and 6.4p of gas, so none of the change is the tariff moving. A comparison at each year&rsquo;s own prices would show a different number and would be measuring the market rather than the house.</p>
+        <p><b class="font-medium text-foreground">The standing charges are in the total and not in the per-kWh figures.</b> Losing the gas meter removed £108 of standing charge on its own, which is 20% of the headline saving and nothing to do with how the pump performs.</p>
+        <p><b class="font-medium text-foreground">One house, one year, one winter.</b> Nothing here generalizes. It is a record of what happened at one address, and the reason for the scatter is that a slope is the only part of it that could be compared with anyone else&rsquo;s.</p>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
@@ -385,11 +386,26 @@
         const GREY = "var(--color-gray-400)";
 
         /** Draws into `id`, or leaves whatever is already there if Plot never
-         *  arrived. Every caller has a table under it either way. */
+         *  arrived. Every caller has a table under it either way.
+         *
+         *  Plot has no idea how wide its container is -- it draws at 640 and
+         *  stops -- so the width is measured off the host and measured again
+         *  when the host changes. Redrawing changes the host's contents, which
+         *  is exactly the thing a ResizeObserver watches, so the guard on the
+         *  measured width is what keeps that from being a loop. */
         const chart = (id, options) => {
           if (typeof Plot === "undefined") return;
           const host = document.querySelector("#" + id);
-          host.replaceChildren(Plot.plot({ ...PLOT, ...options }));
+          let drawn = 0;
+          const render = () => {
+            const pad = getComputedStyle(host);
+            const width = Math.round(host.clientWidth - parseFloat(pad.paddingLeft) - parseFloat(pad.paddingRight));
+            if (width <= 0 || width === drawn) return;
+            drawn = width;
+            host.replaceChildren(Plot.plot({ width, ...PLOT, ...options }));
+          };
+          render();
+          new ResizeObserver(render).observe(host);
         };
 
         // ---- the two years ----
@@ -461,15 +477,6 @@
           (d) => d.year.startsWith("Heat pump") && d.t < -2,
         ).length;
       </script>
-
-      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        An illustrative readout. Every reading, price and temperature was written
-        for this page; the daily scatter is generated from the two slopes named in
-        the method rather than measured, and says so, because its job is to show
-        what a slope comparison looks like rather than to report a house. The part
-        worth copying is the shape: a headline number, the same number with its
-        largest confounder removed, and both of them on the page at the same size.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

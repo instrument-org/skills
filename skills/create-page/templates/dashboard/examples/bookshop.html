@@ -261,15 +261,15 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+    <main class="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
       <header>
         <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
           Dashboard &middot; Quarter to 30 September, read 6 October
         </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+        <h1 class="mt-1.5 text-[26px] font-semibold tracking-[-0.03em] sm:text-[30px]">
           A good quarter with one category quietly falling over
         </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+        <p class="mt-3 max-w-[68ch] text-[15px] leading-7 text-muted-foreground">
           Takings are up 9% on the same quarter last year and up 4% on the one
           before, which is the headline and is not the interesting part. Underneath
           it, children&rsquo;s books have fallen for four quarters in a row and now
@@ -280,7 +280,7 @@
         </p>
       </header>
 
-      <section id="numbers" class="mt-9">
+      <section id="numbers" class="mt-7">
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div class="rounded-xl border border-border bg-card p-4">
             <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Takings</p>
@@ -388,16 +388,17 @@
         </div>
       </section>
 
-      <section id="method" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">How this was counted</h2>
-        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">The shop is illustrative.</span> Every figure on this page was written to show what a quarterly readout looks like when it carries its own comparisons. No real business is described.</li>
-          <li><span class="font-medium text-foreground">Takings are net of returns and exclude the card fee.</span> Which is why the total here will not match a bank statement, and a readout that does not say which basis it used cannot be reconciled with anything.</li>
-          <li><span class="font-medium text-foreground">A category is where a book sits on the shelf, not what the publisher calls it.</span> Which means the boundary moves when the shop is rearranged, and the children&rsquo;s decline is a shelf-space fact as much as a demand fact. Nobody rearranged those bays this year, so the comparison holds.</li>
-          <li><span class="font-medium text-foreground">Every comparison is against the same quarter a year earlier</span>, not the previous quarter, because a bookshop&rsquo;s year has a shape and Q3 against Q2 mostly measures the summer.</li>
-          <li><span class="font-medium text-foreground">This is a snapshot with a date on it.</span> It was read on 6 October and it will not update. Nothing on this page is live and nothing on it is filterable: if the question needs slicing, it needs the till export and a grid, not this.</li>
-        </ul>
-      </section>
+      <!-- The basis, and all of it: what is netted off, what a category means,
+           which period the comparison is against, and the date it stopped being
+           true. Lines rather than sections, so a reader who wants it finds it in
+           one glance and a reader who does not is already looking at the charts. -->
+      <div class="mt-10 grid gap-x-8 gap-y-2 border-t border-border pt-5 text-[12px] leading-6 text-muted-foreground sm:grid-cols-2">
+        <p><b class="font-medium text-foreground">The shop is illustrative.</b> Every figure on this page was written to show what a quarterly readout looks like when it carries its own comparisons. No real business is described.</p>
+        <p><b class="font-medium text-foreground">Takings are net of returns and exclude the card fee.</b> Which is why the total here will not match a bank statement, and a readout that does not say which basis it used cannot be reconciled with anything.</p>
+        <p><b class="font-medium text-foreground">A category is where a book sits on the shelf, not what the publisher calls it.</b> Which means the boundary moves when the shop is rearranged, and the children&rsquo;s decline is a shelf-space fact as much as a demand fact. Nobody rearranged those bays this year, so the comparison holds.</p>
+        <p><b class="font-medium text-foreground">Every comparison is against the same quarter a year earlier</b>, not the previous quarter, because a bookshop&rsquo;s year has a shape and Q3 against Q2 mostly measures the summer.</p>
+        <p><b class="font-medium text-foreground">This is a snapshot with a date on it.</b> It was read on 6 October and it will not update. Nothing on this page is live and nothing on it is filterable: if the question needs slicing, it needs the till export and a grid, not this.</p>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
@@ -450,11 +451,26 @@
         const GREY = "var(--color-gray-400)";
 
         /** Draws into `id`, or leaves whatever is already there if Plot never
-         *  arrived. Every caller has a table under it either way. */
+         *  arrived. Every caller has a table under it either way.
+         *
+         *  Plot has no idea how wide its container is -- it draws at 640 and
+         *  stops -- so the width is measured off the host and measured again
+         *  when the host changes. Redrawing changes the host's contents, which
+         *  is exactly the thing a ResizeObserver watches, so the guard on the
+         *  measured width is what keeps that from being a loop. */
         const chart = (id, options) => {
           if (typeof Plot === "undefined") return;
           const host = document.querySelector("#" + id);
-          host.replaceChildren(Plot.plot({ ...PLOT, ...options }));
+          let drawn = 0;
+          const render = () => {
+            const pad = getComputedStyle(host);
+            const width = Math.round(host.clientWidth - parseFloat(pad.paddingLeft) - parseFloat(pad.paddingRight));
+            if (width <= 0 || width === drawn) return;
+            drawn = width;
+            host.replaceChildren(Plot.plot({ width, ...PLOT, ...options }));
+          };
+          render();
+          new ResizeObserver(render).observe(host);
         };
 
         // ---- six panels on one scale ----
@@ -503,7 +519,7 @@
         chart("weekday", {
           height: 240,
           marginLeft: 84,
-          x: { label: "average takings", grid: true, tickFormat: (v) => (v >= 1000 ? v / 1000 + "k" : v) },
+          x: { label: null, grid: true, tickFormat: (v) => (v >= 1000 ? v / 1000 + "k" : v) },
           y: { label: null, domain: DAYS.map((d) => d[0]) },
           marks: [
             Plot.barX(DAYS, { y: (d) => d[0], x: (d) => d[1], fill: (d) => (d[0] === "Thursday" ? GREEN : GREY) }),
@@ -523,7 +539,10 @@
         chart("basket", {
           height: 240,
           marginLeft: 72,
-          x: { label: "transactions", grid: true },
+          // Room for the value printed at the end of the longest bar, or the
+          // one label the chart exists to show is the one that gets clipped.
+          marginRight: 52,
+          x: { label: null, grid: true },
           y: { label: null, domain: BASKETS.map((d) => "£" + d[0]) },
           marks: [
             Plot.barX(BASKETS, { y: (d) => "£" + d[0], x: (d) => d[1], fill: GREY }),
@@ -532,15 +551,6 @@
           ],
         });
       </script>
-
-      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        An illustrative readout. Every figure was written for this page to show
-        what a quarter looks like when each number arrives with the thing it should
-        be compared against; none of it is a measurement of any real shop. The
-        method notes are the part worth copying: what is netted off, what a
-        category means, which quarter the comparison is against, and the date it
-        stopped being true.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

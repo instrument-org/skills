@@ -48,13 +48,27 @@ const GREY = "var(--color-gray-400)";
 
 const chart = (id, options) => {
   if (typeof Plot === "undefined") return;
-  document
-    .querySelector("#" + id)
-    .replaceChildren(Plot.plot({ ...PLOT, ...options }));
+  const host = document.querySelector("#" + id);
+  let drawn = 0;
+  const render = () => {
+    const pad = getComputedStyle(host);
+    const width = Math.round(
+      host.clientWidth -
+        parseFloat(pad.paddingLeft) -
+        parseFloat(pad.paddingRight),
+    );
+    if (width <= 0 || width === drawn) return;
+    drawn = width;
+    host.replaceChildren(Plot.plot({ width, ...PLOT, ...options }));
+  };
+  render();
+  new ResizeObserver(render).observe(host);
 };
 ```
 
-Two things are doing work here. `background: "transparent"` and `color: "currentColor"` stop Plot painting its own white card and black type over a dark page; without them a dark reader gets a white rectangle. And the early return is the offline contract: the host element already contains a sentence describing the chart, so a page whose libraries never arrive reads as prose with a table under it.
+Three things are doing work here. `background: "transparent"` and `color: "currentColor"` stop Plot painting its own white card and black type over a dark page; without them a dark reader gets a white rectangle. And the early return is the offline contract: the host element already contains a sentence describing the chart, so a page whose libraries never arrive reads as prose with a table under it.
+
+And the width, which is the one that looks like polish and is not. **Plot has no idea how wide its container is.** It draws at 640 and stops, so a chart in a card that is 940 wide sits in the left two thirds of it with dead space beside it, which reads as a rendering fault and is the most common way one of these pages looks unfinished. Measure the host, subtract its padding, and measure again when it changes. Redrawing changes the host's contents, which is exactly what a `ResizeObserver` watches, so the guard on the measured width is not an optimization: without it the thing loops.
 
 Because Plot draws SVG, `fill: "var(--color-brand-500)"` works directly on a mark. There is no probe, no resolved-color cache, and no redraw on a theme change: this is the whole reason to prefer it over canvas on a page that follows the reader's theme.
 

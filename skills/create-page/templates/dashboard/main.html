@@ -1,11 +1,15 @@
+      <!-- A readout is scanned, not read, so it opens tighter than the rest of
+           this family: `mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10`, a
+           headline rather than a title, and the lead in the page's own type
+           rather than the serif an essay opens with. -->
       <header>
         <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
           Dashboard &middot; WHAT PERIOD, READ WHEN
         </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+        <h1 class="mt-1.5 text-[26px] font-semibold tracking-[-0.03em] sm:text-[30px]">
           TITLE: the finding, not the subject
         </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+        <p class="mt-3 max-w-[68ch] text-[15px] leading-7 text-muted-foreground">
           ONE PARAGRAPH: how it went, in the reader's terms, and the one thing
           underneath the headline that the headline hides. A dashboard whose
           opening paragraph could be written before the numbers arrived has not
@@ -13,7 +17,7 @@
         </p>
       </header>
 
-      <section id="numbers" class="mt-9">
+      <section id="numbers" class="mt-7">
         <!-- Four or five figures, each with the thing it should be compared
              against. A number with no baseline is decoration: say what it was
              last period, or what it was meant to be, or what it is a share of.
@@ -52,12 +56,18 @@
              took. That is the difference between a readout and a report. -->
       </section>
 
-      <section id="method" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">HOW THIS WAS COUNTED</h2>
-        <!-- The basis: what is netted off, what a category means, which period the
-             comparison is against and why, what is excluded. End with the date it
-             was read and the fact that it will not update. -->
-      </section>
+      <!-- The basis, and all of it: what is netted off, what a category means,
+           which period the comparison is against and why, what is excluded, the
+           date it was read, and the fact that it will not update. Lines rather
+           than a section, so a reader who wants it finds it in one glance and a
+           reader who does not is already looking at the charts. This replaces
+           the footer as well; the two used to say the same things twice. -->
+      <div class="mt-10 grid gap-x-8 gap-y-2 border-t border-border pt-5 text-[12px] leading-6 text-muted-foreground sm:grid-cols-2">
+        <p><b class="font-medium text-foreground">What the figures are.</b> Illustrative or measured, and if measured, from where.</p>
+        <p><b class="font-medium text-foreground">What is netted off.</b> The basis, so the total can be reconciled with something.</p>
+        <p><b class="font-medium text-foreground">Which comparison, and why that one.</b> Against last period, the same period a year back, or the plan.</p>
+        <p><b class="font-medium text-foreground">The date it stopped being true.</b> This is a snapshot; say so, and say what to reach for when the question needs slicing.</p>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
@@ -83,11 +93,26 @@
         const GREY = "var(--color-gray-400)";
 
         /** Draws into `id`, or leaves whatever is already there if Plot never
-         *  arrived. Every caller has a table under it either way. */
+         *  arrived. Every caller has a table under it either way.
+         *
+         *  Plot has no idea how wide its container is -- it draws at 640 and
+         *  stops -- so the width is measured off the host and measured again
+         *  when the host changes. Redrawing changes the host's contents, which
+         *  is exactly what a ResizeObserver watches, so the guard on the
+         *  measured width is what keeps that from being a loop. */
         const chart = (id, options) => {
           if (typeof Plot === "undefined") return;
           const host = document.querySelector("#" + id);
-          host.replaceChildren(Plot.plot({ ...PLOT, ...options }));
+          let drawn = 0;
+          const render = () => {
+            const pad = getComputedStyle(host);
+            const width = Math.round(host.clientWidth - parseFloat(pad.paddingLeft) - parseFloat(pad.paddingRight));
+            if (width <= 0 || width === drawn) return;
+            drawn = width;
+            host.replaceChildren(Plot.plot({ width, ...PLOT, ...options }));
+          };
+          render();
+          new ResizeObserver(render).observe(host);
         };
 
         chart("chart", {
@@ -106,7 +131,3 @@
           `<tr class="border-b border-border/60"><td class="py-1.5 text-left font-medium">Value</td>${VALUES.map((v) => `<td class="py-1.5 font-mono">${v}</td>`).join("")}</tr>`;
       </script>
 
-      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        <!-- Where the figures came from and when they were read. Say which ones
-             are illustrative before anyone quotes one. -->
-      </footer>

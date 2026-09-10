@@ -16,11 +16,11 @@ Do not reach for it when there are more rows than anyone will read and the rows 
 
 Each slot is an intent. Answer it in whatever form suits the material.
 
-- **How it went.** Two or three sentences: the headline in the reader's own terms, and the thing under it the headline hides. A dashboard whose opening paragraph could have been written before the numbers arrived has not read its own numbers.
+- **How it went.** A meta line, a headline and two or three sentences: the finding in the reader's own terms, and the thing under it the headline hides. A dashboard whose opening paragraph could have been written before the numbers arrived has not read its own numbers. Open tighter than the rest of this family, because a readout is scanned: a headline rather than a title, and the lead in the page's own type rather than the serif an essay opens with.
 - **The figures that matter.** Four or five, each with the thing it should be compared against. Tint the one that is a problem and leave the rest plain: when every tile is loud, none of them is.
 - **What moved, and what it looks like.** Two or three views, each answering a question the tiles raised, each with the same numbers as a table beneath it.
 - **What is actually going wrong.** Two to four findings, each checkable against the charts above, each naming the thing to do or the question to ask. At least one should be about the measurement rather than the subject.
-- **How this was counted.** The basis: what is netted off, what a category means, which period the comparison is against and why, what is excluded, and the date it stopped being true.
+- **How this was counted.** The basis: what is netted off, what a category means, which period the comparison is against and why, what is excluded, and the date it stopped being true. Four or five one-liners in two columns under a rule, not a section with a heading, and there is no footer under it: the footer and the method notes always ended up saying the same things twice.
 
 ## The rules that make it worth reading
 

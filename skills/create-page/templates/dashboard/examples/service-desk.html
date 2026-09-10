@@ -261,15 +261,15 @@
   </head>
 
   <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+    <main class="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
       <header>
         <p class="text-xs font-medium tracking-[0.12em] text-brand-700 uppercase">
           Dashboard &middot; Service desk, quarter to 31 December
         </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+        <h1 class="mt-1.5 text-[26px] font-semibold tracking-[-0.03em] sm:text-[30px]">
           The average is twenty-one minutes and one ticket in ten waits nine hours
         </h1>
-        <p class="mt-4 font-serif text-[17px] leading-8 text-muted-foreground">
+        <p class="mt-3 max-w-[68ch] text-[15px] leading-7 text-muted-foreground">
           Every number we report on this team is a mean, and the mean is the one
           statistic this distribution defeats: most tickets are answered almost
           immediately and a long thin tail waits most of a working day. Nobody
@@ -279,7 +279,7 @@
         </p>
       </header>
 
-      <section id="numbers" class="mt-9">
+      <section id="numbers" class="mt-7">
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div class="rounded-xl border border-border bg-card p-4">
             <p class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">Tickets</p>
@@ -375,16 +375,17 @@
         </div>
       </section>
 
-      <section id="method" class="mt-12">
-        <h2 class="text-xl font-semibold tracking-[-0.02em]">How this was counted</h2>
-        <ul class="mt-4 space-y-2.5 text-sm leading-7 text-muted-foreground">
-          <li><span class="font-medium text-foreground">The desk is illustrative.</span> Every figure here was written to show what a service readout looks like when it reports a distribution instead of an average. No real team is described.</li>
-          <li><span class="font-medium text-foreground">First reply means the first message from a person.</span> Auto-acknowledgements are excluded, which is why these numbers are larger than the ones in the vendor&rsquo;s own dashboard. Counting the robot would put the median at four seconds and mean nothing.</li>
-          <li><span class="font-medium text-foreground">The clock runs in real time, not business time.</span> A ticket arriving at 19:00 and answered at 08:10 waited thirteen hours, not ten minutes. Business-hours clocks make an out-of-hours problem invisible by definition, which is the problem this page is about.</li>
-          <li><span class="font-medium text-foreground">Percentiles are over tickets, not over customers.</span> One customer who filed 90 tickets is 2% of the quarter. Nothing here is weighted for that and it should be before anyone draws a conclusion about how customers experience the desk.</li>
-          <li><span class="font-medium text-foreground">A snapshot, dated.</span> Read on 6 January and it will not update. There are no filters on this page: if the question is which queue, or which customer, that needs the export and a grid rather than this.</li>
-        </ul>
-      </section>
+      <!-- The basis, and all of it: what is netted off, what a category means,
+           which period the comparison is against, and the date it stopped being
+           true. Lines rather than sections, so a reader who wants it finds it in
+           one glance and a reader who does not is already looking at the charts. -->
+      <div class="mt-10 grid gap-x-8 gap-y-2 border-t border-border pt-5 text-[12px] leading-6 text-muted-foreground sm:grid-cols-2">
+        <p><b class="font-medium text-foreground">The desk is illustrative.</b> Every figure here was written to show what a service readout looks like when it reports a distribution instead of an average. No real team is described.</p>
+        <p><b class="font-medium text-foreground">First reply means the first message from a person.</b> Auto-acknowledgements are excluded, which is why these numbers are larger than the ones in the vendor&rsquo;s own dashboard. Counting the robot would put the median at four seconds and mean nothing.</p>
+        <p><b class="font-medium text-foreground">The clock runs in real time, not business time.</b> A ticket arriving at 19:00 and answered at 08:10 waited thirteen hours, not ten minutes. Business-hours clocks make an out-of-hours problem invisible by definition, which is the problem this page is about.</p>
+        <p><b class="font-medium text-foreground">Percentiles are over tickets, not over customers.</b> One customer who filed 90 tickets is 2% of the quarter. Nothing here is weighted for that and it should be before anyone draws a conclusion about how customers experience the desk.</p>
+        <p><b class="font-medium text-foreground">A snapshot, dated.</b> Read on 6 January and it will not update. There are no filters on this page: if the question is which queue, or which customer, that needs the export and a grid rather than this.</p>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
@@ -424,11 +425,26 @@
         const GREY = "var(--color-gray-400)";
 
         /** Draws into `id`, or leaves whatever is already there if Plot never
-         *  arrived. Every caller has a table under it either way. */
+         *  arrived. Every caller has a table under it either way.
+         *
+         *  Plot has no idea how wide its container is -- it draws at 640 and
+         *  stops -- so the width is measured off the host and measured again
+         *  when the host changes. Redrawing changes the host's contents, which
+         *  is exactly the thing a ResizeObserver watches, so the guard on the
+         *  measured width is what keeps that from being a loop. */
         const chart = (id, options) => {
           if (typeof Plot === "undefined") return;
           const host = document.querySelector("#" + id);
-          host.replaceChildren(Plot.plot({ ...PLOT, ...options }));
+          let drawn = 0;
+          const render = () => {
+            const pad = getComputedStyle(host);
+            const width = Math.round(host.clientWidth - parseFloat(pad.paddingLeft) - parseFloat(pad.paddingRight));
+            if (width <= 0 || width === drawn) return;
+            drawn = width;
+            host.replaceChildren(Plot.plot({ width, ...PLOT, ...options }));
+          };
+          render();
+          new ResizeObserver(render).observe(host);
         };
 
         const total = BANDS.reduce((a, [, n]) => a + n, 0);
@@ -490,15 +506,6 @@
           ],
         });
       </script>
-
-      <footer class="mt-14 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
-        An illustrative readout. Every count and every median was written for this
-        page rather than measured, and no real service desk is described. What is
-        worth copying is the argument the shape makes: when a distribution has a
-        long thin tail, the mean is the one summary that describes nobody in it,
-        and a readout that reports only the mean will keep the tail invisible for
-        as long as it is read.
-      </footer>
     </main>
     <!-- shell:start -->
     <!-- Progressive: with scripts off, or offline, every link reads exactly as

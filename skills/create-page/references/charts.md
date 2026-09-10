@@ -170,9 +170,23 @@ const PLOT = {
 };
 const chart = (id, options) => {
   if (typeof Plot === "undefined") return; // The host already holds a sentence and a table.
-  document
-    .querySelector("#" + id)
-    .replaceChildren(Plot.plot({ ...PLOT, ...options }));
+  const host = document.querySelector("#" + id);
+  // Plot draws at 640 and stops, so the width is measured off the host; the
+  // guard is what stops the redraw retriggering its own observer.
+  let drawn = 0;
+  const render = () => {
+    const pad = getComputedStyle(host);
+    const width = Math.round(
+      host.clientWidth -
+        parseFloat(pad.paddingLeft) -
+        parseFloat(pad.paddingRight),
+    );
+    if (width <= 0 || width === drawn) return;
+    drawn = width;
+    host.replaceChildren(Plot.plot({ width, ...PLOT, ...options }));
+  };
+  render();
+  new ResizeObserver(render).observe(host);
 };
 ```
 
