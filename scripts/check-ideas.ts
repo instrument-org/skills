@@ -290,7 +290,7 @@ export function checkSelfContained(
     for (const match of (script[1] ?? "").matchAll(/https?:\/\/[^\s"'`]+/g)) {
       if (!SCRIPT_BUILT_PREFIXES.some((p) => match[0].startsWith(p))) {
         errors.push(
-          `${file}: a script reaches ${match[0].slice(0, 80)}; only ${SCRIPT_BUILT_PREFIXES.join(", ")} may be built at runtime`,
+          `${file}: a script reaches ${match[0].slice(0, 80)}, which is not an address a script may build at runtime`,
         );
       }
     }
