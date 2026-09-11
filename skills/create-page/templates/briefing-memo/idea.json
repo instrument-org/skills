@@ -1,7 +1,7 @@
 {
   "title": "Briefing memo",
-  "tagline": "The options and a recommendation on one page, before you commit.",
-  "when": "You have to decide something with real stakes and want the situation, the options, and a recommendation on one page before you commit.",
+  "tagline": "The options and a recommendation, before you commit.",
+  "when": "You have to decide something that matters and want the options and a recommendation on one page before you commit.",
   "tags": ["persuade"],
   "order": 60,
   "needs": [],

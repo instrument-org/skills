@@ -1,7 +1,7 @@
 {
   "title": "Checklist",
   "tagline": "Every step grouped and tickable, ready to print.",
-  "when": "You are about to run a process where forgetting one step is expensive and want every item grouped, tickable, and printed on a sheet.",
+  "when": "You are about to run a process where forgetting one step is expensive and want every item grouped and tickable on a printed sheet.",
   "tags": ["steps"],
   "order": 110,
   "needs": [],

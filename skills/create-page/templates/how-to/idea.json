@@ -1,7 +1,7 @@
 {
   "title": "How-to guide",
-  "tagline": "The steps in order, with the tools listed and the traps marked.",
-  "when": "You need to get something done in order, with the tools listed, the traps marked, and a way to know when you are finished.",
+  "tagline": "Each step in order and the traps marked.",
+  "when": "You need to get something done in order, with the traps marked and a way to know when you are finished.",
   "tags": ["steps"],
   "order": 100,
   "needs": [],

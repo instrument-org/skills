@@ -1,7 +1,7 @@
 {
   "title": "Explainer",
   "tagline": "How something works, at the depth you need before going further.",
-  "when": "You need a mental model of a concept, a system, or a topic before you decide or dig deeper.",
+  "when": "You need a working picture of how something works before you decide or dig deeper.",
   "tags": ["explain"],
   "order": 90,
   "needs": [],

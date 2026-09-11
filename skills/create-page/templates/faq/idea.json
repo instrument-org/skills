@@ -1,7 +1,7 @@
 {
   "title": "FAQ",
   "tagline": "The questions people keep asking about one topic, answered once.",
-  "when": "The same questions keep arriving about one topic and the reader wants each answered once, in a block they can find, skim, or send.",
+  "when": "The same questions keep arriving about one topic and the reader wants each answered once, in a block they can find and send on.",
   "tags": ["explain"],
   "order": 140,
   "needs": [],
