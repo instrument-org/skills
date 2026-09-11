@@ -56,7 +56,7 @@ Research before you write, and write from what you found. A page whose facts cam
 
 ## What stays fixed, and what must vary
 
-Fixed, because every page shares one look: the skin block in the starter, the type stack, the palette with brand green as the only saturated color, the spacing scale, a single self-contained file, and a provenance footer.
+Fixed, because every page shares one look: the skin block in the starter, the type stack and its scale, the palette with brand green as the only saturated color, the spacing scale, a single self-contained file, and a provenance footer. The type scale is Tailwind's and tops out where the templates put it: a page title is `text-3xl sm:text-4xl`, or `sm:text-5xl` on a long read, a section heading is `text-xl` or `text-2xl`, and nothing is sized in `vw`. A register asks for a serif or a wider measure, never for a larger headline; one that fills the first screen pushes what the reader came for below the fold.
 
 Free, and expected to differ between two pages made a day apart: the layout and column count, the density, the register, the components, the way a slot is realized, and any interaction, which must be progressive so the page reads with scripts off. Each template names what varies most in its own case.
 
