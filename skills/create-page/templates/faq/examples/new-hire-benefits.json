@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Calm and open: one column of answers beside a jump list that stays put on a wide screen, because a new hire reads this once with the enrollment form open and needs to find one answer and trust it, so nothing is hidden behind a click. Question headings are sans at medium weight with a link icon on hover, the first sentence of every answer carries the foreground color with the rest muted so the answer is visible before the reader decides to read on, and the still-stuck box names a channel and a person, the only card on the page.",
   "illustrative": true,
-  "html_sha256": "ce23d63fecfb1ca7d92ebb0850e5c1b007b6e97bc61086008f195e836bd1e2dc"
+  "html_sha256": "68033f82a9e6785ef8bcff36f23aee98af04bf425d3945997d87d2b3639e14d0"
 }

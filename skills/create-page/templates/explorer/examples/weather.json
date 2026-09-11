@@ -4,5 +4,5 @@
   "prompt": "Compare a year of weather across a few cities I might move to.",
   "model": "claude-opus-5",
   "note": "The six cities have coordinates and the page deliberately has no map, because where they are is not the finding and a map would only confirm what everyone already knows. Time carries it instead: one chart, six smoothed lines on a shared axis, where Sydney's curve is visibly upside down and Nairobi's is visibly flat. Rain gets two charts rather than one because volume and frequency are different questions and Reykjavik and Tokyo answer them in opposite orders. Six series needs six hues, so the lines take the five saturated tokens that hold in both themes plus the neutral, rather than inventing a palette.",
-  "html_sha256": "c2210a427b9f63c3e13c5ae58fea0971d944ef3c1018f0c4c3de2d23dad1499e"
+  "html_sha256": "9e1431b24b76a0899b68aa74abce7be03bfc467ee921a80265399a8c808d37c5"
 }

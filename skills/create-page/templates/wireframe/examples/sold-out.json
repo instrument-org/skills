@@ -4,5 +4,5 @@
   "prompt": "Show me what a ticket checkout should do when the event sells out mid-purchase. Right now it dumps you back to the event page and you lose the form.",
   "model": "claude-opus-5",
   "note": "The widest frames the template draws, 1280x800 in browser chrome, and the one that shows a helper earning its place: `checkout()` renders the same form three times so frames 2, 3 and 4 differ only in the banner and the sidebar, which is exactly what a reader has to be able to see. Frame 5 is 480x320 because a release notice is a small thing and drawing it window-sized would be a lie about it; that mix is what the `w`/`h` overrides exist for. The failure state is the whole page. Frame 3's caption is where the proposal's one load-bearing assumption surfaces -- \"nothing is redirected and nothing is retyped\", which is a claim about what the checkout can still do with the card details it holds -- and putting it there rather than in a section under the grid is the point: a reader who decides from the pictures meets it, and a reader who scrolls past a ledger does not.",
-  "html_sha256": "cd11309764d7eabf659968b40b2060bcada1629edb7292d0563d10b3b2c343c2"
+  "html_sha256": "4b99e2a685c701fc5698b98b2939ffb82f64aedc61eecb6b61ee43bcc05d85db"
 }
