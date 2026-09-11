@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tab bar icons, round two</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="whiteboard@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+      html {
+        visibility: hidden;
+        animation: instrument-ready 0s 3s forwards;
+      }
+      @keyframes instrument-ready {
+        to {
+          visibility: visible;
+        }
+      }
+    </style>
+    <script>
+      // --font-sans is declared in the @theme static block below, so it resolves
+      // once the compiled stylesheet is in the document and not a frame before.
+      (function () {
+        const show = () => {
+          document.documentElement.style.visibility = "visible";
+        };
+        (function poll() {
+          const theme = getComputedStyle(document.documentElement)
+            .getPropertyValue("--font-sans")
+            .trim();
+          if (theme !== "") show();
+          else requestAnimationFrame(poll);
+        })();
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
+      })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script defer src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
+    <!-- shell:end -->
+
+    <!-- shell:note A page's own CSS goes here, between the framework above and
+         the shared behavior below: outside the pairs, so fix:shell leaves it
+         alone. Several examples carry print rules or a rating scale here. -->
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="fixed inset-0 overflow-hidden">
+      <!-- The page is the board. <main> is the whole window, `fixed inset-0`,
+           and nothing sits above or below the canvas: the name of the page and
+           where it came from are written on the board, where a reader who
+           exports it keeps them. -->
+      <link rel="stylesheet" href="https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/index.css" />
+      <style>
+        /* The board before the editor arrives, and the whole board if it never
+           does: the same scene as plain SVG, in the page's own type. */
+        #sketch svg { display: block; width: 100%; height: 100%; }
+        /* Named rather than inherited: the framework comes from the same host as the editor, so the one case that shows this sketch for long is the one with no utilities either. */
+        #sketch text { font-family: Inter, system-ui, sans-serif; }
+      </style>
+
+      <div id="sketch" class="absolute inset-0"></div>
+      <div id="editor" class="absolute inset-0"></div>
+
+      <!-- The scene, as Excalidraw reads it and as it was written. This element
+           is the document and the canvas is a view of it: a reader with the
+           network off still has every word of it here, and the editor's own
+           export writes the same shape back out. -->
+      <script type="application/json" id="scene">{"type":"excalidraw","version":2,"source":"tryinstrument.com","elements":[{"id":"t1","type":"text","x":40,"y":0,"width":369.6,"height":35,"text":"Tab bar icons, round two","originalText":"Tab bar icons, round two","fontSize":28,"fontFamily":1,"textAlign":"left","verticalAlign":"top","strokeColor":"#1e1e1e","angle":0},{"id":"t2","type":"text","x":40,"y":42,"width":589.6,"height":20,"text":"five slots, judged at 24 px, which is the size the phone draws them","originalText":"five slots, judged at 24 px, which is the size the phone draws them","fontSize":16,"fontFamily":1,"textAlign":"left","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i4","type":"image","x":40,"y":120,"width":96,"height":96,"fileId":"f3","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"t5","type":"text","x":70.4,"y":226,"width":35.2,"height":20,"text":"home","originalText":"home","fontSize":16,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i7","type":"image","x":76,"y":262,"width":24,"height":24,"fileId":"f6","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"i9","type":"image","x":190,"y":120,"width":96,"height":96,"fileId":"f8","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"t10","type":"text","x":224.8,"y":226,"width":26.400000000000002,"height":20,"text":"map","originalText":"map","fontSize":16,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i12","type":"image","x":226,"y":262,"width":24,"height":24,"fileId":"f11","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"i14","type":"image","x":340,"y":120,"width":96,"height":96,"fileId":"f13","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"t15","type":"text","x":370.4,"y":226,"width":35.2,"height":20,"text":"list","originalText":"list","fontSize":16,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i17","type":"image","x":376,"y":262,"width":24,"height":24,"fileId":"f16","status":"saved","scale":[1,1],"boundElements":[{"id":"a38","type":"arrow"}],"frameId":"fr34"},{"id":"i19","type":"image","x":490,"y":120,"width":96,"height":96,"fileId":"f18","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"t20","type":"text","x":511.6,"y":226,"width":52.800000000000004,"height":20,"text":"camera","originalText":"camera","fontSize":16,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i22","type":"image","x":526,"y":262,"width":24,"height":24,"fileId":"f21","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"i24","type":"image","x":640,"y":120,"width":96,"height":96,"fileId":"f23","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"t25","type":"text","x":670.4,"y":226,"width":35.2,"height":20,"text":"bell","originalText":"bell","fontSize":16,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i27","type":"image","x":676,"y":262,"width":24,"height":24,"fileId":"f26","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"i29","type":"image","x":790,"y":120,"width":96,"height":96,"fileId":"f28","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"t30","type":"text","x":811.6,"y":226,"width":52.800000000000004,"height":20,"text":"person","originalText":"person","fontSize":16,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i32","type":"image","x":826,"y":262,"width":24,"height":24,"fileId":"f31","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr34"},{"id":"t33","type":"text","x":40,"y":296,"width":61.60000000000001,"height":17.5,"text":"at 24 px","originalText":"at 24 px","fontSize":14,"fontFamily":2,"textAlign":"left","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"fr34","type":"frame","x":12,"y":84,"width":902,"height":230,"name":"Round two","boundElements":[]},{"id":"e35","type":"ellipse","x":182.20000000000002,"y":228.1,"width":261.59999999999997,"height":91.80000000000001,"strokeColor":"#b4324f","backgroundColor":"transparent","fillStyle":"solid","boundElements":[],"strokeWidth":2},{"id":"r36","type":"rectangle","x":280,"y":380,"width":400,"height":80,"strokeColor":"#b4324f","backgroundColor":"#fbeaea","fillStyle":"solid","boundElements":[{"id":"t37","type":"text"},{"id":"a38","type":"arrow"},{"id":"a56","type":"arrow"}],"roundness":{"type":3}},{"id":"t37","type":"text","x":292,"y":408.75,"width":376,"height":22.5,"text":"map and list read the same at 24 px","originalText":"map and list read the same at 24 px","fontSize":18,"fontFamily":1,"textAlign":"center","verticalAlign":"middle","strokeColor":"#b4324f","containerId":"r36"},{"id":"a38","type":"arrow","x":480,"y":374,"width":92,"height":82,"points":[[0,0],[-92,-82]],"strokeColor":"#b4324f","startBinding":{"elementId":"r36","focus":0,"gap":6},"endBinding":{"elementId":"i17","focus":0,"gap":6},"startArrowhead":null,"endArrowhead":"arrow","boundElements":[]},{"id":"t39","type":"text","x":760,"y":380,"width":287.1,"height":22.5,"text":"instead of map, one of these:","originalText":"instead of map, one of these:","fontSize":18,"fontFamily":1,"textAlign":"left","verticalAlign":"top","strokeColor":"#0e7869","angle":0},{"id":"i41","type":"image","x":760,"y":420,"width":72,"height":72,"fileId":"f40","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr55"},{"id":"i43","type":"image","x":784,"y":504,"width":24,"height":24,"fileId":"f42","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr55"},{"id":"t44","type":"text","x":772.9,"y":536,"width":46.2,"height":17.5,"text":"layers","originalText":"layers","fontSize":14,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i46","type":"image","x":880,"y":420,"width":72,"height":72,"fileId":"f45","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr55"},{"id":"i48","type":"image","x":904,"y":504,"width":24,"height":24,"fileId":"f47","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr55"},{"id":"t49","type":"text","x":889.05,"y":536,"width":53.900000000000006,"height":17.5,"text":"compass","originalText":"compass","fontSize":14,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"i51","type":"image","x":1000,"y":420,"width":72,"height":72,"fileId":"f50","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr55"},{"id":"i53","type":"image","x":1024,"y":504,"width":24,"height":24,"fileId":"f52","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr55"},{"id":"t54","type":"text","x":1020.6,"y":536,"width":30.800000000000004,"height":17.5,"text":"grid","originalText":"grid","fontSize":14,"fontFamily":2,"textAlign":"center","verticalAlign":"top","strokeColor":"#6d655f","angle":0},{"id":"fr55","type":"frame","x":732,"y":384,"width":368,"height":172,"name":"For the map slot","boundElements":[{"id":"a56","type":"arrow"}]},{"id":"a56","type":"arrow","x":686,"y":420,"width":40,"height":50,"points":[[0,0],[40,50]],"strokeColor":"#0e7869","strokeStyle":"dashed","startBinding":{"elementId":"r36","focus":0,"gap":6},"endBinding":{"elementId":"fr55","focus":0,"gap":6},"startArrowhead":null,"endArrowhead":"arrow","boundElements":[]},{"id":"i58","type":"image","x":40,"y":440,"width":72,"height":72,"fileId":"f57","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr61"},{"id":"i60","type":"image","x":240,"y":440,"width":72,"height":72,"fileId":"f59","status":"saved","scale":[1,1],"boundElements":[],"frameId":"fr61"},{"id":"fr61","type":"frame","x":12,"y":404,"width":328,"height":136,"name":"Round one, dropped","boundElements":[]},{"id":"d62","type":"freedraw","x":36,"y":436,"width":80,"height":80,"points":[[0,0],[80,80]],"pressures":[],"simulatePressure":true,"strokeColor":"#b4324f","strokeWidth":2},{"id":"d63","type":"freedraw","x":116,"y":436,"width":80,"height":80,"points":[[0,0],[-80,80]],"pressures":[],"simulatePressure":true,"strokeColor":"#b4324f","strokeWidth":2},{"id":"t64","type":"text","x":40,"y":530,"width":154,"height":17.5,"text":"too close to 'stack'","originalText":"too close to 'stack'","fontSize":14,"fontFamily":1,"textAlign":"left","verticalAlign":"top","strokeColor":"#b4324f","angle":0},{"id":"d65","type":"freedraw","x":236,"y":436,"width":80,"height":80,"points":[[0,0],[80,80]],"pressures":[],"simulatePressure":true,"strokeColor":"#b4324f","strokeWidth":2},{"id":"d66","type":"freedraw","x":316,"y":436,"width":80,"height":80,"points":[[0,0],[-80,80]],"pressures":[],"simulatePressure":true,"strokeColor":"#b4324f","strokeWidth":2},{"id":"t67","type":"text","x":220,"y":530,"width":184.8,"height":17.5,"text":"we have no notifications","originalText":"we have no notifications","fontSize":14,"fontFamily":1,"textAlign":"left","verticalAlign":"top","strokeColor":"#b4324f","angle":0},{"id":"t68","type":"text","x":40,"y":640,"width":739.2,"height":35,"text":"Icons are drawn for this review on a 24-unit grid with a 2-unit stroke. Names are working names.\nDouble-click any icon to open it at full size; drag a corner to try it larger or smaller.","originalText":"Icons are drawn for this review on a 24-unit grid with a 2-unit stroke. Names are working names.\nDouble-click any icon to open it at full size; drag a corner to try it larger or smaller.","fontSize":14,"fontFamily":2,"textAlign":"left","verticalAlign":"top","strokeColor":"#6d655f","angle":0}],"appState":{"viewBackgroundColor":"#ffffff","gridSize":null,"gridModeEnabled":false,"name":"Tab bar icons, round two"},"files":{"f3":{"id":"f3","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTMgMTFsOS04IDkgOCIvPjxwYXRoIGQ9Ik01IDEwdjEwaDE0VjEwIi8+PHBhdGggZD0iTTEwIDIwdi02aDR2NiIvPjwvc3ZnPg==","created":1757548800000},"f6":{"id":"f6","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTMgMTFsOS04IDkgOCIvPjxwYXRoIGQ9Ik01IDEwdjEwaDE0VjEwIi8+PHBhdGggZD0iTTEwIDIwdi02aDR2NiIvPjwvc3ZnPg==","created":1757548800000},"f8":{"id":"f8","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTMgNmw2LTIgNiAyIDYtMnYxNGwtNiAyLTYtMi02IDJ6Ii8+PHBhdGggZD0iTTkgNHYxNE0xNSA2djE0Ii8+PC9zdmc+","created":1757548800000},"f11":{"id":"f11","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTMgNmw2LTIgNiAyIDYtMnYxNGwtNiAyLTYtMi02IDJ6Ii8+PHBhdGggZD0iTTkgNHYxNE0xNSA2djE0Ii8+PC9zdmc+","created":1757548800000},"f13":{"id":"f13","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgNmgxNk00IDEyaDE2TTQgMThoMTYiLz48L3N2Zz4=","created":1757548800000},"f16":{"id":"f16","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgNmgxNk00IDEyaDE2TTQgMThoMTYiLz48L3N2Zz4=","created":1757548800000},"f18":{"id":"f18","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgOGgzbDItM2g2bDIgM2gzdjExSDR6Ii8+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMyIgcj0iMy41Ii8+PC9zdmc+","created":1757548800000},"f21":{"id":"f21","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgOGgzbDItM2g2bDIgM2gzdjExSDR6Ii8+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMyIgcj0iMy41Ii8+PC9zdmc+","created":1757548800000},"f23":{"id":"f23","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTYgMTZWMTFhNiA2IDAgMDExMiAwdjVsMiAySDR6Ii8+PHBhdGggZD0iTTEwIDIwYTIgMiAwIDAwNCAwIi8+PC9zdmc+","created":1757548800000},"f26":{"id":"f26","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTYgMTZWMTFhNiA2IDAgMDExMiAwdjVsMiAySDR6Ii8+PHBhdGggZD0iTTEwIDIwYTIgMiAwIDAwNCAwIi8+PC9zdmc+","created":1757548800000},"f28":{"id":"f28","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSI4IiByPSI0Ii8+PHBhdGggZD0iTTQgMjFhOCA4IDAgMDExNiAwIi8+PC9zdmc+","created":1757548800000},"f31":{"id":"f31","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSI4IiByPSI0Ii8+PHBhdGggZD0iTTQgMjFhOCA4IDAgMDExNiAwIi8+PC9zdmc+","created":1757548800000},"f40":{"id":"f40","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDNsOSA1LTkgNS05LTV6Ii8+PHBhdGggZD0iTTMgMTNsOSA1IDktNSIvPjwvc3ZnPg==","created":1757548800000},"f42":{"id":"f42","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDNsOSA1LTkgNS05LTV6Ii8+PHBhdGggZD0iTTMgMTNsOSA1IDktNSIvPjwvc3ZnPg==","created":1757548800000},"f45":{"id":"f45","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iOSIvPjxwYXRoIGQ9Ik0xNSA5bC0yIDYtNCAyIDItNnoiLz48L3N2Zz4=","created":1757548800000},"f47":{"id":"f47","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iOSIvPjxwYXRoIGQ9Ik0xNSA5bC0yIDYtNCAyIDItNnoiLz48L3N2Zz4=","created":1757548800000},"f50":{"id":"f50","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iNCIgeT0iNCIgd2lkdGg9IjYiIGhlaWdodD0iNiIvPjxyZWN0IHg9IjE0IiB5PSI0IiB3aWR0aD0iNiIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNCIgeT0iMTQiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiLz48cmVjdCB4PSIxNCIgeT0iMTQiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiLz48L3N2Zz4=","created":1757548800000},"f52":{"id":"f52","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iNCIgeT0iNCIgd2lkdGg9IjYiIGhlaWdodD0iNiIvPjxyZWN0IHg9IjE0IiB5PSI0IiB3aWR0aD0iNiIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNCIgeT0iMTQiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiLz48cmVjdCB4PSIxNCIgeT0iMTQiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiLz48L3N2Zz4=","created":1757548800000},"f57":{"id":"f57","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDNsOSA1LTkgNS05LTV6Ii8+PHBhdGggZD0iTTMgMTNsOSA1IDktNSIvPjwvc3ZnPg==","created":1757548800000},"f59":{"id":"f59","mimeType":"image/svg+xml","dataURL":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWUxZTFlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTYgMTZWMTFhNiA2IDAgMDExMiAwdjVsMiAySDR6Ii8+PHBhdGggZD0iTTEwIDIwYTIgMiAwIDAwNCAwIi8+PC9zdmc+","created":1757548800000}}}</script>
+
+      <script type="module">
+        const scene = JSON.parse(document.querySelector("#scene").textContent);
+        const elements = scene.elements.filter((e) => !e.isDeleted);
+        const files = scene.files ?? {};
+
+        // --- the sketch: nothing loaded, nothing fetched ------------------------
+        // Enough of Excalidraw's element types to show any board this template
+        // writes. Not hand-drawn, since that would need a library; a reader who
+        // sees this for more than a moment is a reader with no network.
+        const esc = (s) => s.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"));
+        const dash = (e) => (e.strokeStyle === "dashed" ? ' stroke-dasharray="8 6"' : "");
+        const paint = (e, fill = e.backgroundColor) =>
+          ` fill="${fill && fill !== "transparent" ? fill : "none"}" stroke="${e.strokeColor || "#1e1e1e"}" stroke-width="${e.strokeWidth || 2}"${dash(e)}`;
+        const words = (e, x, y, anchor) =>
+          e.text.split("\n").map((line, i) =>
+            `<text x="${x}" y="${y + i * e.fontSize * 1.25}" text-anchor="${anchor}" font-size="${e.fontSize}" fill="${e.strokeColor || "#1e1e1e"}">${esc(line)}</text>`).join("");
+        const byId = new Map(elements.map((e) => [e.id, e]));
+        const piece = (e) => {
+          const { x, y, width: w, height: h } = e;
+          switch (e.type) {
+            case "rectangle":
+              return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${e.roundness ? 12 : 0}"${paint(e)}/>`;
+            case "ellipse":
+              return `<ellipse cx="${x + w / 2}" cy="${y + h / 2}" rx="${w / 2}" ry="${h / 2}"${paint(e)}/>`;
+            case "diamond":
+              return `<polygon points="${x + w / 2},${y} ${x + w},${y + h / 2} ${x + w / 2},${y + h} ${x},${y + h / 2}"${paint(e)}/>`;
+            case "frame":
+              return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6 5"/>` +
+                `<text x="${x}" y="${y - 8}" font-size="14" fill="#888">${esc(e.name || "")}</text>`;
+            case "image":
+              return files[e.fileId] ? `<image href="${files[e.fileId].dataURL}" x="${x}" y="${y}" width="${w}" height="${h}"/>` : "";
+            case "freedraw":
+            case "line":
+            case "arrow": {
+              const pts = e.points.map(([px, py]) => [x + px, y + py]);
+              let out = `<polyline points="${pts.map((p) => p.join(",")).join(" ")}"${paint(e, "transparent")} stroke-linecap="round" stroke-linejoin="round"/>`;
+              if (e.type === "arrow" && e.endArrowhead !== null) {
+                const [[hx, hy], [tx, ty]] = [pts[pts.length - 2], pts[pts.length - 1]];
+                const a = Math.atan2(ty - hy, tx - hx);
+                for (const s of [1, -1]) {
+                  out += `<line x1="${tx}" y1="${ty}" x2="${tx - Math.cos(a + s * 0.45) * 13}" y2="${ty - Math.sin(a + s * 0.45) * 13}"${paint(e, "transparent")} stroke-linecap="round"/>`;
+                }
+              }
+              return out;
+            }
+            case "text": {
+              const host = e.containerId && byId.get(e.containerId);
+              if (host && host.type !== "arrow" && host.type !== "line") {
+                const lines = e.text.split("\n").length;
+                return words(e, host.x + host.width / 2, host.y + host.height / 2 - ((lines - 1) * e.fontSize * 1.25) / 2 + e.fontSize * 0.35, "middle");
+              }
+              return words(e, x, y + e.fontSize, "start");
+            }
+            default:
+              return "";
+          }
+        };
+        const xs = elements.flatMap((e) => [e.x, e.x + e.width]);
+        const ys = elements.flatMap((e) => [e.y, e.y + e.height]);
+        const [x0, y0, x1, y1] = [Math.min(...xs) - 60, Math.min(...ys) - 60, Math.max(...xs) + 60, Math.max(...ys) + 60];
+        const sketch = document.querySelector("#sketch");
+        sketch.innerHTML =
+          `<svg viewBox="${x0} ${y0} ${x1 - x0} ${y1 - y0}" preserveAspectRatio="xMidYMid meet">` +
+          `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="${scene.appState?.viewBackgroundColor || "#ffffff"}"/>` +
+          elements.map(piece).join("") + "</svg>";
+
+        // --- which theme the page settled on -------------------------------------
+        // Ask a resolved color, never matchMedia: the page's scheme is whatever
+        // `light-dark()` chose, and a viewer that pins `color-scheme: only light`
+        // leaves the media query still reporting the desktop's dark.
+        const probe = document.createElement("div");
+        probe.style.cssText = "position:absolute;visibility:hidden;color:light-dark(#000,#fff)";
+        document.body.appendChild(probe);
+        const theme = () => (getComputedStyle(probe).color === "rgb(255, 255, 255)" ? "dark" : "light");
+        // Excalidraw's own dark mode is this filter over a light canvas.
+        const tint = () => (sketch.style.filter = theme() === "dark" ? "invert(93%) hue-rotate(180deg)" : "");
+        tint();
+
+        // --- the editor -------------------------------------------------------------
+        // 1.2 MB, which the board earns because the board is the page. Fonts and
+        // locales are fetched relative to the asset path, so it is set before the
+        // module is asked for. One React through the whole graph, or none of it
+        // mounts: that is what `?deps=` is for.
+        window.EXCALIDRAW_ASSET_PATH = "https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/";
+        try {
+          const React = await import("https://esm.sh/react@19.2.5");
+          const { createRoot } = await import("https://esm.sh/react-dom@19.2.5/client");
+          const { Excalidraw } = await import("https://esm.sh/@excalidraw/excalidraw@0.18.1?deps=react@19.2.5,react-dom@19.2.5");
+          createRoot(document.querySelector("#editor")).render(
+            React.createElement(Excalidraw, {
+              initialData: { elements, appState: scene.appState, files },
+              theme: theme(),
+              excalidrawAPI: (api) => {
+                // The scene lands a tick after the editor does. Fit the whole
+                // board to the window once it has, then let the sketch go.
+                let polls = 0;
+                const settle = () => {
+                  const drawn = api.getSceneElements();
+                  if (!drawn.length && polls++ < 600) return requestAnimationFrame(settle);
+                  api.scrollToContent(drawn, { fitToContent: true, animate: false });
+                  sketch.remove();
+                };
+                requestAnimationFrame(settle);
+                window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+                  api.updateScene({ appState: { theme: theme() } });
+                });
+              },
+            }),
+          );
+        } catch {
+          // The sketch stays, and the page is the board it was written as.
+        }
+      </script>
+    </main>
+    <!-- shell:start -->
+    <!-- The page as written, kept for the share widget before any script has
+         changed it. A page's own scripts are modules, and Tailwind is deferred,
+         so both run after this and a shared copy carries the markup rather than
+         what a script drew on it. -->
+    <script>
+      window.__instrumentSource = "<!doctype html>\n" + document.documentElement.outerHTML;
+
+      // Progressive: with scripts off, or offline, every link reads exactly as
+      // it does now and nothing shifts. Only the origin is ever sent, never the
+      // path, so a link's query string is not handed over to draw an icon.
+      // Waits for the page's module scripts, so a link one of them draws gets
+      // its icon like any other.
+      const decorate = () => {
+        const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+        for (const link of document.querySelectorAll('a[href^="https://"]')) {
+          const icon = document.createElement("img");
+          icon.alt = "";
+          icon.className = "site-icon";
+          icon.src =
+            "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+            encodeURIComponent(new URL(link.href).origin);
+
+          // A line may break between an image and the text beside it, so the icon
+          // and the first word it leads go in a span that cannot break. A link
+          // with no text of its own takes the icon at the front of the link.
+          const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+          let text = walker.nextNode();
+          while (text && !text.data.trim()) text = walker.nextNode();
+          let host = link;
+          if (text) {
+            const at = text.data.search(/\S/);
+            const word = at > 0 ? text.splitText(at) : text;
+            const space = word.data.search(/\s/);
+            if (space > 0) word.splitText(space); // The rest of the text stays put.
+            host = document.createElement("span");
+            host.className = "site-icon-word";
+            word.replaceWith(host);
+            host.append(word);
+          }
+
+          const drop = () => {
+            icon.remove();
+            if (host !== link) host.replaceWith(...host.childNodes);
+          };
+          icon.onerror = drop;
+          icon.onload = () => {
+            if (icon.naturalWidth <= ABSENT) drop();
+          };
+          host.prepend(icon);
+        }
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", decorate, { once: true });
+      } else {
+        decorate();
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

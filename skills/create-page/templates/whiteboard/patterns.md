@@ -1,219 +1,470 @@
-# Patterns: the whiteboard's own vocabulary
+# Whiteboard patterns
 
-Everything in `references/` still applies to what goes on a card. These are the pieces only a page whose content has coordinates needs.
+Vocabulary only a board uses. The page, the fallback drawing and the editor mount are in `main.html` and do not change from board to board; what changes is the scene, and the scene is written with the kit below.
 
-## The three elements
+## The kit
 
-```html
-<main class="relative flex h-dvh flex-col overflow-hidden">
-  <header class="shrink-0 …">…</header>
-  <div id="stage" class="relative flex-1 overflow-auto bg-background">
-    <div
-      id="board"
-      class="relative origin-top-left"
-      style="width: 2400px; height: 1400px"
-    >
-      <div class="absolute" style="left:80px; top:80px; width:260px">…</div>
-    </div>
-  </div>
-</main>
-```
+Save it beside a scratch script, write the board as calls, run it with `node`, and paste the JSON it writes into the page's `#scene` block. Every call returns the element it made, so a later call can bind to it, ring it, or put it in a frame.
 
-`#stage` is the window, `#board` is the surface, and every card is absolutely placed on it. The script removes `overflow-auto` from the stage and starts driving `#board`'s `transform`; until then, and forever if the script never runs, the stage is a scrolling box and the board is a big page. That is the entire degradation story, and it is why the stage is written as a scroller rather than as `overflow-hidden`.
+```js
+// A board is a list of Excalidraw elements. This is the kit that writes them,
+// so a page's author names things and never types a coordinate twice.
+//
+// Two references have to point both ways or Excalidraw drops them on the way
+// in: a container's text (containerId <-> boundElements) and an arrow's ends
+// (startBinding / endBinding <-> boundElements). Both are made here, never by
+// hand. Everything else Excalidraw fills in for itself.
 
-Two things about `<main>`: `relative` is what the minimap and the zoom controls hang off, and `h-dvh overflow-hidden` is what makes the board the page rather than a panel inside one. The print block puts both back.
+import { writeFileSync } from "node:fs";
 
-`origin-top-left` matters: with the default center origin every translation has to be corrected for the scale, and the arithmetic stops being worth reading.
+export const INK = "#1e1e1e";
+export const RED = "#b4324f";
+export const GREEN = "#0e7869";
+export const MUTED = "#6d655f";
+export const SAND = "#f6efe6";
+export const SAGE = "#d8e6e1";
+export const BLUSH = "#f3d9d9";
+export const CREAM = "#fbf5e6";
 
-## Attributes carry everything
+const els = [];
+const files = {};
+let n = 0;
+const id = (p) => `${p}${++n}`;
 
-| Attribute         | What it does                                                                            |
-| ----------------- | --------------------------------------------------------------------------------------- |
-| `data-region`     | Backdrop, rule or ink. Hidden when the page prints; handwriting is not.                 |
-| `data-mini`       | Include this card as a block in the small map.                                          |
-| `data-drag="id"`  | The reader may move it, and where they put it is remembered under that id.              |
-| `data-from="0.6"` | Fade in only once the board is at that scale or larger.                                 |
-| `data-ink="…"`    | Draw a marker stroke into this box: `lasso`, `arrow`, `underline`, `bracket`, `strike`. |
+const put = (el) => (els.push(el), el);
 
-A card that carries none of them sits still, is not on the map, and is always visible, which is the right default for most of them.
+const shape = (type, x, y, w, h, o = {}) =>
+  put({
+    id: id(type[0]),
+    type,
+    x,
+    y,
+    width: w,
+    height: h,
+    strokeColor: INK,
+    backgroundColor: "transparent",
+    fillStyle: "solid",
+    boundElements: [],
+    ...(type === "rectangle" ? { roundness: { type: 3 } } : {}),
+    ...o,
+  });
 
-`data-drag` is an opinion, not a feature. Put it on a note whose cluster is a judgment; leave it off a plan, where a reader who moves a desk has broken the page's only claim.
+/** Text that lives inside a shape and moves with it. */
+const bind = (host, label, size = 20, o = {}) => {
+  const lines = label.split("\n").length;
+  const t = put({
+    id: id("t"),
+    type: "text",
+    x: host.x + 12,
+    y: host.y + host.height / 2 - (size * 1.25 * lines) / 2,
+    width: Math.max(20, host.width - 24),
+    height: size * 1.25 * lines,
+    text: label,
+    originalText: label,
+    fontSize: size,
+    fontFamily: 1,
+    textAlign: "center",
+    verticalAlign: "middle",
+    strokeColor: o.color ?? host.strokeColor,
+    containerId: host.id,
+  });
+  host.boundElements.push({ id: t.id, type: "text" });
+  return t;
+};
 
-## Stickies, marker and cards
+// --- things ------------------------------------------------------------------
 
-Three weights, and the difference between them is how much the thing has to say.
+/** A box with a label. `fill` names its color; `size` its type. */
+export function box(
+  x,
+  y,
+  w,
+  h,
+  label,
+  {
+    fill = "transparent",
+    stroke = INK,
+    size = 20,
+    color,
+    square = false,
+    dash = false,
+    weight,
+  } = {},
+) {
+  const b = shape("rectangle", x, y, w, h, {
+    backgroundColor: fill,
+    strokeColor: stroke,
+    ...(square ? { roundness: null } : {}),
+    ...(dash ? { strokeStyle: "dashed" } : {}),
+    ...(weight ? { strokeWidth: weight } : {}),
+  });
+  if (label) bind(b, label, size, { color });
+  return b;
+}
 
-```html
-<!-- A sticky: something someone said, or one line of an idea. -->
-<div
-  data-mini
-  class="absolute -rotate-1 rounded-[3px] bg-warning-100 px-3 py-2.5 shadow-sm"
-  style="left:96px; top:130px; width:196px"
->
-  <p class="marker text-[19px] leading-[1.12]">What someone actually said</p>
-  <p class="mt-1.5 text-[10px] tracking-wide text-gray-600 uppercase">
-    who, and how many
-  </p>
-</div>
+export function ellipse(
+  x,
+  y,
+  w,
+  h,
+  label,
+  { fill = "transparent", stroke = INK, size = 20, weight } = {},
+) {
+  const e = shape("ellipse", x, y, w, h, {
+    backgroundColor: fill,
+    strokeColor: stroke,
+    ...(weight ? { strokeWidth: weight } : {}),
+  });
+  if (label) bind(e, label, size);
+  return e;
+}
 
-<!-- Marker: a heading, or a finding, written where the finding is. No
-     data-region on handwriting: it is content, and on paper a cluster
-     heading is the only thing holding the printed list together. -->
-<p
-  class="marker absolute text-[30px] text-foreground"
-  style="left:80px; top:52px"
->
-  What this corner is
-</p>
+export function diamond(
+  x,
+  y,
+  w,
+  h,
+  label,
+  { fill = "transparent", stroke = INK, size = 18 } = {},
+) {
+  const d = shape("diamond", x, y, w, h, {
+    backgroundColor: fill,
+    strokeColor: stroke,
+  });
+  if (label) bind(d, label, size);
+  return d;
+}
 
-<!-- A card: anything with more in it than a sticky can hold. -->
-<div
-  data-mini
-  class="absolute rounded-xl border border-border bg-card p-4 shadow-sm"
-  style="left:320px; top:150px; width:230px"
->
-  …
-</div>
-```
+/** Text on its own. `font`: 1 hand-drawn, 2 plain, 3 monospace. */
+export function text(
+  x,
+  y,
+  s,
+  { size = 20, color = INK, font = 1, align = "left", angle = 0 } = {},
+) {
+  const lines = s.split("\n");
+  const w = Math.max(...lines.map((l) => l.length)) * size * 0.55;
+  return put({
+    id: id("t"),
+    type: "text",
+    x: align === "center" ? x - w / 2 : align === "right" ? x - w : x,
+    y,
+    width: w,
+    height: size * 1.25 * lines.length,
+    text: s,
+    originalText: s,
+    fontSize: size,
+    fontFamily: font,
+    textAlign: align,
+    verticalAlign: "top",
+    strokeColor: color,
+    angle,
+  });
+}
 
-The `.marker` class is the one hand on the page, and the template's `<style>` and its `<link>` are all it takes:
+/** A straight line between two points. */
+export function line(
+  x1,
+  y1,
+  x2,
+  y2,
+  { stroke = INK, weight = 2, dash = false } = {},
+) {
+  return put({
+    id: id("l"),
+    type: "line",
+    x: x1,
+    y: y1,
+    width: Math.abs(x2 - x1),
+    height: Math.abs(y2 - y1),
+    points: [
+      [0, 0],
+      [x2 - x1, y2 - y1],
+    ],
+    strokeColor: stroke,
+    strokeWidth: weight,
+    ...(dash ? { strokeStyle: "dashed" } : {}),
+  });
+}
 
-```css
-.marker {
-  font-family: "Caveat", ui-rounded, cursive;
+/** Where an arrow should leave `a` for `b`: the middle of the facing edge. */
+const port = (a, b, gap) => {
+  const [ax, ay] = [a.x + a.width / 2, a.y + a.height / 2];
+  const [bx, by] = [b.x + b.width / 2, b.y + b.height / 2];
+  if (Math.abs(bx - ax) >= Math.abs(by - ay)) {
+    const s = Math.sign(bx - ax) || 1;
+    return [ax + (s * a.width) / 2 + s * gap, ay];
+  }
+  const s = Math.sign(by - ay) || 1;
+  return [ax, ay + (s * a.height) / 2 + s * gap];
+};
+
+/** An arrow from shape `a` to shape `b`, bound at both ends so it follows a drag. */
+export function arrow(
+  a,
+  b,
+  { label, stroke = INK, size = 16, dash = false, weight } = {},
+) {
+  const gap = 6;
+  const [x1, y1] = port(a, b, gap);
+  const [x2, y2] = port(b, a, gap);
+  const ar = put({
+    id: id("a"),
+    type: "arrow",
+    x: x1,
+    y: y1,
+    width: Math.abs(x2 - x1),
+    height: Math.abs(y2 - y1),
+    points: [
+      [0, 0],
+      [x2 - x1, y2 - y1],
+    ],
+    strokeColor: stroke,
+    ...(dash ? { strokeStyle: "dashed" } : {}),
+    ...(weight ? { strokeWidth: weight } : {}),
+    startBinding: { elementId: a.id, focus: 0, gap },
+    endBinding: { elementId: b.id, focus: 0, gap },
+    startArrowhead: null,
+    endArrowhead: "arrow",
+    boundElements: [],
+  });
+  a.boundElements.push({ id: ar.id, type: "arrow" });
+  b.boundElements.push({ id: ar.id, type: "arrow" });
+  if (label) {
+    const t = put({
+      id: id("t"),
+      type: "text",
+      x: (x1 + x2) / 2 - 30,
+      y: (y1 + y2) / 2 - size * 0.625,
+      width: 60,
+      height: size * 1.25,
+      text: label,
+      originalText: label,
+      fontSize: size,
+      fontFamily: 1,
+      textAlign: "center",
+      verticalAlign: "middle",
+      strokeColor: stroke,
+      containerId: ar.id,
+    });
+    ar.boundElements.push({ id: t.id, type: "text" });
+  }
+  return ar;
+}
+
+/** An SVG drawn onto the board, as an image the reader can move and scale. */
+export function pic(x, y, w, h, svg) {
+  const fileId = id("f");
+  files[fileId] = {
+    id: fileId,
+    mimeType: "image/svg+xml",
+    dataURL: "data:image/svg+xml;base64," + Buffer.from(svg).toString("base64"),
+    created: 1757548800000,
+  };
+  return put({
+    id: id("i"),
+    type: "image",
+    x,
+    y,
+    width: w,
+    height: h,
+    fileId,
+    status: "saved",
+    scale: [1, 1],
+    boundElements: [],
+  });
+}
+
+/** A named frame around a set of things, sized from what it holds. */
+export function frame(name, members, { pad = 28 } = {}) {
+  const x0 = Math.min(...members.map((m) => m.x)) - pad;
+  const y0 = Math.min(...members.map((m) => m.y)) - pad - 8;
+  const x1 = Math.max(...members.map((m) => m.x + m.width)) + pad;
+  const y1 = Math.max(...members.map((m) => m.y + m.height)) + pad;
+  const f = put({
+    id: id("fr"),
+    type: "frame",
+    x: x0,
+    y: y0,
+    width: x1 - x0,
+    height: y1 - y0,
+    name,
+    boundElements: [],
+  });
+  const inside = new Set(members.map((m) => m.id));
+  for (const e of els) {
+    if (inside.has(e.id) || (e.containerId && inside.has(e.containerId)))
+      e.frameId = f.id;
+  }
+  return f;
+}
+
+/** A hand-drawn stroke through the given points, as the marker would. */
+export function stroke(points, { stroke: color = RED, weight = 2 } = {}) {
+  const [x0, y0] = points[0];
+  const xs = points.map((p) => p[0]);
+  const ys = points.map((p) => p[1]);
+  return put({
+    id: id("d"),
+    type: "freedraw",
+    x: x0,
+    y: y0,
+    width: Math.max(...xs) - Math.min(...xs),
+    height: Math.max(...ys) - Math.min(...ys),
+    points: points.map(([x, y]) => [x - x0, y - y0]),
+    pressures: [],
+    simulatePressure: true,
+    strokeColor: color,
+    strokeWidth: weight,
+  });
+}
+
+/** A ring around one or more things: the marker's way of saying `these`. */
+export function ring(members, { stroke = RED, pad = 22 } = {}) {
+  const x0 = Math.min(...members.map((m) => m.x)) - pad;
+  const y0 = Math.min(...members.map((m) => m.y)) - pad;
+  const x1 = Math.max(...members.map((m) => m.x + m.width)) + pad;
+  const y1 = Math.max(...members.map((m) => m.y + m.height)) + pad;
+  // An ellipse through a box's corners is sqrt(2) wider than the box.
+  const [cx, cy, w, h] = [
+    (x0 + x1) / 2,
+    (y0 + y1) / 2,
+    (x1 - x0) * 1.2,
+    (y1 - y0) * 1.35,
+  ];
+  return shape("ellipse", cx - w / 2, cy - h / 2, w, h, {
+    strokeColor: stroke,
+    strokeWidth: 2,
+  });
+}
+
+/** A marker note: a pale box with colored ink, for what the board says about itself. */
+export function note(
+  x,
+  y,
+  w,
+  h,
+  label,
+  { stroke = RED, fill = "#fbeaea", size = 18 } = {},
+) {
+  return box(x, y, w, h, label, { fill, stroke, size });
+}
+
+// --- the file ------------------------------------------------------------------
+
+/** Writes the scene, named so an export from the board is named after the page. */
+export function write(
+  path,
+  name,
+  { grid = null, background = "#ffffff" } = {},
+) {
+  const scene = {
+    type: "excalidraw",
+    version: 2,
+    source: "tryinstrument.com",
+    elements: els,
+    appState: {
+      viewBackgroundColor: background,
+      gridSize: grid,
+      gridModeEnabled: grid !== null,
+      name,
+    },
+    files,
+  };
+  const out = JSON.stringify(scene);
+  writeFileSync(path, out);
+  console.log(
+    `${path}: ${els.length} elements, ${Object.keys(files).length} files, ${(out.length / 1024).toFixed(1)} KB`,
+  );
 }
 ```
 
-Keep it for headings, findings and what a person said. Everything measured stays in the page's own type, because a price in handwriting reads as a guess.
+## A board, in calls
 
-Two rules on stickies. Tilt them a little (`-rotate-2` through `rotate-2`) and vary the direction, or a wall of them reads as a table. And color them by something the position does not carry: who said it, who does it, where it came from. A wall colored by the cluster it is already inside has spent its second dimension on nothing.
+```js
+import {
+  arrow,
+  box,
+  diamond,
+  note,
+  ring,
+  text,
+  write,
+  MUTED,
+  RED,
+  SAND,
+  SAGE,
+} from "./kit.mjs";
 
-## Ink
+text(40, 0, "How a refund moves", { size: 28 });
+text(40, 42, "drawn from the ticket log, week of 2 March", {
+  size: 16,
+  color: MUTED,
+});
 
-Marker over the top of the board. Every stroke goes into a box you placed, so the position is in the HTML and only the shape is in the script:
+const asked = box(40, 120, 200, 84, "refund asked for", { fill: SAND });
+const check = diamond(320, 90, 230, 144, "under £50?", { fill: SAND });
+const paid = box(640, 50, 210, 76, "paid back", { fill: SAGE });
+arrow(asked, check);
+arrow(check, paid, { label: "yes" });
 
-```html
-<span
-  data-ink="lasso"
-  data-tone="red"
-  data-region
-  class="absolute"
-  style="left:78px; top:112px; width:236px; height:120px"
-></span>
-<span
-  data-ink="arrow"
-  data-dir="se"
-  data-region
-  class="absolute"
-  style="left:300px; top:250px; width:150px; height:80px"
-></span>
+const held = ring([check]);
+const why = note(610, 380, 300, 92, "12 days sat here, median");
+arrow(why, held, { stroke: RED });
+
+text(
+  40,
+  520,
+  "Drawn from 118 tickets, 2 to 8 March. Every figure is illustrative.",
+  { size: 14, color: MUTED, font: 2 },
+);
+write("scene.json", "How a refund moves");
 ```
 
-`lasso` rounds the whole box and overshoots the start, the way a hand does. `arrow` runs corner to corner with a bend and a two-stroke head, and `data-dir` picks which corner it ends at: `se`, `ne`, `sw`, `nw`. `underline` draws twice, because once reads as a border. `bracket` is a square brace down the left edge, for _these, together_. `strike` crosses the box out. Tones are `ink` (which follows the reader's theme), `red`, `green` and `orange`; `data-weight` thickens a stroke.
+## Coordinates
 
-**Ink is commentary, never content.** It carries `data-region`, so it does not print, is not on the map, and is gone if the script never runs, and the board still says everything it said. Anything you would be sorry to lose is a card.
+The board has no edges: the editor fits whatever was drawn to the window on open. Start the title at `(40, 0)`, lay the drawing out under it, and put the provenance note below the drawing. Sizes that read well at the fit: a box 200 by 80 with 20-point text, a title at 28, a marker note at 18, provenance at 14 in the plain face.
 
-Two shapes, two jobs, and picking wrong is the usual mistake: a **lasso is an ellipse**, so it wants a group that is roughly as wide as it is tall, and inscribing one in a rectangle either misses the corners or swallows half the board. Around a column of rooms, or a stack of three cards, reach for a **bracket**.
+`fontFamily` is `1` for the hand-drawn face, `2` for plain, `3` for monospace. The title, labels and marker are hand-drawn; measurements, captions under images and the provenance note are plain, which is what makes them read as record rather than as drawing.
 
-## Rings that hold what they claim
+## A plan, to scale
 
-A lasso drawn by hand around a cluster is wrong the moment a note moves. Compute it from the notes it holds:
+Pick a unit, state it on the board, and derive every coordinate from it:
 
-```python
-left   = min(n.x for n in notes)
-top    = min(n.y for n in notes)
-right  = max(n.x + n.w for n in notes)
-bottom = max(n.y + n.h for n in notes)
-cx, cy = (left + right) / 2, (top + bottom) / 2
-rw, rh = (right - left) * 1.42, (bottom - top) * 1.42   # sqrt(2), plus air
-ring = (cx - rw / 2, cy - rh / 2, rw, rh)
+```js
+const M = 80; // one meter
+const m = (v) => Math.round(v * M);
+const walls = box(0, 0, m(9), m(6), null, { square: true, weight: 4 });
+const counter = box(m(0.4), m(2.2), m(0.9), m(3.2), "counter", {
+  fill: SAND,
+  size: 16,
+  square: true,
+});
+write("scene.json", "The shop", { grid: 40 }); // half a meter
 ```
 
-The 1.42 is the whole trick: an ellipse inscribed in a rectangle passes through the middle of each edge and misses all four corners, so a ring sized to the bounding box cuts through the notes at its corners. Inflating by the diagonal ratio is what puts them inside.
+`square: true` turns off the rounded corners a box has by default, which walls and furniture want. An opening in a wall is a short line in the background color drawn over it, then a thin line for the door leaf. The grid is on for a plan and off for everything else.
 
-And a note that belongs to two clusters goes **halfway between the two ring centers**, which is inside both ellipses at its middle and outside both at its corners: the two lines cross over the note. That is what "it went in two clusters" looks like, and it is a claim a list of the same notes cannot make.
+## A sheet of things
 
-Same rule for a count beside a ring. Derive it from the notes the ring contains rather than typing a number that will be wrong by the second revision.
+An image element is an SVG the reader can move and scale, and a sheet draws each candidate twice: once large enough to see and once at the size it is judged, with a plain-face name under the pair:
 
-## Laying out by hand, and by arithmetic
-
-Coordinates in the file are the point, but nobody should be typing 27 of them. Compute them from something meaningful and write the results:
-
-```python
-MINUTE = 12                       # twelve pixels a minute, so a gap is a gap
-x = LEFT + (minutes - START) * MINUTE
-y = LANE[card.lane]
+```js
+const icon = (paths) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1e1e1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+const home = icon('<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>');
+const big = pic(40, 120, 96, 96, home);
+const small = pic(76, 262, 24, 24, home);
+text(88, 226, "home", { size: 16, color: MUTED, font: 2, align: "center" });
+frame("Round two", [big, small]);
 ```
 
-Where an axis has labeled bands, place a card from **its own value**, not by eye:
+Draw the SVG on a small grid with a real stroke width, because that is what ships; an icon that looks fine at 96 and fills in at 24 is the finding a sheet exists to show.
 
-```python
-x = BAND[job.price_band] + jitter(-70, 70)
-```
+## Marker
 
-A board whose cards disagree with the axis labels under them is worse than a table, because it looks authoritative. Placing from the value is what makes that impossible rather than merely unlikely.
+`ring(things)` draws an ellipse round one or more elements, with air. `note(x, y, w, h, text)` is a pale box in the marker color. `stroke(points)` is a freehand line, for a strike-through, an underline, or a route walked. `arrow(from, to, { stroke: RED })` joins a note to the thing it is about, and moves with both. All of it in one marker color per board, and every one of them a real element the reader can move or delete.
 
-The rule is that the arithmetic lives where the page is built and the answers live in the file. A page that computes its own layout in the browser has moved its content into a script, and then the board is gone when the script is.
+## Frames
 
-## Regions, lanes and rulers
-
-A region is a wash of ground behind its cards plus a heading outside it. On a wall, prefer a lasso: a dashed rectangle reads as software and a ring reads as a person. On a plan, prefer the rectangle, because a room is a rectangle.
-
-```html
-<div
-  data-region
-  class="absolute rounded-2xl bg-accent/50"
-  style="left:60px; top:140px; width:760px; height:480px"
-></div>
-```
-
-A ruler is the same idea in one dimension: a label at each interval and a dashed rule under it, both `data-region`. Draw the rule the full height of the board, so a card's position can be read off it from anywhere.
-
-## Surfaces that survive both themes
-
-`muted` and `card` resolve to the same value in the dark palette, so a `bg-muted` region behind `bg-card` cards is invisible there. Use `bg-background` for the ground under cards and `bg-accent` for a chip or a well **on** a card. This is the one palette trap that bites a board harder than an ordinary page, because a board is mostly surfaces.
-
-Sticky fills come off the ramps at 100 (`bg-warning-100`, `bg-brand-100`, `bg-error-100`), which invert to dark tints and stay distinguishable from each other. Ink tones are the saturated middles, which hold still in both.
-
-One consequence worth knowing before `pnpm check:contrast` tells you: `bg-brand-100` is the darkest of those three in the light theme, and `text-muted-foreground` on it comes to 3.75:1. A sticky's second line takes `text-gray-600`, which is quiet enough to read as secondary and passes on all three fills in both themes.
-
-## Printing
-
-The board collapses to its cards in document order:
-
-```css
-@media print {
-  main,
-  #stage {
-    height: auto !important;
-    overflow: visible !important;
-  }
-  #board {
-    position: static !important;
-    transform: none !important;
-    width: auto !important;
-    height: auto !important;
-  }
-  #board *,
-  #board > * {
-    position: static !important;
-    transform: none !important;
-  }
-  #board > * {
-    width: auto !important;
-    height: auto !important;
-    margin-bottom: 0.5rem;
-  }
-  #board > [data-region] {
-    display: none !important;
-  }
-}
-```
-
-Which is the reason DOM order has to be reading order, and the reason regions and ink carry `data-region`: an empty ring printed as a block is a page of nothing. `#board *` and not only `#board > *`, because a label pinned to the bottom of a fixed-height card has nothing to pin to once the card is in the flow and goes missing from the paper; `transform: none` on the same selector straightens the stickies out.
-
-## Size, and when to stop
-
-A board of about 2,400 by 1,500 fits a laptop stage at roughly half scale, which is the size where a card's title reads and its body does not. That is a good place to open: the reader sees the shape, and reading is what zooming is for. Go much past 4,000 in either direction and the fitted view is a texture rather than a picture, which is right for a canvas whose shape is the finding and wrong for a wall someone is meant to scan.
-
-Past roughly a hundred cards, stop. Nobody is reading a board at that point; they are scanning a dataset, and a grid they can sort would serve them better.
+`frame(name, members)` draws a named region round a set of elements and marks each as belonging to it, so Excalidraw moves them together and an export can be of one frame alone. A sheet has one frame per round; a plan has one per room; a wall has one per group.

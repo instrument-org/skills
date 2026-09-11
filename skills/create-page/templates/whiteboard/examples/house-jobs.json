@@ -1,8 +1,0 @@
-{
-  "title": "Twenty jobs on the house, and the order they want doing in",
-  "variant": "Twenty-one cards placed on two axes, so position carries the meaning",
-  "prompt": "Help me work out what to do to the house first. I have about twenty jobs written down and no idea where to start.",
-  "model": "claude-opus-5",
-  "note": "A board is a scatter plot whose points are legible, and this is the file that says so: twenty-one labeled cards at measured positions, which as a chart would be twenty-one dots and a legend nobody can read. Each card is placed from the price band its own label names rather than by eye, so the picture cannot drift from the figures -- the honesty rule for a page whose content IS its geometry. The row is a judgment and the About card says so. What earns the canvas is the layer on top: a ring around the seven jobs in the cheap-and-urgent corner with a count derived from the ring rather than typed, two dependency arrows measured off where the cards actually landed, and one job crossed out. A chart can show you the points. It cannot tell you that two of them have an order.",
-  "html_sha256": "f87286307ad2e0f123b9e394bf77f50a587767f06d7d426a9a44b3b772b3b0b0"
-}

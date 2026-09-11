@@ -1,494 +1,135 @@
-      <!-- This page is the board. <main> takes the whole window and does not
-           scroll: `relative flex h-dvh flex-col overflow-hidden`. The stage
-           inside it is what scrolls, until the script turns it into a viewport,
-           and `relative` is what the minimap and the controls hang off. -->
-
-      <!-- The one hand on the page. Everything else is the skin's own type, so
-           the handwriting reads as a person having written on this rather than
-           as a typeface choice. -->
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" />
-
+      <!-- The page is the board. <main> is the whole window, `fixed inset-0`,
+           and nothing sits above or below the canvas: the name of the page and
+           where it came from are written on the board, where a reader who
+           exports it keeps them. -->
+      <link rel="stylesheet" href="https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/index.css" />
       <style>
-        .marker {
-          font-family: "Caveat", ui-rounded, cursive;
-        }
-
-        /* On paper there is no panning, so the board stops being a canvas and
-           becomes what it always was underneath: cards in document order. That
-           is the reason DOM order has to be reading order. */
-        @media print {
-          main {
-            height: auto !important;
-            overflow: visible !important;
-          }
-          #stage {
-            height: auto !important;
-            overflow: visible !important;
-          }
-          #board {
-            position: static !important;
-            width: auto !important;
-            height: auto !important;
-            transform: none !important;
-          }
-          /* Everything inside a card too, not only the cards: a label pinned
-             to the bottom of a fixed-height card has nothing to pin to once
-             the card is in the flow, and goes missing from the paper. A tilted
-             sticky straightens up for the same reason, and it takes both
-             properties, because Tailwind's rotate utilities set `rotate` and
-             not `transform`. */
-          #board *,
-          #board > * {
-            position: static !important;
-            transform: none !important;
-            rotate: none !important;
-          }
-          #board > * {
-            width: auto !important;
-            height: auto !important;
-            margin-bottom: 0.5rem;
-          }
-          /* A heading in marker is the only thing holding the printed list
-             together, so it gets the air a heading needs. */
-          #board > .marker {
-            margin-top: 1.25rem;
-          }
-          #board > [data-region],
-          #board-controls,
-          #minimap-wrap {
-            display: none !important;
-          }
-        }
+        /* The board before the editor arrives, and the whole board if it never
+           does: the same scene as plain SVG, in the page's own type. */
+        #sketch svg { display: block; width: 100%; height: 100%; }
+        /* Named rather than inherited: the framework comes from the same host as the editor, so the one case that shows this sketch for long is the one with no utilities either. */
+        #sketch text { font-family: Inter, system-ui, sans-serif; }
       </style>
 
-      <header class="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-border px-4 py-2.5 sm:px-5">
-        <!-- A name and one line. On a board the line has a job the other
-             templates' openers do not: it says what POSITION means, because a
-             reader who does not know that is looking at a picture. -->
-        <div class="min-w-0 flex-1">
-          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">TITLE</h1>
-          <p class="truncate text-[12px] text-muted-foreground">ONE LINE: what is on the board and what its arrangement means. Left to right is X; near is Y.</p>
-        </div>
-        <!-- Whatever color, size or shape says, in as few words as it takes.
-             Delete it when nothing on the board is coded. -->
-        <div class="flex shrink-0 flex-wrap items-center gap-x-3.5 gap-y-1 text-[11px] text-muted-foreground">
-          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-warning-300"></span>WHAT YELLOW MEANS</span>
-          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-brand-300"></span>WHAT GREEN MEANS</span>
-        </div>
-      </header>
+      <div id="sketch" class="absolute inset-0"></div>
+      <div id="editor" class="absolute inset-0"></div>
 
-      <!-- Without the script this is an ordinary scrolling box at 1:1 and every
-           card on it is still there to read. The script turns it into a
-           viewport. That is the whole degradation story and it costs nothing. -->
-      <div id="stage" class="relative flex-1 overflow-auto bg-background">
-        <div id="board" class="relative origin-top-left" style="width: 2400px; height: 1400px">
-          <!-- Every card is absolutely placed, in board coordinates, written
-               here rather than generated: this is the content of the page.
-               DOM ORDER IS READING ORDER, because printing collapses the
-               board to exactly this sequence.
-                 data-region  backdrop, rule or ink: hidden when printed
-                 data-mini    include this card in the small map
-                 data-drag=id the reader may move it, and it is remembered
-                 data-from=k  fade in only once the board is at scale k
-                 data-ink=…   a marker stroke drawn over the box you place
-               Ink and washes are regions; handwriting is not, because a
-               heading is the only thing holding the printed list together. -->
+      <!-- The scene, as Excalidraw reads it and as it was written. This element
+           is the document and the canvas is a view of it: a reader with the
+           network off still has every word of it here, and the editor's own
+           export writes the same shape back out. -->
+      <script type="application/json" id="scene">{"type": "excalidraw", "version": 2, "source": "https://tryinstrument.com", "elements": [{"id": "a", "type": "rectangle", "x": 0, "y": 0, "width": 200, "height": 80, "backgroundColor": "#f6efe6", "boundElements": [{"id": "at", "type": "text"}, {"id": "ab", "type": "arrow"}]}, {"id": "at", "type": "text", "x": 12, "y": 28, "width": 176, "height": 25, "text": "a thing", "originalText": "a thing", "fontSize": 20, "fontFamily": 1, "textAlign": "center", "verticalAlign": "middle", "containerId": "a"}, {"id": "b", "type": "rectangle", "x": 320, "y": 0, "width": 200, "height": 80, "boundElements": [{"id": "bt", "type": "text"}, {"id": "ab", "type": "arrow"}]}, {"id": "bt", "type": "text", "x": 332, "y": 28, "width": 176, "height": 25, "text": "what it leads to", "originalText": "what it leads to", "fontSize": 20, "fontFamily": 1, "textAlign": "center", "verticalAlign": "middle", "containerId": "b"}, {"id": "ab", "type": "arrow", "x": 206, "y": 40, "width": 108, "height": 0, "points": [[0, 0], [108, 0]], "startBinding": {"elementId": "a", "focus": 0, "gap": 6}, "endBinding": {"elementId": "b", "focus": 0, "gap": 6}, "endArrowhead": "arrow"}, {"id": "n", "type": "text", "x": 0, "y": 140, "width": 520, "height": 18, "text": "Where this came from, written on the board.", "originalText": "Where this came from, written on the board.", "fontSize": 14, "fontFamily": 2, "strokeColor": "#6d655f"}], "appState": {"viewBackgroundColor": "#ffffff", "name": "TITLE"}, "files": {}}</script>
 
-          <!-- A region: the ground a group of things sits on. -->
-          <div data-region class="absolute rounded-2xl bg-accent/50" style="left:60px; top:90px; width:520px; height:360px"></div>
-          <p class="marker absolute text-[26px] text-muted-foreground" style="left:80px; top:52px">What this corner is</p>
-
-          <!-- A sticky. The tilt is what stops a wall of them reading as a
-               table; keep it small and vary the direction. -->
-          <div data-mini class="absolute -rotate-1 rounded-[3px] bg-warning-100 p-3 shadow-sm" style="left:96px; top:130px; width:196px">
-            <p class="marker text-[19px] leading-[1.15]">What someone actually said</p>
-            <p class="mt-1.5 text-[10px] text-gray-600">who, and how many</p>
-          </div>
-
-          <!-- A card, for anything with more in it than a sticky can hold. -->
-          <div data-mini class="absolute rounded-xl border border-border bg-card p-4 shadow-sm" style="left:320px; top:150px; width:230px">
-            <p class="text-[14px] font-semibold">A card</p>
-            <p class="mt-1 text-[12px] leading-5 text-muted-foreground">Where it sits is part of what it says.</p>
-          </div>
-
-          <!-- Ink. Drawn by the script over the box you give it, so it is
-               annotation rather than content and nothing is lost without it. -->
-          <span data-ink="lasso" data-tone="red" data-region class="absolute" style="left:78px; top:112px; width:236px; height:120px"></span>
-          <span data-ink="arrow" data-dir="se" data-tone="ink" data-region class="absolute" style="left:300px; top:250px; width:150px; height:80px"></span>
-          <p class="marker absolute text-[22px] text-error-700" style="left:120px; top:250px">and this is why</p>
-        </div>
-      </div>
-
-      <div id="minimap-wrap" class="absolute bottom-3 left-3 rounded-lg border border-border bg-card/90 p-1.5 shadow-sm backdrop-blur print:hidden">
-        <div id="minimap" class="relative w-36 cursor-pointer overflow-hidden rounded bg-muted">
-          <span id="minimap-view" class="absolute rounded-[2px] border border-brand-500 bg-brand-500/10"></span>
-        </div>
-      </div>
-
-      <div id="board-controls" class="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur print:hidden">
-        <button data-zoom="0.8" title="Zoom out" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-minus"></i></button>
-        <span id="zoom-level" class="min-w-11 text-center font-mono text-[11px] text-muted-foreground">100%</span>
-        <button data-zoom="1.25" title="Zoom in" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-plus"></i></button>
-        <span class="mx-0.5 h-5 w-px bg-border"></span>
-        <button data-fit title="Fit the whole board" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-corners-out"></i></button>
-        <!-- Only where cards carry data-drag. -->
-        <button data-reset title="Put everything back where it started" class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-accent"><i class="ph ph-arrow-counter-clockwise"></i></button>
-      </div>
-
-      <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
       <script type="module">
-        // ---- the canvas ------------------------------------------------------
-        // The board is a fixed-size surface and every card is absolutely placed
-        // on it, in the HTML above. Without this script the stage is an ordinary
-        // scrolling box at 1:1 and every card is still there to be read; with it,
-        // the same surface pans and zooms. Nothing here is the only copy of
-        // anything.
+        const scene = JSON.parse(document.querySelector("#scene").textContent);
+        const elements = scene.elements.filter((e) => !e.isDeleted);
+        const files = scene.files ?? {};
 
-        const stage = document.querySelector("#stage");
-        const board = document.querySelector("#board");
-        const zoomLabel = document.querySelector("#zoom-level");
-        const minimap = document.querySelector("#minimap");
-        const viewbox = document.querySelector("#minimap-view");
-
-        const BOARD_W = board.offsetWidth;
-        const BOARD_H = board.offsetHeight;
-        const MIN_K = 0.1;
-        const MAX_K = 2.5;
-        const miniScale = minimap.clientWidth / BOARD_W;
-
-        let k = 1;
-        let tx = 0;
-        let ty = 0;
-        let topCard = 20;
-
-        const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
-
-        /** The viewport rectangle, drawn over the minimap in board coordinates. */
-        const paintMinimap = () => {
-          viewbox.style.cssText = `left:${(-tx / k) * miniScale}px; top:${(-ty / k) * miniScale}px; width:${(stage.clientWidth / k) * miniScale}px; height:${(stage.clientHeight / k) * miniScale}px`;
-        };
-
-        const apply = () => {
-          board.style.transform = `translate(${tx}px, ${ty}px) scale(${k})`;
-          // Semantic zoom: anything carrying data-from fades in once the board is
-          // at least that scale. It is detail, never a fact the page needs.
-          for (const el of board.querySelectorAll("[data-from]")) {
-            el.style.opacity = k >= Number(el.dataset.from) ? "1" : "0";
+        // --- the sketch: nothing loaded, nothing fetched ------------------------
+        // Enough of Excalidraw's element types to show any board this template
+        // writes. Not hand-drawn, since that would need a library; a reader who
+        // sees this for more than a moment is a reader with no network.
+        const esc = (s) => s.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"));
+        const dash = (e) => (e.strokeStyle === "dashed" ? ' stroke-dasharray="8 6"' : "");
+        const paint = (e, fill = e.backgroundColor) =>
+          ` fill="${fill && fill !== "transparent" ? fill : "none"}" stroke="${e.strokeColor || "#1e1e1e"}" stroke-width="${e.strokeWidth || 2}"${dash(e)}`;
+        const words = (e, x, y, anchor) =>
+          e.text.split("\n").map((line, i) =>
+            `<text x="${x}" y="${y + i * e.fontSize * 1.25}" text-anchor="${anchor}" font-size="${e.fontSize}" fill="${e.strokeColor || "#1e1e1e"}">${esc(line)}</text>`).join("");
+        const byId = new Map(elements.map((e) => [e.id, e]));
+        const piece = (e) => {
+          const { x, y, width: w, height: h } = e;
+          switch (e.type) {
+            case "rectangle":
+              return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${e.roundness ? 12 : 0}"${paint(e)}/>`;
+            case "ellipse":
+              return `<ellipse cx="${x + w / 2}" cy="${y + h / 2}" rx="${w / 2}" ry="${h / 2}"${paint(e)}/>`;
+            case "diamond":
+              return `<polygon points="${x + w / 2},${y} ${x + w},${y + h / 2} ${x + w / 2},${y + h} ${x},${y + h / 2}"${paint(e)}/>`;
+            case "frame":
+              return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6 5"/>` +
+                `<text x="${x}" y="${y - 8}" font-size="14" fill="#888">${esc(e.name || "")}</text>`;
+            case "image":
+              return files[e.fileId] ? `<image href="${files[e.fileId].dataURL}" x="${x}" y="${y}" width="${w}" height="${h}"/>` : "";
+            case "freedraw":
+            case "line":
+            case "arrow": {
+              const pts = e.points.map(([px, py]) => [x + px, y + py]);
+              let out = `<polyline points="${pts.map((p) => p.join(",")).join(" ")}"${paint(e, "transparent")} stroke-linecap="round" stroke-linejoin="round"/>`;
+              if (e.type === "arrow" && e.endArrowhead !== null) {
+                const [[hx, hy], [tx, ty]] = [pts[pts.length - 2], pts[pts.length - 1]];
+                const a = Math.atan2(ty - hy, tx - hx);
+                for (const s of [1, -1]) {
+                  out += `<line x1="${tx}" y1="${ty}" x2="${tx - Math.cos(a + s * 0.45) * 13}" y2="${ty - Math.sin(a + s * 0.45) * 13}"${paint(e, "transparent")} stroke-linecap="round"/>`;
+                }
+              }
+              return out;
+            }
+            case "text": {
+              const host = e.containerId && byId.get(e.containerId);
+              if (host && host.type !== "arrow" && host.type !== "line") {
+                const lines = e.text.split("\n").length;
+                return words(e, host.x + host.width / 2, host.y + host.height / 2 - ((lines - 1) * e.fontSize * 1.25) / 2 + e.fontSize * 0.35, "middle");
+              }
+              return words(e, x, y + e.fontSize, "start");
+            }
+            default:
+              return "";
           }
-          zoomLabel.textContent = `${Math.round(k * 100)}%`;
-          paintMinimap();
         };
+        const xs = elements.flatMap((e) => [e.x, e.x + e.width]);
+        const ys = elements.flatMap((e) => [e.y, e.y + e.height]);
+        const [x0, y0, x1, y1] = [Math.min(...xs) - 60, Math.min(...ys) - 60, Math.max(...xs) + 60, Math.max(...ys) + 60];
+        const sketch = document.querySelector("#sketch");
+        sketch.innerHTML =
+          `<svg viewBox="${x0} ${y0} ${x1 - x0} ${y1 - y0}" preserveAspectRatio="xMidYMid meet">` +
+          `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="${scene.appState?.viewBackgroundColor || "#ffffff"}"/>` +
+          elements.map(piece).join("") + "</svg>";
 
-        /** Keeps the board point under (clientX, clientY) still while scaling. */
-        const zoomAt = (clientX, clientY, factor) => {
-          const rect = stage.getBoundingClientRect();
-          const px = clientX - rect.left;
-          const py = clientY - rect.top;
-          const next = clamp(k * factor, MIN_K, MAX_K);
-          const ratio = next / k;
-          tx = px - (px - tx) * ratio;
-          ty = py - (py - ty) * ratio;
-          k = next;
-          apply();
-        };
+        // --- which theme the page settled on -------------------------------------
+        // Ask a resolved color, never matchMedia: the page's scheme is whatever
+        // `light-dark()` chose, and a viewer that pins `color-scheme: only light`
+        // leaves the media query still reporting the desktop's dark.
+        const probe = document.createElement("div");
+        probe.style.cssText = "position:absolute;visibility:hidden;color:light-dark(#000,#fff)";
+        document.body.appendChild(probe);
+        const theme = () => (getComputedStyle(probe).color === "rgb(255, 255, 255)" ? "dark" : "light");
+        // Excalidraw's own dark mode is this filter over a light canvas.
+        const tint = () => (sketch.style.filter = theme() === "dark" ? "invert(93%) hue-rotate(180deg)" : "");
+        tint();
 
-        const zoomCenter = (factor) => {
-          const rect = stage.getBoundingClientRect();
-          zoomAt(rect.left + stage.clientWidth / 2, rect.top + stage.clientHeight / 2, factor);
-        };
-
-        /** The whole board, centered, with a margin. Also the reset. */
-        const fit = () => {
-          const pad = 28;
-          k = clamp(
-            Math.min((stage.clientWidth - pad * 2) / BOARD_W, (stage.clientHeight - pad * 2) / BOARD_H),
-            MIN_K,
-            MAX_K,
+        // --- the editor -------------------------------------------------------------
+        // 1.2 MB, which the board earns because the board is the page. Fonts and
+        // locales are fetched relative to the asset path, so it is set before the
+        // module is asked for. One React through the whole graph, or none of it
+        // mounts: that is what `?deps=` is for.
+        window.EXCALIDRAW_ASSET_PATH = "https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/";
+        try {
+          const React = await import("https://esm.sh/react@19.2.5");
+          const { createRoot } = await import("https://esm.sh/react-dom@19.2.5/client");
+          const { Excalidraw } = await import("https://esm.sh/@excalidraw/excalidraw@0.18.1?deps=react@19.2.5,react-dom@19.2.5");
+          createRoot(document.querySelector("#editor")).render(
+            React.createElement(Excalidraw, {
+              initialData: { elements, appState: scene.appState, files },
+              theme: theme(),
+              excalidrawAPI: (api) => {
+                // The scene lands a tick after the editor does. Fit the whole
+                // board to the window once it has, then let the sketch go.
+                let polls = 0;
+                const settle = () => {
+                  const drawn = api.getSceneElements();
+                  if (!drawn.length && polls++ < 600) return requestAnimationFrame(settle);
+                  api.scrollToContent(drawn, { fitToContent: true, animate: false });
+                  sketch.remove();
+                };
+                requestAnimationFrame(settle);
+                window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+                  api.updateScene({ appState: { theme: theme() } });
+                });
+              },
+            }),
           );
-          tx = (stage.clientWidth - BOARD_W * k) / 2;
-          ty = (stage.clientHeight - BOARD_H * k) / 2;
-          apply();
-        };
-
-        // ---- ink -------------------------------------------------------------
-        // Marker over the top of the board: a lasso around things that belong
-        // together, an arrow from a cause to what it causes, an underline, a
-        // bracket, a crossing-out. Every one of them is drawn INTO a box you
-        // placed, so the position is in the HTML and only the stroke is here.
-        //
-        // Ink is commentary, never content. It carries data-region, so it does
-        // not print and is not on the map, and a page whose script never runs
-        // loses the marker and keeps every word. Anything you would be sorry to
-        // lose is a card, not a stroke.
-
-        const INK_TONE = {
-          ink: "currentColor",
-          red: "#b4324f",
-          green: "#0e7869",
-          orange: "#f79009",
-        };
-
-        /** A repeatable wobble, so a mark drawn twice is the same mark. */
-        const wobbler = (seed) => {
-          let s = seed % 2147483647 || 1;
-          return () => ((s = (s * 48271) % 2147483647) / 2147483647 - 0.5) * 2;
-        };
-
-        /** Points to a path that curves through them rather than bending at
-         *  them, which is most of what separates a drawn line from a plotted
-         *  one. */
-        const through = (points) => {
-          let d = `M ${points[0][0].toFixed(1)} ${points[0][1].toFixed(1)}`;
-          for (let i = 1; i < points.length - 1; i++) {
-            const [x, y] = points[i];
-            const [nx, ny] = points[i + 1];
-            d += ` Q ${x.toFixed(1)} ${y.toFixed(1)} ${((x + nx) / 2).toFixed(1)} ${((y + ny) / 2).toFixed(1)}`;
-          }
-          const last = points[points.length - 1];
-          return `${d} L ${last[0].toFixed(1)} ${last[1].toFixed(1)}`;
-        };
-
-        const STROKES = {
-          /** Round the whole box, overshooting the start the way a hand does. */
-          lasso: (w, h, rnd) => {
-            const points = [];
-            const steps = 26;
-            for (let i = 0; i <= steps + 3; i++) {
-              const angle = (i / steps) * Math.PI * 2 - 0.7;
-              const off = 1 + rnd() * 0.045;
-              points.push([w / 2 + Math.cos(angle) * (w / 2 - 4) * off, h / 2 + Math.sin(angle) * (h / 2 - 4) * off]);
-            }
-            return [through(points)];
-          },
-          /** Corner to corner of the box you placed, bent, with a two-stroke
-           *  head. data-dir picks which corner it ends at: se, ne, sw, nw. */
-          arrow: (w, h, rnd, dir) => {
-            const CORNERS = { se: [0, 0, w, h], ne: [0, h, w, 0], sw: [w, 0, 0, h], nw: [w, h, 0, 0] };
-            const [x1, y1, x2, y2] = CORNERS[dir] || CORNERS.se;
-            const mx = (x1 + x2) / 2 + (y1 - y2) * 0.16;
-            const my = (y1 + y2) / 2 + (x2 - x1) * 0.16;
-            const angle = Math.atan2(y2 - my, x2 - mx);
-            const head = Math.min(16, Math.hypot(w, h) / 5);
-            const barb = (turn) => `M ${x2.toFixed(1)} ${y2.toFixed(1)} L ${(x2 - Math.cos(angle + turn) * head).toFixed(1)} ${(y2 - Math.sin(angle + turn) * head).toFixed(1)}`;
-            return [
-              `M ${x1} ${y1} Q ${(mx + rnd() * 4).toFixed(1)} ${(my + rnd() * 4).toFixed(1)} ${x2} ${y2}`,
-              barb(0.42),
-              barb(-0.42),
-            ];
-          },
-          /** Twice, because once reads as a border. */
-          underline: (w, h, rnd) => [0, 1].map((pass) => through(
-            Array.from({ length: 7 }, (_, i) => [(i / 6) * w, h - 4 + pass * 2.5 + rnd() * 1.6]),
-          )),
-          /** These, together: a square bracket down the left edge. */
-          bracket: (w, h, rnd) => [
-            through([
-              [w, 2 + rnd()],
-              [4, 8 + rnd() * 2],
-              [2, h / 2],
-              [4, h - 8 + rnd() * 2],
-              [w, h - 2 + rnd()],
-            ]),
-          ],
-          /** Not this. */
-          strike: (w, h, rnd) => [
-            through(Array.from({ length: 5 }, (_, i) => [(i / 4) * w, (i / 4) * h + rnd() * 3])),
-          ],
-        };
-
-        for (const mark of board.querySelectorAll("[data-ink]")) {
-          const draw = STROKES[mark.dataset.ink];
-          if (!draw) continue;
-          const w = mark.offsetWidth;
-          const h = mark.offsetHeight;
-          // The seed is the position, so a mark keeps its own wobble across
-          // reloads and two marks side by side do not come out identical.
-          const rnd = wobbler(Math.round(mark.offsetLeft * 31 + mark.offsetTop * 7) + 1);
-          // Written as markup rather than built element by element: parsing
-          // `<svg>` inside HTML puts it in the right namespace on its own, and
-          // the style is inline because this arrives after Tailwind has run and
-          // a stroke is not worth depending on a rescan for.
-          mark.innerHTML =
-            `<svg viewBox="0 0 ${w} ${h}" fill="none" stroke="${INK_TONE[mark.dataset.tone] || INK_TONE.ink}"` +
-            ` stroke-width="${mark.dataset.weight || 2.5}" stroke-linecap="round" stroke-linejoin="round"` +
-            ` style="width:100%; height:100%; pointer-events:none; overflow:visible; opacity:0.82">` +
-            draw(w, h, rnd, mark.dataset.dir).map((d) => `<path d="${d}"/>`).join("") +
-            `</svg>`;
+        } catch {
+          // The sketch stays, and the page is the board it was written as.
         }
-
-        // ---- what the reader moved -------------------------------------------
-        // Positions live in this browser and nowhere else. A board someone
-        // rearranged is theirs; the file they were sent is unchanged, and saying
-        // so on the page is the honest version of offering the drag at all.
-        // Storage throws outright inside a sandboxed frame, so every touch of it
-        // is guarded and a failure costs the reader nothing.
-        const MEMORY = `board:${document.title}`;
-
-        const remember = () => {
-          try {
-            const moved = {};
-            for (const card of board.querySelectorAll("[data-drag]")) {
-              moved[card.dataset.drag] = [card.offsetLeft, card.offsetTop];
-            }
-            localStorage.setItem(MEMORY, JSON.stringify(moved));
-          } catch {
-            /* Private window, sandboxed frame, storage turned off. */
-          }
-        };
-
-        const recall = () => {
-          try {
-            const moved = JSON.parse(localStorage.getItem(MEMORY) || "{}");
-            for (const card of board.querySelectorAll("[data-drag]")) {
-              const at = moved[card.dataset.drag];
-              if (!at) continue;
-              card.style.left = `${at[0]}px`;
-              card.style.top = `${at[1]}px`;
-            }
-          } catch {
-            /* The board keeps the positions it was written with. */
-          }
-        };
-
-        // The script is here, so the stage stops being a scroller and becomes a
-        // viewport. Doing that from script rather than in the class list is what
-        // leaves the no-script reading intact.
-        stage.classList.remove("overflow-auto");
-        stage.classList.add("overflow-hidden", "cursor-grab", "touch-none");
-        recall();
-
-        // ---- wheel, drag, pinch ----------------------------------------------
-        // A trackpad pinch arrives as a wheel event with ctrlKey set, which is how
-        // every canvas on the web tells the two apart. Everything else is a pan.
-        stage.addEventListener(
-          "wheel",
-          (event) => {
-            event.preventDefault();
-            if (event.ctrlKey || event.metaKey) {
-              zoomAt(event.clientX, event.clientY, Math.exp(-event.deltaY / 180));
-              return;
-            }
-            tx -= event.deltaX;
-            ty -= event.deltaY;
-            apply();
-          },
-          { passive: false },
-        );
-
-        // Two live pointers pinch; one drags. A card that opts in with data-drag
-        // takes the pointer first and moves itself instead of the board.
-        const pointers = new Map();
-        let pinchGap = 0;
-        let dragging = null;
-
-        stage.addEventListener("pointerdown", (event) => {
-          stage.setPointerCapture(event.pointerId);
-          pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-          const card = event.target.closest("[data-drag]");
-          if (card && pointers.size === 1) {
-            dragging = { card, left: card.offsetLeft, top: card.offsetTop, x: event.clientX, y: event.clientY };
-            card.style.zIndex = String(++topCard);
-            card.classList.add("shadow-xl");
-            return;
-          }
-          stage.classList.replace("cursor-grab", "cursor-grabbing");
-        });
-
-        stage.addEventListener("pointermove", (event) => {
-          const previous = pointers.get(event.pointerId);
-          if (!previous) return;
-          pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-
-          if (pointers.size === 2) {
-            const [a, b] = [...pointers.values()];
-            const gap = Math.hypot(a.x - b.x, a.y - b.y);
-            if (pinchGap) zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, gap / pinchGap);
-            pinchGap = gap;
-            return;
-          }
-
-          if (dragging) {
-            // Screen pixels are board pixels divided by the scale, which is the
-            // one line that makes a card follow the pointer at every zoom.
-            dragging.card.style.left = `${dragging.left + (event.clientX - dragging.x) / k}px`;
-            dragging.card.style.top = `${dragging.top + (event.clientY - dragging.y) / k}px`;
-            paintMinimap();
-            return;
-          }
-
-          tx += event.clientX - previous.x;
-          ty += event.clientY - previous.y;
-          apply();
-        });
-
-        const endPointer = (event) => {
-          pointers.delete(event.pointerId);
-          if (pointers.size < 2) pinchGap = 0;
-          if (dragging) {
-            dragging.card.classList.remove("shadow-xl");
-            remember();
-            dragging = null;
-          }
-          stage.classList.replace("cursor-grabbing", "cursor-grab");
-        };
-        stage.addEventListener("pointerup", endPointer);
-        stage.addEventListener("pointercancel", endPointer);
-
-        // ---- controls --------------------------------------------------------
-        document.querySelector("#board-controls").addEventListener("click", (event) => {
-          const button = event.target.closest("button");
-          if (!button) return;
-          if (button.dataset.zoom) zoomCenter(Number(button.dataset.zoom));
-          if (button.dataset.fit !== undefined) fit();
-          if (button.dataset.reset !== undefined) {
-            try {
-              localStorage.removeItem(MEMORY);
-            } catch {
-              /* Nothing was stored, so nothing has to be removed. */
-            }
-            location.reload();
-          }
-        });
-
-        // Arrows pan, plus and minus zoom, 0 fits. The board is the page here,
-        // so it takes the keys without needing to be focused first.
-        document.addEventListener("keydown", (event) => {
-          if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
-          const step = event.shiftKey ? 240 : 80;
-          const moves = {
-            ArrowLeft: () => (tx += step),
-            ArrowRight: () => (tx -= step),
-            ArrowUp: () => (ty += step),
-            ArrowDown: () => (ty -= step),
-          };
-          if (moves[event.key]) {
-            event.preventDefault();
-            moves[event.key]();
-            return apply();
-          }
-          if (event.key === "0") return event.preventDefault(), fit();
-          if (event.key === "+" || event.key === "=") return event.preventDefault(), zoomCenter(1.25);
-          if (event.key === "-") return event.preventDefault(), zoomCenter(0.8);
-        });
-
-        // ---- minimap ---------------------------------------------------------
-        // Drawn from the cards themselves rather than from a second copy of the
-        // layout, so it cannot drift from the board it describes.
-        minimap.style.height = `${Math.round(BOARD_H * miniScale)}px`;
-        for (const card of board.querySelectorAll("[data-mini]")) {
-          const dot = document.createElement("span");
-          dot.className = "absolute rounded-[1px] bg-gray-400";
-          dot.style.cssText = `left:${card.offsetLeft * miniScale}px; top:${card.offsetTop * miniScale}px; width:${Math.max(2, card.offsetWidth * miniScale)}px; height:${Math.max(2, card.offsetHeight * miniScale)}px`;
-          minimap.append(dot);
-        }
-
-        minimap.addEventListener("pointerdown", (event) => {
-          const rect = minimap.getBoundingClientRect();
-          tx = stage.clientWidth / 2 - ((event.clientX - rect.left) / miniScale) * k;
-          ty = stage.clientHeight / 2 - ((event.clientY - rect.top) / miniScale) * k;
-          apply();
-        });
-
-        new ResizeObserver(apply).observe(stage);
-        fit();
       </script>

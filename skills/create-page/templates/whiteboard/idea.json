@@ -1,11 +1,11 @@
 {
   "title": "Whiteboard",
-  "tagline": "Notes, a plan, or a map, laid out on a surface you move around.",
-  "when": "What you have is spatial: a wall of sorted notes, a plan of a real place, or things placed on two axes, and putting it in a list would lose the point.",
+  "tagline": "A real drawing board with the drawing already on it: move it, edit it, take it away.",
+  "when": "You want something drawn that the reader will then move, edit or export: a flow, a plan of somewhere real, a sheet of things judged side by side, or notes to sort.",
   "tags": ["layout"],
   "order": 35,
   "needs": [],
-  "cover": "high-street",
-  "sections": ["A title bar", "The board"],
+  "cover": "refund-flow",
+  "sections": ["The board"],
   "sketch": ["board"]
 }
