@@ -6,8 +6,15 @@ const config: KnipConfig = {
       entry: ["scripts/**/*.ts"],
     },
   },
-  // Read by scripts/ideas.ts as a file, not imported.
-  ignore: ["skin/theme.css"],
+  ignore: [
+    // Read by scripts/ideas.ts as a file, not imported.
+    "skin/theme.css",
+    // The kits a create-page template ships for an agent to import from a
+    // script of its own, in the consuming project. Nothing in this repo imports
+    // them, which is the point of them, and create-page carries no package.json
+    // for the workspace entry patterns above to hang off.
+    "skills/create-page/templates/*/scripts/**",
+  ],
   ignoreBinaries: [
     "actionlint", // Used by scripts/check-actions.ts
     "uv",

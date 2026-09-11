@@ -26,7 +26,7 @@ Do not reach for it when the subject is the interface, which is a wireframe, or 
 
 ## The cast and the set
 
-Nobody draws these panels; they are composed from the kit in `patterns.md`. A person is a few thick round-capped strokes in one flat color, which reads as a pictogram and so as deliberate, where a thin stick figure reads as unfinished. The set is thin outline behind them: a door, a counter, a desk, a sofa, a phone, a van, a clock. The contrast between the two is what makes a composed scene look drawn on purpose.
+Nobody draws these panels; they are composed from a kit that ships in both languages, as a library to import rather than code to copy: `scripts/panels.mjs` for `node` and `scripts/panels.py` for `python`, neither with any dependency, and `patterns.md` has the worked example. A person is a few thick round-capped strokes in one flat color, which reads as a pictogram and so as deliberate, where a thin stick figure reads as unfinished. The set is thin outline behind them: a door, a counter, a desk, a sofa, a phone, a van, a clock. The contrast between the two is what makes a composed scene look drawn on purpose.
 
 Three rules the kit enforces and a hand-drawn panel forgets:
 
