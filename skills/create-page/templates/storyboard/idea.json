@@ -1,0 +1,11 @@
+{
+  "title": "Storyboard",
+  "tagline": "An experience drawn as a handful of moments, one beat each, with a person in every one.",
+  "when": "You have to show how something would be lived rather than how it works: a first day, a delivery, paying at a table, drawn as beats a reader can argue with.",
+  "tags": ["layout", "persuade"],
+  "order": 16,
+  "needs": [],
+  "cover": "first-monday",
+  "sections": ["A name and one line", "The panels", "One line underneath"],
+  "sketch": ["frames"]
+}

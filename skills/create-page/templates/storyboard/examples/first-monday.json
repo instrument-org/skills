@@ -1,0 +1,8 @@
+{
+  "title": "Ash's first Monday",
+  "variant": "Moments in a day: six beats with a clock time on each, the break in one caption",
+  "prompt": "Storyboard a new starter's first day from the exit interviews, so the team can see where it goes wrong.",
+  "model": "claude-fable-5-1",
+  "note": "The moments shape, and the cover because the grid of six with a time on each is what a storyboard looks like to anyone. The argument is panel three, forty minutes on a sofa, and its caption says so rather than describing the sofa. The accent is spent on exactly one thing per panel: the clock that says 09:50, the person who finally arrives, the question mark where a laptop should be, the screen that works at last. Every panel has Ash in it; the reception panel puts a second person behind the counter, drawn in the soft tone and after the counter so only their head shows. Names are changed and the times are the interviewees' own.",
+  "html_sha256": "05dd956cc5f98050e2ee3f36f71198cefa6b3c3cbab171c30fb2eba8eebb942d"
+}

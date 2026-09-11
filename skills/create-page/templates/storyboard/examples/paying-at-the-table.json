@@ -1,0 +1,8 @@
+{
+  "title": "Paying at the table",
+  "variant": "Two tracks: the person on the left of every panel, the phone on the right",
+  "prompt": "Storyboard paying at the table by phone, showing what the diners do and what the screen shows at each step.",
+  "model": "claude-fable-5-1",
+  "note": "The two-track shape, for a proposal about a product: the people are in the left two thirds of a wide panel and the phone is in the right third at one size and one position in every row, so a reader who scrolls compares five screens in a column the way a wireframe would show them, while still seeing the two people who are supposed to be looking at it. One row per beat and the caption beside the panel, since a wide panel wants its words to the side. The tip line is the argument, and the one line of speech on the page is the question it answers. Prices are invented; the flow is from the prompt and one visit.",
+  "html_sha256": "97609655738c7217488a7f639f0e53766de2658f48706bf8f3fe792d84b86fef"
+}
