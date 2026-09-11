@@ -46,7 +46,7 @@
       })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
@@ -234,11 +234,11 @@
       }
       /* skin:end */
     </style>
-    <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <script defer src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
     <!-- shell:end -->
 
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@6.5.2/dist/css/tabulator_simple.min.css" />
+        <link rel="stylesheet" href="https://esm.sh/tabulator-tables@6.5.2/dist/css/tabulator_simple.min.css" />
     <style>
       .tabulator {
         border: 1px solid var(--color-border);
@@ -533,9 +533,9 @@
         is between cities rather than between years.
       </footer>
 
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/sql-wasm.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6.5.2/dist/js/tabulator.min.js"></script>
+      <script src="https://esm.sh/chart.js@4.5.1/dist/chart.umd.js?raw"></script>
+      <script src="https://esm.sh/sql.js@1.14.2/dist/sql-wasm.js?raw"></script>
+      <script src="https://esm.sh/tabulator-tables@6.5.2/dist/js/tabulator.min.js?raw"></script>
       <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
       <script type="module">
         (() => {
@@ -789,7 +789,7 @@
           if (typeof initSqlJs === "undefined") {
             pvStatus.textContent = "The database engine did not load; the grid below still holds every row.";
           } else {
-            initSqlJs({ locateFile: (f) => "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/" + f })
+            initSqlJs({ locateFile: (f) => "https://esm.sh/sql.js@1.14.2/dist/" + f })
               .then((SQL) => {
                 db = new SQL.Database();
                 db.run("CREATE TABLE days (city TEXT, date TEXT, high REAL, low REAL, rain REAL);");

@@ -46,7 +46,7 @@
       })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
@@ -234,7 +234,7 @@
       }
       /* skin:end */
     </style>
-    <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <script defer src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
     <!-- shell:end -->
 
 
@@ -379,11 +379,14 @@
         <p><b class="font-medium text-foreground">Where the defaults came from.</b> Nowhere. $280,000 at 5.9% over 24 years is a shape that makes the curves legible, not an offer, a market average, or anybody's actual loan.</p>
       </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
       <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
       <script type="module">
+        // Chart.js comes in as a module, or does not come at all: the table
+        // under the chart is already right, so a failed import costs a picture
+        // and no facts.
+        const Chart = (await import("https://esm.sh/chart.js@4.5.1/auto").catch(() => ({}))).default;
         // All the arithmetic is here. The chart is decoration over a table that is
-        // already correct, so a failed script tag costs a picture and no facts.
+        // already correct, so a failed import costs a picture and no facts.
 
         const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
         const $ = (id) => document.querySelector("#" + id);
@@ -479,7 +482,7 @@
           $("chart-note").innerHTML = `Balance remaining, month by month. The lower curve is the one paying ${money(extra)} extra; it reaches zero in year ${Math.ceil(fast.months / 12)} rather than year ${Math.ceil(base.months / 12)}. The same numbers are in the table below, at every anniversary.`;
 
           // ---- the picture ----
-          if (typeof Chart === "undefined") return;
+          if (!Chart) return;
           const labels = base.balances.map((_, i) => (i / 12).toFixed(1));
           const data = {
             labels,

@@ -46,7 +46,7 @@
       })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
@@ -234,7 +234,7 @@
       }
       /* skin:end */
     </style>
-    <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3"></script>
+    <script defer src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
     <!-- shell:end -->
 
 
@@ -434,10 +434,12 @@
         <p><b class="font-medium text-foreground">This is a snapshot with a date on it.</b> It was read on 6 October and it will not update. Nothing on this page is live and nothing on it is filterable: if the question needs slicing, it needs the till export and a grid, not this.</p>
       </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
       <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
       <script type="module">
+        // Plot comes in as a module, or does not come at all: every chart on
+        // the page has its table under it, so a failed import costs pictures
+        // and no figures. d3 rides inside the same import.
+        const Plot = await import("https://esm.sh/@observablehq/plot@0.6.17").catch(() => undefined);
         // The figures, inline. Every chart and every table below is drawn from
         // these arrays, so the picture and the numbers under it cannot disagree.
         const QUARTERS = ["Q4 24", "Q1 25", "Q2 25", "Q3 25", "Q4 25", "Q1 26", "Q2 26", "Q3 26"];
@@ -494,7 +496,7 @@
          *  is exactly the thing a ResizeObserver watches, so the guard on the
          *  measured width is what keeps that from being a loop. */
         const chart = (id, options) => {
-          if (typeof Plot === "undefined") return;
+          if (!Plot) return;
           const host = document.querySelector("#" + id);
           let drawn = 0;
           const render = () => {

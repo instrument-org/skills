@@ -4,5 +4,5 @@
   "prompt": "Quarterly numbers for the support desk. Response times look fine on paper and people keep complaining.",
   "model": "claude-opus-5",
   "note": "The leanest of the three and the one about measurement rather than subject: every finding is a statement about how the numbers are being reported. Median and 90th percentile sit in adjacent tiles because reporting both is the recommendation; the distribution shows that 61% of tickets are in the first bar and the mean falls in a bucket almost nobody is in; and the by-hour chart is deliberately linear rather than log, so the working day comes out as a row of slivers -- which is the finding, not a rendering problem. The out-of-hours tail turns out to be a rota question, which is the kind of thing an average can hide indefinitely.",
-  "html_sha256": "c26facd1d1f250386b4b77465ec5ce48fc519a63f434b42b4c2238e2c2ae1d4c"
+  "html_sha256": "f9742da72acbe395ad0d4068a43e9f48cf893b68469f62b4562783dd508c84da"
 }

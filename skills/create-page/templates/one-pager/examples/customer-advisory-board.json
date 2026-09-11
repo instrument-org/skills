@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Internal register, all sans and tight, with the problem, proposal, and outcome as a three-column band under the headline so an exec sees the argument's shape before reading a word, and the outcome column the only toned cell. Costs and returns are two short lists side by side, the ask is the one heavy-bordered box and carries a date and the three parts of a yes, and the risks are a four-cell strip so the whole page fits one laptop screen.",
   "illustrative": true,
-  "html_sha256": "8ac4fc028767619bb1632537ad16538c546ea85820c16d95c21939fbab175ef1"
+  "html_sha256": "5b14f607b6efddad6da041824027a5c6c9cde9387d6a2a9b4bd61d72d89e472c"
 }

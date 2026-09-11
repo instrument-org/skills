@@ -144,22 +144,24 @@ Same for any other JavaScript that takes a color string rather than setting CSS.
 
 ## Reaching for a charting library
 
-Everything above needs nothing but the page, and most pages should stop there: a set of bar rows or a generated sparkline says what a chart would and costs nothing. Where the material is genuinely a dataset, `SKILL.md`'s load rule allows two, pinned to an exact version, and the test is never whether they load but what happens when they do not. **The numbers a chart draws are on the page as a table too, always rendered, directly beneath it.** Not in a tooltip, not behind a `details` the reader has to open, not only inside the library's own DOM. Pull the network and the page loses a picture and no facts.
+Everything above needs nothing but the page, and most pages should stop there: a set of bar rows or a generated sparkline says what a chart would and costs nothing. Where the material is genuinely a dataset, the page may import a charting library the way `references/loading.md` describes, pinned to an exact version, and the test is never whether it loads but what happens when it does not. **The numbers a chart draws are on the page as a table too, always rendered, directly beneath it.** Not in a tooltip, not behind a `details` the reader has to open, not only inside the library's own DOM. Pull the network and the page loses a picture and no facts.
 
-|                   | Chart.js                   | Observable Plot                                          |
-| ----------------- | -------------------------- | -------------------------------------------------------- |
-| Wire cost         | 210 KB, self-contained     | 210 KB **plus d3's 280 KB**, in two script tags          |
-| Draws             | canvas                     | SVG                                                      |
-| Theme tokens      | need the probe above       | `fill: "var(--color-brand-500)"` works directly          |
-| Prints            | as a bitmap                | as vector, at any size                                   |
-| Small multiples   | build them yourself        | `facet: { data, x: "category" }`                         |
-| Reach for it when | one or two ordinary charts | facets, distributions, regressions, anything statistical |
+|                   | Chart.js                                         | Observable Plot                                           |
+| ----------------- | ------------------------------------------------ | --------------------------------------------------------- |
+| Import            | `https://esm.sh/chart.js@4.5.1/auto`, `.default` | `https://esm.sh/@observablehq/plot@0.6.17`, the namespace |
+| Wire cost         | about 70 KB                                      | about 140 KB, d3 included                                 |
+| Draws             | canvas                                           | SVG                                                       |
+| Theme tokens      | need the probe above                             | `fill: "var(--color-brand-500)"` works directly           |
+| Prints            | as a bitmap                                      | as vector, at any size                                    |
+| Small multiples   | build them yourself                              | `facet: { data, x: "category" }`                          |
+| Reach for it when | one or two ordinary charts                       | facets, distributions, regressions, anything statistical  |
 
-Plot's UMD bundle does not carry d3 despite its size, and a page that loads only Plot gets a silent `undefined` inside the library rather than an error you can see. Load d3 first, always.
-
-Plot also paints its own white card and black type unless told otherwise, which on a dark page is a white rectangle. One wrapper fixes it and is worth writing once at the top of any page that uses it:
+Plot paints its own white card and black type unless told otherwise, which on a dark page is a white rectangle. One wrapper fixes it and is worth writing once at the top of any page that uses it:
 
 ```js
+const Plot = await import("https://esm.sh/@observablehq/plot@0.6.17").catch(
+  () => undefined,
+);
 const PLOT = {
   style: {
     background: "transparent",
@@ -169,7 +171,7 @@ const PLOT = {
   },
 };
 const chart = (id, options) => {
-  if (typeof Plot === "undefined") return; // The host already holds a sentence and a table.
+  if (!Plot) return; // The host already holds a sentence and a table.
   const host = document.querySelector("#" + id);
   // Plot draws at 640 and stops, so the width is measured off the host; the
   // guard is what stops the redraw retriggering its own observer.

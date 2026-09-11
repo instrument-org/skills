@@ -69,10 +69,12 @@
         <p><b class="font-medium text-foreground">The date it stopped being true.</b> This is a snapshot; say so, and say what to reach for when the question needs slicing.</p>
       </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>
       <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
       <script type="module">
+        // Plot comes in as a module, or does not come at all: every chart on
+        // the page has its table under it, so a failed import costs pictures
+        // and no figures. d3 rides inside the same import.
+        const Plot = await import("https://esm.sh/@observablehq/plot@0.6.17").catch(() => undefined);
         // The figures, inline and once. Every chart and every table on the page is
         // drawn from these arrays, so a picture and the numbers under it cannot
         // disagree.
@@ -102,7 +104,7 @@
          *  is exactly what a ResizeObserver watches, so the guard on the
          *  measured width is what keeps that from being a loop. */
         const chart = (id, options) => {
-          if (typeof Plot === "undefined") return;
+          if (!Plot) return;
           const host = document.querySelector("#" + id);
           let drawn = 0;
           const render = () => {

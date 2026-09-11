@@ -163,7 +163,7 @@ The engine comes from the CDN; the rows are already in the file. Build the table
 
 ```js
 initSqlJs({
-  locateFile: (f) => "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/" + f,
+  locateFile: (f) => "https://esm.sh/sql.js@1.14.2/dist/" + f,
 })
   .then((SQL) => {
     db = new SQL.Database();

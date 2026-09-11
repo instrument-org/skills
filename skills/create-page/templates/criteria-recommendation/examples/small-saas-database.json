@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Tight and numeric, on a narrow measure with small margins, because an engineer reads this in a pull request tab: the winner is a one-line mono result strip under the title rather than a card, weights are a bare three-column table with no bars, and the scorecard encodes 1 to 5 scores as small dots with the winning column tinted and the raw points and the totals as mono rows under it. A named 'why not the runner-up' paragraph and a 'never wins' line do the sensitivity work in prose, and there is no interaction and no photo.",
   "illustrative": true,
-  "html_sha256": "76b18d9b70976250b79ce805cb8a9fd48d90163fa99f7bd9f0da19b5b3d0a630"
+  "html_sha256": "a17d024b8d9f37292021c516000931a0acbf67af5d77acc82229f891b8846b46"
 }
