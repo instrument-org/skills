@@ -20,6 +20,53 @@
     <script async src="https://tryinstrument.com/page.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- shell:note The stylesheet is compiled in the browser, which takes until
+         after the document is parsed. Left alone the page paints unstyled first
+         and then snaps into place: two frames of it on a fast connection, most
+         of a second on a slow one, and the jump is the part a reader notices.
+         So the page is held back and shown the moment the theme resolves.
+
+         Every way this can go wrong ends with the reader seeing the page. The
+         animation is a floor that needs no script at all, so JavaScript turned
+         off means a wait and then the page. A CDN that cannot be reached fails
+         its script, which shows the page at once rather than waiting out the
+         floor. Nothing here can leave a page blank for good, which matters more
+         than the flash does: these files are opened from a folder, years later,
+         by someone who may have no network at all. -->
+    <style>
+      html {
+        visibility: hidden;
+        animation: instrument-ready 0s 3s forwards;
+      }
+      @keyframes instrument-ready {
+        to {
+          visibility: visible;
+        }
+      }
+    </style>
+    <script>
+      // --font-sans is declared in the @theme static block below, so it resolves
+      // once the compiled stylesheet is in the document and not a frame before.
+      (function () {
+        const show = () => {
+          document.documentElement.style.visibility = "visible";
+        };
+        (function poll() {
+          const theme = getComputedStyle(document.documentElement)
+            .getPropertyValue("--font-sans")
+            .trim();
+          if (theme !== "") show();
+          else requestAnimationFrame(poll);
+        })();
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
+      })();
+    </script>
     <!-- shell:note Weights are asked for the cheap way, and the difference is large. A range
          (`400..700`) is one variable file covering every weight in it; a list
          (`400;500;600;700`) is one static file each. And naming an axis, as

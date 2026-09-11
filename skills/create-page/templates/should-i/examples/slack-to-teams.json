@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Compact and two-column on a wide screen, because the reader is an operations lead deciding on a laptop who wants the checklist, the risks, and the revisit conditions on one screen; the error-toned badge sits in the header's right column so the answer and the title land together. The factors are real checkboxes the reader ticks against their own case, with a small script that counts them and says when the answer flips and a page that reads the same with scripts off, and the risks are a numbered list in the sidebar above a revisit-when box, since a not-yet answer owes the reader the conditions that reopen it.",
   "illustrative": true,
-  "html_sha256": "f5bb8b06c2f1393156dc2d09fa312c9b87ad8175e09533b6813562ff83b716e7"
+  "html_sha256": "97edc2296b9d09fa4c0f174d1d556bf782723bac9d82e17253cdcfa20c40fc1d"
 }

@@ -14,6 +14,40 @@
     <script async src="https://tryinstrument.com/page.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+      html {
+        visibility: hidden;
+        animation: instrument-ready 0s 3s forwards;
+      }
+      @keyframes instrument-ready {
+        to {
+          visibility: visible;
+        }
+      }
+    </style>
+    <script>
+      // --font-sans is declared in the @theme static block below, so it resolves
+      // once the compiled stylesheet is in the document and not a frame before.
+      (function () {
+        const show = () => {
+          document.documentElement.style.visibility = "visible";
+        };
+        (function poll() {
+          const theme = getComputedStyle(document.documentElement)
+            .getPropertyValue("--font-sans")
+            .trim();
+          if (theme !== "") show();
+          else requestAnimationFrame(poll);
+        })();
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
+      })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <style type="text/tailwindcss">

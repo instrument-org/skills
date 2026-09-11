@@ -4,5 +4,5 @@
   "prompt": "We have five people on the support desk and someone is always asking whether we could manage with four. Can you build me something that shows what actually happens?",
   "model": "claude-opus-5",
   "note": "The tool worth building is one whose answer nobody can guess, and this is the shape of it: three numbers in, Erlang C in about forty lines, and a result that is wildly non-linear. Five on the desk waits three and a half minutes; four waits twenty-four; three never clears at all. The page states that comparison in a sentence it computes rather than leaving the reader to do the division, which is the difference between a calculator and an explanation. It loads nothing: the bars are HTML, because a bar chart of one number per row does not need a library and a page that loads nothing cannot be broken by a CDN. Erlang B is written as the recurrence rather than with factorials, which overflow around c=170 and are the usual way this goes wrong. The four limits under it are the real ones, and the third -- that people give up and leave -- is the one that makes a real desk look better than this model and be worse.",
-  "html_sha256": "d1659d1c1aecc6a82a09e1986edb4ef6b7107de54a914c5a8e304ffad42f9176"
+  "html_sha256": "568ba42555273270dc900503b72631868062fbf9ea5c576c07db0c4a36c85b10"
 }
