@@ -75,32 +75,29 @@ const EXAMPLE_KEYS = ["title", "variant", "prompt", "model", "note"];
 /** A variant line is a card caption, so it has to fit on one. */
 const VARIANT_MAX_CHARS = 80;
 
+// An esm.sh path is `/<package>@<exact version>` and then whatever the package
+// keeps under it. `@4` or no version at all resolves to whatever is newest on
+// the day the page is opened, which is drift the offline test cannot catch, so
+// neither passes. A query string is fine: `?raw` asks for the file as
+// published, `?deps=` pins what a package's own imports resolve to.
+const ESM_PINNED =
+  /^\/(?:@[\w.-]+\/)?[\w.-]+@\d+\.\d+\.\d+(?:[-+][\w.-]+)?(?:\/|$)/;
 // What a page may load, as an exact origin and the path that family lives
 // under. Matched through `new URL()` rather than by string prefix, so a
 // lookalike host like fonts.googleapis.com.example.net does not pass.
 // Everything else has to be inlined. Hyperlinks are not loads and are free.
-const ALLOWED_SOURCES = [
+const ALLOWED_SOURCES: { origin: string; path: string; pin?: RegExp }[] = [
   { origin: "https://fonts.googleapis.com", path: "/" },
   { origin: "https://fonts.gstatic.com", path: "/" },
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/@tailwindcss/browser@" },
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/@phosphor-icons/web@" },
   { origin: "https://tryinstrument.com", path: "/page.js" },
-  // What a page may reach for when the material is a dataset rather than an
-  // argument. Each is pinned to an exact version in the URL, each is small
-  // against what the page already spends on type and icons, and none of them
-  // may be the only copy of anything: the offline test in SKILL.md is what
-  // keeps this list from becoming a license to build pages that need the
-  // network. The path prefix ends in `@` so an unpinned URL cannot match.
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/chart.js@" },
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/leaflet@" },
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/sql.js@" },
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/tabulator-tables@" },
-  // Observable Plot draws SVG rather than canvas, which is why it is here
-  // alongside Chart.js rather than instead of it: a mark can take a theme token
-  // straight from CSS, and the result prints and scales. Its UMD bundle does not
-  // carry d3, so both files are needed and both are listed.
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/@observablehq/plot@" },
-  { origin: "https://cdn.jsdelivr.net", path: "/npm/d3@" },
+  // Every library, and the starter's own framework and icon set, come from one
+  // host. esm.sh serves any npm package as a module at one URL shape, resolves
+  // a React once across a whole import graph when asked (`?deps=`), hands a
+  // file over untouched when asked (`?raw`), and marks a pinned URL immutable.
+  // What a page may reach for is still bounded by the offline test in
+  // SKILL.md: a library may add motion, precision or scale to something already
+  // on the page, and may never be the only copy of a fact.
+  { origin: "https://esm.sh", path: "/", pin: ESM_PINNED },
 ];
 // The share widget, carried by every page. Byte identity is the whole rule: the
 // widget hashes the page as the browser serialized it and that hash is the
@@ -114,19 +111,17 @@ const PAGE_WIDGET_TAG =
 // this catches is the starter itself losing the icon, which would otherwise
 // propagate to all of them as an absence nothing reports.
 const PAGE_ICON_OPENING = '<link rel="icon" href="data:image/svg+xml,';
-// The addresses a script on these pages may build, which the scan below cannot
-// see because they are assembled at runtime. Every one is decoration or a
-// pinned asset of something already in ALLOWED_SOURCES, and every one is
-// absent-safe: with the network off the page reads exactly as it does with it.
-// Anything else a script reaches for is a load this file cannot see and must
-// not have.
+// The addresses a script on these pages may build beyond the allowed sources,
+// which the scan below cannot see because they are assembled at runtime. Every
+// one is decoration, and every one is absent-safe: with the network off the
+// page reads exactly as it does with it. Anything else a script reaches for is
+// a load this file cannot see and must not have. An allowed source is fine in
+// a script too, since a module's `import()` and a library's own asset path
+// (`locateFile`, an asset-path global) are loads this file can read.
 const SCRIPT_BUILT_PREFIXES = [
   // A link wears the icon of the site it points at, and no CSS can read a host
   // out of an href, so the URL is built from the link.
   "https://t0.gstatic.com",
-  // sql.js is handed its own wasm path through `locateFile`, so the engine's
-  // second file is named in script rather than in a tag.
-  "https://cdn.jsdelivr.net/npm/sql.js@",
   // Map tiles are a URL template a map library fills in per tile. A page whose
   // tiles never arrive still carries its places as a list, which is the rule
   // the map template is built around.
@@ -148,7 +143,8 @@ function isAllowedSource(url: string): boolean {
   return ALLOWED_SOURCES.some(
     (source) =>
       parsed.origin === source.origin &&
-      parsed.pathname.startsWith(source.path),
+      parsed.pathname.startsWith(source.path) &&
+      (!source.pin || source.pin.test(parsed.pathname)),
   );
 }
 
@@ -331,7 +327,10 @@ export function checkSelfContained(
   // A script builds its addresses at runtime, where nothing above can see them.
   for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
     for (const match of (script[1] ?? "").matchAll(/https?:\/\/[^\s"'`]+/g)) {
-      if (!SCRIPT_BUILT_PREFIXES.some((p) => match[0].startsWith(p))) {
+      if (
+        !SCRIPT_BUILT_PREFIXES.some((p) => match[0].startsWith(p)) &&
+        !isAllowedSource(match[0])
+      ) {
         errors.push(
           `${file}: a script reaches ${match[0].slice(0, 80)}, which is not an address a script may build at runtime`,
         );

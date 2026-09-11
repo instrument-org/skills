@@ -16,14 +16,49 @@ function errorsFor(html: string): string[] {
 }
 
 describe("checkSelfContained", () => {
-  it("passes the four families a starter is allowed to load", () => {
+  it("passes the three families a starter is allowed to load", () => {
     expect(
       errorsFor(`
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+        <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+        <script src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
       `),
     ).toEqual([]);
+  });
+
+  it.each([
+    [
+      "a module import",
+      `<script type="module">const Plot = await import("https://esm.sh/@observablehq/plot@0.6.17");</script>`,
+    ],
+    [
+      "an import carrying a deps query",
+      `<script type="module">import("https://esm.sh/@excalidraw/excalidraw@0.18.1?deps=react@19.2.5,react-dom@19.2.5");</script>`,
+    ],
+    [
+      "a prerelease version",
+      `<script src="https://esm.sh/some-lib@2.0.0-beta.3/dist/x.js?raw"></script>`,
+    ],
+    [
+      "a stylesheet by path",
+      `<link rel="stylesheet" href="https://esm.sh/leaflet@1.9.4/dist/leaflet.css" />`,
+    ],
+  ])("passes %s from esm.sh, pinned to an exact version", (_name, html) => {
+    expect(errorsFor(html)).toEqual([]);
+  });
+
+  // Each of these resolves to whatever is newest the day the page is opened,
+  // which is the one kind of change the offline test cannot catch.
+  it.each([
+    ["a major version", `<script src="https://esm.sh/chart.js@4"></script>`],
+    ["a minor version", `<script src="https://esm.sh/chart.js@4.5"></script>`],
+    ["no version", `<script src="https://esm.sh/chart.js"></script>`],
+    [
+      "no version, inside a script",
+      `<script type="module">await import("https://esm.sh/react");</script>`,
+    ],
+  ])("rejects an esm.sh package with %s", (_name, html) => {
+    expect(errorsFor(html)).toHaveLength(1);
   });
 
   it("passes an inline image and an inline script", () => {
@@ -83,7 +118,7 @@ describe("checkSelfContained", () => {
   it("passes the asset paths an allowed library builds for itself", () => {
     expect(
       errorsFor(
-        `<script>initSqlJs({ locateFile: (f) => "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/" + f });</script>`,
+        `<script>initSqlJs({ locateFile: (f) => "https://esm.sh/sql.js@1.14.2/dist/" + f });</script>`,
       ),
     ).toEqual([]);
   });
@@ -109,7 +144,7 @@ describe("checkSelfContained", () => {
   it("rejects an allowed origin serving a path outside its family", () => {
     expect(
       errorsFor(
-        `<script src="https://cdn.jsdelivr.net/npm/something-else@1.0.0/x.js"></script>`,
+        `<script src="https://tryinstrument.com/something-else.js"></script>`,
       ),
     ).toHaveLength(1);
   });
