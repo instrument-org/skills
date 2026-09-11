@@ -51,7 +51,9 @@ def _s(d: str, *, stroke=INK, width=2, fill="none", cap="round") -> str:
 
 
 def _esc(t: str) -> str:
-    return t.replace("&", "&amp;").replace("<", "&lt;")
+    """Safe in a text node and in a double-quoted attribute alike, so one escaper
+    serves a bubble's words and a panel's aria-label."""
+    return t.replace("&", "&amp;").replace("<", "&lt;").replace('"', "&quot;")
 
 
 # --- the panel ------------------------------------------------------------------

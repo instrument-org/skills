@@ -31,7 +31,10 @@ export const ACCENT_PALE = "var(--color-brand-100)";
 const s = (d, { stroke = INK, width = 2, fill = "none", cap = "round" } = {}) =>
   `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" stroke-linecap="${cap}" stroke-linejoin="round"/>`;
 
-const esc = (t) => t.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"));
+// Safe in a text node and in a double-quoted attribute alike, so one escaper
+// serves a bubble's words and a panel's aria-label.
+const esc = (t) =>
+  t.replace(/[<&"]/g, (c) => ({ "<": "&lt;", "&": "&amp;", '"': "&quot;" })[c]);
 
 // --- the panel ------------------------------------------------------------------
 

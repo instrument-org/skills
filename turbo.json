@@ -91,7 +91,12 @@
       "outputs": []
     },
     "//#test:scripts": {
-      "inputs": ["scripts/**", "vitest.config.ts", "package.json"],
+      "inputs": [
+        "scripts/**",
+        "skills/create-page/templates/*/scripts/**",
+        "vitest.config.ts",
+        "package.json"
+      ],
       "outputs": []
     },
     "//#check:format": {
