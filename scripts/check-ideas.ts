@@ -13,6 +13,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseFrontmatter } from "./check-skill.ts";
 import {
+  ALLOWED_SOURCES_PATH,
   listIdeas,
   normalizedSkin,
   PAGE_SKILL_DIR,
@@ -75,30 +76,27 @@ const EXAMPLE_KEYS = ["title", "variant", "prompt", "model", "note"];
 /** A variant line is a card caption, so it has to fit on one. */
 const VARIANT_MAX_CHARS = 80;
 
-// An esm.sh path is `/<package>@<exact version>` and then whatever the package
-// keeps under it. `@4` or no version at all resolves to whatever is newest on
-// the day the page is opened, which is drift the offline test cannot catch, so
-// neither passes. A query string is fine: `?raw` asks for the file as
-// published, `?deps=` pins what a package's own imports resolve to.
-const ESM_PINNED =
-  /^\/(?:@[\w.-]+\/)?[\w.-]+@\d+\.\d+\.\d+(?:[-+][\w.-]+)?(?:\/|$)/;
-// What a page may load, as an exact origin and the path that family lives
-// under. Matched through `new URL()` rather than by string prefix, so a
-// lookalike host like fonts.googleapis.com.example.net does not pass.
+// What a page may load, and what its script may build, from the file the
+// platform reads too: the pages worker derives a hosted copy's connect-src from
+// it, so an origin allowed here is one a hosted copy may fetch from, and one
+// added here needs a pages deploy before hosted copies honor it. Each entry
+// carries its own reason in the file. Tags are matched through `new URL()` by
+// exact origin and path family, so a lookalike host like
+// fonts.googleapis.com.example.net does not pass, and a `pin` is a pattern the
+// path must also match, which is how esm.sh is held to exact versions.
 // Everything else has to be inlined. Hyperlinks are not loads and are free.
-const ALLOWED_SOURCES: { origin: string; path: string; pin?: RegExp }[] = [
-  { origin: "https://fonts.googleapis.com", path: "/" },
-  { origin: "https://fonts.gstatic.com", path: "/" },
-  { origin: "https://tryinstrument.com", path: "/page.js" },
-  // Every library, and the starter's own framework and icon set, come from one
-  // host. esm.sh serves any npm package as a module at one URL shape, resolves
-  // a React once across a whole import graph when asked (`?deps=`), hands a
-  // file over untouched when asked (`?raw`), and marks a pinned URL immutable.
-  // What a page may reach for is still bounded by the offline test in
-  // SKILL.md: a library may add motion, precision or scale to something already
-  // on the page, and may never be the only copy of a fact.
-  { origin: "https://esm.sh", path: "/", pin: ESM_PINNED },
-];
+interface AllowedSources {
+  built: { prefix: string; why: string }[];
+  tags: { origin: string; path: string; pin?: string; why: string }[];
+}
+const ALLOWED: AllowedSources = JSON.parse(
+  readFileSync(ALLOWED_SOURCES_PATH, "utf-8"),
+);
+const ALLOWED_SOURCES = ALLOWED.tags.map((tag) => ({
+  origin: tag.origin,
+  path: tag.path,
+  pin: tag.pin === undefined ? undefined : new RegExp(tag.pin),
+}));
 // The share widget, carried by every page. Byte identity is the whole rule: the
 // widget hashes the page as the browser serialized it and that hash is the
 // link's address, so a tag differing by one character publishes the same page to
@@ -118,16 +116,7 @@ const PAGE_ICON_OPENING = '<link rel="icon" href="data:image/svg+xml,';
 // a load this file cannot see and must not have. An allowed source is fine in
 // a script too, since a module's `import()` and a library's own asset path
 // (`locateFile`, an asset-path global) are loads this file can read.
-const SCRIPT_BUILT_PREFIXES = [
-  // A link wears the icon of the site it points at, and no CSS can read a host
-  // out of an href, so the URL is built from the link.
-  "https://t0.gstatic.com",
-  // Map tiles are a URL template a map library fills in per tile. A page whose
-  // tiles never arrive still carries its places as a list, which is the rule
-  // the map template is built around.
-  "https://tile.openstreetmap.org/",
-  "https://www.openstreetmap.org/copyright",
-];
+const SCRIPT_BUILT_PREFIXES = ALLOWED.built.map((built) => built.prefix);
 // Tags that fetch what they name, and the attributes they fetch it through.
 const LOADER_TAGS = ["link", "script"];
 const MEDIA_TAGS = ["img", "video", "audio", "iframe", "source", "embed"];

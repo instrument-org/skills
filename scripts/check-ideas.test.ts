@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   checkExampleMeta,
@@ -7,7 +8,7 @@ import {
   checkSelfContained,
   checkShell,
 } from "./check-ideas.ts";
-import type { ExampleMeta } from "./ideas.ts";
+import { ALLOWED_SOURCES_PATH, type ExampleMeta } from "./ideas.ts";
 
 function errorsFor(html: string): string[] {
   const errors: string[] = [];
@@ -379,4 +380,33 @@ describe("checkPageScripts", () => {
       ]
     `);
   });
+});
+
+describe("allowed-sources.json", () => {
+  const allowed = JSON.parse(readFileSync(ALLOWED_SOURCES_PATH, "utf-8")) as {
+    built: { prefix: string; why: string }[];
+    tags: { origin: string; path: string; pin?: string; why: string }[];
+  };
+
+  // The pages worker reads the same file and takes every origin into a CSP
+  // directive, where a path or a trailing slash would be a different value.
+  it.each(allowed.tags.map((tag) => [tag.origin, tag]))(
+    "%s is a bare https origin with a path family and a reason",
+    (_origin, tag) => {
+      expect(new URL(tag.origin).origin).toBe(tag.origin);
+      expect(tag.origin.startsWith("https://")).toBe(true);
+      expect(tag.path.startsWith("/")).toBe(true);
+      expect(tag.why.length).toBeGreaterThan(0);
+      const pin = tag.pin;
+      if (pin !== undefined) expect(() => new RegExp(pin)).not.toThrow();
+    },
+  );
+
+  it.each(allowed.built.map((built) => [built.prefix, built]))(
+    "%s is an https address with a reason",
+    (_prefix, built) => {
+      expect(new URL(built.prefix).protocol).toBe("https:");
+      expect(built.why.length).toBeGreaterThan(0);
+    },
+  );
 });

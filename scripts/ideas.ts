@@ -14,6 +14,8 @@ import { fileURLToPath } from "node:url";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SKILLS_DIR = join(REPO_ROOT, "skills");
+/** What a page may load, read here by the checker and by the platform's pages worker. */
+export const ALLOWED_SOURCES_PATH = join(REPO_ROOT, "allowed-sources.json");
 /** The skill the templates live in. One starter serves all of them. */
 export const PAGE_SKILL_DIR = join(SKILLS_DIR, "create-page");
 const TEMPLATES_DIR = join(PAGE_SKILL_DIR, "templates");

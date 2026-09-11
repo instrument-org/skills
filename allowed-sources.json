@@ -1,0 +1,40 @@
+{
+  "about": "What a page made by create-page may load, and what its script may build at runtime. scripts/check-ideas.ts holds every example to this file, and the pages worker in instrument-org/internal derives the connect-src of every hosted copy from it, so an origin added here needs a pages deploy there before hosted copies honor it. Tags are matched by exact origin and path family, so a lookalike host does not pass; a pin is a pattern the path must also match.",
+  "tags": [
+    {
+      "origin": "https://fonts.googleapis.com",
+      "path": "/",
+      "why": "The type: one stylesheet naming the faces every page sets."
+    },
+    {
+      "origin": "https://fonts.gstatic.com",
+      "path": "/",
+      "why": "The font files that stylesheet points at."
+    },
+    {
+      "origin": "https://tryinstrument.com",
+      "path": "/page.js",
+      "why": "The share widget every page carries."
+    },
+    {
+      "origin": "https://esm.sh",
+      "path": "/",
+      "pin": "^\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
+      "why": "Every library, and the starter's own framework and icon set, come from one host. esm.sh serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked (?deps=), hands a file over untouched when asked (?raw), and marks a pinned URL immutable. The pin requires /<package>@<exact version>: @4 or no version at all resolves to whatever is newest on the day the page is opened, which is drift the offline test cannot catch. What a page may reach for is still bounded by the offline test in SKILL.md: a library may add motion, precision or scale to something already on the page, and may never be the only copy of a fact."
+    }
+  ],
+  "built": [
+    {
+      "prefix": "https://t0.gstatic.com",
+      "why": "A link wears the icon of the site it points at, and no CSS can read a host out of an href, so the URL is built from the link."
+    },
+    {
+      "prefix": "https://tile.openstreetmap.org/",
+      "why": "Map tiles are a URL template a map library fills in per tile. A page whose tiles never arrive still carries its places as a list, which is the rule the map template is built around."
+    },
+    {
+      "prefix": "https://www.openstreetmap.org/copyright",
+      "why": "The attribution a map library writes into its corner, as a link."
+    }
+  ]
+}
