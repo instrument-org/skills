@@ -158,9 +158,8 @@ describe("checkSelfContained", () => {
   });
 
   it("names the relative path a stylesheet would lose", () => {
-    expect(
-      errorsFor(`<style>body{background:url(logo.png)}</style>`),
-    ).toMatchInlineSnapshot(`
+    expect(errorsFor(`<style>body{background:url(logo.png)}</style>`))
+      .toMatchInlineSnapshot(`
       [
         "page.html: a stylesheet loads logo.png; it must be inline data or an allowed source",
       ]
