@@ -305,13 +305,26 @@ export function checkSelfContained(
       }
     }
   }
-  // CSS reaches the network too, from a style attribute or a <style> block.
-  for (const match of html.matchAll(/url\(\s*['"]?(https?:[^)'"]+)/gi)) {
-    const url = match[1] ?? "";
-    if (!isAllowedSource(url)) {
-      errors.push(
-        `${file}: a stylesheet loads ${url.slice(0, 80)}; it must be inline data`,
-      );
+  // CSS reaches the network too, from a style attribute or a <style> block, and
+  // only there: a script's `new URL(x)` is not a fetch. A relative path is as
+  // bad as a remote one, since it is lost the moment the file is copied.
+  const css = [
+    ...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi),
+    ...html.matchAll(/\sstyle\s*=\s*(?:"([^"]*)"|'([^']*)')/gi),
+  ].map((match) => match[1] ?? match[2] ?? "");
+  for (const block of css) {
+    for (const match of block.matchAll(
+      /url\(\s*(?:"([^"]*)"|'([^']*)'|([^)'"\s]*))\s*\)/gi,
+    )) {
+      const url = (match[1] ?? match[2] ?? match[3] ?? "").trim();
+      if (url === "" || url.startsWith("#") || url.startsWith("data:")) {
+        continue;
+      }
+      if (!isAllowedSource(url)) {
+        errors.push(
+          `${file}: a stylesheet loads ${url.slice(0, 80)}; it must be inline data or an allowed source`,
+        );
+      }
     }
   }
   // A script builds its addresses at runtime, where nothing above can see them.

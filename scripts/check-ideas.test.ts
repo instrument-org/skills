@@ -138,6 +138,48 @@ describe("checkSelfContained", () => {
     expect(errorsFor(html)).toHaveLength(1);
   });
 
+  // A relative path loads fine from the folder the page was written in and
+  // from nowhere else, which is the failure the self-contained rule exists for.
+  it.each([
+    [
+      "an unquoted relative path",
+      `<style>body{background:url(logo.png)}</style>`,
+    ],
+    [
+      "a quoted relative path",
+      `<style>@font-face{src:url("../fonts/x.woff2")}</style>`,
+    ],
+    [
+      "a root-relative path in a style attribute",
+      `<div style="background:url('/logo.png')"></div>`,
+    ],
+  ])("rejects %s in CSS", (_name, html) => {
+    expect(errorsFor(html)).toHaveLength(1);
+  });
+
+  it("names the relative path a stylesheet would lose", () => {
+    expect(
+      errorsFor(`<style>body{background:url(logo.png)}</style>`),
+    ).toMatchInlineSnapshot(`
+      [
+        "page.html: a stylesheet loads logo.png; it must be inline data or an allowed source",
+      ]
+    `);
+  });
+
+  it("passes the CSS url() forms that fetch nothing", () => {
+    expect(
+      errorsFor(`
+        <style>
+          @supports (mask-image: url("")) { html { color: red } }
+          .mark { mask-image: url("data:image/svg+xml,%3Csvg/%3E") }
+          .line { fill: url(#gradient) }
+        </style>
+        <script>const origin = new URL(link.href).origin;</script>
+      `),
+    ).toEqual([]);
+  });
+
   it("rejects a host that merely starts with an allowed one", () => {
     expect(
       errorsFor(
