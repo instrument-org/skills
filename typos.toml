@@ -12,14 +12,15 @@ locale = "en-us"
 # Abbreviated git hashes, which docs and comments cite constantly. Without this
 # every `1242ba1` reads as a misspelled `by`.
 extend-ignore-identifiers-re = ["\\b[0-9a-f]{7,40}\\b"]
-# A page that carries its dataset inline does it as one array-of-arrays literal,
-# and real-world data is full of tokens that collide with corrections: Ende on
-# Flores, Viet Nam as the World Bank spells it, OME and GAM and MYU as Alaskan
-# airports, and a new one every refresh. The array is the only thing skipped;
-# every word of prose around it is still checked, which is what an outright file
-# exclude would have cost. The name is screaming snake by convention, which is
-# what keeps this from matching ordinary code.
-extend-ignore-re = ["(?s)const [A-Z][A-Z0-9_]* = \\[\\[.*?\\]\\];"]
+# A page that carries its dataset inline does it as one array literal, of rows
+# or of objects, and real-world data is full of tokens that collide with
+# corrections: Ende on Flores, Viet Nam as the World Bank spells it, OME and GAM
+# as Alaskan airports, Mononoke-hime, and The Pursuit of Happyness, which is
+# spelled that way on the poster. Skipping the array is what an outright file
+# exclude would have cost: every word of prose around it is still checked. The
+# name is screaming snake by convention, which is what keeps this off ordinary
+# code, and the match ends at the first `];`, which JSON never contains.
+extend-ignore-re = ["(?s)const [A-Z][A-Z0-9_]* = \\[[\\[{].*?\\];"]
 
 # Third-party surface the skills quote verbatim. These sit here rather than
 # under extend-words so each matches a whole token only, which leaves
