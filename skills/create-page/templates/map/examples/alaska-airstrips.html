@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>In Alaska the next airstrip is the next town</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="map@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+      html {
+        visibility: hidden;
+        animation: instrument-floor 0s 3s forwards;
+        /* The paper's own color while the page waits, so a dark reader is not
+           shown a white window first. The values are the skin's page tokens. */
+        color-scheme: light dark;
+        background: light-dark(#fafaf9, #141210);
+        /* The mark's ink and its faint swell, per theme. As properties rather
+           than light-dark() in the keyframes, which Chrome paints as nothing. */
+        --instrument-mark: #a8a29e;
+        --instrument-mark-faint: #d9d7d5;
+      }
+      @media (prefers-color-scheme: dark) {
+        html {
+          --instrument-mark: #57534e;
+          --instrument-mark-faint: #2f2c29;
+        }
+      }
+      html.instrument-ready {
+        visibility: visible;
+      }
+      @keyframes instrument-floor {
+        to {
+          visibility: visible;
+        }
+      }
+      /* The page fades in rather than appearing: once the theme resolves, or at
+         the floor when nothing resolves it. Per child of the body, since an
+         opacity on the body itself would take the mark down with it. */
+      body > * {
+        opacity: 0;
+        animation: instrument-page 0.5s ease-out 3s both;
+      }
+      @keyframes instrument-page {
+        to {
+          opacity: 1;
+        }
+      }
+      html.instrument-ready body > * {
+        animation: none;
+        opacity: 1;
+        transition: opacity 0.45s ease-out;
+      }
+      /* The mark. It shows inside the hidden document because visibility stops
+         cascading at an explicit value. Only where masks are understood: without
+         one this box would be a gray sheet over the page. */
+      @supports (mask-image: url("")) {
+        html::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          visibility: visible;
+          opacity: 0;
+          background: var(--instrument-mark);
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 520'%3E%3Cpath d='M436.675%20331.78C408.481%20401.395%20340.226%20450.5%20260.5%20450.5C180.774%20450.5%20112.519%20401.395%2084.3252%20331.78H436.675ZM446.977%20223.906C449.287%20235.748%20450.5%20247.982%20450.5%20260.5C450.5%20274.88%20448.899%20288.886%20445.872%20302.352H314.801C293.139%20302.351%20275.578%20284.791%20275.578%20263.129C275.578%20241.467%20293.139%20223.906%20314.801%20223.906H446.977ZM210.199%20223.906C231.861%20223.906%20249.422%20241.467%20249.422%20263.129C249.422%20284.791%20231.861%20302.352%20210.199%20302.352H75.1279C72.1008%20288.886%2070.5%20274.88%2070.5%20260.5C70.5%20247.982%2071.7131%20235.748%2074.0234%20223.906H210.199ZM260.5%2070.5C342.227%2070.5%20411.9%20122.101%20438.721%20194.5H82.2793C109.1%20122.101%20178.773%2070.5%20260.5%2070.5Z'/%3E%3C/svg%3E");
+          mask-position: center;
+          mask-size: 30px 30px;
+          mask-repeat: no-repeat;
+          animation:
+            instrument-mark-in 0.4s ease-out 0.75s forwards,
+            instrument-mark-out 0.3s ease-in 3s forwards,
+            instrument-breathe 1.8s ease-in-out 0.75s infinite;
+        }
+        html.instrument-ready::before {
+          animation: none;
+          opacity: 0;
+          visibility: hidden;
+          transition:
+            opacity 0.25s ease-in,
+            visibility 0s 0.25s;
+        }
+      }
+      @keyframes instrument-mark-in {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes instrument-mark-out {
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+      @keyframes instrument-breathe {
+        50% {
+          background-color: var(--instrument-mark-faint);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html::before {
+          animation:
+            instrument-mark-in 0s 0.75s forwards,
+            instrument-mark-out 0s 3s forwards;
+        }
+        body > *,
+        html.instrument-ready body > *,
+        html.instrument-ready::before {
+          animation-duration: 0s;
+          transition: none;
+        }
+      }
+    </style>
+    <script>
+      // --font-sans is declared in the @theme static block below, so it resolves
+      // once the compiled stylesheet is in the document and not a frame before.
+      (function () {
+        const show = () => {
+          document.documentElement.classList.add("instrument-ready");
+        };
+        (function poll() {
+          const theme = getComputedStyle(document.documentElement)
+            .getPropertyValue("--font-sans")
+            .trim();
+          if (theme !== "") show();
+          else requestAnimationFrame(poll);
+        })();
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
+      })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script defer src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
+    <!-- shell:end -->
+
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+      <!-- The page is a map with its places written under it. -->
+      <link rel="stylesheet" href="https://esm.sh/leaflet@1.9.4/dist/leaflet.css" />
+      <style>
+        /* Leaflet paints its own white tiles and black attribution. */
+        #map { background: var(--color-muted); }
+        .leaflet-container { font-family: inherit; background: var(--color-muted); }
+        .leaflet-control-attribution { background: var(--color-card); color: var(--color-muted-foreground); }
+        .leaflet-control-attribution a { color: var(--color-brand-700); }
+        .leaflet-bar a { background: var(--color-card); color: var(--color-foreground); border-color: var(--color-border); }
+      </style>
+
+      <header class="mb-6">
+        <p class="mb-2 text-[11px] font-semibold tracking-[0.14em] text-brand-700 uppercase">Map &middot; 200 scheduled fields</p>
+        <h1 class="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">In Alaska the next airstrip is the next town</h1>
+        <p class="mt-3 max-w-2xl text-[15px] leading-7 text-muted-foreground">
+          Every field with a three-letter code, joined by a line to its nearest neighbor. The median
+          hop is <b class="font-medium text-foreground">40 km</b>; <b class="font-medium text-foreground">14</b> of
+          them have nothing within 100. Drag the map, or read the list under it, which says the same thing.
+        </p>
+      </header>
+
+      <div class="overflow-hidden rounded-xl border border-border">
+        <div id="map" class="h-[30rem] w-full"></div>
+      </div>
+      <p class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-[12px] text-muted-foreground">
+        <span><i class="ph ph-circle -mt-px mr-1 align-middle text-brand-600"></i>under 50 km to the next field</span>
+        <span><i class="ph ph-circle -mt-px mr-1 align-middle text-warning-500"></i>50 to 100</span>
+        <span><i class="ph ph-circle -mt-px mr-1 align-middle text-error-500"></i>over 100</span>
+        <span>Circle size is the distance. Click one for its name.</span>
+      </p>
+
+      <section class="mt-8">
+        <h2 class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">The ten with the furthest neighbor</h2>
+        <table class="mt-3 w-full text-[14px]">
+          <thead>
+            <tr class="text-left text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+              <th class="pb-1.5 pr-3 font-semibold">Code</th>
+              <th class="pb-1.5 pr-3 font-semibold">Field</th>
+              <th class="pb-1.5 pr-3 text-right font-semibold">km to nearest</th>
+              <th class="pb-1.5 font-semibold">Which</th>
+            </tr>
+          </thead>
+          <tbody>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">YAK</td>
+            <td class="py-1.5 pr-3">Yakutat</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">236</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">HNS</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">BTI</td>
+            <td class="py-1.5 pr-3">Barter Island</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">184</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">SCC</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">ADK</td>
+            <td class="py-1.5 pr-3">Adak</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">171</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">AKA</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">AKA</td>
+            <td class="py-1.5 pr-3">Atka</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">171</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">ADK</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">PIZ</td>
+            <td class="py-1.5 pr-3">Point Lay Dew Station</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">152</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">AWI</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">MHM</td>
+            <td class="py-1.5 pr-3">Minchumina</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">144</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">TAL</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">BIG</td>
+            <td class="py-1.5 pr-3">Allen AAF</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">137</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">FAI</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">ARC</td>
+            <td class="py-1.5 pr-3">Arctic Village</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">127</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">VEE</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">PHO</td>
+            <td class="py-1.5 pr-3">Point Hope</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">116</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">KVL</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1.5 pr-3 font-mono text-[12px]">HSL</td>
+            <td class="py-1.5 pr-3">Huslia</td>
+            <td class="py-1.5 pr-3 text-right font-mono tabular-nums">104</td>
+            <td class="py-1.5 font-mono text-[12px] text-muted-foreground">HUS</td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <p class="mt-8 text-[12px] leading-6 text-muted-foreground">
+        Positions from <a href="https://github.com/vega/vega-datasets">vega-datasets</a>&rsquo; <code class="font-mono text-[11px]">airports.csv</code>,
+        BSD-3-Clause, filtered to Alaskan fields carrying a three-letter IATA code. Distances are great-circle,
+        computed in this page from those positions, and are not flight distances. Tiles are
+        <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>; with them unreachable the map is an empty
+        panel and the list above is unchanged.
+      </p>
+
+      <script src="https://esm.sh/leaflet@1.9.4/dist/leaflet.js?raw"></script>
+      <script type="module">
+        // [code, name, lat, lon, km to nearest, which]. The table above is the
+        // same numbers, so a map that never loads costs a picture and no facts.
+        const FIELDS = [["YAK","Yakutat",59.5034,-139.6602,236.1,"HNS"],["BTI","Barter Island",70.1339,-143.577,184.5,"SCC"],["ADK","Adak",51.878,-176.646,171.1,"AKA"],["AKA","Atka",52.2203,-174.2064,171.1,"ADK"],["PIZ","Point Lay Dew Station",69.7329,-163.0053,151.6,"AWI"],["MHM","Minchumina",63.8806,-152.3007,144.2,"TAL"],["BIG","Allen AAF",63.9945,-145.7216,137.3,"FAI"],["ARC","Arctic Village",68.1161,-145.5761,126.7,"VEE"],["PHO","Point Hope",68.3488,-166.7993,116.0,"KVL"],["HSL","Huslia",65.7006,-156.3875,103.7,"HUS"],["HUS","Hughes",66.0411,-154.2632,103.7,"HSL"],["SHH","Shishmaref",66.2496,-166.0896,103.5,"KTS"],["AKP","Anaktuvuk Pass",68.1343,-151.7417,100.2,"GBH"],["GBH","Galbraith Lake",68.4791,-149.49,100.2,"AKP"],["ORT","Northway",62.9613,-141.9291,99.2,"CZN"],["OME","Nome",64.5122,-165.4452,98.9,"WMO"],["AWI","Wainwright",70.638,-159.9948,96.6,"ATK"],["AQT","Nuiqsut",70.21,-151.0056,95.7,"SCC"],["SCC","Deadhorse",70.1948,-148.4652,95.7,"AQT"],["ATK","Atqasuk",70.4673,-157.4357,94.2,"BRW"],["BRW","Wiley Post Will Rogers Memorial",71.2854,-156.766,94.2,"ATK"],["SDP","Sand Point Municipal",55.315,-160.5177,91.5,"KIB"],["CZN","Chisana",62.0712,-142.0484,88.4,"MYK"],["MYK","May Creek",61.3357,-142.6868,88.4,"CZN"],["WBQ","Beaver",66.3616,-147.4012,85.4,"VEE"],["UNK","Unalakleet",63.8884,-160.799,84.0,"WBB"],["WBB","Stebbins",63.5159,-162.2827,84.0,"UNK"],["CXC","Chitina",61.5829,-144.4271,83.4,"GKN"],["GKN","Gulkana",62.1549,-145.4566,83.4,"CXC"],["IWK","Wales",65.6239,-168.0992,82.2,"KTS"],["KTS","Brevig Mission",65.3314,-166.4632,82.2,"IWK"],["SWD","Seward",60.1269,-149.4188,81.8,"IEM"],["EAA","Eagle",64.7764,-141.1509,77.6,"BYA"],["HRR","Healy River",63.8662,-148.969,76.1,"ENN"],["KIB","Ivanof Bay SPB",55.8975,-159.4887,74.9,"KCL"],["PBV","St. George",56.5774,-169.6637,73.8,"SNP"],["SNP","St. Paul",57.1673,-170.2204,73.8,"PBV"],["BVK","Buckland",65.9823,-161.152,73.6,"DEE"],["DEE","Deering",66.0682,-162.7666,73.6,"BVK"],["SVS","Stevens Village",66.009,-149.0959,73.4,"RMP"],["PTH","Port Heiden",56.9594,-158.6318,72.3,"KCL"],["AKK","Akhiok",56.9387,-154.1826,71.7,"KYK"],["KYK","Karluk",57.5671,-154.4504,71.7,"AKK"],["VEE","Venetie",67.0227,-146.4138,71.5,"FYU"],["TAL","Ralph M Calhoun Memorial",65.1744,-152.1094,71.4,"MLY"],["VDZ","Valdez",61.134,-146.2484,71.4,"CKU"],["WCR","Chandalar Lake",67.5045,-148.4832,70.8,"WSM"],["RBY","Ruby",64.7272,-155.4699,69.7,"GAL"],["KVL","Kivalina",67.7313,-164.5518,69.3,"WTK"],["WTK","Noatak",67.5621,-162.9753,69.3,"KVL"],["OTZ","Ralph Wien Memorial",66.8847,-162.5985,68.9,"ORV"],["PNP","Pilot Point",57.5804,-157.5674,68.5,"EII"],["TOG","Togiak Village",59.0528,-160.3969,68.0,"GNU"],["CIK","Chalkyitsik",66.6497,-143.7359,67.4,"FYU"],["FYU","Fort Yukon",66.5715,-145.2504,67.4,"CIK"],["MYU","Mekoryuk",60.3714,-166.2706,65.9,"OOK"],["FLT","Flat",62.4526,-157.9891,65.4,"CJX"],["ENN","Nenana Municipal",64.549,-149.0735,64.8,"FAI"],["FAI","Fairbanks International",64.8137,-147.8597,64.8,"ENN"],["AHP","Port Alexander SPB",56.2468,-134.6482,64.3,"KPB"],["SKW","Skwentna",61.9653,-151.1914,64.2,"UUO"],["KPH","Pauloff Harbor SPB",54.4591,-162.6936,63.2,"KFP"],["TKA","Talkeetna",62.3205,-150.0937,63.0,"UUO"],["KPB","Point Baker SPB",56.3519,-133.6226,61.9,"KCC"],["GAM","Gambell",63.7668,-171.7328,61.7,"SVA"],["SVA","Savoonga",63.6864,-170.4926,61.7,"GAM"],["MLY","Manley Hot Springs",64.9976,-150.6441,61.4,"RMP"],["RMP","Rampart",65.5079,-150.1428,61.4,"MLY"],["EII","Egegik",58.1884,-157.381,61.2,"WSN"],["ILI","Iliamna",59.7538,-154.911,60.0,"TPO"],["TPO","Port Alsworth",60.2043,-154.3189,60.0,"ILI"],["IGG","Igiugig",59.3237,-155.9033,59.3,"KLL"],["KFP","False Pass",54.8474,-163.4103,59.1,"CDB"],["DUY","Kongiganak",59.9595,-162.8817,56.3,"EEK"],["DUT","Unalaska",53.9001,-166.5435,55.9,"KQA"],["KQA","Akutan SPB",54.1325,-165.7853,55.9,"DUT"],["KAL","Kaltag",64.3257,-158.7441,55.2,"NUL"],["ELI","Elim",64.614,-162.2701,55.0,"WMO"],["WMO","White Mountain",64.6892,-163.4126,55.0,"ELI"],["EWU","Newtok",60.9387,-164.6412,51.9,"OOK"],["AQH","Kwinhagak",59.757,-161.8795,51.5,"EEK"],["EEK","Eek",60.2159,-162.0056,51.5,"AQH"],["PSG","James C. Johnson Petersburg",56.8017,-132.9453,49.8,"WRG"],["WRG","Wrangell",56.4843,-132.3698,49.8,"PSG"],["AGN","Angoon SPB",57.5036,-134.5851,48.5,"BNF"],["MDR","Medfra",63.1058,-154.719,47.8,"MCG"],["WLK","Selawik",66.6,-159.9862,46.6,"IAN"],["KKB","Kitoi Bay SPB",58.1909,-152.3705,44.0,"ORI"],["KLL","Levelock",59.1182,-156.8652,43.5,"KEK"],["CRC","Circle City",65.8305,-144.0758,43.2,"CEM"],["ANI","Aniak",61.5816,-159.543,42.6,"KLG"],["KLG","Kalskag",61.5363,-160.3413,42.6,"ANI"],["CJX","Crooked Creek",61.869,-158.1371,42.4,"RDV"],["BYA","Boundary",64.0783,-141.1134,40.8,"CKX"],["CKX","Chicken",64.0713,-141.9523,40.8,"BYA"],["MLL","Marshall",61.8659,-162.069,40.5,"RSH"],["RSH","Russian Mission",61.7797,-161.3195,40.5,"MLL"],["BTT","Bettles",66.9153,-151.5281,40.3,"PPC"],["PPC","Prospect Creek",66.8129,-150.6438,40.3,"BTT"],["GAL","Edward G. Pitka Sr.",64.7362,-156.9374,40.0,"KYU"],["KCC","Coffman Cove SPB",56.0032,-132.842,39.9,"KTB"],["AFM","Ambler",67.1061,-157.8536,38.9,"SHG"],["TKE","Tenakee SPB",57.7797,-135.2184,37.0,"HNH"],["SCM","Scammon Bay",61.8445,-165.5737,34.6,"VAK"],["HYG","Hydaburg SPB",55.2063,-132.8283,32.7,"HYL"],["BNF","Baranof Warm Springs SPB",57.0888,-134.8331,32.3,"SIT"],["SIT","Sitka",57.0471,-135.3616,32.3,"BNF"],["SHX","Shageluk",62.6951,-159.5691,32.1,"ANV"],["SRV","Stony River 2",61.7899,-156.5882,31.2,"SLQ"],["JZZ","Koliganek",59.7266,-157.2595,31.0,"KNW"],["IAN","Bob Baker Memorial",66.9794,-160.4359,30.8,"ORV"],["ORV","Robert(Bob) Curtis Memorial",66.8285,-161.0278,30.8,"IAN"],["CDB","Cold Bay",55.2056,-162.7243,30.7,"KVC"],["KVC","King Cove",55.1163,-162.2662,30.7,"CDB"],["AQY","Girdwood",60.9661,-149.1258,30.3,"IEM"],["IEM","Whittier",60.7772,-148.7216,30.3,"AQY"],["HPB","Hooper Bay",61.5242,-166.1468,29.9,"VAK"],["VAK","Chevak",61.5336,-165.5837,29.9,"HPB"],["HAY","Haycock",65.201,-161.1568,29.7,"KKA"],["KKA","Koyuk",64.934,-161.1581,29.7,"HAY"],["ANV","Anvik",62.6486,-160.1899,28.1,"KGX"],["KGX","Grayling",62.8946,-160.0649,28.1,"ANV"],["CFK","Chefornak",60.1492,-164.2856,27.9,"IIK"],["IIK","Kipnuk",59.933,-164.0305,27.9,"CFK"],["ELV","Elfin Cove SPB",58.1952,-136.3474,27.5,"PEC"],["PEC","Pelican SPB",57.9552,-136.2363,27.5,"ELV"],["UUO","Willow",61.7544,-150.0517,27.4,"BGQ"],["HNS","Haines",59.2452,-135.5221,26.6,"SGY"],["SGY","Skagway",59.4601,-135.3157,26.6,"HNS"],["KTN","Ketchikan International",55.3556,-131.7137,26.4,"MTM"],["MTM","Metlakatla SPB",55.131,-131.5781,26.4,"KTN"],["HOM","Homer",59.6456,-151.4766,26.0,"SOV"],["ADQ","Kodiak",57.75,-152.4939,25.7,"ORI"],["ORI","Port Lions",57.8854,-152.8461,25.7,"ADQ"],["TLT","Tuluksak",61.0968,-160.9684,25.5,"AKI"],["IGT","Nightmute",60.4703,-164.6856,24.5,"OOK"],["OOK","Toksook Bay",60.5334,-165.114,24.5,"IGT"],["PAQ","Palmer Municipal",61.5947,-149.0888,24.0,"IYS"],["MCG","McGrath",62.9529,-155.6058,23.8,"TCT"],["TCT","Takotna",62.9927,-156.0682,23.8,"MCG"],["KYU","Koyukuk",64.8771,-157.7158,23.5,"NUL"],["NUL","Nulato",64.7298,-158.0732,23.5,"KYU"],["CLP","Clarks Point",58.8423,-158.5452,22.7,"DLG"],["DLG","Dillingham",59.0454,-158.5033,22.7,"CLP"],["JNU","Juneau International",58.355,-134.5763,21.9,"FNR"],["AKN","King Salmon",58.6768,-156.6492,21.0,"WSN"],["WSN","South Naknek 2",58.7034,-157.0083,21.0,"AKN"],["KSM","St. Mary's",62.0605,-163.3021,20.2,"MOU"],["MOU","Mountain Village",62.0954,-163.6821,20.2,"KSM"],["SXP","Sheldon Point",62.5206,-164.8478,20.2,"AUK"],["KTB","Thorne Bay",55.688,-132.5367,18.9,"KXA"],["GNU","Goodnews",59.1173,-161.5814,18.0,"PTU"],["PTU","Platinum",59.0114,-161.8197,18.0,"GNU"],["BCV","Birchwood",61.4161,-149.5089,17.4,"IYS"],["WSM","Wiseman",67.4046,-150.1227,17.4,"CXF"],["HYL","Hollis SPB",55.4816,-132.6461,16.8,"KXA"],["KXA","Kasaan SPB",55.5374,-132.3975,16.8,"HYL"],["FNR","Funter Bay SPB",58.2544,-134.8979,16.4,"HWI"],["HWI","Hawk Inlet SPB",58.1274,-134.756,16.4,"FNR"],["AKI","Akiak",60.9048,-161.227,16.3,"KWT"],["KWT","Kwethluk",60.8043,-161.4453,16.3,"AKI"],["ENA","Kenai Municipal",60.572,-151.2475,15.9,"SXQ"],["SXQ","Soldotna",60.4761,-151.0324,15.9,"ENA"],["BGQ","Big Lake Strip Nr 2",61.5356,-149.8139,15.0,"IYS"],["EXI","Excursion Inlet SPB",58.4205,-135.449,15.0,"GST"],["GST","Gustavus",58.4244,-135.7074,15.0,"EXI"],["IYS","Wasilla",61.572,-149.5406,15.0,"BGQ"],["CDV","Merle K (Mudhole) Smith",60.4918,-145.4777,14.8,"CKU"],["CKU","Cordova Muni",60.5439,-145.7267,14.8,"CDV"],["AUK","Alakanuk",62.68,-164.6599,14.5,"ENM"],["ENM","Emmonak",62.7852,-164.491,14.5,"AUK"],["KEK","Ekwok",59.354,-157.4744,13.5,"KNW"],["KNW","Stuyahok",59.4496,-157.3272,13.5,"KEK"],["RDV","Red Devil",61.7876,-157.3479,13.4,"SLQ"],["SLQ","Sleetmute",61.7093,-157.1557,13.4,"RDV"],["SOV","Seldovia",59.4424,-151.7041,12.7,"PGM"],["CEM","Central",65.5738,-144.7833,12.6,"CHP"],["CHP","Circle Hot Springs",65.4855,-144.6108,12.6,"CEM"],["SHG","Shungnak",66.8892,-157.1505,12.3,"DCK"],["WNA","Napakiak",60.6912,-161.9695,10.6,"PKA"],["AJC","Chignik (Anchorage Bay)",56.3115,-158.3732,10.0,"KCL"],["KCL","Chignik Lagoon",56.3112,-158.5359,10.0,"AJC"],["BET","Bethel",60.7798,-161.838,9.1,"PKA"],["PKA","Napaskiak",60.7037,-161.7767,9.1,"BET"],["CGA","Craig SPB",55.4788,-133.1478,8.9,"AQC"],["MRI","Merrill",61.2144,-149.8462,7.7,"LHD"],["KEB","English Bay",59.3521,-151.9252,5.3,"PGM"],["PGM","Port Graham",59.3483,-151.8315,5.3,"KEB"],["DCK","Dahl Creek",66.9433,-156.9047,4.2,"OBU"],["OBU","Kobuk",66.9092,-156.8611,4.2,"DCK"],["CXF","Coldfoot",67.2516,-150.2066,3.7,"PCK"],["PCK","Porcupine Creek",67.2379,-150.2861,3.7,"CXF"],["AKW","Klawock",55.5792,-133.076,3.2,"AQC"],["AQC","Klawock SPB",55.5547,-133.1017,3.2,"AKW"],["HNH","Hoonah",58.0961,-135.4097,3.1,"OOH"],["OOH","Hoonah SPB",58.1122,-135.4518,3.1,"HNH"],["AFE","Kake",56.9605,-133.9083,2.7,"KAE"],["KAE","Kake SPB",56.973,-133.9456,2.7,"AFE"],["ANC","Ted Stevens Anchorage International",61.1743,-149.9962,1.4,"LHD"],["LHD","Lake Hood SPB",61.18,-149.9719,1.4,"ANC"]];
+        const LINKS = [["YAK",59.5034,-139.6602,59.2452,-135.5221],["BTI",70.1339,-143.577,70.1948,-148.4652],["ADK",51.878,-176.646,52.2203,-174.2064],["AKA",52.2203,-174.2064,51.878,-176.646],["PIZ",69.7329,-163.0053,70.638,-159.9948],["MHM",63.8806,-152.3007,65.1744,-152.1094],["BIG",63.9945,-145.7216,64.8137,-147.8597],["ARC",68.1161,-145.5761,67.0227,-146.4138],["PHO",68.3488,-166.7993,67.7313,-164.5518],["HSL",65.7006,-156.3875,66.0411,-154.2632],["HUS",66.0411,-154.2632,65.7006,-156.3875],["SHH",66.2496,-166.0896,65.3314,-166.4632],["AKP",68.1343,-151.7417,68.4791,-149.49],["GBH",68.4791,-149.49,68.1343,-151.7417],["ORT",62.9613,-141.9291,62.0712,-142.0484],["OME",64.5122,-165.4452,64.6892,-163.4126],["AWI",70.638,-159.9948,70.4673,-157.4357],["AQT",70.21,-151.0056,70.1948,-148.4652],["SCC",70.1948,-148.4652,70.21,-151.0056],["ATK",70.4673,-157.4357,71.2854,-156.766],["BRW",71.2854,-156.766,70.4673,-157.4357],["SDP",55.315,-160.5177,55.8975,-159.4887],["CZN",62.0712,-142.0484,61.3357,-142.6868],["MYK",61.3357,-142.6868,62.0712,-142.0484],["WBQ",66.3616,-147.4012,67.0227,-146.4138],["UNK",63.8884,-160.799,63.5159,-162.2827],["WBB",63.5159,-162.2827,63.8884,-160.799],["CXC",61.5829,-144.4271,62.1549,-145.4566],["GKN",62.1549,-145.4566,61.5829,-144.4271],["IWK",65.6239,-168.0992,65.3314,-166.4632],["KTS",65.3314,-166.4632,65.6239,-168.0992],["SWD",60.1269,-149.4188,60.7772,-148.7216],["EAA",64.7764,-141.1509,64.0783,-141.1134],["HRR",63.8662,-148.969,64.549,-149.0735],["KIB",55.8975,-159.4887,56.3112,-158.5359],["PBV",56.5774,-169.6637,57.1673,-170.2204],["SNP",57.1673,-170.2204,56.5774,-169.6637],["BVK",65.9823,-161.152,66.0682,-162.7666],["DEE",66.0682,-162.7666,65.9823,-161.152],["SVS",66.009,-149.0959,65.5079,-150.1428],["PTH",56.9594,-158.6318,56.3112,-158.5359],["AKK",56.9387,-154.1826,57.5671,-154.4504],["KYK",57.5671,-154.4504,56.9387,-154.1826],["VEE",67.0227,-146.4138,66.5715,-145.2504],["TAL",65.1744,-152.1094,64.9976,-150.6441],["VDZ",61.134,-146.2484,60.5439,-145.7267],["WCR",67.5045,-148.4832,67.4046,-150.1227],["RBY",64.7272,-155.4699,64.7362,-156.9374],["KVL",67.7313,-164.5518,67.5621,-162.9753],["WTK",67.5621,-162.9753,67.7313,-164.5518],["OTZ",66.8847,-162.5985,66.8285,-161.0278],["PNP",57.5804,-157.5674,58.1884,-157.381],["TOG",59.0528,-160.3969,59.1173,-161.5814],["CIK",66.6497,-143.7359,66.5715,-145.2504],["FYU",66.5715,-145.2504,66.6497,-143.7359],["MYU",60.3714,-166.2706,60.5334,-165.114],["FLT",62.4526,-157.9891,61.869,-158.1371],["ENN",64.549,-149.0735,64.8137,-147.8597],["FAI",64.8137,-147.8597,64.549,-149.0735],["AHP",56.2468,-134.6482,56.3519,-133.6226],["SKW",61.9653,-151.1914,61.7544,-150.0517],["KPH",54.4591,-162.6936,54.8474,-163.4103],["TKA",62.3205,-150.0937,61.7544,-150.0517],["KPB",56.3519,-133.6226,56.0032,-132.842],["GAM",63.7668,-171.7328,63.6864,-170.4926],["SVA",63.6864,-170.4926,63.7668,-171.7328],["MLY",64.9976,-150.6441,65.5079,-150.1428],["RMP",65.5079,-150.1428,64.9976,-150.6441],["EII",58.1884,-157.381,58.7034,-157.0083],["ILI",59.7538,-154.911,60.2043,-154.3189],["TPO",60.2043,-154.3189,59.7538,-154.911],["IGG",59.3237,-155.9033,59.1182,-156.8652],["KFP",54.8474,-163.4103,55.2056,-162.7243],["DUY",59.9595,-162.8817,60.2159,-162.0056],["DUT",53.9001,-166.5435,54.1325,-165.7853],["KQA",54.1325,-165.7853,53.9001,-166.5435],["KAL",64.3257,-158.7441,64.7298,-158.0732],["ELI",64.614,-162.2701,64.6892,-163.4126],["WMO",64.6892,-163.4126,64.614,-162.2701],["EWU",60.9387,-164.6412,60.5334,-165.114],["AQH",59.757,-161.8795,60.2159,-162.0056],["EEK",60.2159,-162.0056,59.757,-161.8795],["PSG",56.8017,-132.9453,56.4843,-132.3698],["WRG",56.4843,-132.3698,56.8017,-132.9453],["AGN",57.5036,-134.5851,57.0888,-134.8331],["MDR",63.1058,-154.719,62.9529,-155.6058],["WLK",66.6,-159.9862,66.9794,-160.4359],["KKB",58.1909,-152.3705,57.8854,-152.8461],["KLL",59.1182,-156.8652,59.354,-157.4744],["CRC",65.8305,-144.0758,65.5738,-144.7833],["ANI",61.5816,-159.543,61.5363,-160.3413],["KLG",61.5363,-160.3413,61.5816,-159.543],["CJX",61.869,-158.1371,61.7876,-157.3479],["BYA",64.0783,-141.1134,64.0713,-141.9523],["CKX",64.0713,-141.9523,64.0783,-141.1134],["MLL",61.8659,-162.069,61.7797,-161.3195],["RSH",61.7797,-161.3195,61.8659,-162.069],["BTT",66.9153,-151.5281,66.8129,-150.6438],["PPC",66.8129,-150.6438,66.9153,-151.5281],["GAL",64.7362,-156.9374,64.8771,-157.7158],["KCC",56.0032,-132.842,55.688,-132.5367],["AFM",67.1061,-157.8536,66.8892,-157.1505],["TKE",57.7797,-135.2184,58.0961,-135.4097],["SCM",61.8445,-165.5737,61.5336,-165.5837],["HYG",55.2063,-132.8283,55.4816,-132.6461],["BNF",57.0888,-134.8331,57.0471,-135.3616],["SIT",57.0471,-135.3616,57.0888,-134.8331],["SHX",62.6951,-159.5691,62.6486,-160.1899],["SRV",61.7899,-156.5882,61.7093,-157.1557],["JZZ",59.7266,-157.2595,59.4496,-157.3272],["IAN",66.9794,-160.4359,66.8285,-161.0278],["ORV",66.8285,-161.0278,66.9794,-160.4359],["CDB",55.2056,-162.7243,55.1163,-162.2662],["KVC",55.1163,-162.2662,55.2056,-162.7243],["AQY",60.9661,-149.1258,60.7772,-148.7216],["IEM",60.7772,-148.7216,60.9661,-149.1258],["HPB",61.5242,-166.1468,61.5336,-165.5837],["VAK",61.5336,-165.5837,61.5242,-166.1468],["HAY",65.201,-161.1568,64.934,-161.1581],["KKA",64.934,-161.1581,65.201,-161.1568],["ANV",62.6486,-160.1899,62.8946,-160.0649],["KGX",62.8946,-160.0649,62.6486,-160.1899],["CFK",60.1492,-164.2856,59.933,-164.0305],["IIK",59.933,-164.0305,60.1492,-164.2856],["ELV",58.1952,-136.3474,57.9552,-136.2363],["PEC",57.9552,-136.2363,58.1952,-136.3474],["UUO",61.7544,-150.0517,61.5356,-149.8139],["HNS",59.2452,-135.5221,59.4601,-135.3157],["SGY",59.4601,-135.3157,59.2452,-135.5221],["KTN",55.3556,-131.7137,55.131,-131.5781],["MTM",55.131,-131.5781,55.3556,-131.7137],["HOM",59.6456,-151.4766,59.4424,-151.7041],["ADQ",57.75,-152.4939,57.8854,-152.8461],["ORI",57.8854,-152.8461,57.75,-152.4939],["TLT",61.0968,-160.9684,60.9048,-161.227],["IGT",60.4703,-164.6856,60.5334,-165.114],["OOK",60.5334,-165.114,60.4703,-164.6856],["PAQ",61.5947,-149.0888,61.572,-149.5406],["MCG",62.9529,-155.6058,62.9927,-156.0682],["TCT",62.9927,-156.0682,62.9529,-155.6058],["KYU",64.8771,-157.7158,64.7298,-158.0732],["NUL",64.7298,-158.0732,64.8771,-157.7158],["CLP",58.8423,-158.5452,59.0454,-158.5033],["DLG",59.0454,-158.5033,58.8423,-158.5452],["JNU",58.355,-134.5763,58.2544,-134.8979],["AKN",58.6768,-156.6492,58.7034,-157.0083],["WSN",58.7034,-157.0083,58.6768,-156.6492],["KSM",62.0605,-163.3021,62.0954,-163.6821],["MOU",62.0954,-163.6821,62.0605,-163.3021],["SXP",62.5206,-164.8478,62.68,-164.6599],["KTB",55.688,-132.5367,55.5374,-132.3975],["GNU",59.1173,-161.5814,59.0114,-161.8197],["PTU",59.0114,-161.8197,59.1173,-161.5814],["BCV",61.4161,-149.5089,61.572,-149.5406],["WSM",67.4046,-150.1227,67.2516,-150.2066],["HYL",55.4816,-132.6461,55.5374,-132.3975],["KXA",55.5374,-132.3975,55.4816,-132.6461],["FNR",58.2544,-134.8979,58.1274,-134.756],["HWI",58.1274,-134.756,58.2544,-134.8979],["AKI",60.9048,-161.227,60.8043,-161.4453],["KWT",60.8043,-161.4453,60.9048,-161.227],["ENA",60.572,-151.2475,60.4761,-151.0324],["SXQ",60.4761,-151.0324,60.572,-151.2475],["BGQ",61.5356,-149.8139,61.572,-149.5406],["EXI",58.4205,-135.449,58.4244,-135.7074],["GST",58.4244,-135.7074,58.4205,-135.449],["IYS",61.572,-149.5406,61.5356,-149.8139],["CDV",60.4918,-145.4777,60.5439,-145.7267],["CKU",60.5439,-145.7267,60.4918,-145.4777],["AUK",62.68,-164.6599,62.7852,-164.491],["ENM",62.7852,-164.491,62.68,-164.6599],["KEK",59.354,-157.4744,59.4496,-157.3272],["KNW",59.4496,-157.3272,59.354,-157.4744],["RDV",61.7876,-157.3479,61.7093,-157.1557],["SLQ",61.7093,-157.1557,61.7876,-157.3479],["SOV",59.4424,-151.7041,59.3483,-151.8315],["CEM",65.5738,-144.7833,65.4855,-144.6108],["CHP",65.4855,-144.6108,65.5738,-144.7833],["SHG",66.8892,-157.1505,66.9433,-156.9047],["WNA",60.6912,-161.9695,60.7037,-161.7767],["AJC",56.3115,-158.3732,56.3112,-158.5359],["KCL",56.3112,-158.5359,56.3115,-158.3732],["BET",60.7798,-161.838,60.7037,-161.7767],["PKA",60.7037,-161.7767,60.7798,-161.838],["CGA",55.4788,-133.1478,55.5547,-133.1017],["MRI",61.2144,-149.8462,61.18,-149.9719],["KEB",59.3521,-151.9252,59.3483,-151.8315],["PGM",59.3483,-151.8315,59.3521,-151.9252],["DCK",66.9433,-156.9047,66.9092,-156.8611],["OBU",66.9092,-156.8611,66.9433,-156.9047],["CXF",67.2516,-150.2066,67.2379,-150.2861],["PCK",67.2379,-150.2861,67.2516,-150.2066],["AKW",55.5792,-133.076,55.5547,-133.1017],["AQC",55.5547,-133.1017,55.5792,-133.076],["HNH",58.0961,-135.4097,58.1122,-135.4518],["OOH",58.1122,-135.4518,58.0961,-135.4097],["AFE",56.9605,-133.9083,56.973,-133.9456],["KAE",56.973,-133.9456,56.9605,-133.9083],["ANC",61.1743,-149.9962,61.18,-149.9719],["LHD",61.18,-149.9719,61.1743,-149.9962]];
+        if (typeof L !== "undefined") {
+          const map = L.map("map", { scrollWheelZoom: false }).setView([64.2, -152], 4);
+          L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 11,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          }).addTo(map);
+
+          const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+          const tone = (km) => (km > 100 ? css("--color-error-500") : km > 50 ? css("--color-warning-500") : css("--color-brand-600"));
+
+          for (const [, lat1, lon1, lat2, lon2] of LINKS) {
+            L.polyline([[lat1, lon1], [lat2, lon2]], { color: css("--color-gray-400"), weight: 1, opacity: 0.5 }).addTo(map);
+          }
+          for (const [iata, name, lat, lon, km, to] of FIELDS) {
+            L.circleMarker([lat, lon], {
+              radius: 3 + Math.min(9, km / 18),
+              color: tone(km),
+              weight: 1.5,
+              fillColor: tone(km),
+              fillOpacity: 0.45,
+            })
+              .addTo(map)
+              .bindPopup(`<b>${name}</b> (${iata})<br>${km} km to ${to}`);
+          }
+        }
+      </script>
+    </main>
+    <!-- shell:start -->
+    <!-- The page as written, kept for the share widget before any script has
+         changed it. A page's own scripts are modules, and Tailwind is deferred,
+         so both run after this and a shared copy carries the markup rather than
+         what a script drew on it. -->
+    <script>
+      {
+        // A script that failed while the page was still parsing has already
+        // marked the root as shown; a copy starts held back, like the file.
+        const page = document.documentElement.cloneNode(true);
+        page.classList.remove("instrument-ready");
+        window.__instrumentSource = "<!doctype html>\n" + page.outerHTML;
+      }
+
+      // Progressive: with scripts off, or offline, every link reads exactly as
+      // it does now and nothing shifts. Only the origin is ever sent, never the
+      // path, so a link's query string is not handed over to draw an icon.
+      // Waits for the page's module scripts, so a link one of them draws gets
+      // its icon like any other.
+      const decorate = () => {
+        const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+        for (const link of document.querySelectorAll('a[href^="https://"]')) {
+          const icon = document.createElement("img");
+          icon.alt = "";
+          icon.className = "site-icon";
+          icon.src =
+            "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+            encodeURIComponent(new URL(link.href).origin);
+
+          // A line may break between an image and the text beside it, so the icon
+          // and the first word it leads go in a span that cannot break. A link
+          // with no text of its own takes the icon at the front of the link.
+          const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+          let text = walker.nextNode();
+          while (text && !text.data.trim()) text = walker.nextNode();
+          let host = link;
+          if (text) {
+            const at = text.data.search(/\S/);
+            const word = at > 0 ? text.splitText(at) : text;
+            const space = word.data.search(/\s/);
+            if (space > 0) word.splitText(space); // The rest of the text stays put.
+            host = document.createElement("span");
+            host.className = "site-icon-word";
+            word.replaceWith(host);
+            host.append(word);
+          }
+
+          const drop = () => {
+            icon.remove();
+            if (host !== link) host.replaceWith(...host.childNodes);
+          };
+          icon.onerror = drop;
+          icon.onload = () => {
+            if (icon.naturalWidth <= ABSENT) drop();
+          };
+          host.prepend(icon);
+        }
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", decorate, { once: true });
+      } else {
+        decorate();
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

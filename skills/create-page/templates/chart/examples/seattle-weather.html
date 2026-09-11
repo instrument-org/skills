@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seattle's rain is not constant, it is seasonal and lumpy</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="chart@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+      html {
+        visibility: hidden;
+        animation: instrument-floor 0s 3s forwards;
+        /* The paper's own color while the page waits, so a dark reader is not
+           shown a white window first. The values are the skin's page tokens. */
+        color-scheme: light dark;
+        background: light-dark(#fafaf9, #141210);
+        /* The mark's ink and its faint swell, per theme. As properties rather
+           than light-dark() in the keyframes, which Chrome paints as nothing. */
+        --instrument-mark: #a8a29e;
+        --instrument-mark-faint: #d9d7d5;
+      }
+      @media (prefers-color-scheme: dark) {
+        html {
+          --instrument-mark: #57534e;
+          --instrument-mark-faint: #2f2c29;
+        }
+      }
+      html.instrument-ready {
+        visibility: visible;
+      }
+      @keyframes instrument-floor {
+        to {
+          visibility: visible;
+        }
+      }
+      /* The page fades in rather than appearing: once the theme resolves, or at
+         the floor when nothing resolves it. Per child of the body, since an
+         opacity on the body itself would take the mark down with it. */
+      body > * {
+        opacity: 0;
+        animation: instrument-page 0.5s ease-out 3s both;
+      }
+      @keyframes instrument-page {
+        to {
+          opacity: 1;
+        }
+      }
+      html.instrument-ready body > * {
+        animation: none;
+        opacity: 1;
+        transition: opacity 0.45s ease-out;
+      }
+      /* The mark. It shows inside the hidden document because visibility stops
+         cascading at an explicit value. Only where masks are understood: without
+         one this box would be a gray sheet over the page. */
+      @supports (mask-image: url("")) {
+        html::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          visibility: visible;
+          opacity: 0;
+          background: var(--instrument-mark);
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 520'%3E%3Cpath d='M436.675%20331.78C408.481%20401.395%20340.226%20450.5%20260.5%20450.5C180.774%20450.5%20112.519%20401.395%2084.3252%20331.78H436.675ZM446.977%20223.906C449.287%20235.748%20450.5%20247.982%20450.5%20260.5C450.5%20274.88%20448.899%20288.886%20445.872%20302.352H314.801C293.139%20302.351%20275.578%20284.791%20275.578%20263.129C275.578%20241.467%20293.139%20223.906%20314.801%20223.906H446.977ZM210.199%20223.906C231.861%20223.906%20249.422%20241.467%20249.422%20263.129C249.422%20284.791%20231.861%20302.352%20210.199%20302.352H75.1279C72.1008%20288.886%2070.5%20274.88%2070.5%20260.5C70.5%20247.982%2071.7131%20235.748%2074.0234%20223.906H210.199ZM260.5%2070.5C342.227%2070.5%20411.9%20122.101%20438.721%20194.5H82.2793C109.1%20122.101%20178.773%2070.5%20260.5%2070.5Z'/%3E%3C/svg%3E");
+          mask-position: center;
+          mask-size: 30px 30px;
+          mask-repeat: no-repeat;
+          animation:
+            instrument-mark-in 0.4s ease-out 0.75s forwards,
+            instrument-mark-out 0.3s ease-in 3s forwards,
+            instrument-breathe 1.8s ease-in-out 0.75s infinite;
+        }
+        html.instrument-ready::before {
+          animation: none;
+          opacity: 0;
+          visibility: hidden;
+          transition:
+            opacity 0.25s ease-in,
+            visibility 0s 0.25s;
+        }
+      }
+      @keyframes instrument-mark-in {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes instrument-mark-out {
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+      @keyframes instrument-breathe {
+        50% {
+          background-color: var(--instrument-mark-faint);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html::before {
+          animation:
+            instrument-mark-in 0s 0.75s forwards,
+            instrument-mark-out 0s 3s forwards;
+        }
+        body > *,
+        html.instrument-ready body > *,
+        html.instrument-ready::before {
+          animation-duration: 0s;
+          transition: none;
+        }
+      }
+    </style>
+    <script>
+      // --font-sans is declared in the @theme static block below, so it resolves
+      // once the compiled stylesheet is in the document and not a frame before.
+      (function () {
+        const show = () => {
+          document.documentElement.classList.add("instrument-ready");
+        };
+        (function poll() {
+          const theme = getComputedStyle(document.documentElement)
+            .getPropertyValue("--font-sans")
+            .trim();
+          if (theme !== "") show();
+          else requestAnimationFrame(poll);
+        })();
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
+      })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. */
+      @media print {
+        :root {
+          color-scheme: only light;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script defer src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
+    <!-- shell:end -->
+
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+      <!-- Three chart shapes on one dataset, each with its numbers beneath it. -->
+      <header class="mb-8">
+        <p class="mb-2 text-[11px] font-semibold tracking-[0.14em] text-brand-700 uppercase">Chart &middot; 1,461 days &middot; 2012&ndash;2015</p>
+        <h1 class="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">Seattle&rsquo;s rain is not constant, it is seasonal and lumpy</h1>
+        <p class="mt-3 max-w-2xl text-[15px] leading-7 text-muted-foreground">
+          Nov averages <b class="font-medium text-foreground">161 mm</b> a year against
+          Jul&rsquo;s <b class="font-medium text-foreground">12</b>, one day in
+          2015 took <b class="font-medium text-foreground">56 mm</b> on its own, and the longest
+          run with no measurable rain at all was <b class="font-medium text-foreground">48 days</b>. Three shapes,
+          because no one of them says all three things.
+        </p>
+      </header>
+
+      <section>
+        <h2 class="text-lg font-semibold tracking-[-0.01em]">Every wet day, four years at once</h2>
+        <p class="mt-1.5 max-w-2xl text-[14px] leading-6 text-muted-foreground">
+          One square per day, darker for more rain, blank where none fell. The winters are solid and the summers are
+          gapped; the single darkest square is 2015-03-15.
+        </p>
+        <figure class="mt-4 overflow-x-auto rounded-xl border border-border bg-card p-3">
+          <div id="cal" class="h-[35rem] min-w-[52rem]"></div>
+        </figure>
+      </section>
+
+      <section class="mt-12 grid gap-6 lg:grid-cols-2">
+        <div>
+          <h2 class="text-lg font-semibold tracking-[-0.01em]">The spread, not the average</h2>
+          <p class="mt-1.5 text-[14px] leading-6 text-muted-foreground">
+            Daily highs by month: the box is the middle half, the line the median, the whiskers the extremes across all
+            four years. July and August are not just warmer, they are tighter.
+          </p>
+          <figure class="mt-4 rounded-xl border border-border bg-card p-3"><div id="box" class="h-[22rem]"></div></figure>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold tracking-[-0.01em]">The year as a wheel</h2>
+          <p class="mt-1.5 text-[14px] leading-6 text-muted-foreground">
+            Mean rainfall per month on a radial axis, where December meets January the way the calendar does. A bar
+            chart cuts that join; this does not.
+          </p>
+          <figure class="mt-4 rounded-xl border border-border bg-card p-3"><div id="polar" class="h-[22rem]"></div></figure>
+        </div>
+      </section>
+
+      <section class="mt-10 max-w-3xl">
+        <h2 class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">The monthly figures all three are drawn from</h2>
+        <table class="mt-3 w-full text-[13px]">
+          <thead>
+            <tr class="text-left text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+              <th class="pb-1.5 pr-5 font-semibold">Month</th>
+              <th class="pb-1.5 pr-5 text-right font-semibold">Rain, mm/yr</th>
+              <th class="pb-1.5 pr-5 text-right font-semibold">Coldest high</th>
+              <th class="pb-1.5 pr-5 text-right font-semibold">Median high</th>
+              <th class="pb-1.5 text-right font-semibold">Warmest high</th>
+            </tr>
+          </thead>
+          <tbody>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Jan</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">116.5</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">-1.1</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">8.3</td>
+            <td class="py-1 text-right font-mono tabular-nums">17.2</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Feb</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">105.5</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">-1.6</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">10.0</td>
+            <td class="py-1 text-right font-mono tabular-nums">16.7</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Mar</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">151.6</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">5.0</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">12.2</td>
+            <td class="py-1 text-right font-mono tabular-nums">20.6</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Apr</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">93.9</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">7.8</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">14.2</td>
+            <td class="py-1 text-right font-mono tabular-nums">27.8</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">May</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">51.9</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">11.1</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">18.3</td>
+            <td class="py-1 text-right font-mono tabular-nums">30.6</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Jun</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">33.2</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">12.8</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">22.2</td>
+            <td class="py-1 text-right font-mono tabular-nums">33.9</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Jul</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">12.1</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">18.3</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">26.1</td>
+            <td class="py-1 text-right font-mono tabular-nums">35.0</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Aug</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">40.9</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">17.2</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">25.9</td>
+            <td class="py-1 text-right font-mono tabular-nums">35.6</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Sep</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">58.9</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">13.9</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">21.1</td>
+            <td class="py-1 text-right font-mono tabular-nums">33.9</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Oct</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">125.9</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">7.8</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">15.9</td>
+            <td class="py-1 text-right font-mono tabular-nums">25.6</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Nov</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">160.6</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">1.7</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">11.1</td>
+            <td class="py-1 text-right font-mono tabular-nums">17.8</td>
+          </tr>
+<tr class="border-t border-border">
+            <td class="py-1 pr-5">Dec</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">155.7</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">0.0</td>
+            <td class="py-1 pr-5 text-right font-mono tabular-nums">7.8</td>
+            <td class="py-1 text-right font-mono tabular-nums">18.9</td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <p class="mt-8 max-w-3xl text-[12px] leading-6 text-muted-foreground">
+        <code class="font-mono text-[11px]">seattle-weather.csv</code> from
+        <a href="https://github.com/vega/vega-datasets">vega-datasets</a>, BSD-3-Clause: NOAA daily observations at
+        Seattle&ndash;Tacoma airport, 1 January 2012 to 31 December 2015. Millimeters and degrees Celsius. Monthly rainfall
+        is the four-year total divided by four, not a climate normal, and one airport is not a city. Every figure above is
+        in the table, so the charts failing to load costs three pictures and no facts.
+      </p>
+
+      <script type="module">
+        // The three charts and the table are all drawn from these, counted once.
+        const CAL = [["2012-01-02",10.9],["2012-01-03",0.8],["2012-01-04",20.3],["2012-01-05",1.3],["2012-01-06",2.5],["2012-01-09",4.3],["2012-01-10",1.0],["2012-01-14",4.1],["2012-01-15",5.3],["2012-01-16",2.5],["2012-01-17",8.1],["2012-01-18",19.8],["2012-01-19",15.2],["2012-01-20",13.5],["2012-01-21",3.0],["2012-01-22",6.1],["2012-01-24",8.6],["2012-01-25",8.1],["2012-01-26",4.8],["2012-01-29",27.7],["2012-01-30",3.6],["2012-01-31",1.8],["2012-02-01",13.5],["2012-02-07",0.3],["2012-02-08",2.8],["2012-02-09",2.5],["2012-02-10",2.5],["2012-02-11",0.8],["2012-02-12",1.0],["2012-02-13",11.4],["2012-02-14",2.5],["2012-02-16",1.8],["2012-02-17",17.3],["2012-02-18",6.4],["2012-02-20",3.0],["2012-02-21",0.8],["2012-02-22",8.6],["2012-02-24",11.4],["2012-02-26",1.3],["2012-02-28",3.6],["2012-02-29",0.8],["2012-03-02",2.0],["2012-03-05",6.9],["2012-03-06",0.5],["2012-03-09",3.6],["2012-03-10",10.4],["2012-03-11",13.7],["2012-03-12",19.3],["2012-03-13",9.4],["2012-03-14",8.6],["2012-03-15",23.9],["2012-03-16",8.4],["2012-03-17",9.4],["2012-03-18",3.6],["2012-03-19",2.0],["2012-03-20",3.6],["2012-03-21",1.3],["2012-03-22",4.1],["2012-03-27",4.8],["2012-03-28",1.3],["2012-03-29",27.4],["2012-03-30",5.6],["2012-03-31",13.2],["2012-04-01",1.5],["2012-04-03",1.5],["2012-04-05",4.6],["2012-04-06",0.3],["2012-04-11",2.3],["2012-04-12",0.5],["2012-04-16",8.1],["2012-04-17",1.8],["2012-04-18",1.8],["2012-04-19",10.9],["2012-04-20",6.6],["2012-04-24",4.3],["2012-04-25",10.7],["2012-04-26",3.8],["2012-04-27",0.8],["2012-04-29",4.3],["2012-04-30",4.3],["2012-05-01",0.5],["2012-05-02",0.5],["2012-05-03",18.5],["2012-05-04",1.8],["2012-05-20",6.4],["2012-05-21",14.0],["2012-05-22",6.1],["2012-05-23",0.3],["2012-05-30",0.3],["2012-05-31",3.8],["2012-06-01",6.6],["2012-06-02",0.3],["2012-06-04",1.3],["2012-06-05",16.0],["2012-06-07",16.5],["2012-06-08",1.5],["2012-06-12",0.8],["2012-06-18",3.0],["2012-06-19",1.0],["2012-06-22",15.7],["2012-06-23",8.6],["2012-06-25",0.5],["2012-06-29",0.3],["2012-06-30",3.0],["2012-07-02",2.0],["2012-07-03",5.8],["2012-07-09",1.5],["2012-07-13",0.5],["2012-07-16",0.3],["2012-07-20",15.2],["2012-07-22",1.0],["2012-09-09",0.3],["2012-09-10",0.3],["2012-09-22",0.3],["2012-10-12",2.0],["2012-10-13",4.8],["2012-10-14",16.5],["2012-10-15",7.9],["2012-10-18",20.8],["2012-10-19",4.8],["2012-10-20",0.5],["2012-10-21",6.4],["2012-10-22",8.9],["2012-10-24",7.1],["2012-10-26",1.5],["2012-10-27",23.1],["2012-10-28",6.1],["2012-10-29",10.9],["2012-10-30",34.5],["2012-10-31",14.5],["2012-11-01",9.7],["2012-11-02",5.6],["2012-11-03",0.5],["2012-11-04",8.1],["2012-11-05",0.8],["2012-11-06",0.3],["2012-11-11",15.2],["2012-11-12",3.6],["2012-11-13",5.3],["2012-11-14",0.8],["2012-11-16",5.6],["2012-11-17",6.1],["2012-11-18",7.9],["2012-11-19",54.1],["2012-11-20",3.8],["2012-11-21",11.2],["2012-11-23",32.0],["2012-11-28",2.8],["2012-11-29",1.5],["2012-11-30",35.6],["2012-12-01",4.1],["2012-12-02",19.6],["2012-12-03",13.0],["2012-12-04",14.2],["2012-12-05",1.5],["2012-12-06",1.5],["2012-12-07",1.0],["2012-12-09",1.5],["2012-12-10",0.5],["2012-12-11",3.0],["2012-12-12",8.1],["2012-12-13",2.3],["2012-12-14",7.9],["2012-12-15",5.3],["2012-12-16",22.6],["2012-12-17",2.0],["2012-12-18",3.3],["2012-12-19",13.7],["2012-12-20",13.2],["2012-12-21",1.8],["2012-12-22",3.3],["2012-12-23",6.6],["2012-12-24",0.3],["2012-12-25",13.5],["2012-12-26",4.6],["2012-12-27",4.1],["2012-12-29",1.5],["2013-01-03",4.1],["2013-01-04",2.5],["2013-01-05",3.0],["2013-01-06",2.0],["2013-01-07",2.3],["2013-01-08",16.3],["2013-01-09",38.4],["2013-01-10",0.3],["2013-01-23",5.1],["2013-01-24",5.8],["2013-01-25",3.0],["2013-01-26",2.3],["2013-01-27",1.8],["2013-01-28",7.9],["2013-01-29",4.3],["2013-01-30",3.6],["2013-01-31",3.0],["2013-02-01",0.3],["2013-02-03",2.3],["2013-02-05",3.3],["2013-02-06",1.0],["2013-02-07",1.3],["2013-02-09",0.3],["2013-02-11",0.3],["2013-02-12",1.0],["2013-02-13",2.3],["2013-02-14",1.0],["2013-02-20",1.5],["2013-02-21",0.5],["2013-02-22",9.4],["2013-02-23",0.3],["2013-02-25",2.3],["2013-02-26",0.5],["2013-02-27",4.6],["2013-02-28",8.1],["2013-03-01",4.1],["2013-03-02",0.8],["2013-03-06",11.9],["2013-03-07",7.4],["2013-03-10",0.8],["2013-03-11",1.3],["2013-03-12",2.0],["2013-03-13",2.3],["2013-03-14",2.8],["2013-03-16",4.3],["2013-03-19",11.7],["2013-03-20",9.9],["2013-03-21",8.1],["2013-03-27",0.3],["2013-03-28",2.0],["2013-04-04",8.4],["2013-04-05",18.5],["2013-04-06",12.7],["2013-04-07",39.1],["2013-04-08",0.8],["2013-04-10",9.4],["2013-04-11",1.5],["2013-04-12",9.7],["2013-04-13",9.4],["2013-04-14",5.8],["2013-04-16",0.3],["2013-04-18",5.3],["2013-04-19",20.6],["2013-04-21",3.3],["2013-04-28",1.0],["2013-04-29",3.8],["2013-05-12",6.6],["2013-05-13",3.3],["2013-05-15",1.0],["2013-05-17",0.5],["2013-05-21",13.7],["2013-05-22",13.7],["2013-05-23",4.1],["2013-05-24",0.3],["2013-05-26",1.5],["2013-05-27",9.7],["2013-05-28",0.5],["2013-05-29",5.6],["2013-06-02",1.0],["2013-06-12",0.3],["2013-06-18",0.3],["2013-06-20",3.0],["2013-06-21",0.3],["2013-06-23",7.9],["2013-06-24",4.8],["2013-06-25",9.9],["2013-06-26",2.0],["2013-06-27",3.6],["2013-08-02",2.0],["2013-08-10",2.3],["2013-08-14",0.8],["2013-08-15",1.8],["2013-08-25",0.3],["2013-08-26",1.0],["2013-08-27",1.3],["2013-08-28",5.6],["2013-08-29",19.3],["2013-09-03",2.3],["2013-09-04",0.3],["2013-09-05",27.7],["2013-09-06",21.3],["2013-09-15",3.3],["2013-09-16",0.3],["2013-09-20",3.6],["2013-09-22",13.5],["2013-09-23",2.8],["2013-09-25",2.0],["2013-09-27",1.0],["2013-09-28",43.4],["2013-09-29",16.8],["2013-09-30",18.5],["2013-10-01",7.9],["2013-10-02",5.3],["2013-10-03",0.8],["2013-10-06",4.1],["2013-10-07",0.5],["2013-10-08",6.9],["2013-10-10",1.0],["2013-10-11",9.1],["2013-10-12",1.0],["2013-10-27",1.8],["2013-10-30",0.5],["2013-10-31",0.3],["2013-11-01",1.3],["2013-11-02",12.7],["2013-11-03",0.5],["2013-11-05",2.5],["2013-11-06",3.8],["2013-11-07",30.0],["2013-11-09",1.8],["2013-11-12",4.1],["2013-11-14",1.3],["2013-11-15",3.0],["2013-11-17",5.3],["2013-11-18",26.2],["2013-11-19",1.0],["2013-11-29",0.5],["2013-11-30",2.3],["2013-12-01",3.0],["2013-12-02",4.6],["2013-12-12",6.9],["2013-12-13",0.5],["2013-12-15",1.3],["2013-12-16",0.3],["2013-12-18",1.3],["2013-12-20",5.6],["2013-12-21",5.6],["2013-12-22",10.7],["2013-12-23",1.5],["2013-12-27",0.3],["2013-12-30",0.3],["2013-12-31",0.5],["2014-01-02",4.1],["2014-01-03",1.5],["2014-01-06",0.3],["2014-01-07",12.2],["2014-01-08",9.7],["2014-01-09",5.8],["2014-01-10",4.3],["2014-01-11",21.3],["2014-01-12",1.5],["2014-01-22",0.5],["2014-01-28",8.9],["2014-01-29",21.6],["2014-01-31",2.3],["2014-02-01",2.0],["2014-02-08",5.1],["2014-02-09",0.5],["2014-02-10",18.3],["2014-02-11",17.0],["2014-02-12",4.6],["2014-02-13",1.8],["2014-02-14",9.4],["2014-02-15",11.7],["2014-02-16",26.4],["2014-02-17",14.5],["2014-02-18",15.2],["2014-02-19",1.0],["2014-02-20",3.0],["2014-02-21",2.8],["2014-02-22",2.5],["2014-02-23",6.1],["2014-02-24",13.0],["2014-02-25",0.3],["2014-03-01",0.5],["2014-03-02",19.1],["2014-03-03",10.7],["2014-03-04",16.5],["2014-03-05",46.7],["2014-03-06",3.0],["2014-03-08",32.3],["2014-03-09",4.3],["2014-03-10",18.8],["2014-03-13",0.5],["2014-03-14",6.9],["2014-03-15",8.1],["2014-03-16",27.7],["2014-03-17",0.3],["2014-03-19",0.5],["2014-03-25",4.1],["2014-03-26",3.6],["2014-03-27",0.3],["2014-03-28",22.1],["2014-03-29",14.0],["2014-04-03",2.5],["2014-04-05",4.6],["2014-04-08",4.6],["2014-04-15",0.5],["2014-04-16",10.9],["2014-04-17",18.5],["2014-04-19",13.7],["2014-04-21",5.1],["2014-04-22",14.2],["2014-04-23",8.9],["2014-04-24",12.4],["2014-04-26",3.3],["2014-04-27",6.9],["2014-05-03",33.3],["2014-05-04",16.0],["2014-05-05",5.1],["2014-05-08",13.7],["2014-05-09",2.0],["2014-05-10",0.5],["2014-05-23",3.8],["2014-05-25",5.6],["2014-06-12",1.8],["2014-06-13",6.4],["2014-06-15",0.5],["2014-06-16",3.6],["2014-06-17",1.3],["2014-06-19",0.8],["2014-06-20",0.3],["2014-06-27",1.8],["2014-06-28",2.3],["2014-07-22",0.3],["2014-07-23",19.3],["2014-08-02",0.5],["2014-08-11",0.5],["2014-08-12",12.7],["2014-08-13",21.6],["2014-08-15",1.0],["2014-08-30",8.4],["2014-08-31",1.3],["2014-09-02",3.0],["2014-09-17",0.5],["2014-09-18",0.3],["2014-09-22",0.3],["2014-09-23",18.3],["2014-09-24",20.3],["2014-09-25",4.3],["2014-09-26",8.9],["2014-09-29",0.8],["2014-10-10",0.3],["2014-10-11",7.4],["2014-10-13",7.6],["2014-10-14",7.1],["2014-10-15",8.6],["2014-10-17",3.3],["2014-10-18",15.0],["2014-10-20",11.7],["2014-10-21",1.0],["2014-10-22",32.0],["2014-10-23",9.4],["2014-10-24",4.1],["2014-10-25",6.1],["2014-10-26",1.5],["2014-10-27",0.8],["2014-10-28",12.7],["2014-10-29",0.5],["2014-10-30",25.4],["2014-10-31",17.0],["2014-11-02",1.8],["2014-11-03",10.9],["2014-11-04",4.1],["2014-11-05",4.8],["2014-11-06",4.1],["2014-11-09",5.1],["2014-11-20",3.6],["2014-11-21",15.2],["2014-11-22",0.5],["2014-11-23",11.9],["2014-11-24",1.3],["2014-11-25",18.3],["2014-11-26",0.3],["2014-11-27",3.3],["2014-11-28",34.3],["2014-11-29",3.6],["2014-12-04",0.8],["2014-12-05",3.0],["2014-12-06",7.4],["2014-12-08",9.1],["2014-12-09",9.9],["2014-12-10",13.0],["2014-12-11",6.9],["2014-12-17",2.8],["2014-12-18",13.0],["2014-12-19",3.0],["2014-12-20",19.6],["2014-12-23",20.6],["2014-12-24",5.3],["2014-12-27",3.3],["2014-12-28",4.1],["2015-01-02",1.5],["2015-01-04",10.2],["2015-01-05",8.1],["2015-01-09",0.3],["2015-01-10",5.8],["2015-01-11",1.5],["2015-01-15",9.7],["2015-01-17",26.2],["2015-01-18",21.3],["2015-01-19",0.5],["2015-01-22",0.8],["2015-01-23",5.8],["2015-01-24",0.5],["2015-01-27",0.8],["2015-02-01",1.5],["2015-02-02",7.4],["2015-02-03",1.3],["2015-02-04",8.4],["2015-02-05",26.2],["2015-02-06",17.3],["2015-02-07",23.6],["2015-02-08",3.6],["2015-02-09",6.1],["2015-02-10",0.3],["2015-02-12",1.0],["2015-02-14",0.3],["2015-02-19",4.6],["2015-02-20",0.8],["2015-02-25",4.1],["2015-02-26",9.4],["2015-02-27",18.3],["2015-03-10",0.8],["2015-03-11",2.5],["2015-03-13",2.0],["2015-03-14",17.0],["2015-03-15",55.9],["2015-03-16",1.0],["2015-03-17",0.8],["2015-03-20",4.1],["2015-03-21",3.8],["2015-03-22",1.0],["2015-03-23",8.1],["2015-03-24",7.6],["2015-03-25",5.1],["2015-03-27",1.0],["2015-03-30",1.8],["2015-03-31",1.0],["2015-04-01",5.1],["2015-04-03",1.5],["2015-04-06",1.0],["2015-04-07",0.5],["2015-04-10",10.9],["2015-04-13",14.0],["2015-04-14",3.3],["2015-04-21",5.6],["2015-04-23",3.0],["2015-04-24",3.3],["2015-04-25",1.3],["2015-04-27",0.3],["2015-04-28",1.8],["2015-05-05",6.1],["2015-05-12",4.3],["2015-05-13",4.1],["2015-05-14",0.3],["2015-06-01",4.6],["2015-06-02",0.5],["2015-06-19",0.5],["2015-06-28",0.3],["2015-07-24",0.3],["2015-07-26",2.0],["2015-08-12",7.6],["2015-08-14",30.5],["2015-08-20",2.0],["2015-08-28",0.5],["2015-08-29",32.5],["2015-08-30",10.2],["2015-09-01",5.8],["2015-09-05",0.3],["2015-09-06",5.3],["2015-09-07",0.3],["2015-09-13",0.5],["2015-09-16",1.0],["2015-09-17",1.8],["2015-09-20",4.1],["2015-09-25",2.0],["2015-10-07",9.9],["2015-10-09",0.3],["2015-10-10",28.7],["2015-10-12",4.6],["2015-10-13",1.3],["2015-10-17",0.3],["2015-10-18",3.8],["2015-10-19",0.3],["2015-10-25",8.9],["2015-10-26",6.9],["2015-10-28",3.3],["2015-10-29",1.8],["2015-10-30",19.3],["2015-10-31",33.0],["2015-11-01",26.2],["2015-11-02",0.3],["2015-11-03",0.8],["2015-11-05",1.3],["2015-11-07",12.7],["2015-11-08",6.6],["2015-11-09",3.3],["2015-11-10",1.3],["2015-11-11",1.5],["2015-11-12",9.9],["2015-11-13",33.5],["2015-11-14",47.2],["2015-11-15",22.4],["2015-11-16",2.0],["2015-11-17",29.5],["2015-11-18",1.5],["2015-11-19",2.0],["2015-11-23",3.0],["2015-11-24",7.1],["2015-11-30",0.5],["2015-12-01",12.2],["2015-12-02",2.5],["2015-12-03",12.7],["2015-12-04",2.0],["2015-12-05",15.7],["2015-12-06",11.2],["2015-12-07",27.4],["2015-12-08",54.1],["2015-12-09",13.5],["2015-12-10",9.4],["2015-12-11",0.3],["2015-12-12",16.0],["2015-12-13",1.3],["2015-12-15",1.5],["2015-12-16",3.6],["2015-12-17",21.8],["2015-12-18",18.5],["2015-12-20",4.3],["2015-12-21",27.4],["2015-12-22",4.6],["2015-12-23",6.1],["2015-12-24",2.5],["2015-12-25",5.8],["2015-12-27",8.6],["2015-12-28",1.5]];
+        const BOX = [[-1.1,6.1,8.3,10.0,17.2],[-1.6,7.8,10.0,12.2,16.7],[5.0,10.0,12.2,14.4,20.6],[7.8,12.8,14.2,16.7,27.8],[11.1,16.7,18.3,21.7,30.6],[12.8,19.4,22.2,25.0,33.9],[18.3,22.8,26.1,28.9,35.0],[17.2,23.3,25.9,28.3,35.6],[13.9,18.9,21.1,24.4,33.9],[7.8,14.4,15.9,18.3,25.6],[1.7,9.4,11.1,12.8,17.8],[0.0,5.6,7.8,10.0,18.9]];
+        const POLAR = [116.5,105.5,151.6,93.9,51.9,33.2,12.1,40.9,58.9,125.9,160.6,155.7];
+        const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+        // Only the full entry registers ECharts' chart types: the tree-shaken
+        // `echarts/core` build hands each import its own core, so `use()` and
+        // `init()` land on different instances and nothing draws.
+        const echarts = await import("https://esm.sh/echarts@6.1.0").catch(() => null);
+
+        if (!echarts) {
+          for (const id of ["cal", "box", "polar"]) {
+            document.querySelector("#" + id).innerHTML =
+              '<p class="p-4 text-[13px] text-muted-foreground">The chart library did not load. The figures are in the table below.</p>';
+          }
+        } else {
+          // ECharts takes color strings rather than CSS, so tokens are resolved
+          // through a real property and read again when the theme moves.
+          const probe = document.createElement("div");
+          probe.style.cssText = "position:absolute;visibility:hidden";
+          document.body.appendChild(probe);
+          const tone = (n) => {
+            probe.style.color = `var(--color-${n})`;
+            return getComputedStyle(probe).color;
+          };
+
+          const charts = ["cal", "box", "polar"].map((id) => [id, echarts.init(document.querySelector("#" + id), null, { renderer: "svg" })]);
+          const base = () => ({
+            textStyle: { fontFamily: "inherit", color: tone("muted-foreground"), fontSize: 12 },
+            tooltip: {
+              backgroundColor: tone("card"),
+              borderColor: tone("border"),
+              textStyle: { color: tone("foreground"), fontFamily: "inherit", fontSize: 12 },
+            },
+          });
+          const axis = () => ({
+            axisLine: { lineStyle: { color: tone("border") } },
+            axisLabel: { color: tone("muted-foreground") },
+            splitLine: { lineStyle: { color: tone("border"), opacity: 0.6 } },
+          });
+
+          const paint = () => {
+            const b = base();
+            const ink = tone("foreground");
+
+            charts[0][1].setOption({
+              ...b,
+              tooltip: { ...b.tooltip, formatter: (p) => `${p.value[0]}<br>${p.value[1]} mm` },
+              visualMap: {
+                min: 0, max: 30, calculable: true, orient: "horizontal", right: 20, top: 0, itemWidth: 12, itemHeight: 90,
+                inRange: { color: [tone("brand-100"), tone("brand-400"), tone("brand-700")] },
+                textStyle: { color: tone("muted-foreground") },
+              },
+              calendar: [2012, 2013, 2014, 2015].map((y, i) => ({
+                top: 46 + i * 122, left: 62, right: 30, cellSize: ["auto", 13], range: String(y),
+                itemStyle: { color: "transparent", borderColor: tone("border"), borderWidth: 1 },
+                splitLine: { lineStyle: { color: tone("border") } },
+                yearLabel: { show: true, color: tone("muted-foreground"), margin: 34 },
+                dayLabel: { color: tone("muted-foreground"), nameMap: "en" },
+                monthLabel: { color: tone("muted-foreground"), nameMap: "en" },
+              })),
+              series: [2012, 2013, 2014, 2015].map((y, i) => ({
+                type: "heatmap", coordinateSystem: "calendar", calendarIndex: i,
+                data: CAL.filter((d) => d[0].startsWith(String(y))),
+              })),
+            });
+
+            charts[1][1].setOption({
+              ...b,
+              grid: { left: 46, right: 14, top: 18, bottom: 30 },
+              xAxis: { type: "category", data: MONTHS, ...axis(), splitLine: { show: false } },
+              yAxis: { type: "value", name: "°C", nameTextStyle: { color: tone("muted-foreground") }, ...axis() },
+              series: [{
+                type: "boxplot", data: BOX,
+                itemStyle: { color: tone("brand-100"), borderColor: tone("brand-600") },
+                emphasis: { itemStyle: { color: tone("brand-200"), borderColor: tone("brand-700") } },
+              }],
+            });
+
+            charts[2][1].setOption({
+              ...b,
+              polar: { radius: [22, "72%"] },
+              angleAxis: { type: "category", data: MONTHS, startAngle: 90, ...axis() },
+              radiusAxis: { ...axis(), axisLabel: { color: tone("muted-foreground"), fontSize: 10 } },
+              series: [{
+                type: "bar", coordinateSystem: "polar", data: POLAR,
+                itemStyle: { color: tone("brand-500"), borderRadius: 3 },
+                emphasis: { itemStyle: { color: tone("brand-700") } },
+              }],
+            });
+            void ink;
+          };
+
+          paint();
+          matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paint);
+          for (const [id, c] of charts) new ResizeObserver(() => c.resize()).observe(document.querySelector("#" + id));
+        }
+      </script>
+    </main>
+    <!-- shell:start -->
+    <!-- The page as written, kept for the share widget before any script has
+         changed it. A page's own scripts are modules, and Tailwind is deferred,
+         so both run after this and a shared copy carries the markup rather than
+         what a script drew on it. -->
+    <script>
+      {
+        // A script that failed while the page was still parsing has already
+        // marked the root as shown; a copy starts held back, like the file.
+        const page = document.documentElement.cloneNode(true);
+        page.classList.remove("instrument-ready");
+        window.__instrumentSource = "<!doctype html>\n" + page.outerHTML;
+      }
+
+      // Progressive: with scripts off, or offline, every link reads exactly as
+      // it does now and nothing shifts. Only the origin is ever sent, never the
+      // path, so a link's query string is not handed over to draw an icon.
+      // Waits for the page's module scripts, so a link one of them draws gets
+      // its icon like any other.
+      const decorate = () => {
+        const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+        for (const link of document.querySelectorAll('a[href^="https://"]')) {
+          const icon = document.createElement("img");
+          icon.alt = "";
+          icon.className = "site-icon";
+          icon.src =
+            "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+            encodeURIComponent(new URL(link.href).origin);
+
+          // A line may break between an image and the text beside it, so the icon
+          // and the first word it leads go in a span that cannot break. A link
+          // with no text of its own takes the icon at the front of the link.
+          const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+          let text = walker.nextNode();
+          while (text && !text.data.trim()) text = walker.nextNode();
+          let host = link;
+          if (text) {
+            const at = text.data.search(/\S/);
+            const word = at > 0 ? text.splitText(at) : text;
+            const space = word.data.search(/\s/);
+            if (space > 0) word.splitText(space); // The rest of the text stays put.
+            host = document.createElement("span");
+            host.className = "site-icon-word";
+            word.replaceWith(host);
+            host.append(word);
+          }
+
+          const drop = () => {
+            icon.remove();
+            if (host !== link) host.replaceWith(...host.childNodes);
+          };
+          icon.onerror = drop;
+          icon.onload = () => {
+            if (icon.naturalWidth <= ABSENT) drop();
+          };
+          host.prepend(icon);
+        }
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", decorate, { once: true });
+      } else {
+        decorate();
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>
