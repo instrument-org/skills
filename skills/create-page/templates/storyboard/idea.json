@@ -7,5 +7,5 @@
   "needs": [],
   "cover": "first-monday",
   "sections": ["A name and one line", "The panels", "One line underneath"],
-  "sketch": ["frames"]
+  "sketch": ["panels"]
 }
