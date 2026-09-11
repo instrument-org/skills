@@ -1,12 +1,21 @@
 # Loading a library
 
-Every page loads its type from Google Fonts and everything else from one host, `https://esm.sh`. esm.sh serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked, hands a file over untouched when asked, and marks a pinned URL immutable. `pnpm check:ideas` rejects any other host and any esm.sh URL that is not pinned to an exact version.
+Any library, from a short list of general-purpose package hosts. `esm.sh` is the default and the one to reach for first: it serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked, hands a file over untouched when asked, and marks a pinned URL immutable. `allowed-sources.json` at the registry root is the list, `pnpm check:ideas` holds every page to it, and the pages worker derives a hosted copy's `connect-src` from the same file.
+
+**Which library is yours to choose.** Nothing here is a curated set of blessed packages; if a page wants a physics engine, a music notation renderer or a date picker, import it. What the list bounds is the host and the version.
 
 The rule that has not changed: **open the page with the network off and every number, name, place and finding is still there, in the HTML.** A library may add motion, precision or scale to something already on the page; it may never be the only copy of a fact. So every import below has a branch for not arriving, and the page says on it what that branch shows.
 
 ## Pin it
 
-`https://esm.sh/<package>@<major>.<minor>.<patch>`, then whatever the package keeps under it. `@4` and no version both resolve to whatever is newest on the day the page is opened, which is the one kind of change the offline test cannot catch, so neither passes the check. Pick the version once, from `npm view <package> version`, and write it everywhere the page names the package.
+Every host on the list insists on an exact version, `<major>.<minor>.<patch>`. `@4` and no version both resolve to whatever is newest on the day the page is opened, and a page is an artifact somebody opens in a year: that drift is the one kind of change the offline test cannot catch, so neither passes the check. Pick the version once, from `npm view <package> version`, and write it everywhere the page names the package.
+
+| Host                                                | Shape                                 | Reach for it when                                                                     |
+| --------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `esm.sh/<pkg>@1.2.3`                                | anything, built as a module           | always, first                                                                         |
+| `cdn.jsdelivr.net/npm/<pkg>@1.2.3/<file>`           | npm as published, file for file       | the package ships a UMD or IIFE build you want unrewritten, or esm.sh cannot build it |
+| `unpkg.com/<pkg>@1.2.3/<file>`                      | the same, and what most READMEs print | you are copying a library's own documented script tag                                 |
+| `cdnjs.cloudflare.com/ajax/libs/<lib>/1.2.3/<file>` | hand-curated, minified builds         | the library never shipped to npm, or only its single-file build is any use            |
 
 ## Four shapes, and which to reach for
 

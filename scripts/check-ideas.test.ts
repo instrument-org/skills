@@ -48,6 +48,48 @@ describe("checkSelfContained", () => {
     expect(errorsFor(html)).toEqual([]);
   });
 
+  // esm.sh is the default, not the boundary: an agent reaching for a library
+  // only another host carries, or copying the script tag a package's own README
+  // prints, lands on one of these.
+  it.each([
+    [
+      "jsDelivr's npm mirror",
+      `<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>`,
+    ],
+    [
+      "a scoped package on jsDelivr",
+      `<script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/dist/plot.umd.min.js"></script>`,
+    ],
+    [
+      "unpkg",
+      `<script src="https://unpkg.com/three@0.169.0/build/three.js"></script>`,
+    ],
+    [
+      "cdnjs",
+      `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/katex/0.16.11/katex.min.css" />`,
+    ],
+  ])("passes %s, pinned to an exact version", (_name, html) => {
+    expect(errorsFor(html)).toEqual([]);
+  });
+
+  it.each([
+    [
+      "jsDelivr without a version",
+      `<script src="https://cdn.jsdelivr.net/npm/d3/dist/d3.min.js"></script>`,
+    ],
+    [
+      "jsDelivr's GitHub mirror, which serves a branch",
+      `<script src="https://cdn.jsdelivr.net/gh/user/repo@main/x.js"></script>`,
+    ],
+    ["unpkg at a major", `<script src="https://unpkg.com/three@0"></script>`],
+    [
+      "cdnjs without a version",
+      `<script src="https://cdnjs.cloudflare.com/ajax/libs/katex/katex.min.js"></script>`,
+    ],
+  ])("rejects %s", (_name, html) => {
+    expect(errorsFor(html)).toHaveLength(1);
+  });
+
   // Each of these resolves to whatever is newest the day the page is opened,
   // which is the one kind of change the offline test cannot catch.
   it.each([

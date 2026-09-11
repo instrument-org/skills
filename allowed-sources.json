@@ -1,5 +1,5 @@
 {
-  "about": "What a page made by create-page may load, and what its script may build at runtime. scripts/check-ideas.ts holds every example to this file, and the pages worker in instrument-org/internal derives the connect-src of every hosted copy from it, so an origin added here needs a pages deploy there before hosted copies honor it. Tags are matched by exact origin and path family, so a lookalike host does not pass; a pin is a pattern the path must also match.",
+  "about": "What a page made by create-page may load, and what its script may build at runtime. scripts/check-ideas.ts holds every example to this file, and the pages worker in instrument-org/internal derives the connect-src of every hosted copy from it, so an origin added here needs a pages deploy there before hosted copies honor it. These pages are written by an agent reaching for whatever a page needs, so the list names the general-purpose package hosts rather than the packages we happened to think of: any library on any of them is fair game. What every entry does insist on is an exact version, since a page is an artifact someone opens in a year and an unpinned URL resolves to whatever is newest that day. Tags are matched by exact origin and path family, so a lookalike host does not pass; a pin is a pattern the path must also match.",
   "tags": [
     {
       "origin": "https://fonts.googleapis.com",
@@ -20,7 +20,25 @@
       "origin": "https://esm.sh",
       "path": "/",
       "pin": "^\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
-      "why": "Every library, and the starter's own framework and icon set, come from one host. esm.sh serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked (?deps=), hands a file over untouched when asked (?raw), and marks a pinned URL immutable. The pin requires /<package>@<exact version>: @4 or no version at all resolves to whatever is newest on the day the page is opened, which is drift the offline test cannot catch. What a page may reach for is still bounded by the offline test in SKILL.md: a library may add motion, precision or scale to something already on the page, and may never be the only copy of a fact."
+      "why": "The default, and where the starter's own framework and icon set come from. esm.sh serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked (?deps=), hands a file over untouched when asked (?raw), and marks a pinned URL immutable. Reach past it only for a package it cannot build, or a build only another host carries."
+    },
+    {
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/",
+      "pin": "^\\/npm\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
+      "why": "Mirrors npm as published, so it carries the UMD and IIFE builds a package ships and esm.sh would rewrite, and it is the host older shared pages were written against."
+    },
+    {
+      "origin": "https://unpkg.com",
+      "path": "/",
+      "pin": "^\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
+      "why": "The other npm mirror, and the one a package's own README usually names, so an agent copying a library's documented script tag lands here."
+    },
+    {
+      "origin": "https://cdnjs.cloudflare.com",
+      "path": "/ajax/libs/",
+      "pin": "^\\/ajax\\/libs\\/[\\w.-]+\\/\\d+\\.\\d+\\.\\d+(?:[-\\w.]+)?\\/",
+      "why": "Hand-curated rather than a mirror, which is why it carries libraries that never shipped to npm and the minified single-file builds of ones that did."
     }
   ],
   "built": [
