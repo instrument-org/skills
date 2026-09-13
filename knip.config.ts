@@ -10,10 +10,12 @@ const config: KnipConfig = {
     // Read by scripts/ideas.ts as a file, not imported.
     "skin/theme.css",
     // The kits a create-page template ships for an agent to import from a
-    // script of its own, in the consuming project. Nothing in this repo imports
+    // script of its own, in the consuming project, and the share script the
+    // skill ships for an agent to run there. Nothing in this repo imports
     // them, which is the point of them, and create-page carries no package.json
     // for the workspace entry patterns above to hang off.
     "skills/create-page/templates/*/scripts/**",
+    "skills/create-page/share.mjs",
   ],
   ignoreBinaries: [
     "actionlint", // Used by scripts/check-actions.ts

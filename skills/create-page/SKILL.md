@@ -52,7 +52,7 @@ When none of them fit, say so and write the page anyway, using the nearest templ
 4. Copy `starter.html` to `output/<slug>.html`, set its `instrument:idea` meta to the template's name, and paste the template's `main.html` inside `<main>`. The starter carries the tab icon, the skin, the fonts, the icon set, and the page behavior, each inside a `shell:start` … `shell:end` pair; leave those regions as they are, and everything under `<main>` is yours. Your own CSS goes in the gap the starter leaves between them.
 5. Fill the slots with the research. Sections may be reordered, merged, renamed, or rebuilt, but every intent the template names must be answered somewhere on the page.
 6. Check it against the refusals below and the template's own, open it, and look at it once at a laptop width. Fix what you see, then stop.
-7. Put it in front of the reader. If you have any way to open or present the page, such as opening it in the app or a browser, rendering it in a viewer, or publishing it and returning the link, use it, and give the path as well. A page the reader has to find on disk and double-click is one many never open.
+7. Put it in front of the reader. Open it in the app or a browser, or render it in a viewer, whichever this environment offers, and give the path as well. Where the reader cannot open a file from where they are, or asked for a link, publish it to a public link with `share.mjs` the way [`references/sharing.md`](references/sharing.md) says, and hand that back with what it means. A page the reader has to find on disk and double-click is one many never open.
 
 Research before you write, and write from what you found. A page whose facts came from the model rather than from a source is the failure this whole skill exists to avoid.
 
@@ -94,5 +94,6 @@ Vocabulary, not layout. Read the one whose form is in play, not all of them.
 - [`references/interaction.md`](references/interaction.md) — answer forms, runbook ticks, click-to-enlarge, details/summary, and the rule that interaction may orient but never gate.
 - [`references/images.md`](references/images.md) — when a picture earns its place, how to size and inline one, and what to draw when there is no photo to use.
 - [`references/loading.md`](references/loading.md) — the one host a library comes from, the four shapes an import takes, how a React library gets one React, and what the page shows when the import never arrives.
+- [`references/sharing.md`](references/sharing.md) — publishing a finished page to a public link on the reader's behalf: when that is the right move and when it is not, the one command, and what to tell them.
 
 Each template also has a `patterns.md` beside it, for the vocabulary only that document kind uses.
