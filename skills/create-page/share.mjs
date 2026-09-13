@@ -73,7 +73,7 @@ export async function publish(page) {
   const bytes = await readFile(page);
   if (bytes.byteLength > MAX_BYTES) {
     throw new Error(
-      `${page} is ${(bytes.byteLength / 1024 / 1024).toFixed(1)} MB; the share host takes up to 8 MB, and a page should be under about 1.5`,
+      `${page} is ${(bytes.byteLength / 1024 / 1024).toFixed(1)} MB; the share host takes up to 8 MB. Check its images for bytes the box they render in never shows.`,
     );
   }
   const head = bytes.subarray(0, 8192).toString("utf8");

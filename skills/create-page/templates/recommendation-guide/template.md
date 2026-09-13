@@ -29,7 +29,7 @@ Free, and expected to differ between two pages made a day apart: the layout and 
 
 ## Pictures of the picks
 
-A guide about things people buy carries a photo of each pick, embedded in the file as a data URI so it opens anywhere, sourced from the maker's product page, and sized so the file stays small: one picture per pick, each under about 80 KB, and the whole file under about 1.5 MB, because a file that will not open in a mail client or a chat is not shareable. Read [`references/images.md`](references/images.md) for where a picture goes, how to fetch and inline one, and what to do when no picture of the actual product can be had. A software guide may leave pictures out.
+A guide about things people buy carries a photo of each pick, embedded in the file as a data URI so it opens anywhere, sourced from the maker's product page, and sized to the box it renders in: one picture per pick, each about 40 to 80 KB once cropped and encoded properly, so a guide with a dozen picks still travels as an attachment. Read [`references/images.md`](references/images.md) for where a picture goes, how to fetch and inline one, and what to do when no picture of the actual product can be had. A software guide may leave pictures out.
 
 ## Refusals
 

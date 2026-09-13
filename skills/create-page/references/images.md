@@ -8,11 +8,11 @@ A picture earns its place when the reader is choosing between physical things th
 
 If the answer is no, the page is better without it. Whitespace, a heading, and a well-set table carry more authority than a picture that is there because pages usually have pictures.
 
-## The ceiling
+## Pay for it properly
 
-**200 KB per inline image**, enforced by `check:ideas`, and **about 1.5 MB for the whole file**. Those are ceilings, not targets: most photos should land well under.
+There is no ceiling on what a page may weigh. A page that carries a dozen product photos, or a dataset of thousands of rows, is carrying what the reader asked for. What there is no excuse for is a picture carrying bytes the reader's screen will never show, because those are paid by everyone the page is sent to and buy nothing.
 
-The recipe that reliably comes in under it: **crop to the aspect the layout uses, resize to 720 pixels on the long edge, and encode JPEG at quality 78.** A product photo done that way is usually 40 to 80 KB.
+The recipe: **crop to the aspect the layout uses, resize to 720 pixels on the long edge, and encode JPEG at quality 78.** A product photo done that way is usually 40 to 80 KB. One that comes out over about 200 KB was not resized, and `check:ideas` holds the registry's own examples to that line so the shape an agent copies is a light one.
 
 A template may go stricter and should say why. `comparison-matrix` uses 480 wide at quality 72 because its photos sit in table cells rendered at `width="480"`, and a matrix carries many of them; going stricter there is right, and going stricter without a reason is just a worse picture.
 
@@ -42,7 +42,7 @@ def inline_photo(url: str, width: int = 720, quality: int = 78) -> str:
 
 Give every `<img>` a `width` and `height` so the line does not reflow as the page paints, and real `alt` text saying what the picture shows, not what it is of.
 
-Base64 costs a third more than the bytes it carries, so a 150 KB photo becomes a 200 KB attribute. Budget against the encoded size, which is what `check:ideas` measures.
+Base64 costs a third more than the bytes it carries, so a 150 KB photo becomes a 200 KB attribute. Count the encoded size, which is what `check:ideas` measures.
 
 ## When there is no photo
 

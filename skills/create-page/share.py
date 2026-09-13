@@ -106,7 +106,7 @@ def publish(page: Path) -> str:
     data = page.read_bytes()
     if len(data) > MAX_BYTES:
         raise ShareError(
-            f"{page} is {len(data) / 1024 / 1024:.1f} MB; the share host takes up to 8 MB, and a page should be under about 1.5"
+            f"{page} is {len(data) / 1024 / 1024:.1f} MB; the share host takes up to 8 MB. Check its images for bytes the box they render in never shows."
         )
     head = data[:8192].decode("utf-8", "replace")
     if not re.match(r"\s*<!doctype html", head, re.I):

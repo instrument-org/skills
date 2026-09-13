@@ -34,9 +34,10 @@ import {
 // of them used to have.
 const SKILL_DESCRIPTION_MAX_LENGTH = 400;
 const MIN_EXAMPLES = 3;
-// A page travels as one file, so its size is its shareability. Inline images
-// are where it goes wrong: a handful at a few megabytes each and the file no
-// longer opens in a mail client or a chat.
+// An example is the shape an agent copies, so it stays light: a page a user
+// asks for may weigh what its content weighs, but an example carrying a photo
+// at a few megabytes teaches that as the norm. Inline images are where it goes
+// wrong, and the skill's images reference has the recipe.
 const EXAMPLE_MAX_BYTES = 1_500_000;
 const INLINE_IMAGE_MAX_BYTES = 200_000;
 // The marks a sketch may name; the website draws them. See AGENTS.md, Ideas.
@@ -161,7 +162,7 @@ function checkSize(file: string, html: string, errors: string[]) {
   const bytes = Buffer.byteLength(html);
   if (bytes > EXAMPLE_MAX_BYTES) {
     errors.push(
-      `${file}: ${Math.round(bytes / 1000)} KB, over the ${EXAMPLE_MAX_BYTES / 1000} KB a page may weigh; shrink its images`,
+      `${file}: ${Math.round(bytes / 1000)} KB, over the ${EXAMPLE_MAX_BYTES / 1000} KB an example may weigh; shrink its images`,
     );
   }
   for (const match of html.matchAll(
