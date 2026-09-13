@@ -20,13 +20,13 @@
       "origin": "https://esm.sh",
       "path": "/",
       "pin": "^\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
-      "why": "The default, and where the starter's own framework and icon set come from. esm.sh serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked (?deps=), hands a file over untouched when asked (?raw), and marks a pinned URL immutable. Reach past it only for a package it cannot build, or a build only another host carries."
+      "why": "The default for a library. esm.sh serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked (?deps=), hands a file over untouched when asked (?raw), and marks a pinned URL immutable. Reach past it only for a package it cannot build, or a build only another host carries."
     },
     {
       "origin": "https://cdn.jsdelivr.net",
       "path": "/npm/",
       "pin": "^\\/npm\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
-      "why": "Mirrors npm as published, so it carries the UMD and IIFE builds a package ships and esm.sh would rewrite, and it is the host older shared pages were written against."
+      "why": "Mirrors npm as published, so it carries the UMD and IIFE builds a package ships and esm.sh would rewrite. The starter's own framework and icon set come from here: neither needs building, and this is the host a framed viewer's Content Security Policy is likeliest to name."
     },
     {
       "origin": "https://unpkg.com",

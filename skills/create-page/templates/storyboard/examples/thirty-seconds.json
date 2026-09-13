@@ -4,5 +4,5 @@
   "prompt": "Storyboard a thirty-second spot for the bakery's delivery, shot by shot, with the voice-over against each.",
   "model": "claude-fable-5-1",
   "note": "The shot-list shape, which is what a storyboard means to anyone who has made a film: wide and close alternate, the timecode is monospace, and what is said over the shot is a second column in the brand color because it is copy rather than commentary. It is the example that uses the close-up, twice: hands and a tray with no face, then the first face in the spot, cropped by the panel, and the caption says why the face was held back. Camera moves are thin accent arrows outside the picture's own logic. The van and the phone are kit pieces; the tray and the loaves are four ellipses drawn in the call, which is what the kit is for when a beat needs one thing it does not have. Timings are targets and the voice-over is draft.",
-  "html_sha256": "42a7dccf0775f9abcac09b84ccfd3eb9e67b36eaeff7e0af56aca49651bf9269"
+  "html_sha256": "c5acb13b3603c8a1ea6488929a37dfb4f1d5a2800eb2b1a147565af028536f2a"
 }

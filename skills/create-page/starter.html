@@ -173,7 +173,13 @@
          `opsz,wght@8..144,400` does, buys the whole optical-size range at 144 KB
          a weight where a plain weight costs 64. Same type, 196 KB instead of 497. -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://esm.sh/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <!-- shell:note The framework and the icon set come from jsDelivr, as
+         published, rather than from the builder host a library may use. Neither
+         needs building, and some places a page is opened are frames whose
+         Content Security Policy names a few plain CDNs and nothing else; a
+         framework that cannot load there is a page shown unstyled, where an
+         icon set or a library that cannot load is a page shown without them. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
       /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
@@ -366,10 +372,10 @@
          head the moment it runs, and a copy that carried it would carry a
          different sheet on every load. Compiling is asynchronous either way, so
          the delay is the parse time of the body and nothing a reader sees.
-         `?raw` asks esm.sh for the file as published: this build is a plain
-         script that installs a global, and wrapped as a module it would export
-         nothing and run nowhere. -->
-    <script defer src="https://esm.sh/@tailwindcss/browser@4.3.3?raw"></script>
+         The file as published, by its path: this build is a plain script that
+         installs a global, and wrapped as a module it would export nothing and
+         run nowhere. -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3/dist/index.global.js"></script>
     <!-- shell:end -->
 
     <!-- shell:note A page's own CSS goes here, between the framework above and
