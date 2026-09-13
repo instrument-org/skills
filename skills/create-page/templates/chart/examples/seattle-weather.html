@@ -551,7 +551,7 @@
         // Only the full entry registers ECharts' chart types: the tree-shaken
         // `echarts/core` build hands each import its own core, so `use()` and
         // `init()` land on different instances and nothing draws.
-        const echarts = await import("https://esm.sh/echarts@6.1.0").catch(() => null);
+        const echarts = await import("https://cdn.jsdelivr.net/npm/echarts@6.1.0/+esm").catch(() => null);
 
         if (!echarts) {
           for (const id of ["cal", "box", "polar"]) {

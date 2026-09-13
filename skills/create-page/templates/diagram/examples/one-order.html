@@ -487,7 +487,7 @@
 
       <script type="module">
         const DIAGRAMS = [{"id":"flow","src":"flowchart TD\n  A([order placed]) --> B[payment authorized]\n  B --> C{in stock?}\n  C -- yes --> D[picked]\n  C -- no --> E[backorder]\n  E --> F[supplier] --> D\n  D --> G[packed] --> H[shipped]\n  H --> I([delivered])\n  I -. return .-> J[inspected]\n  J -- resellable --> D\n  J -- not --> K[written off]"},{"id":"seq","src":"sequenceDiagram\n  autonumber\n  actor C as Customer\n  participant S as Shop\n  participant P as Payment provider\n  participant W as Warehouse\n  C->>S: place order\n  S->>P: authorize \u00a348.20\n  P-->>S: held, expires in 7 days\n  S->>W: pick and pack\n  Note over S,W: hours to days\n  W-->>S: handed to carrier\n  S->>P: capture \u00a348.20\n  P-->>S: settled\n  S-->>C: shipped, with tracking"},{"id":"state","src":"stateDiagram-v2\n  [*] --> Pending\n  Pending --> Authorized: payment held\n  Pending --> Failed: declined\n  Authorized --> Picking\n  Picking --> Backordered: out of stock\n  Backordered --> Picking: restocked\n  Picking --> Shipped\n  Shipped --> Delivered\n  Delivered --> Returned: within 30 days\n  Returned --> Refunded\n  Failed --> [*]\n  Refunded --> [*]\n  Delivered --> [*]"}];
-        const mermaid = (await import("https://esm.sh/mermaid@12.0.0").catch(() => null))?.default;
+        const mermaid = (await import("https://cdn.jsdelivr.net/npm/mermaid@12.0.0/+esm").catch(() => null))?.default;
 
         // Mermaid writes its colors into the SVG as hex rather than reading CSS,
         // so the page hands it resolved values and redraws when the theme moves.

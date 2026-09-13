@@ -390,7 +390,7 @@
   <body class="bg-background font-sans text-foreground antialiased">
     <main class="mx-auto max-w-6xl px-5 py-10 sm:px-8">
       <!-- The page is a map with its places written under it. -->
-      <link rel="stylesheet" href="https://esm.sh/leaflet@1.9.4/dist/leaflet.css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
       <style>
         /* Leaflet paints its own white tiles and black attribution. */
         #map { background: var(--color-muted); }
@@ -504,7 +504,7 @@
         panel and the list above is unchanged.
       </p>
 
-      <script src="https://esm.sh/leaflet@1.9.4/dist/leaflet.js?raw"></script>
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
       <script type="module">
         // [code, name, lat, lon, km to nearest, which]. The table above is the
         // same numbers, so a map that never loads costs a picture and no facts.

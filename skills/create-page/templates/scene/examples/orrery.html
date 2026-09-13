@@ -517,9 +517,9 @@
         const SUN_KM = 1392700;
 
         const sky = document.querySelector("#sky");
-        const THREE = await import("https://esm.sh/three@0.180.0").catch(() => null);
+        const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.180.0/+esm").catch(() => null);
         const orbit = THREE
-          ? await import("https://esm.sh/three@0.180.0/examples/jsm/controls/OrbitControls.js?deps=three@0.180.0").catch(() => null)
+          ? await import("https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js/+esm").catch(() => null)
           : null;
 
         if (!THREE || !orbit) {

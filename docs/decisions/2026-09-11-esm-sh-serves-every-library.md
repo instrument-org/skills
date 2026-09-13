@@ -1,6 +1,6 @@
 # esm.sh serves every library
 
-Status: accepted, 2026-09-11
+Status: superseded by [`2026-09-13-jsdelivr-first-esm-sh-for-react-graphs.md`](2026-09-13-jsdelivr-first-esm-sh-for-react-graphs.md), which keeps esm.sh for the React case below and moves everything else to jsDelivr. Accepted 2026-09-11.
 
 ## What
 

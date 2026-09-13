@@ -20,13 +20,13 @@
       "origin": "https://esm.sh",
       "path": "/",
       "pin": "^\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
-      "why": "The default for a library. esm.sh serves any npm package as a module at one URL shape, resolves a React once across a whole import graph when asked (?deps=), hands a file over untouched when asked (?raw), and marks a pinned URL immutable. Reach past it only for a package it cannot build, or a build only another host carries."
+      "why": "The builder host. esm.sh serves any npm package as a module at one URL shape and, asked with ?deps=, resolves one React across a whole import graph, which a mirror cannot: each package's peer range resolves on its own there and a React component library arrives with several Reacts in it. Reach for it for that, and for a package the mirror's module build cannot handle. Framed viewers with a strict Content Security Policy do not name it, so a page that needs it says in its template what it shows there."
     },
     {
       "origin": "https://cdn.jsdelivr.net",
       "path": "/npm/",
       "pin": "^\\/npm\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
-      "why": "Mirrors npm as published, so it carries the UMD and IIFE builds a package ships and esm.sh would rewrite. The starter's own framework and icon set come from here: neither needs building, and this is the host a framed viewer's Content Security Policy is likeliest to name."
+      "why": "The default. Mirrors npm as published, file for file, so a classic script, a stylesheet or an asset is at its own path, and builds any file as a module at /+esm with its dependencies pinned on the same host. The starter's own framework and icon set come from here. It is the host a framed viewer's Content Security Policy is likeliest to name, which is what makes it first."
     },
     {
       "origin": "https://unpkg.com",

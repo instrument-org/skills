@@ -491,7 +491,7 @@
         // Plot comes in as a module, or does not come at all: every chart on
         // the page has its table under it, so a failed import costs pictures
         // and no figures. d3 rides inside the same import.
-        const Plot = await import("https://esm.sh/@observablehq/plot@0.6.17").catch(() => undefined);
+        const Plot = await import("https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/+esm").catch(() => undefined);
         // The readings, inline. Every chart and table below is drawn from these,
         // so the picture and the numbers under it cannot disagree.
         const MONTHS = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];

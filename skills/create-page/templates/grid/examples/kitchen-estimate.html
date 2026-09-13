@@ -688,7 +688,7 @@
         const TRADES = ["Strip out","Building","Plumbing","Electrical","Joinery","Tiling","Decorating","Appliances"];
 
         const host = document.querySelector("#sheet");
-        const ag = await import("https://esm.sh/ag-grid-community@36.1.0").catch(() => null);
+        const ag = await import("https://cdn.jsdelivr.net/npm/ag-grid-community@36.1.0/+esm").catch(() => null);
 
         if (!ag) {
           host.innerHTML = '<p class="p-4 text-[13px] text-muted-foreground">The grid did not load, so this sheet cannot be edited. Every line it opens with is under the fold below.</p>';

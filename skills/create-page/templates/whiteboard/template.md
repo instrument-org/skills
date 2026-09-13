@@ -52,7 +52,7 @@ Fixed: the page is the board, the scene is in the page as JSON, everything bound
 
 ## What it may load, and what has to survive without it
 
-Excalidraw, from esm.sh, the way `references/loading.md` describes: React and ReactDOM pinned, the editor with `?deps=` naming the same pins, its stylesheet by path, and its fonts through the asset path the page sets before importing. About 1.2 MB, which no other template spends and which this one earns because the editor **is** the page.
+Excalidraw, from esm.sh rather than the default host, the way `references/loading.md` describes for a React component library: React and ReactDOM pinned, the editor with `?deps=` naming the same pins, its stylesheet by path, and its fonts through the asset path the page sets before importing. About 1.2 MB, which no other template spends and which this one earns because the editor **is** the page. A framed viewer whose Content Security Policy names only a few plain CDNs will not load it, and shows the plain SVG below instead.
 
 What survives without it is decided at three levels. Before the editor arrives, and for good if it never does, the page draws the same scene itself as plain SVG, in the page's own type: every shape, arrow, label, image and note, fitted to the window, not hand-drawn. Under that, the scene is in the file as text a reader can open. And a page whose facts are only in an image on the board has broken the rule everything else here obeys: anything a reader needs is written as text on the board too.
 

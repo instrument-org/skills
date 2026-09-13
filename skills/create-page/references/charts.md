@@ -146,22 +146,23 @@ Same for any other JavaScript that takes a color string rather than setting CSS.
 
 Everything above needs nothing but the page, and most pages should stop there: a set of bar rows or a generated sparkline says what a chart would and costs nothing. Where the material is genuinely a dataset, the page may import a charting library the way `references/loading.md` describes, pinned to an exact version, and the test is never whether it loads but what happens when it does not. **The numbers a chart draws are on the page as a table too, always rendered, directly beneath it.** Not in a tooltip, not behind a `details` the reader has to open, not only inside the library's own DOM. Pull the network and the page loses a picture and no facts.
 
-|                   | Chart.js                                         | Observable Plot                                           |
-| ----------------- | ------------------------------------------------ | --------------------------------------------------------- |
-| Import            | `https://esm.sh/chart.js@4.5.1/auto`, `.default` | `https://esm.sh/@observablehq/plot@0.6.17`, the namespace |
-| Wire cost         | about 70 KB                                      | about 140 KB, d3 included                                 |
-| Draws             | canvas                                           | SVG                                                       |
-| Theme tokens      | need the probe above                             | `fill: "var(--color-brand-500)"` works directly           |
-| Prints            | as a bitmap                                      | as vector, at any size                                    |
-| Small multiples   | build them yourself                              | `facet: { data, x: "category" }`                          |
-| Reach for it when | one or two ordinary charts                       | facets, distributions, regressions, anything statistical  |
+|                   | Chart.js                                                            | Observable Plot                                                              |
+| ----------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Import            | `https://cdn.jsdelivr.net/npm/chart.js@4.5.1/auto/+esm`, `.default` | `https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/+esm`, the namespace |
+| Wire cost         | about 70 KB                                                         | about 140 KB, d3 included                                                    |
+| Draws             | canvas                                                              | SVG                                                                          |
+| Theme tokens      | need the probe above                                                | `fill: "var(--color-brand-500)"` works directly                              |
+| Prints            | as a bitmap                                                         | as vector, at any size                                                       |
+| Small multiples   | build them yourself                                                 | `facet: { data, x: "category" }`                                             |
+| Reach for it when | one or two ordinary charts                                          | facets, distributions, regressions, anything statistical                     |
 
 Plot paints its own white card and black type unless told otherwise, which on a dark page is a white rectangle. One wrapper fixes it and is worth writing once at the top of any page that uses it:
 
 ```js
-const Plot = await import("https://esm.sh/@observablehq/plot@0.6.17").catch(
-  () => undefined,
-);
+const Plot =
+  await import("https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/+esm").catch(
+    () => undefined,
+  );
 const PLOT = {
   style: {
     background: "transparent",

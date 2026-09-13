@@ -477,7 +477,7 @@
         // Chart.js comes in as a module, or does not come at all: the table
         // under the chart is already right, so a failed import costs a picture
         // and no facts.
-        const Chart = (await import("https://esm.sh/chart.js@4.5.1/auto").catch(() => ({}))).default;
+        const Chart = (await import("https://cdn.jsdelivr.net/npm/chart.js@4.5.1/auto/+esm").catch(() => ({}))).default;
         // All the arithmetic is here. The chart is decoration over a table that is
         // already correct, so a failed import costs a picture and no facts.
 
