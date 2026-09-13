@@ -133,14 +133,16 @@ const tone = (name) => {
   }
   return tones.get(name);
 };
-// The reader can switch theme with the page open, so the cache goes with it.
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+// The theme can change with the page open, so the cache goes with it. The shell
+// fires this for a system change and for one the reader chose on the page, so
+// it is the one event to hear; the media query alone misses the second.
+document.addEventListener("instrument:theme", () => {
   tones = new Map();
   draw();
 });
 ```
 
-Same for any other JavaScript that takes a color string rather than setting CSS. Two notes: the saturated middle of each ramp (400 through 600) is one value in both themes and so survives being read raw, which is exactly why a page that only uses those looks fine until the first gray is drawn; and `getComputedStyle(probe).color` returns `rgb(…)`, so build a translucent variant with `replace` into `rgba(…)` rather than appending hex digits.
+Same for any other JavaScript that takes a color string rather than setting CSS. A script that needs to know which theme it is drawing for, rather than a resolved color, asks `window.__instrumentTheme()`, which answers `"light"` or `"dark"` for what the page shows, including under a viewer that pinned it. Two notes: the saturated middle of each ramp (400 through 600) is one value in both themes and so survives being read raw, which is exactly why a page that only uses those looks fine until the first gray is drawn; and `getComputedStyle(probe).color` returns `rgb(…)`, so build a translucent variant with `replace` into `rgba(…)` rather than appending hex digits.
 
 ## Reaching for a charting library
 

@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Stacked rather than side by side, with serif headings, because every point needs a full sentence of arithmetic and two narrow columns would have squeezed them: pros as a numbered list, then cons, each point carrying its weight as a phrase beneath it that also says why. A three-row table of the numbers that decide it sits between the lists and the bottom line, and the bottom line is a bordered box with a serif sentence rather than a dark strip, so the page stays quiet and paper-like for a reader who will hand it to an accountant.",
   "illustrative": true,
-  "html_sha256": "d6ef52e55ab25a5bbf3ce5762d9e85cd825c71114afa9184b9d8f4ffa8daef2f"
+  "html_sha256": "3c7eee114161edb5d7a944f1498546953f230f9dc5dad53ac7d059bcafe5342b"
 }

@@ -1,6 +1,6 @@
 # Pages follow the reader's theme
 
-A page made by `create-page` renders light or dark according to the reader's system setting. The agent writing one never chooses, and never writes a `dark:` variant.
+A page made by `create-page` renders light or dark according to the reader's system setting, or to a choice the reader makes on the page itself. The agent writing one never chooses, and never writes a `dark:` variant.
 
 Before this, the skin was one light palette and `SKILL.md` said so: "a page that has to look right in two themes is a page that looks wrong in one of them." That held only while nobody could check. The reason it stopped holding is below.
 
@@ -56,6 +56,19 @@ Three token values moved because it found them under AA in the light theme, unre
 Not always the operating system. Whatever is showing the page decides, and the two that matter already do:
 
 - **Studio** sets `nativeTheme.themeSource` from its own preference, and Electron hands that to Chromium as the preferred color scheme for every web content in the app, including the sandboxed iframe a page is shown in. A page therefore follows the app, not the desktop, with nothing passed to it. Verified against real Electron with the desktop set to the opposite appearance.
-- **A capture** has no reader. `scripts/capture.ts` injects `:root { color-scheme: only light }` into the throwaway copy it shoots, so a tile is the same PNG on a dark laptop and on a CI runner, and the website that shows those tiles stays light.
+- **A capture** has no reader. `scripts/capture.ts` injects `:root { color-scheme: only light !important }` into the throwaway copy it shoots, so a tile is the same PNG on a dark laptop and on a CI runner, and the website that shows those tiles stays light.
 
-Anything else embedding a page can pin it the same way, in one property.
+Anything else embedding a page can pin it the same way, in one property. The `!important` is not optional: a theme the reader chose sits on the root as an attribute, and its rule outranks a bare `:root`. The print pin in the skin carries it for the same reason.
+
+## The reader's own choice
+
+The page's chrome carries one round button, drawn by the share widget in its row at the bottom right, that flips the page between light and dark. It sits there rather than at the top of the page because that corner is the one every page already yielded to the widget on day one: a fixed control at the top right lands on the grid's toolbar, on Excalidraw's library button in a whiteboard, and on the wireframe's sticky header, and a control in each template's masthead is a different home on every template and none on a board. The widget is also already themed, already tucks away, and already stays out of Studio, where the app's own theme setting is the override and a second one would fight it. The cost is that the button rides in `page.js`, so a page opened with no network has no button and simply follows the system.
+
+The contract the page offers, all of it in the shell's head so a remembered choice is on the root before anything paints:
+
+- `data-theme="light"` or `"dark"` on `<html>` overrides the system; absent, the page follows it. The rule lives in the head's plain stylesheet rather than the skin so it holds from the first frame, before Tailwind has compiled.
+- `window.__instrumentTheme(choice)` is the one way to write it: `"light"` or `"dark"` to choose, `null` to follow the system again, nothing to ask what the page shows. It stores the choice under `localStorage["instrument:theme"]`, which is per origin, so a file opened from disk is remembered however the browser scopes file URLs, a hosted copy is remembered on its own subdomain, and a frame with no origin remembers nothing and throws nothing.
+- `instrument:theme` fires on `document` with the theme as `detail` whenever the page's theme changes, for a system change and a chosen one alike. A script that resolved tokens to color strings listens for that and nothing else; the media query alone never fires for a page-level choice, which is what the eight examples that paint in script used to listen for.
+- The snapshot a page keeps for sharing drops the attribute, so a published copy follows its own reader and a file hashes the same whoever chose what.
+
+The button's rule is that a choice matching the system is no choice at all: flipping to what the desktop already says removes the attribute and the stored key, so the page goes back to following the desktop, and no third "system" state has to be drawn or explained.

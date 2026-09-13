@@ -175,9 +175,10 @@
 
 /* Paper has one theme. Pinning the scheme here rather than restating the
    palette means a page printed from a dark desktop comes out on white, with no
-   second set of colors to keep in step. */
+   second set of colors to keep in step. Important because a reader's chosen
+   theme sits on the root as `data-theme`, whose rule outranks a bare root. */
 @media print {
   :root {
-    color-scheme: only light;
+    color-scheme: only light !important;
   }
 }

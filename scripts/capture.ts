@@ -68,13 +68,14 @@ function capture(chrome: string, htmlPath: string, pngPath: string) {
   // As early in the head as possible: the widget's tag is async and may run as
   // soon as it lands, so a flag set after it is a flag set too late. The style
   // is unlayered, so it wins over the skin's `color-scheme` however late the
-  // skin's own block is parsed.
+  // skin's own block is parsed, and important, so it also wins over a theme
+  // the reader chose, which the shell writes on the root as `data-theme`.
   const shot = join(scratch, "page.html");
   writeFileSync(
     shot,
     readFileSync(htmlPath, "utf-8").replace(
       "<head>",
-      "<head>\n    <script>window.__instrumentViewer = true;</script>\n    <style>:root { color-scheme: only light }</style>",
+      "<head>\n    <script>window.__instrumentViewer = true;</script>\n    <style>:root { color-scheme: only light !important }</style>",
     ),
   );
   const result = spawnSync(

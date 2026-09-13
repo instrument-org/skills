@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "A serif title on a wider measure, because the reader is a leadership team looking at it on a conference room screen, and a slim brand band for the winner rather than a card so the grid gets the space. Criteria are rows with their weight as a numeric column and the four cities as columns, totals in a bold bottom row, and the ranked totals as bars beside the table; three preset buttons re-total the grid and re-rank the bars with a few lines of script, while the balanced weighting is printed in the markup and the sensitivity prose carries every preset's result for a reader with scripts off.",
   "illustrative": true,
-  "html_sha256": "6173cf85335fe48f18ece2cd147dc3c830df76f31d8ba08447678324890a3a81"
+  "html_sha256": "90ed646ad188f2cf5ed42f1546891f27bb4c7b3d3352719ddab5002de6c823e6"
 }

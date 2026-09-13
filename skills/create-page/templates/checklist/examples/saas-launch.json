@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Dense and wide because the reader is a launch lead who wants all five areas on one laptop screen, so the groups flow through two CSS columns under bare ruled headings rather than cards, every item is a short clause at 13 pixels with an owner chip in mono at the row's end, and priority is a single filled flag glyph so a row rarely wraps. The ten items that usually go wrong carry a small numbered superscript that links to a tips column on the right, which drops below the groups on a narrow screen and onto the second sheet in print, and the counter is a mono fraction in the header's right corner beside the legend.",
   "illustrative": true,
-  "html_sha256": "5a5db2dfd2b1a4499e8ddca1b321024a5768780bf982b38d8f58930c15e85717"
+  "html_sha256": "fcb03952f6aee8b1dc2dd39410f017703c874c21743976a7e32f5cdcfdbe0952"
 }

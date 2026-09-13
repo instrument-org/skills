@@ -4,5 +4,5 @@
   "prompt": "Draw how a refund moves through support, from the ticket log. Something the team can move around in the meeting.",
   "model": "claude-fable-5-1",
   "note": "The flow shape, and the cover because it is the one everyone recognizes: boxes, a diamond, arrows with yes and no on them. What makes it a board rather than a diagram is that every arrow is bound at both ends, so a reader who drags 'sent to review' somewhere else takes both its arrows with it, and the finding is on the board as marker: a red ring round the step, a note with the median, a question in the reader's own hand, and a freehand underline that says someone was here. The provenance is the plain-face line at the bottom, which an exported PNG keeps and a footer would have lost. Every figure is illustrative.",
-  "html_sha256": "a43094b36ec36cba29881d1fa55e701423492eb2ceb6905bd447b2767753f92a"
+  "html_sha256": "ecb1e28eeea28d8456e8947dadc4e1023dbdaaa610be43565fd9b6559b3d3b38"
 }

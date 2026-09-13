@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Customer-facing, so a serif title under a product kicker and every question as its own card with a short answer and a what-to-do line, because the reader is a billing contact who will forward one card, not the page. The three hardest questions sit first in a tinted band across the full width, ahead of the jump list's other groups, and the remaining questions run as two-column cards with the cheerful answers kept as short as the hard ones so the page does not read as spin.",
   "illustrative": true,
-  "html_sha256": "26a88999582b4f160869e28da739fc99f88413f4388e31da459ee37bd84ed44f"
+  "html_sha256": "9671977dcf04419817c6446b66fe50f3243e612e97f338cda4ea85dcd50360e3"
 }

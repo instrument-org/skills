@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Light and sans, with the winner as a bordered card directly under the title so the pick and its total are on screen before the arithmetic, and the three runners-up as a small column inside that card. Weights are a table with horizontal bars scaled to the heaviest criterion, scores are a heatmap grid with laptops as rows and a bold total column, and sensitivity is two prose paragraphs that each restate every recomputed total, because a student comparing on a phone reads better than they click.",
   "illustrative": true,
-  "html_sha256": "dd5e75dd206b1b45e179936bc56b3986abbcd16fbb9ad5a6804ff8f9c785b141"
+  "html_sha256": "091ba3e672d2c46fede3dfd001bd991dee462049ded9479881fe2702d3f2aeeb"
 }

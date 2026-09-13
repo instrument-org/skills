@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Tools run as columns and thirteen attributes as rows in four bands, because six options across a wide table is the shape a reader knows from review-site spec tables and the bands let the eye find the one band (Billing hourly) that decides this brief. The page stays light and airy with a sans title and wide margins, the legend explains each band in a clause above the table, and the only chrome is the matrix card itself; the tones do the work and no best mark is used, because with six columns the reader counts green cells rather than stars.",
   "illustrative": true,
-  "html_sha256": "ac85fa92482139908f0137bb4272e9efa725e202e9bf2fe465a104667ea99721"
+  "html_sha256": "ab21e48ab833a5e3a4d17e9bdbfd5ba1c046becd3172cc9d0de16c79cd43f289"
 }
