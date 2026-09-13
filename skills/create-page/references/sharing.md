@@ -18,9 +18,10 @@ Do not publish a page that carries something the reader would not hand a strange
 
 ```sh
 node <skill>/share.mjs output/<slug>.html
+python <skill>/share.py output/<slug>.html
 ```
 
-Prints the link on its first line, then what happened. Beside the page it writes `output/<slug>.share.json`: the id, the link, when it went up and when it expires, and the delete token, which exists nowhere else. Keep that file with the page. The same command on an unchanged page reports the existing link; on an edited page it publishes the new version and names the earlier link still serving the old one.
+The same script in two runtimes, no dependencies in either; take whichever is here. Prints the link on its first line, then what happened. Beside the page it writes `output/<slug>.share.json`: the id, the link, when it went up and when it expires, and the delete token, which exists nowhere else. Keep that file with the page; either script reads what the other wrote. The same command on an unchanged page reports the existing link; on an edited page it publishes the new version and names the earlier link still serving the old one.
 
 ```sh
 node <skill>/share.mjs output/<slug>.html --check         # still up, and until when
@@ -32,7 +33,7 @@ After an edit, tell the reader which link is current. Delete the earlier one whe
 
 Tell the reader what you kept: the link, that anyone holding it can read the page, the day it expires, and that `--delete` takes it down.
 
-## The endpoint, for when Node is not there
+## The endpoint, for when neither runtime is there
 
 `POST https://share.instrument.page/share` with `content-type: text/html` and the file as the body, from any origin. The body has to open with `<!doctype html>` and stay under 8 MB. It answers `201 {id, url, bytes, deleteToken}`, or `200 {id, url, bytes}` with no token when those bytes are already published, by anyone. `GET /share/<id>` answers `{id, url, expires}` or 404; `DELETE /share/<id>` with an `x-delete-token` header answers 204, 403 for a wrong token, 404 once gone. Twenty uploads a minute per address.
 

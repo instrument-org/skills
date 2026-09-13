@@ -6,7 +6,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const SHARE = join(import.meta.dirname, "../skills/create-page/share.mjs");
+const SKILL = join(import.meta.dirname, "../skills/create-page");
+
+// The two files promise the same commands, the same sidecar and the same
+// words, so every case below runs against both, and one crosses over.
+const RUNTIMES = [
+  ["node", join(SKILL, "share.mjs")],
+  ["python3", join(SKILL, "share.py")],
+] as const;
 
 // The pages worker's upload half, as far as the script can tell it apart from
 // the real one: content addresses, a token minted once, 200 without one for
@@ -113,13 +120,14 @@ function run(
   });
 }
 
-const share = (...args: string[]) => run("node", [SHARE, page, ...args]);
 const firstLine = (out: string) => out.split("\n")[0];
 
 const sidecarPath = () => join(dir, "heat-pumps.share.json");
 const sidecar = () => JSON.parse(readFileSync(sidecarPath(), "utf-8"));
 
-describe("share.mjs", () => {
+describe.each(RUNTIMES)("share via %s", (runtime, script) => {
+  const share = (...args: string[]) => run(runtime, [script, page, ...args]);
+
   it("publishes, prints the link first, and keeps the token beside the page", async () => {
     const id = idOf(Buffer.from(PAGE));
     const { code, out } = await share();
@@ -211,4 +219,17 @@ describe("share.mjs", () => {
     expect(out).toContain("does not open with <!doctype html>");
     expect(pages.size).toBe(0);
   });
+});
+
+// A sidecar one runtime wrote is the other's to read: an agent that published
+// from Node and comes back with only Python still holds the token.
+it("a link published from one runtime is deleted from the other", async () => {
+  const [[node, mjs], [python, py]] = RUNTIMES;
+  const link = firstLine((await run(node, [mjs, page])).out);
+  expect((await run(python, [py, page, "--check"])).out).toContain(link);
+  expect((await run(python, [py, page, "--delete"])).out).toBe(
+    `Deleted ${link}. The link now answers 404.`,
+  );
+  expect(existsSync(sidecarPath())).toBe(false);
+  expect(pages.size).toBe(0);
 });

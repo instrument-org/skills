@@ -15,8 +15,9 @@
 // can take the link down. Read references/sharing.md for when to publish at
 // all.
 //
-// Node only, no dependencies. INSTRUMENT_SHARE_ENDPOINT overrides the share
-// host, for a local or staging pages worker.
+// The same commands, the same sidecar and the same words as share.py beside
+// it; take whichever runtime is here. No dependencies. INSTRUMENT_SHARE_ENDPOINT
+// overrides the share host, for a local or staging pages worker.
 
 import { readFile, unlink, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join } from "node:path";
