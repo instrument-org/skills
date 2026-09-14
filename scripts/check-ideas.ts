@@ -119,6 +119,13 @@ const PAGE_ICON_OPENING = '<link rel="icon" href="data:image/svg+xml,';
 // a script too, since a module's `import()` and a library's own asset path
 // (`locateFile`, an asset-path global) are loads this file can read.
 const SCRIPT_BUILT_PREFIXES = ALLOWED.built.map((built) => built.prefix);
+// XML namespaces read as addresses and are not: an SVG written out as a file
+// has to name one to be an SVG file, and nothing ever fetches it.
+const XML_NAMESPACES = new Set([
+  "http://www.w3.org/2000/svg",
+  "http://www.w3.org/1999/xlink",
+  "http://www.w3.org/1999/xhtml",
+]);
 // Tags that fetch what they name, and the attributes they fetch it through.
 const LOADER_TAGS = ["link", "script"];
 const MEDIA_TAGS = ["img", "video", "audio", "iframe", "source", "embed"];
@@ -332,6 +339,7 @@ export function checkSelfContained(
   for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
     for (const match of (script[1] ?? "").matchAll(/https?:\/\/[^\s"'`]+/g)) {
       if (
+        !XML_NAMESPACES.has(match[0]) &&
         !SCRIPT_BUILT_PREFIXES.some((p) => match[0].startsWith(p)) &&
         !isAllowedSource(match[0])
       ) {
