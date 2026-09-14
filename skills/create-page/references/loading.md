@@ -89,6 +89,7 @@ A page that does this will not run inside the strict frames above, and its `temp
 | sql.js          | classic script by path, wasm by path                             | `explorer`         |
 | Leaflet         | classic script by path, stylesheet                               | `explorer`         |
 | Excalidraw      | esm.sh with `?deps`, stylesheet, assets                          | `whiteboard`       |
+| dialkit         | module, `/vanilla/+esm`, stylesheet                              | `playground`       |
 
 ## Say what it costs
 

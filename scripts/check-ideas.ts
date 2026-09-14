@@ -45,6 +45,7 @@ const SKETCH_MARKS = new Set([
   "board",
   "compute",
   "days",
+  "dials",
   "flow",
   "fork",
   "frames",

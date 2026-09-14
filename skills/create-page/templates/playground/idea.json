@@ -1,0 +1,17 @@
+{
+  "title": "Playground",
+  "tagline": "One thing on a stage, the dials beside it, and the settings to take away.",
+  "when": "Something has a look or a feel that is a matter of taste rather than arithmetic, and you would rather turn the dials on a live rendering until it looks right than argue about it in words.",
+  "tags": ["layout"],
+  "order": 40,
+  "needs": [],
+  "cover": "bottom-sheet",
+  "sections": [
+    "A name and one line",
+    "The stage",
+    "The dials",
+    "The takeaway",
+    "One line underneath"
+  ],
+  "sketch": ["dials"]
+}

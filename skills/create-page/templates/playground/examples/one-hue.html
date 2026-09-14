@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A palette from one hue</title>
+    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <meta name="instrument:idea" content="playground@1" />
+    <!-- shell:start -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E" />
+    <script async src="https://tryinstrument.com/page.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+      html {
+        visibility: hidden;
+        animation: instrument-floor 0s 3s forwards;
+        /* The paper's own color while the page waits, so a dark reader is not
+           shown a white window first. The values are the skin's page tokens. */
+        color-scheme: light dark;
+        background: light-dark(#fafaf9, #141210);
+        /* The mark's ink and its faint swell, per theme. As properties rather
+           than light-dark() in the keyframes, which Chrome paints as nothing. */
+        --instrument-mark: #a8a29e;
+        --instrument-mark-faint: #d9d7d5;
+      }
+      @media (prefers-color-scheme: dark) {
+        html {
+          --instrument-mark: #57534e;
+          --instrument-mark-faint: #2f2c29;
+        }
+      }
+      /* A theme the reader chose over their system's, written on the root by
+         the share widget's button or by whatever is showing the page. One
+         property does it, because every color in the skin is light-dark().
+         Absent, the page follows the system. Here rather than in the skin so it
+         holds from the first frame, before the stylesheet is compiled. */
+      html[data-theme="light"] {
+        color-scheme: light;
+        --instrument-mark: #a8a29e;
+        --instrument-mark-faint: #d9d7d5;
+      }
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --instrument-mark: #57534e;
+        --instrument-mark-faint: #2f2c29;
+      }
+      html.instrument-ready {
+        visibility: visible;
+      }
+      @keyframes instrument-floor {
+        to {
+          visibility: visible;
+        }
+      }
+      /* The page fades in rather than appearing: once the theme resolves, or at
+         the floor when nothing resolves it. Per child of the body, since an
+         opacity on the body itself would take the mark down with it. */
+      body > * {
+        opacity: 0;
+        animation: instrument-page 0.5s ease-out 3s both;
+      }
+      @keyframes instrument-page {
+        to {
+          opacity: 1;
+        }
+      }
+      html.instrument-ready body > * {
+        animation: none;
+        opacity: 1;
+        transition: opacity 0.45s ease-out;
+      }
+      /* The mark. It shows inside the hidden document because visibility stops
+         cascading at an explicit value. Only where masks are understood: without
+         one this box would be a gray sheet over the page. */
+      @supports (mask-image: url("")) {
+        html::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          visibility: visible;
+          opacity: 0;
+          background: var(--instrument-mark);
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 520'%3E%3Cpath d='M436.675%20331.78C408.481%20401.395%20340.226%20450.5%20260.5%20450.5C180.774%20450.5%20112.519%20401.395%2084.3252%20331.78H436.675ZM446.977%20223.906C449.287%20235.748%20450.5%20247.982%20450.5%20260.5C450.5%20274.88%20448.899%20288.886%20445.872%20302.352H314.801C293.139%20302.351%20275.578%20284.791%20275.578%20263.129C275.578%20241.467%20293.139%20223.906%20314.801%20223.906H446.977ZM210.199%20223.906C231.861%20223.906%20249.422%20241.467%20249.422%20263.129C249.422%20284.791%20231.861%20302.352%20210.199%20302.352H75.1279C72.1008%20288.886%2070.5%20274.88%2070.5%20260.5C70.5%20247.982%2071.7131%20235.748%2074.0234%20223.906H210.199ZM260.5%2070.5C342.227%2070.5%20411.9%20122.101%20438.721%20194.5H82.2793C109.1%20122.101%20178.773%2070.5%20260.5%2070.5Z'/%3E%3C/svg%3E");
+          mask-position: center;
+          mask-size: 30px 30px;
+          mask-repeat: no-repeat;
+          animation:
+            instrument-mark-in 0.4s ease-out 0.75s forwards,
+            instrument-mark-out 0.3s ease-in 3s forwards,
+            instrument-breathe 1.8s ease-in-out 0.75s infinite;
+        }
+        html.instrument-ready::before {
+          animation: none;
+          opacity: 0;
+          visibility: hidden;
+          transition:
+            opacity 0.25s ease-in,
+            visibility 0s 0.25s;
+        }
+      }
+      @keyframes instrument-mark-in {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes instrument-mark-out {
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+      @keyframes instrument-breathe {
+        50% {
+          background-color: var(--instrument-mark-faint);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html::before {
+          animation:
+            instrument-mark-in 0s 0.75s forwards,
+            instrument-mark-out 0s 3s forwards;
+        }
+        body > *,
+        html.instrument-ready body > *,
+        html.instrument-ready::before {
+          animation-duration: 0s;
+          transition: none;
+        }
+      }
+    </style>
+    <script>
+      // --font-sans is declared in the @theme static block below, so it resolves
+      // once the compiled stylesheet is in the document and not a frame before.
+      (function () {
+        const show = () => {
+          document.documentElement.classList.add("instrument-ready");
+        };
+        (function poll() {
+          const theme = getComputedStyle(document.documentElement)
+            .getPropertyValue("--font-sans")
+            .trim();
+          if (theme !== "") show();
+          else requestAnimationFrame(poll);
+        })();
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
+      })();
+    </script>
+    <script>
+      // The theme the page shows, and the reader's say in it. `data-theme` on
+      // the root overrides the system; nothing set means follow it. The choice
+      // is remembered per origin, which for a file opened from disk is whatever
+      // the browser makes of file URLs, and a frame with no origin refuses
+      // storage outright, so the store is asked and never relied on.
+      (function () {
+        const root = document.documentElement;
+        const KEY = "instrument:theme";
+        const remember = (choice) => {
+          try {
+            if (choice) localStorage.setItem(KEY, choice);
+            else localStorage.removeItem(KEY);
+          } catch {}
+        };
+        // What the page resolves to, read from the root's own scheme rather than
+        // the media query, so a viewer that pinned the page light is answered
+        // correctly under a dark desktop.
+        const theme = () => {
+          const scheme = getComputedStyle(root).colorScheme;
+          if (!scheme.includes("dark")) return "light";
+          if (!scheme.includes("light")) return "dark";
+          return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        };
+        const announce = () => {
+          document.dispatchEvent(new CustomEvent("instrument:theme", { detail: theme() }));
+        };
+        // Called with "light" or "dark" to choose, with null to follow the system
+        // again, and with nothing to ask what the page shows.
+        window.__instrumentTheme = (choice) => {
+          if (choice !== undefined) {
+            if (choice) root.dataset.theme = choice;
+            else delete root.dataset.theme;
+            remember(choice);
+            announce();
+          }
+          return theme();
+        };
+        try {
+          const kept = localStorage.getItem(KEY);
+          if (kept === "light" || kept === "dark") root.dataset.theme = kept;
+        } catch {}
+        matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+          if (!root.dataset.theme) announce();
+        });
+      })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400&family=Roboto+Serif:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
+    <style type="text/tailwindcss">
+      /* skin:start */
+      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
+         the one element these pages style directly, the link.
+         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
+         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         `static` matters: without it Tailwind emits only the variables some utility
+         on the page uses, so a var(--color-...) in generated SVG can resolve to
+         nothing and the fill falls back to black. */
+      @import "tailwindcss";
+
+      /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
+         theme and a page is never written for one of them.
+
+         A step on a ramp names distance from the paper rather than a lightness: 25 is
+         the faintest wash the page can carry and 950 its darkest ink, and what
+         changes between themes is which end of the spectrum each of those lands on.
+         The saturated middle, 400 through 600, is written as one value because it
+         holds still in both. That is also the whole rule for white: it rides the
+         middle and nowhere else, because every other step moves out from under it.
+
+         scripts/check-contrast.ts reads this file for both palettes and every page
+         for what sits on what, so a page that fails in one theme fails the build. */
+      @theme static {
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Roboto Serif", ui-serif, Georgia, serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+        --radius: 0.5rem;
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) + 4px);
+
+        /* On dark the hairline is what draws a card, so it turns from ink to light
+           while the cast shadow deepens. */
+        --shadow-sm:
+          0 2px 4px 0 light-dark(rgb(10 13 18 / 0.04), rgb(0 0 0 / 0.4)),
+          0 1px 2px -1px light-dark(rgb(10 13 18 / 0.06), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+        --shadow-xl:
+          0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
+          0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
+
+        --color-gray-25: light-dark(#fdfdfc, #100e0d);
+        --color-gray-50: light-dark(#fafaf9, #141210);
+        --color-gray-100: light-dark(#f5f5f4, #1c1917);
+        --color-gray-200: light-dark(#e7e5e4, #292524);
+        --color-gray-300: light-dark(#d7d3d0, #3a3532);
+        --color-gray-400: light-dark(#a9a29d, #6a625c);
+        --color-gray-500: light-dark(#6d655f, #9a918a);
+        --color-gray-600: light-dark(#57534e, #b5aca5);
+        --color-gray-700: light-dark(#44403c, #d0c8c1);
+        --color-gray-800: light-dark(#292524, #e4ded9);
+        --color-gray-900: light-dark(#1c1917, #f1ede9);
+        --color-gray-950: light-dark(#171412, #faf8f6);
+
+        --color-brand-25: light-dark(#f1f4f2, #0d1615);
+        --color-brand-50: light-dark(#e2eae7, #102220);
+        --color-brand-100: light-dark(#c5d5d0, #143029);
+        --color-brand-200: light-dark(#9dbfb6, #1a463d);
+        --color-brand-300: light-dark(#6ca89c, #205c50);
+        --color-brand-400: #338c81;
+        --color-brand-500: #0e7869;
+        --color-brand-600: #0b6056;
+        --color-brand-700: light-dark(#0a4a42, #56c2b0);
+        --color-brand-800: light-dark(#093a34, #86d4c4);
+        --color-brand-900: light-dark(#082c28, #b2e5d9);
+        --color-brand-950: light-dark(#051b18, #dcf3ef);
+
+        --color-error-50: light-dark(#fbeef0, #26121a);
+        --color-error-100: light-dark(#f8e4e8, #331721);
+        --color-error-300: light-dark(#e197a6, #5e2434);
+        --color-error-500: #b4324f;
+        --color-error-700: light-dark(#7a1f30, #ef8ba3);
+        --color-error-900: light-dark(#3f121a, #f9ccd6);
+
+        --color-warning-50: light-dark(#fffaeb, #2a1c06);
+        --color-warning-100: light-dark(#fef0c7, #3a2608);
+        --color-warning-300: light-dark(#fec84b, #6b4008);
+        --color-warning-500: #f79009;
+        --color-warning-700: light-dark(#b54708, #f0b03f);
+        --color-warning-900: light-dark(#7a2e0e, #fbe0a8);
+
+        --color-success-50: light-dark(#e9f5eb, #0e2413);
+        --color-success-100: light-dark(#d9f1db, #133019);
+        --color-success-300: light-dark(#7dcb87, #1e5e2e);
+        --color-success-500: #29a845;
+        --color-success-700: light-dark(#176229, #6ddc85);
+        --color-success-900: light-dark(#0b3216, #c3f0cd);
+
+        --color-yellow-50: light-dark(#fdf6e2, #241a09);
+        --color-yellow-100: light-dark(#fbebc9, #30240d);
+        --color-yellow-300: light-dark(#f1cc8e, #5c421f);
+        --color-yellow-500: #d58f4f;
+        --color-yellow-700: light-dark(#a25a3c, #e0a978);
+        --color-yellow-900: light-dark(#59301e, #f2ddc4);
+
+        --color-brown-50: light-dark(#fcfbf8, #151310);
+        --color-brown-100: light-dark(#f6f4f0, #1d1a16);
+        --color-brown-300: light-dark(#e8e3da, #2e2921);
+        --color-brown-500: #bbaa8e;
+        --color-brown-700: light-dark(#7f6a4d, #c8b599);
+        --color-brown-900: light-dark(#564538, #e8dfd2);
+
+        --color-background: light-dark(#fafaf9, #141210);
+        --color-foreground: light-dark(#171412, #f1ede9);
+        --color-card: light-dark(#ffffff, #1c1917);
+        --color-popover: light-dark(#ffffff, #1c1917);
+        --color-primary: light-dark(#171412, #f1ede9);
+        --color-primary-foreground: light-dark(#ffffff, #141210);
+        --color-secondary: light-dark(#f5f5f4, #1c1917);
+        --color-secondary-foreground: light-dark(#292524, #e4ded9);
+        --color-muted: light-dark(#f5f5f4, #1c1917);
+        --color-muted-foreground: light-dark(#6d655f, #9a918a);
+        --color-accent: light-dark(#e7e5e4, #292524);
+        --color-accent-foreground: light-dark(#292524, #e4ded9);
+        --color-destructive: light-dark(#b4324f, #e2687f);
+        --color-border: light-dark(#e7e5e4, #292524);
+        --color-input: light-dark(#e7e5e4, #292524);
+        --color-ring: light-dark(#a9a29d, #6a625c);
+
+        /* The one surface that is dark in both themes, because a terminal or a code
+           listing reads as a well cut into the page rather than as more paper. It
+           brings its own ink for the same reason: nothing on it may follow the theme,
+           or half a transcript disappears in one of them. */
+        --color-code: light-dark(#1c1917, #0c0b0a);
+        --color-code-foreground: #e4ded9;
+        --color-code-muted: #a9a29d;
+        --color-code-accent: #6ca89c;
+        --color-code-flag: #fec84b;
+      }
+
+      /* A page that names something living at a URL links it, so a link is house
+         furniture rather than something each page restyles. In the base layer, so any
+         utility on the anchor still wins: a jump list that reads as plain text, a
+         photo credit that stays muted. Color and underline only, never weight or
+         size, so a link inside a heading or a table cell keeps the type it sits in. */
+      @layer base {
+        /* What makes light-dark() resolve, and what tells the browser to draw
+           scrollbars, form controls and the canvas to match. */
+        :root {
+          color-scheme: light dark;
+        }
+
+        a {
+          color: var(--color-brand-700);
+          text-decoration-line: underline;
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 40%,
+            transparent
+          );
+          text-underline-offset: 2px;
+        }
+
+        a:hover {
+          text-decoration-color: color-mix(
+            in oklab,
+            var(--color-brand-700) 70%,
+            transparent
+          );
+        }
+
+        /* A block that sets its own ink — a solid brand banner, an inverted panel, a
+           code listing — has already chosen what reads on it, so a link inside takes
+           that ink and keeps only its underline. Otherwise the one link in a verdict
+           banner is brand on brand, which is the color nobody can read. */
+        .text-white a,
+        .text-background a,
+        .text-code-foreground a {
+          color: inherit;
+          text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+        }
+      }
+
+      /* Paper has one theme. Pinning the scheme here rather than restating the
+         palette means a page printed from a dark desktop comes out on white, with no
+         second set of colors to keep in step. Important because a reader's chosen
+         theme sits on the root as `data-theme`, whose rule outranks a bare root. */
+      @media print {
+        :root {
+          color-scheme: only light !important;
+        }
+      }
+      /* skin:end */
+    </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3/dist/index.global.js"></script>
+    <!-- shell:end -->
+
+    <style>
+      @media print {
+        @page {
+          size: landscape;
+        }
+      }
+    </style>
+
+    <!-- shell:start -->
+    <style>
+      /* Page behavior every template gets. Nothing here is decoration a reader
+         would miss offline; each rule degrades to exactly what the page does
+         without it. */
+
+      /* A footnote marker reaches its note and the note reaches its marker, so
+         whichever end is jumped to lights up rather than leaving the reader to
+         find it. */
+      [id^="fn-"]:target,
+      [id^="fnref-"]:target {
+        background: var(--color-brand-50);
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px var(--color-brand-50);
+      }
+
+      [id^="fn-"],
+      [id^="fnref-"] {
+        scroll-margin-top: 4rem;
+      }
+
+      /* A link wears the icon of the site it goes to, so a reader can see where
+         it lands before clicking. The square is reserved whether or not an icon
+         arrives, so a line does not reflow when one does. */
+      .site-icon {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 0.3em;
+        vertical-align: -0.05em;
+        border-radius: 2px;
+        background: var(--color-gray-100);
+        box-shadow: 0 0 0 1px var(--color-gray-200);
+      }
+
+      /* A line may break between an image and the text beside it, which leaves
+         the icon alone at the end of a line reading as a word gone missing. The
+         icon and the first word of its link travel as one. */
+      .site-icon-word {
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+      <!-- dialkit's own stylesheet, by path. The panel sits in the page's
+           column rather than floating over it, so it takes the column's width
+           and a card's frame. -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialkit@2.0.2/dist/vanilla/styles.css" />
+      <style>
+        #dials .dialkit-root {
+          position: static;
+          width: 100%;
+          border: 1px solid var(--color-border);
+          border-radius: 1rem;
+          background: var(--color-card);
+        }
+      </style>
+
+      <header class="sticky top-0 z-20 -mx-4 mb-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">A palette from one hue</h1>
+          <p class="truncate text-[12px] text-muted-foreground">Eleven steps from one hue and one chroma. Turn the dials until both cards look right, then take the variables.</p>
+        </div>
+        <div class="flex shrink-0 items-center gap-1.5 print:hidden">
+          <button id="reset" hidden class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+            <i class="ph ph-arrow-u-up-left text-sm"></i>Reset
+          </button>
+        </div>
+      </header>
+
+      <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <!-- The stage. The eleven steps are custom properties on this element,
+             written here for the opening dials and rewritten as they move, so
+             everything inside follows them and a page with scripts off shows
+             the opening ramp. -->
+        <section id="stage" aria-label="The ramp, and a card in each theme" class="rounded-2xl border border-border bg-muted p-5 sm:p-6" style="--c-50: #fff4f0; --c-100: #ffd3c3; --c-200: #ffaf93; --c-300: #fd885f; --c-400: #e86c3e; --c-500: #cf521f; --c-600: #b33c00; --c-700: #912f00; --c-800: #702200; --c-900: #521500; --c-950: #251712">
+          <div id="ramp" class="grid grid-cols-11 gap-1 text-[10px] leading-none font-mono">
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-50); color: var(--c-950)"><span class="font-semibold">50</span><span class="opacity-70">#fff4f0</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-100); color: var(--c-950)"><span class="font-semibold">100</span><span class="opacity-70">#ffd3c3</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-200); color: var(--c-950)"><span class="font-semibold">200</span><span class="opacity-70">#ffaf93</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-300); color: var(--c-950)"><span class="font-semibold">300</span><span class="opacity-70">#fd885f</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-400); color: var(--c-950)"><span class="font-semibold">400</span><span class="opacity-70">#e86c3e</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-500); color: var(--c-50)"><span class="font-semibold">500</span><span class="opacity-70">#cf521f</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-600); color: var(--c-50)"><span class="font-semibold">600</span><span class="opacity-70">#b33c00</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-700); color: var(--c-50)"><span class="font-semibold">700</span><span class="opacity-70">#912f00</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-800); color: var(--c-50)"><span class="font-semibold">800</span><span class="opacity-70">#702200</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-900); color: var(--c-50)"><span class="font-semibold">900</span><span class="opacity-70">#521500</span></div>
+            <div class="flex h-20 flex-col justify-end gap-1 rounded-md p-1.5" style="background: var(--c-950); color: var(--c-50)"><span class="font-semibold">950</span><span class="opacity-70">#251712</span></div>
+          </div>
+
+          <!-- The same card twice, once on paper and once on the darkest step,
+               each with its own ink, so the ramp is judged in both themes
+               whatever the reader's own is. -->
+          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-xl p-5 shadow-sm" style="background: #ffffff; color: var(--c-950)">
+              <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.08em] uppercase" style="background: var(--c-100); color: var(--c-700)">Confirmed</span>
+              <h2 class="mt-3 text-[17px] font-semibold tracking-[-0.01em]">Your order is on its way</h2>
+              <p class="mt-1.5 text-[13px] leading-5" style="color: var(--c-800)">Three items, leaving the warehouse tonight. We will send the tracking number as soon as the carrier scans it.</p>
+              <div class="mt-4 flex items-center gap-3">
+                <span class="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style="background: var(--c-600); color: #ffffff">Track order</span>
+                <span class="text-[12px] font-medium underline underline-offset-2" style="color: var(--c-700)">View receipt</span>
+              </div>
+            </div>
+            <div class="rounded-xl p-5 shadow-sm" style="background: var(--c-950); color: var(--c-50)">
+              <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.08em] uppercase" style="background: var(--c-900); color: var(--c-200)">Confirmed</span>
+              <h2 class="mt-3 text-[17px] font-semibold tracking-[-0.01em]">Your order is on its way</h2>
+              <p class="mt-1.5 text-[13px] leading-5" style="color: var(--c-200)">Three items, leaving the warehouse tonight. We will send the tracking number as soon as the carrier scans it.</p>
+              <div class="mt-4 flex items-center gap-3">
+                <span class="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style="background: var(--c-400); color: var(--c-950)">Track order</span>
+                <span class="text-[12px] font-medium underline underline-offset-2" style="color: var(--c-300)">View receipt</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- What the dials work out to: the contrast of the pairings the
+               cards actually use, against WCAG's thresholds. Arithmetic over
+               the ramp, nothing else. -->
+          <dl class="mt-5 grid gap-x-6 gap-y-4 sm:grid-cols-3">
+            <div>
+              <dt class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">700 on white</dt>
+              <dd class="mt-0.5 text-[22px] font-semibold tracking-[-0.02em]"><span id="c1">8.1</span><span id="c1-word" class="ml-1 text-[13px] font-normal text-muted-foreground">passes AA for any text</span></dd>
+            </div>
+            <div>
+              <dt class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">White on 600</dt>
+              <dd class="mt-0.5 text-[22px] font-semibold tracking-[-0.02em]"><span id="c2">5.9</span><span id="c2-word" class="ml-1 text-[13px] font-normal text-muted-foreground">passes AA for any text</span></dd>
+            </div>
+            <div>
+              <dt class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">200 on 950</dt>
+              <dd class="mt-0.5 text-[22px] font-semibold tracking-[-0.02em]"><span id="c3">9.8</span><span id="c3-word" class="ml-1 text-[13px] font-normal text-muted-foreground">passes AA for any text</span></dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- The dials. The opening settings in words; the panel takes this
+             column's place when it arrives, and with the network off this list
+             is the panel. -->
+        <aside id="dials" class="lg:sticky lg:top-16 lg:self-start">
+          <dl id="settings" class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 rounded-2xl border border-border bg-card p-4 text-[12px] leading-5">
+            <dt class="text-muted-foreground">Hue</dt>
+            <dd class="font-mono">40°, a burnt orange</dd>
+            <dt class="text-muted-foreground">Chroma</dt>
+            <dd class="font-mono">0.17 at the fullest step</dd>
+            <dt class="text-muted-foreground">Hue shift</dt>
+            <dd class="font-mono">0°, the same hue end to end</dd>
+            <dt class="text-muted-foreground">Lightest</dt>
+            <dd class="font-mono">L 0.975 at step 50</dd>
+            <dt class="text-muted-foreground">Darkest</dt>
+            <dd class="font-mono">L 0.22 at step 950</dd>
+            <dt class="text-muted-foreground">Curve</dt>
+            <dd class="font-mono">1, evenly spaced</dd>
+          </dl>
+          <p id="dials-note" hidden class="mt-2 text-[11px] leading-5 text-muted-foreground">The dials did not arrive, which takes the network. These are the settings the page opened with, and the variables below are theirs.</p>
+        </aside>
+      </div>
+
+      <!-- The takeaway: the ramp as custom properties, in the color space the
+           dials work in, with the hex each one resolves to beside it. -->
+      <section id="take" class="mt-5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">The variables</h2>
+          <button data-copy="#css" class="flex h-7 items-center gap-1.5 rounded-lg border border-border px-2 text-[11px] font-medium print:hidden"><i class="ph ph-copy text-sm"></i>Copy</button>
+        </div>
+        <pre id="css" class="mt-2 max-h-80 overflow-auto rounded-xl bg-code p-4 font-mono text-[11.5px] leading-5 whitespace-pre-wrap text-code-foreground [overflow-wrap:anywhere]">:root {
+  --brand-50: oklch(97.5% 0.013 40); /* #fff4f0 */
+  --brand-100: oklch(90% 0.055 40); /* #ffd3c3 */
+  --brand-200: oklch(82.4% 0.102 40); /* #ffaf93 */
+  --brand-300: oklch(74.9% 0.153 40); /* #fd885f */
+  --brand-400: oklch(67.3% 0.166 40); /* #e86c3e */
+  --brand-500: oklch(59.7% 0.17 40); /* #cf521f */
+  --brand-600: oklch(52.2% 0.165 40); /* #b33c00 */
+  --brand-700: oklch(44.7% 0.141 40); /* #912f00 */
+  --brand-800: oklch(37.1% 0.118 40); /* #702200 */
+  --brand-900: oklch(29.5% 0.095 40); /* #521500 */
+  --brand-950: oklch(22% 0.026 40); /* #251712 */
+}</pre>
+      </section>
+
+      <p id="source" class="mt-5 text-[11px] leading-5 text-muted-foreground">
+        The opening hue and chroma are those of #c2410c, a burnt orange, read into OKLCH; the ends and the curve are a starting point, not a rule. Steps are placed in <a href="https://oklch.com">OKLCH</a> so that equal moves in lightness look equal, chroma is fullest in the middle and is pulled back wherever sRGB cannot show it, and the hex beside each variable is what the browser will paint. Contrast is WCAG 2's ratio, which is what AA is written against; 4.5 passes for any text, 3 for large text only. The dials are <a href="https://github.com/joshpuckett/dialkit">dialkit</a>, which needs the network; the ramp and the variables do not. Nothing you set leaves this page: the dials remember their last position in this browser and nowhere else, and Reset puts them back to the opening setting.
+      </p>
+
+      <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
+      <script type="module">
+        const $ = (s) => document.querySelector(s);
+        const stage = $("#stage");
+
+        // The dials, in dialkit's own notation. This one object is also the
+        // page's defaults.
+        const CONFIG = {
+          hue: [40, 0, 360, 1],
+          chroma: [0.17, 0, 0.3, 0.005],
+          hueShift: [0, -40, 40, 1],
+          ends: { lightest: [0.975, 0.9, 1, 0.005], darkest: [0.22, 0.05, 0.4, 0.005] },
+          curve: [1, 0.5, 2, 0.05],
+        };
+
+        // The defaults, read out of the config, so the page has its values
+        // before the panel arrives and still has them if it never does.
+        const resolve = (config) =>
+          Object.fromEntries(
+            Object.entries(config).flatMap(([key, v]) => {
+              if (Array.isArray(v)) return [[key, v[0]]];
+              if (v && typeof v === "object") {
+                if (v.type === "action") return [];
+                if (v.type === "spring" || v.type === "easing") return [[key, v]];
+                if (v.type === "pad") return [[key, { x: v.x?.[0] ?? 0, y: v.y?.[0] ?? 0 }]];
+                if ("type" in v) return [[key, v.default ?? v.options?.[0]?.value ?? v.options?.[0] ?? ""]];
+                return [[key, resolve(v)]];
+              }
+              return [[key, v]];
+            }),
+          );
+        let values = resolve(CONFIG);
+
+        // --- color -------------------------------------------------------------
+        // OKLCH to linear sRGB by Ottosson's matrices; a color outside what sRGB
+        // can show has its chroma pulled back until it fits, by halving.
+        const toLinear = (L, C, H) => {
+          const a = C * Math.cos((H * Math.PI) / 180);
+          const b = C * Math.sin((H * Math.PI) / 180);
+          const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+          const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+          const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+          return [
+            4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+            -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+            -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+          ];
+        };
+        const inGamut = (rgb) => rgb.every((c) => c >= -0.0005 && c <= 1.0005);
+        const fit = (L, C, H) => {
+          if (inGamut(toLinear(L, C, H))) return C;
+          let lo = 0;
+          let hi = C;
+          for (let i = 0; i < 16; i++) {
+            const mid = (lo + hi) / 2;
+            if (inGamut(toLinear(L, mid, H))) lo = mid;
+            else hi = mid;
+          }
+          return lo;
+        };
+        const gamma = (c) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055);
+        const clamp = (c) => Math.min(1, Math.max(0, c));
+        const hex = (rgb) => "#" + rgb.map((c) => Math.round(clamp(gamma(c)) * 255).toString(16).padStart(2, "0")).join("");
+        // WCAG 2 relative luminance and contrast, which is what AA is written against.
+        const luminance = ([r, g, b]) => 0.2126 * clamp(r) + 0.7152 * clamp(g) + 0.0722 * clamp(b);
+        const contrast = (a, b) => {
+          const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+          return (hi + 0.05) / (lo + 0.05);
+        };
+        const WHITE = [1, 1, 1];
+
+        const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+        // Lightness runs from the lightest end to the darkest, bent by the curve.
+        // Chroma is fullest in the middle and nearly gone at the ends, where sRGB
+        // has little to give; the shift drifts the hue along the way.
+        const ramp = (v) =>
+          STEPS.map((step, i) => {
+            const t = i / (STEPS.length - 1);
+            const L = v.ends.lightest + (v.ends.darkest - v.ends.lightest) * t ** v.curve;
+            const H = (v.hue + v.hueShift * (t - 0.5) * 2 + 360) % 360;
+            const C = fit(L, v.chroma * (0.15 + 0.85 * Math.sin(Math.PI * t) ** 0.6), H);
+            const rgb = toLinear(L, C, H);
+            return { step, L, C, H, rgb, hex: hex(rgb) };
+          });
+
+        // --- the page ------------------------------------------------------------
+        const fmt = (n, places = 0) => n.toLocaleString("en-US", { maximumFractionDigits: places });
+        const word = (ratio) => (ratio >= 4.5 ? "passes AA for any text" : ratio >= 3 ? "AA for large text only" : "fails AA");
+        const swatches = [...$("#ramp").children];
+        const render = () => {
+          const steps = ramp(values);
+          const at = (n) => steps.find((s) => s.step === n).rgb;
+          for (const s of steps) stage.style.setProperty(`--c-${s.step}`, s.hex);
+          steps.forEach((s, i) => (swatches[i].lastElementChild.textContent = s.hex));
+          for (const [id, ratio] of [
+            ["c1", contrast(at(700), WHITE)],
+            ["c2", contrast(WHITE, at(600))],
+            ["c3", contrast(at(200), at(950))],
+          ]) {
+            $(`#${id}`).textContent = fmt(ratio, 1);
+            $(`#${id}-word`).textContent = word(ratio);
+          }
+          $("#css").textContent =
+            `:root {\n` +
+            steps.map((s) => `  --brand-${s.step}: oklch(${fmt(s.L * 100, 1)}% ${fmt(s.C, 3)} ${fmt(s.H, 1)}); /* ${s.hex} */`).join("\n") +
+            `\n}`;
+        };
+
+        for (const button of document.querySelectorAll("[data-copy]")) {
+          button.addEventListener("click", async () => {
+            const idle = button.innerHTML;
+            try {
+              await navigator.clipboard.writeText($(button.dataset.copy).textContent);
+              button.innerHTML = '<i class="ph ph-check text-sm"></i>Copied';
+            } catch {
+              button.innerHTML = '<i class="ph ph-selection-all text-sm"></i>Select it below';
+            }
+            setTimeout(() => (button.innerHTML = idle), 1600);
+          });
+        }
+
+        render();
+
+        // --- the dials ------------------------------------------------------------
+        // dialkit, pinned, in the page's own column. The panel is told which
+        // theme the page shows, which the shell answers with a viewer's pin and
+        // the reader's own choice taken into account.
+        const theme = () => window.__instrumentTheme();
+
+        try {
+          const { createDialKit, createDialRoot } = await import("https://cdn.jsdelivr.net/npm/dialkit@2.0.2/vanilla/+esm");
+          const root = createDialRoot({ target: $("#dials"), mode: "inline", theme: theme() });
+          document.addEventListener("instrument:theme", () => {
+            root.element.dataset.theme = theme();
+          });
+          const kit = createDialKit("Ramp", CONFIG, { id: "playground-one-hue", persist: true });
+          $("#settings").remove();
+          $("#reset").hidden = false;
+          $("#reset").addEventListener("click", () => kit.resetValues());
+          kit.subscribe((next) => {
+            values = next;
+            render();
+          });
+        } catch {
+          $("#dials-note").hidden = false;
+        }
+      </script>
+    </main>
+    <!-- shell:start -->
+    <!-- The page as written, kept for the share widget before any script has
+         changed it. A page's own scripts are modules, and Tailwind is deferred,
+         so both run after this and a shared copy carries the markup rather than
+         what a script drew on it. -->
+    <script>
+      {
+        // A script that failed while the page was still parsing has already
+        // marked the root as shown; a copy starts held back, like the file. A
+        // theme the reader chose is on the root by now too, and a copy that
+        // carried it would be pinned for every reader and hash differently for
+        // each one who chose.
+        const page = document.documentElement.cloneNode(true);
+        page.classList.remove("instrument-ready");
+        delete page.dataset.theme;
+        window.__instrumentSource = "<!doctype html>\n" + page.outerHTML;
+      }
+
+      // Progressive: with scripts off, or offline, every link reads exactly as
+      // it does now and nothing shifts. Only the origin is ever sent, never the
+      // path, so a link's query string is not handed over to draw an icon.
+      // Waits for the page's module scripts, so a link one of them draws gets
+      // its icon like any other.
+      const decorate = () => {
+        const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+        for (const link of document.querySelectorAll('a[href^="https://"]')) {
+          const icon = document.createElement("img");
+          icon.alt = "";
+          icon.className = "site-icon";
+          icon.src =
+            "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+            encodeURIComponent(new URL(link.href).origin);
+
+          // A line may break between an image and the text beside it, so the icon
+          // and the first word it leads go in a span that cannot break. A link
+          // with no text of its own takes the icon at the front of the link.
+          const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+          let text = walker.nextNode();
+          while (text && !text.data.trim()) text = walker.nextNode();
+          let host = link;
+          if (text) {
+            const at = text.data.search(/\S/);
+            const word = at > 0 ? text.splitText(at) : text;
+            const space = word.data.search(/\s/);
+            if (space > 0) word.splitText(space); // The rest of the text stays put.
+            host = document.createElement("span");
+            host.className = "site-icon-word";
+            word.replaceWith(host);
+            host.append(word);
+          }
+
+          const drop = () => {
+            icon.remove();
+            if (host !== link) host.replaceWith(...host.childNodes);
+          };
+          icon.onerror = drop;
+          icon.onload = () => {
+            if (icon.naturalWidth <= ABSENT) drop();
+          };
+          host.prepend(icon);
+        }
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", decorate, { once: true });
+      } else {
+        decorate();
+      }
+    </script>
+    <!-- shell:end -->
+  </body>
+</html>

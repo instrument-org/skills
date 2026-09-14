@@ -1,0 +1,171 @@
+      <!-- The page is the stage. <main> is wide enough for the thing and its
+           dials side by side: `mx-auto max-w-6xl px-4 pb-8 sm:px-6`. The top
+           padding is the title bar's own, so the bar can pin to the top edge. -->
+
+      <!-- dialkit's own stylesheet, by path. The panel sits in the page's
+           column rather than floating over it, so it takes the column's width
+           and a card's frame. -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialkit@2.0.2/dist/vanilla/styles.css" />
+      <style>
+        #dials .dialkit-root {
+          position: static;
+          width: 100%;
+          border: 1px solid var(--color-border);
+          border-radius: 1rem;
+          background: var(--color-card);
+        }
+      </style>
+
+      <header class="sticky top-0 z-20 -mx-4 mb-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
+        <!-- A name and one line: what is on the stage, and what the dials are
+             for. There is no thesis paragraph on this page. -->
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">TITLE</h1>
+          <p class="truncate text-[12px] text-muted-foreground">ONE LINE: what is on the stage and what to do with the dials.</p>
+        </div>
+        <div class="flex shrink-0 items-center gap-1.5 print:hidden">
+          <!-- Reset is the page's rather than the panel's: it puts the dials back
+               to the opening setting, and shows once there are dials to reset. -->
+          <button id="reset" hidden class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+            <i class="ph ph-arrow-u-up-left text-sm"></i>Reset
+          </button>
+          <!-- Only when something moves. A stage that holds still has no replay. -->
+          <button id="replay" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+            <i class="ph ph-arrow-counter-clockwise text-sm"></i>Replay
+          </button>
+        </div>
+      </header>
+
+      <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <!-- The stage: the thing at its opening settings, drawn here in HTML so
+             a page with scripts off shows it, at the size it will really be
+             seen. -->
+        <section id="stage" aria-label="WHAT IS ON THE STAGE" class="flex flex-wrap items-center justify-center gap-x-14 gap-y-8 rounded-2xl border border-border bg-muted px-6 py-8">
+          <div id="thing" class="h-40 w-64 rounded-2xl bg-card shadow-xl"></div>
+
+          <!-- What the dials work out to, beside the thing they describe.
+               Arithmetic over the settings shown, and nothing else. Delete the
+               list when there is nothing true to compute. -->
+          <dl class="grid gap-5">
+            <div>
+              <dt class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">A figure</dt>
+              <dd class="mt-0.5 text-[22px] font-semibold tracking-[-0.02em]"><span id="figure">24</span><span class="ml-1 text-[13px] font-normal text-muted-foreground">its unit</span></dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- The dials. What is written here is the opening settings, in words;
+             the panel takes this column's place when it arrives, and with the
+             network off this list is the panel. -->
+        <aside id="dials" class="lg:sticky lg:top-16 lg:self-start">
+          <dl id="settings" class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 rounded-2xl border border-border bg-card p-4 text-[12px] leading-5">
+            <dt class="text-muted-foreground">Radius</dt>
+            <dd class="font-mono">24 px</dd>
+            <dt class="text-muted-foreground">Accent</dt>
+            <dd class="font-mono">#0e7869</dd>
+          </dl>
+          <p id="dials-note" hidden class="mt-2 text-[11px] leading-5 text-muted-foreground">The dials did not arrive, which takes the network. These are the settings the page opened with, and what is below is theirs.</p>
+        </aside>
+      </div>
+
+      <!-- The takeaway: what the reader carries out, written here for the
+           opening settings and rewritten as the dials move. Render the page
+           once and paste back what the script produced, so the two agree. -->
+      <section id="take" class="mt-5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">The CSS</h2>
+          <button data-copy="#css" class="flex h-7 items-center gap-1.5 rounded-lg border border-border px-2 text-[11px] font-medium print:hidden"><i class="ph ph-copy text-sm"></i>Copy</button>
+        </div>
+        <pre id="css" class="mt-2 max-h-72 overflow-auto rounded-xl bg-code p-4 font-mono text-[11.5px] leading-5 whitespace-pre-wrap text-code-foreground [overflow-wrap:anywhere]">.thing {
+  border-radius: 24px;
+  background: #0e7869;
+}</pre>
+      </section>
+
+      <!-- One line, small: what the defaults rest on, what the takeaway was
+           checked against, and where what the reader sets is kept. -->
+      <p id="source" class="mt-5 text-[11px] leading-5 text-muted-foreground">
+        The opening values are WHERE THEY CAME FROM. The dials are <a href="https://github.com/joshpuckett/dialkit">dialkit</a>, which needs the network; the stage and what is under it do not. Nothing you set leaves this page: the dials remember their last position in this browser and nowhere else, and Reset puts them back to the opening setting.
+      </p>
+
+      <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
+      <script type="module">
+        const $ = (s) => document.querySelector(s);
+        const thing = $("#thing");
+
+        // The dials, in dialkit's own notation: a number is a slider, a
+        // [default, min, max, step] is a slider with a range, a boolean is a
+        // toggle, a hex string is a color, an object with a type is that
+        // control, and any other object is a folder. This one object is also
+        // the page's defaults.
+        const CONFIG = {
+          radius: [24, 0, 64, 1],
+          accent: "#0e7869",
+        };
+
+        // The defaults, read out of the config, so the page has its values
+        // before the panel arrives and still has them if it never does.
+        const resolve = (config) =>
+          Object.fromEntries(
+            Object.entries(config).flatMap(([key, v]) => {
+              if (Array.isArray(v)) return [[key, v[0]]];
+              if (v && typeof v === "object") {
+                if (v.type === "action") return [];
+                if (v.type === "spring" || v.type === "easing") return [[key, v]];
+                if (v.type === "pad") return [[key, { x: v.x?.[0] ?? 0, y: v.y?.[0] ?? 0 }]];
+                if ("type" in v) return [[key, v.default ?? v.options?.[0]?.value ?? v.options?.[0] ?? ""]];
+                return [[key, resolve(v)]];
+              }
+              return [[key, v]];
+            }),
+          );
+        let values = resolve(CONFIG);
+
+        // One render, from every value to every output, on every change.
+        const render = () => {
+          thing.style.borderRadius = `${values.radius}px`;
+          thing.style.background = values.accent;
+          $("#figure").textContent = values.radius;
+          $("#css").textContent = `.thing {\n  border-radius: ${values.radius}px;\n  background: ${values.accent};\n}`;
+        };
+
+        for (const button of document.querySelectorAll("[data-copy]")) {
+          button.addEventListener("click", async () => {
+            const idle = button.innerHTML;
+            try {
+              await navigator.clipboard.writeText($(button.dataset.copy).textContent);
+              button.innerHTML = '<i class="ph ph-check text-sm"></i>Copied';
+            } catch {
+              button.innerHTML = '<i class="ph ph-selection-all text-sm"></i>Select it below';
+            }
+            setTimeout(() => (button.innerHTML = idle), 1600);
+          });
+        }
+
+        render();
+
+        // dialkit, pinned, in the page's own column. The panel is told which
+        // theme the page shows, which the shell answers with a viewer's pin and
+        // the reader's own choice taken into account.
+        const theme = () => window.__instrumentTheme();
+
+        try {
+          const { createDialKit, createDialRoot } = await import("https://cdn.jsdelivr.net/npm/dialkit@2.0.2/vanilla/+esm");
+          const root = createDialRoot({ target: $("#dials"), mode: "inline", theme: theme() });
+          document.addEventListener("instrument:theme", () => {
+            root.element.dataset.theme = theme();
+          });
+          // The id keys what the reader sets in their browser; make it this
+          // page's own, since every file opened from a folder shares one store.
+          const kit = createDialKit("PANEL NAME", CONFIG, { id: "playground-SLUG", persist: true });
+          $("#settings").remove();
+          $("#reset").hidden = false;
+          $("#reset").addEventListener("click", () => kit.resetValues());
+          kit.subscribe((next) => {
+            values = next;
+            render();
+          });
+        } catch {
+          $("#dials-note").hidden = false;
+        }
+      </script>

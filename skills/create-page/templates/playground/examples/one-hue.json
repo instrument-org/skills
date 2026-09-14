@@ -1,0 +1,8 @@
+{
+  "title": "A palette from one hue",
+  "variant": "A look: a color ramp in both themes, with the contrast it makes as the figures",
+  "prompt": "We have one brand color and need the whole ramp from it for light and dark mode, and I want to see which text-on-background pairs actually pass.",
+  "model": "claude-opus-5",
+  "note": "The look shape, and the one where the figures rule earns its keep: the three numbers beside the cards are WCAG contrast ratios for the pairings the cards actually use, each with the word that says whether it passes, so the reader is judging a ramp and reading its consequences at once. The eleven steps are custom properties on the stage, which is what lets the same card be shown twice, once on paper and once on the darkest step, whatever theme the reader is in. Steps are placed in OKLCH so equal moves look equal; chroma is fullest in the middle and pulled back by halving wherever sRGB cannot show it, and the hex beside each variable is the color the browser will paint, which is what makes the takeaway pasteable. The opening hue and chroma are read out of a real burnt orange rather than picked, and the last line says so, since a reader takes an opening palette for a recommendation.",
+  "html_sha256": "e510d28c4400eb4dc774a011430e6f6514ea75d0446721535553b2178659a4d6"
+}
