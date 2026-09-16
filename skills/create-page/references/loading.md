@@ -88,6 +88,7 @@ A page that does this will not run inside the strict frames above, and its `temp
 | Tabulator       | classic script by path, stylesheet                               | `explorer`         |
 | sql.js          | classic script by path, wasm by path                             | `explorer`         |
 | Leaflet         | classic script by path, stylesheet                               | `explorer`         |
+| MapLibre GL     | classic script by path, stylesheet; styles from OpenFreeMap      | `map`              |
 | Excalidraw      | esm.sh with `?deps`, stylesheet, assets                          | `whiteboard`       |
 | dialkit         | module, `/vanilla/+esm`, stylesheet                              | `playground`       |
 

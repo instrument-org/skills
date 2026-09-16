@@ -20,7 +20,12 @@ extend-ignore-identifiers-re = ["\\b[0-9a-f]{7,40}\\b"]
 # exclude would have cost: every word of prose around it is still checked. The
 # name is screaming snake by convention, which is what keeps this off ordinary
 # code, and the match ends at the first `];`, which JSON never contains.
-extend-ignore-re = ["(?s)const [A-Z][A-Z0-9_]* = \\[[\\[{].*?\\];"]
+extend-ignore-re = [
+  "(?s)const [A-Z][A-Z0-9_]* = \\[[\\[{].*?\\];",
+  # An encoded polyline is a road as one string of letters, and every few
+  # characters of it spell a word: the same convention, for a string literal.
+  "const [A-Z][A-Z0-9_]* = \"[^\"]*\";",
+]
 
 # Third-party surface the skills quote verbatim. These sit here rather than
 # under extend-words so each matches a whole token only, which leaves
@@ -44,6 +49,8 @@ PNGs = "PNGs"
 # A town on Flores, Indonesia, named in prose by an explorer example because
 # the largest earthquake of that month was next to it.
 Ende = "Ende"
+# Big Sur, the stretch of the California coast a map example drives through.
+Sur = "Sur"
 
 [files]
 # Dotted directories are content too: workflows, agent config, editor config.

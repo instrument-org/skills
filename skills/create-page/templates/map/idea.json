@@ -1,0 +1,17 @@
+{
+  "title": "Map",
+  "tagline": "A map that fills the window, with the places in a card beside it.",
+  "when": "You have places to see in relation to each other: where to eat in a city, the stops of a drive and the road between them, or which parts of town to look at first.",
+  "tags": ["layout", "steps"],
+  "order": 17,
+  "needs": [],
+  "cover": "new-york-eating",
+  "sections": [
+    "A name and one line",
+    "The map",
+    "The legend",
+    "The places",
+    "Sources, folded"
+  ],
+  "sketch": ["pins"]
+}

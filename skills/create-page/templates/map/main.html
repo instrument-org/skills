@@ -1,0 +1,291 @@
+      <!-- The page is the map. <main> is `fixed inset-0 overflow-hidden`: the
+           panel fills the window, and the places float over it in a card that
+           scrolls on its own, at the left edge from a tablet up and as a sheet
+           across the bottom on a phone. -->
+
+      <!-- MapLibre's own stylesheet, by path, and the page's say over what it
+           paints: popups and controls on the page's card, pins in the page's
+           ink. The streets themselves come from OpenFreeMap's styles, Liberty
+           by day and Fiord by night, both drawn with buildings and names, so
+           nothing here recolors tiles. -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+      <style>
+        #map { position: absolute; inset: 0; }
+        .maplibregl-map { font-family: var(--font-sans); }
+        .maplibregl-canvas:focus { outline: none; }
+        .maplibregl-ctrl-group { background: var(--color-card); box-shadow: var(--shadow-sm); }
+        .maplibregl-ctrl-group button + button { border-top-color: var(--color-border); }
+        /* The attribution is a condition of the streets, kept, and kept quiet:
+           a faint (i) in the corner that opens to the credit on a tap, and
+           reads as part of the page when it does. */
+        .maplibregl-ctrl.maplibregl-ctrl-attrib.maplibregl-compact { background: transparent; box-shadow: none; color: var(--color-muted-foreground); font-size: 10px; line-height: 20px; border-radius: 10px; padding: 0; }
+        .maplibregl-ctrl.maplibregl-ctrl-attrib.maplibregl-compact-show { background: var(--color-card); box-shadow: var(--shadow-sm); padding: 0 28px 0 8px; }
+        .maplibregl-ctrl-attrib a { color: inherit; text-decoration: none; }
+        .maplibregl-ctrl-attrib-button, .maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-button { background-color: transparent; opacity: 0.45; }
+        .maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-button { opacity: 0.8; }
+        /* The share pill sits in the corner the attribution would take. */
+        .maplibregl-ctrl-bottom-right { bottom: 2.75rem; }
+        .maplibregl-popup-content { background: var(--color-card); color: var(--color-foreground); padding: 0; border-radius: 12px; box-shadow: var(--shadow-xl); font: inherit; line-height: inherit; }
+        .maplibregl-popup-anchor-bottom .maplibregl-popup-tip, .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip, .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip { border-top-color: var(--color-card); }
+        .maplibregl-popup-anchor-top .maplibregl-popup-tip, .maplibregl-popup-anchor-top-left .maplibregl-popup-tip, .maplibregl-popup-anchor-top-right .maplibregl-popup-tip { border-bottom-color: var(--color-card); }
+        .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: var(--color-card); }
+        .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--color-card); }
+        .maplibregl-popup-close-button { color: var(--color-muted-foreground); font-size: 16px; padding: 2px 7px; }
+        /* The control glyphs are black drawings; on dark they turn white. */
+        @media (prefers-color-scheme: dark) {
+          html:not([data-theme="light"]) .maplibregl-ctrl button .maplibregl-ctrl-icon, html:not([data-theme="light"]) .maplibregl-ctrl-attrib-button { filter: invert(1); }
+        }
+        html[data-theme="dark"] .maplibregl-ctrl button .maplibregl-ctrl-icon, html[data-theme="dark"] .maplibregl-ctrl-attrib-button { filter: invert(1); }
+        /* A pin is the entry's number in a brand circle, drawn in CSS so it
+           follows the theme. The pointed-at pin takes the page's ink and paper,
+           which are a pair in both themes. */
+        .pin span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 9999px; background: var(--color-brand-600); color: #fff; font: 600 12px/1 var(--font-sans); box-shadow: 0 0 0 2px var(--color-card), var(--shadow-sm); cursor: pointer; }
+        .pin.is-current span { background: var(--color-primary); color: var(--color-primary-foreground); }
+        /* An entry the map has pointed at. Entries bleed to the card's edges
+           (-mx-4 px-4 against the list's px-4), so the wash and the dividers run
+           the card's full width rather than stopping at the number. */
+        #places [data-lat] { cursor: pointer; }
+        #places [data-lat][aria-current="true"] { background: var(--color-brand-25); }
+        /* On a phone the card is a sheet across the bottom edge, just under
+           half the screen, and the whole sheet is the one thing that scrolls:
+           header, list and sources move as a unit. Its foot is a band the share
+           pill sits in. */
+        @media (max-width: 639px) {
+          #panel { inset: auto 0 0 0; display: block; width: auto; max-width: none; height: 46dvh; max-height: none; overflow-y: auto; border-radius: 16px 16px 0 0; border-bottom: 0; padding-bottom: 3rem; }
+          #places { flex: none; max-height: none; overflow: visible; }
+        }
+        /* Paper cannot scroll a card: the map takes the top of the sheet and
+           the places flow under it. */
+        @media print {
+          main { position: static !important; }
+          #map { position: static; height: 60vh; }
+          #panel { position: static; width: auto; max-height: none; max-width: none; box-shadow: none; }
+          #places { flex: none; max-height: none; overflow: visible; }
+        }
+        @page { size: landscape; }
+      </style>
+
+      <!-- The map, framed on the places by the script. With scripts off this
+           note is what the panel shows; with the network off the script draws
+           the same pins on plain ground from the list's own coordinates. -->
+      <div id="map" role="region" aria-label="Map of the places in the card"><p class="p-3 text-[12px] text-muted-foreground">The map draws here with the network on. The places are in the card, with their positions.</p></div>
+
+      <div id="panel" class="absolute top-4 left-4 z-10 flex max-h-[calc(100dvh-2rem)] w-[23rem] max-w-[calc(100vw-2rem)] flex-col rounded-xl border border-border bg-card/95 shadow-lg backdrop-blur">
+        <header class="flex items-start gap-3 border-b border-border p-4">
+          <!-- A name and one line: what is on the map and what to do with it.
+               The map is the thesis; there is no paragraph after this. -->
+          <div class="min-w-0 flex-1">
+            <p class="mb-1.5 text-[11px] font-semibold tracking-[0.14em] text-brand-700 uppercase">Map &middot; HOW MANY places</p>
+            <h1 class="text-[17px] font-semibold tracking-[-0.01em]">TITLE</h1>
+            <p class="mt-1.5 text-[12px] leading-5 text-muted-foreground">ONE LINE: what these places are, who picked them, and what to do with the map.</p>
+            <!-- The legend, only when the pins mean more than one thing. Delete
+                 it when they are all one kind. -->
+            <p class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+              <span><span class="mr-1.5 inline-block h-2.5 w-2.5 rounded-full bg-brand-600 align-middle"></span>WHAT BRAND MEANS</span>
+              <span><span class="mr-1.5 inline-block h-2.5 w-2.5 rounded-full bg-gray-400 align-middle"></span>WHAT GRAY MEANS</span>
+            </p>
+          </div>
+        </header>
+
+        <!-- The places. Every pin is an entry here, in the order the map numbers
+             them, and each entry carries its own position: the script reads the
+             list, so there is one copy of every fact. A click on an entry goes
+             to its pin. The place's own site and a Google Maps search for it are
+             small links under the entry, so they never look like that click.
+             Group the entries the way the reader thinks about the places, and
+             let the group heading do the legend's work where it can. -->
+        <ol id="places" class="min-h-0 flex-1 divide-y divide-border overflow-y-auto px-4 py-1">
+          <li data-lat="40.7223" data-lon="-73.9874" class="-mx-4 flex gap-3 px-4 py-3">
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-600 text-[11px] font-semibold text-white">1</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="text-[14px] font-semibold tracking-[-0.01em]">NAME</h3>
+              <p class="text-[12px] text-muted-foreground">NEIGHBORHOOD &middot; WHAT KIND OF PLACE</p>
+              <p class="mt-1 text-[13px] leading-5">WHY IT IS ON THIS PAGE, and what to do or order there.</p>
+              <!-- A picture only where the reader has to recognize the place:
+                   480 wide at quality 72, inline, with width and height. The
+                   popup reuses this element, so the bytes are carried once. -->
+              <img src="data:image/jpeg;base64,..." width="480" height="320" alt="WHAT THE PICTURE SHOWS" class="mt-2 aspect-[3/2] w-full rounded-md object-cover" />
+              <!-- The Google Maps link is a search for the name and street, which
+                   lands on the place's own card rather than a dropped pin. -->
+              <p class="mt-1.5 flex flex-wrap gap-x-3 text-[12px]"><a href="https://EXAMPLE.COM/">example.com</a><a href="https://www.google.com/maps/search/?api=1&amp;query=NAME%2C%20STREET%2C%20CITY">Google Maps</a></p>
+            </div>
+          </li>
+          <li data-lat="40.7196" data-lon="-73.9896" class="-mx-4 flex gap-3 px-4 py-3">
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-600 text-[11px] font-semibold text-white">2</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="text-[14px] font-semibold tracking-[-0.01em]">NAME</h3>
+              <p class="text-[12px] text-muted-foreground">NEIGHBORHOOD &middot; WHAT KIND OF PLACE</p>
+              <p class="mt-1 text-[13px] leading-5">WHY IT IS ON THIS PAGE.</p>
+              <p class="mt-1.5 flex flex-wrap gap-x-3 text-[12px]"><a href="https://www.google.com/maps/search/?api=1&amp;query=NAME%2C%20STREET%2C%20CITY">Google Maps</a></p>
+            </div>
+          </li>
+        </ol>
+
+        <!-- Where it came from, folded: the summary is one short line and the
+             rest opens on demand, because the card is small and the map is what
+             the reader came for. Positions and their date, what a router or a
+             planner gave, what was drawn by hand, the photo credits, the map. -->
+        <details id="source" class="border-t border-border px-4 py-2 text-[11px] leading-4 text-muted-foreground">
+          <summary class="cursor-pointer">Sources and credits</summary>
+          <p class="mt-1.5">
+            Positions from <a href="https://nominatim.openstreetmap.org/">Nominatim</a> over OpenStreetMap, read DATE, rounded to four decimals. Hours and prices are not stated; check each place before going. Map by <a href="https://maplibre.org/">MapLibre</a> over <a href="https://openfreemap.org/">OpenFreeMap</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors; with the network off the map shows the pins to scale and this list is unchanged.
+          </p>
+        </details>
+      </div>
+
+      <!-- MapLibre as published, before the module, since it installs a global. -->
+      <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+      <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
+      <script type="module">
+        const panel = document.querySelector("#map");
+        const card = document.querySelector("#panel");
+        const phone = () => !matchMedia("(min-width: 640px)").matches;
+        // The streets, in the theme the page shows. The shell answers with the
+        // reader's choice taken into account, and fires an event when it changes.
+        const STYLE = { light: "https://tiles.openfreemap.org/styles/liberty", dark: "https://tiles.openfreemap.org/styles/fiord" };
+        const theme = () => window.__instrumentTheme();
+
+        // The places are the list. Each entry carries its position, so the
+        // script has no array of its own to fall out of step with the page.
+        const places = [...document.querySelectorAll("#places [data-lat]")].map((el, i) => ({
+          el,
+          n: i + 1,
+          lat: Number(el.dataset.lat),
+          lon: Number(el.dataset.lon),
+          name: el.querySelector("h3")?.textContent.trim() ?? String(i + 1),
+        }));
+        const bounds = places.map((p) => [p.lat, p.lon]);
+
+        // The entry the map points at, and the pin the list points at.
+        const light = (which) => {
+          for (const p of places) {
+            if (p === which) p.el.setAttribute("aria-current", "true");
+            else p.el.removeAttribute("aria-current");
+            p.marker?.getElement().classList.toggle("is-current", p === which);
+          }
+          which?.el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        };
+
+        // A popup repeats the entry: its name, its line, and its picture if it
+        // has one, cloned rather than copied so the bytes are carried once.
+        const popup = (p) => {
+          const box = document.createElement("div");
+          box.className = "w-60 text-[13px] leading-5";
+          const img = p.el.querySelector("img");
+          if (img) {
+            const pic = img.cloneNode();
+            pic.className = "aspect-[3/2] w-full rounded-t-[12px] object-cover";
+            box.append(pic);
+          }
+          const body = document.createElement("div");
+          body.className = "px-3 py-2.5";
+          body.innerHTML = `<b class="font-semibold">${p.n}. ${p.name}</b><br>${p.el.querySelector("p")?.textContent ?? ""}`;
+          box.append(body);
+          return box;
+        };
+
+        // The stylesheet compiles in the browser after the page is parsed, and
+        // until it does the card has no size or place, so the frame would be
+        // measured against nothing. Wait for the skin the shell itself waits for.
+        await new Promise((done) => {
+          const started = performance.now();
+          (function poll() {
+            const styled = getComputedStyle(document.documentElement).getPropertyValue("--font-sans").trim() !== "";
+            if (styled || performance.now() - started > 4000) done();
+            else requestAnimationFrame(poll);
+          })();
+        });
+
+        // A map, if the library arrived and the browser draws WebGL.
+        let map;
+        if (typeof maplibregl !== "undefined") {
+          try {
+            panel.replaceChildren();
+            map = new maplibregl.Map({ container: panel, style: STYLE[theme()], attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false });
+            map.touchZoomRotate.disableRotation();
+          } catch {
+            map = undefined;
+          }
+        }
+
+        if (map) {
+          // The page does not scroll, so the wheel zooms the map. Controls sit
+          // where the card is not: on a phone the sheet covers the bottom.
+          map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+          const attribution = new maplibregl.AttributionControl({ compact: true });
+          map.addControl(attribution, phone() ? "top-right" : "bottom-right");
+          // MapLibre opens the compact form on load; a reader opens it if they want it.
+          map.once("load", () => attribution._container.classList.remove("maplibregl-compact-show"));
+          document.addEventListener("instrument:theme", () => map.setStyle(STYLE[theme()]));
+          // Anything drawn on the map itself, a road or a shape, is added here,
+          // since a new style starts with none of it. Pins are DOM and stay.
+          map.on("style.load", () => {});
+
+          // Frames a set of points in the part of the window the card leaves
+          // free: beside it on a desktop, above it on a phone.
+          const frame = (points, options = {}) => {
+            const box = points.reduce((acc, [lat, lon]) => acc.extend([lon, lat]), new maplibregl.LngLatBounds());
+            const rect = card.getBoundingClientRect();
+            const padding = phone()
+              ? { top: 40, left: 40, right: 40, bottom: Math.min(innerHeight - rect.top + 40, innerHeight * 0.6) }
+              : { top: 40, right: 56, bottom: 88, left: Math.min(rect.right + 40, innerWidth * 0.6) };
+            map.fitBounds(box, { padding, maxZoom: 16, duration: 0, ...options });
+          };
+
+          const pin = (n) => {
+            const el = document.createElement("div");
+            el.className = "pin";
+            el.innerHTML = `<span>${n}</span>`;
+            return el;
+          };
+          for (const p of places) {
+            const el = pin(p.n);
+            p.marker = new maplibregl.Marker({ element: el, anchor: "center" })
+              .setLngLat([p.lon, p.lat])
+              .setPopup(new maplibregl.Popup({ offset: 18, maxWidth: "none" }).setDOMContent(popup(p)))
+              .addTo(map);
+            el.addEventListener("click", () => light(p));
+            p.el.addEventListener("click", (event) => {
+              if (event.target.closest("a")) return;
+              frame([[p.lat, p.lon]], { maxZoom: Math.max(map.getZoom(), 15), duration: 600 });
+              if (!p.marker.getPopup().isOpen()) p.marker.togglePopup();
+              light(p);
+            });
+          }
+          // Framed on the places, with a margin, before the reader touches it.
+          frame(bounds);
+        } else {
+          // No map, so no streets: the same pins on plain ground, to scale,
+          // drawn from the list in the part of the window the card leaves free.
+          // A degree of longitude is shorter than one of latitude by the cosine
+          // of the latitude, which is the one projection this needs.
+          const lats = bounds.map(([lat]) => lat);
+          const lons = bounds.map(([, lon]) => lon);
+          const [s, n, w, e] = [Math.min(...lats), Math.max(...lats), Math.min(...lons), Math.max(...lons)];
+          const k = Math.cos((((s + n) / 2) * Math.PI) / 180);
+          const box = panel.getBoundingClientRect();
+          const rect = card.getBoundingClientRect();
+          const W = Math.max(320, Math.round(box.width));
+          const H = Math.max(240, Math.round(box.height));
+          // The margins, grown on the side the card covers.
+          const pad = 40;
+          const inset = { left: pad, right: pad, top: pad, bottom: pad };
+          if (phone()) inset.bottom += H - rect.top;
+          else inset.left += rect.right;
+          const spanX = Math.max((e - w) * k, 0.002);
+          const spanY = Math.max(n - s, 0.002);
+          const scale = Math.min((W - inset.left - inset.right) / spanX, (H - inset.top - inset.bottom) / spanY);
+          const x = (lon) => inset.left + (W - inset.left - inset.right - spanX * scale) / 2 + (lon - w) * k * scale;
+          const y = (lat) => inset.top + (H - inset.top - inset.bottom - spanY * scale) / 2 + (n - lat) * scale;
+          // A scale bar in round kilometers, since a degree of latitude is 111 km.
+          const kmPerPx = 111 / scale;
+          const km = [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500].find((v) => v / kmPerPx >= 60) ?? 500;
+          const svg = `<svg viewBox="0 0 ${W} ${H}" class="h-full w-full" role="img" aria-label="The places, to scale, without streets">
+            ${places.map((p) => `<circle cx="${x(p.lon).toFixed(1)}" cy="${y(p.lat).toFixed(1)}" r="11" class="fill-brand-600"/><text x="${x(p.lon).toFixed(1)}" y="${(y(p.lat) + 4).toFixed(1)}" text-anchor="middle" class="fill-white text-[11px] font-semibold">${p.n}</text>`).join("")}
+            <line x1="${(W - inset.right - km / kmPerPx).toFixed(1)}" y1="${H - inset.bottom + 22}" x2="${W - inset.right}" y2="${H - inset.bottom + 22}" class="stroke-foreground" stroke-width="2"/>
+            <text x="${W - inset.right}" y="${H - inset.bottom + 16}" text-anchor="end" class="fill-muted-foreground text-[11px]">${km} km</text>
+          </svg>`;
+          panel.innerHTML = `${svg}<p class="absolute top-3 right-3 max-w-[16rem] text-right text-[11px] text-muted-foreground">The streets need the network. These are the same places, to scale.</p>`;
+          for (const p of places) p.el.addEventListener("click", () => light(p));
+        }
+      </script>

@@ -53,6 +53,7 @@ const SKETCH_MARKS = new Set([
   "grid",
   "memo",
   "panels",
+  "pins",
   "qa",
   "quote",
   "rank",

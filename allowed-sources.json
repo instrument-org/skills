@@ -47,6 +47,10 @@
       "why": "A link wears the icon of the site it points at, and no CSS can read a host out of an href, so the URL is built from the link."
     },
     {
+      "prefix": "https://tiles.openfreemap.org/",
+      "why": "The map template's streets: a style URL the script hands MapLibre, which then fetches the style's tiles, glyphs and sprites from the same host. OpenFreeMap hosts these for anyone's site with no key and no limit, commercial use included, which OpenStreetMap's own tile servers forbid for a distributed app. A page whose streets never arrive still draws its pins to scale and carries its places as a list."
+    },
+    {
       "prefix": "https://tile.openstreetmap.org/",
       "why": "Map tiles are a URL template a map library fills in per tile. A page whose tiles never arrive still carries its places as a list, which is the rule the map template is built around."
     },
