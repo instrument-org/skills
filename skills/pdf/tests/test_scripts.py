@@ -197,9 +197,7 @@ class TestCreatePdf:
 
         task = tmp_path / "task"
         attachments = task / "attachments"
-        output = task / "output"
         attachments.mkdir(parents=True)
-        output.mkdir()
         Image.new("RGB", (120, 80), "blue").save(attachments / "chart.png")
 
         result = run(
@@ -212,7 +210,7 @@ class TestCreatePdf:
         )
 
         assert result.returncode == 0
-        assert len(PdfReader(str(output / "report.pdf")).pages[0].images) == 1
+        assert len(PdfReader(str(task / "report.pdf")).pages[0].images) == 1
 
     def test_resolves_images_relative_to_markdown_file_first(self, tmp_path):
         pytest.importorskip("reportlab")
