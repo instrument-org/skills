@@ -9,14 +9,14 @@ Use Python libraries directly when the work needs batching, model reuse, custom 
 
 ## Choose an approach
 
-| Need                                                   | Approach                                                      |
-| ------------------------------------------------------ | ------------------------------------------------------------- |
-| One image, text, or audio file with standard output    | Run the matching script                                       |
-| Many inputs or repeated inference                      | Write Python that loads the model once                        |
-| Similarity, ranking, aggregation, or custom thresholds | Compose the library APIs                                      |
-| A reusable artifact                                    | Write structured results to `output/` and record the model ID |
+| Need                                                   | Approach                                                    |
+| ------------------------------------------------------ | ----------------------------------------------------------- |
+| One image, text, or audio file with standard output    | Run the matching script                                     |
+| Many inputs or repeated inference                      | Write Python that loads the model once                      |
+| Similarity, ranking, aggregation, or custom thresholds | Compose the library APIs                                    |
+| A reusable artifact                                    | Write structured results to `work/` and record the model ID |
 
-Python packages share the task virtual environment, so custom recipes may live under `work/`. Run them from the task root so `attachments/`, `work/`, and `output/` resolve correctly.
+Python packages share the task virtual environment, so custom recipes may live under `work/`. Run them from the task root so `attachments/`, `work/`, and `work/` resolve correctly.
 
 ## Optional dependencies
 
@@ -99,7 +99,7 @@ Repair what is left afterward, but expect much less of it.
 Pass `--output` for anything longer than a few minutes. Segments are written as they are produced, so a run that is interrupted leaves a usable partial transcript instead of nothing:
 
 ```bash
-python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --model turbo --vocabulary "..." --output output/transcript.txt
+python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --model turbo --vocabulary "..." --output work/transcript.txt
 ```
 
 There is no speaker diarization here. Whisper returns text and timings, not who was speaking. Say so rather than labeling speakers by inference, and do not reach for a diarization stack without agreeing the cost first: those models are a separate download, several of them are gated behind an account, and on a CPU they can cost more than the transcription.
@@ -143,7 +143,7 @@ records = [
     }
     for text, result in zip(texts, predictions)
 ]
-Path("output/classifications.json").write_text(
+Path("work/classifications.json").write_text(
     json.dumps(records, indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
@@ -181,7 +181,7 @@ ranked = sorted(
     key=lambda item: item["score"],
     reverse=True,
 )
-Path("output/ranked.json").write_text(
+Path("work/ranked.json").write_text(
     json.dumps(ranked, indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
@@ -197,7 +197,7 @@ from pathlib import Path
 from rembg import new_session, remove
 
 session = new_session("u2net")
-destination = Path("output/background-removed")
+destination = Path("work/background-removed")
 destination.mkdir(parents=True, exist_ok=True)
 
 for source in Path("attachments").glob("*"):
@@ -231,7 +231,7 @@ rows = [
     {"start": segment.start, "end": segment.end, "text": segment.text.strip()}
     for segment in segments
 ]
-Path("output/transcript.json").write_text(
+Path("work/transcript.json").write_text(
     json.dumps(
         {"language": info.language, "model": model_name, "segments": rows},
         indent=2,
@@ -239,7 +239,7 @@ Path("output/transcript.json").write_text(
     ),
     encoding="utf-8",
 )
-Path("output/transcript.txt").write_text(
+Path("work/transcript.txt").write_text(
     "\n".join(row["text"] for row in rows),
     encoding="utf-8",
 )

@@ -79,7 +79,7 @@ summary["B1"] = "=SUM(Sales!C2:C3)"
 summary["B1"].number_format = "$#,##0"
 
 wb.properties.title = "Monthly Sales"
-output = Path("output/sales.xlsx")
+output = Path("work/sales.xlsx")
 output.parent.mkdir(parents=True, exist_ok=True)
 wb.save(output)
 
@@ -106,7 +106,7 @@ summary = (
     .sort_values("revenue", ascending=False)
 )
 summary["attainment"] = summary["revenue"] / summary["target"]
-output = Path("output/regional-summary.xlsx")
+output = Path("work/regional-summary.xlsx")
 output.parent.mkdir(parents=True, exist_ok=True)
 summary.to_excel(output, index=False)
 ```
@@ -126,7 +126,7 @@ parquet_file = pq.ParquetFile("attachments/events.parquet")
 print(parquet_file.schema_arrow, parquet_file.metadata.num_rows)
 
 frame = pd.read_parquet("attachments/events.parquet", columns=["ts", "region", "revenue"])
-frame.to_parquet("output/by-region.parquet", index=False)
+frame.to_parquet("work/by-region.parquet", index=False)
 ```
 
 A Parquet file is one typed table. It preserves column types, nulls, and dictionary-encoded categories, but carries no sheets, formulas, formatting, or charts, so writing a styled workbook to Parquet keeps a single sheet's values and nothing else. Going the other way, prefer Parquet over CSV whenever types must survive the round trip.
@@ -144,7 +144,7 @@ wb = load_workbook(source, data_only=False, keep_vba=keep_vba)
 ws = wb["Inputs"]
 ws["B4"] = 0.08
 ws["B4"].number_format = "0.0%"
-output = Path("output/updated.xlsm" if keep_vba else "output/updated.xlsx")
+output = Path("work/updated.xlsm" if keep_vba else "work/updated.xlsx")
 output.parent.mkdir(parents=True, exist_ok=True)
 wb.save(output)
 ```

@@ -13,7 +13,7 @@ When the page needs decisions back from the reader, collect them as a form a non
 - What the button copies is Markdown shaped as a QA transcript: a line naming the page and file, then each question quoted verbatim from the page (the element marked `data-question`) with the chosen option as its answer, unanswered ones marked as such:
 
   ```markdown
-  Answers from "PAGE TITLE" (output/FILENAME.html):
+  Answers from "PAGE TITLE" (work/FILENAME.html):
 
   1. **Q:** Is this form shape clear enough to ship?
      **A:** Ship it like this

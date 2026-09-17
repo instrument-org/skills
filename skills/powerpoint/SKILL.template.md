@@ -87,7 +87,7 @@ caption.text_frame.paragraphs[0].text = "Internal"
 
 slide.notes_slide.notes_text_frame.text = "Discuss expansion of the pilot."
 prs.core_properties.title = "Quarterly Review"
-output = Path("output/quarterly-review.pptx")
+output = Path("work/quarterly-review.pptx")
 output.parent.mkdir(parents=True, exist_ok=True)
 prs.save(output)
 ```
@@ -146,7 +146,7 @@ prs = Presentation("attachments/template.pptx")
 slide = prs.slides[0]
 by_name = {shape.name: shape for shape in slide.shapes}
 by_name["Title"].text = "Updated title"
-output = Path("output/updated.pptx")
+output = Path("work/updated.pptx")
 output.parent.mkdir(parents=True, exist_ok=True)
 prs.save(output)
 ```

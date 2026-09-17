@@ -72,7 +72,7 @@ for text in ["Expand the pilot", "Review results in 30 days"]:
 
 doc.core_properties.title = "Quarterly Review"
 doc.sections[0].footer.paragraphs[0].text = "Confidential"
-output = Path("output/quarterly-review.docx")
+output = Path("work/quarterly-review.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
 doc.save(output)
 ```
@@ -101,7 +101,7 @@ from docx import Document
 doc = Document("attachments/input.docx")
 doc.add_heading("Appendix", level=1)
 doc.add_paragraph("Additional findings go here.")
-output = Path("output/edited.docx")
+output = Path("work/edited.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
 doc.save(output)
 ```
@@ -126,7 +126,7 @@ template.render(
     },
     autoescape=True,
 )
-output = Path("output/filled.docx")
+output = Path("work/filled.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
 template.save(output)
 ```

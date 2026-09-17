@@ -23,7 +23,7 @@ Use the bundled scripts for ordinary archive creation, listing, and extraction. 
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-output = Path("output/package.zip")
+output = Path("work/package.zip")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 members = {

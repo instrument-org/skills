@@ -87,7 +87,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 
 ## Critical invariants
 
-- Never fabricate a deep URL, identifier, or query string. Discover links from a provided page or use a URL supplied by the user. A file you produced is exempt: its path is not a guess, and `open output/report.html` is a normal navigation.
+- Never fabricate a deep URL, identifier, or query string. Discover links from a provided page or use a URL supplied by the user. A file you produced is exempt: its path is not a guess, and `open work/report.html` is a normal navigation.
 - Open a local file by the same path you would give any other tool, not as a `file://` URL or an absolute host path. Those forms address the real filesystem, which is often not where your working directory actually lives.
 - `snapshot -i` returns interactive elements, not all body copy. Use `get text body`, `get text main`, or another scoped region to read.
 - A ref may exist outside the viewport. Use `is visible` or `scrollintoview` when visibility, hover behavior, screenshots, or lazy loading matter.
@@ -126,7 +126,7 @@ agent-browser snapshot -i --urls
 An HTML deliverable is only done once it has been loaded and exercised. Reading back the source proves the file was written, not that it renders, that its scripts run, or that its data reached the page. Open it by the same path you would give any other tool and run the observe loop you would use on any site:
 
 ```bash
-agent-browser open output/report.html
+agent-browser open work/report.html
 agent-browser get text body
 agent-browser errors
 agent-browser screenshot

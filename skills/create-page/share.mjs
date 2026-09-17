@@ -1,10 +1,10 @@
 // Publish a finished page to a public link, the same link the page's own Share
 // button makes, from wherever the agent is running:
 //
-//   node <this file> output/<slug>.html            publish and print the link
-//   node <this file> output/<slug>.html --check    is the link still up, and until when
-//   node <this file> output/<slug>.html --delete   take the newest link down
-//   node <this file> output/<slug>.html --delete <id>
+//   node <this file> work/<slug>.html            publish and print the link
+//   node <this file> work/<slug>.html --check    is the link still up, and until when
+//   node <this file> work/<slug>.html --delete   take the newest link down
+//   node <this file> work/<slug>.html --delete <id>
 //
 // A link is a copy of the file at https://<id>.instrument.page/, readable by
 // anyone who has the address, unlisted, and gone after thirty days. The id is

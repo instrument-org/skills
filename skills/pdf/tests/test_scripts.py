@@ -207,7 +207,7 @@ class TestCreatePdf:
             "--content",
             "![Chart](attachments/chart.png)",
             "--output",
-            "output/report.pdf",
+            "work/report.pdf",
             cwd=task,
         )
 

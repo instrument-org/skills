@@ -40,7 +40,7 @@ const result = await sharp("attachments/photo.jpg", { failOn: "warning" })
   })
   .flatten({ background: "#ffffff" })
   .jpeg({ mozjpeg: true, quality: 84 })
-  .toFile("output/photo-ready.jpg");
+  .toFile("work/photo-ready.jpg");
 
 console.log(result);
 ```
@@ -89,7 +89,7 @@ await sharp(subject)
     top: padding,
   })
   .jpeg({ chromaSubsampling: "4:4:4", mozjpeg: true, quality: 90 })
-  .toFile("output/product-square.jpg");
+  .toFile("work/product-square.jpg");
 ```
 
 `trim()` on a transparent cutout removes fully clear margins; on an opaque source pass `trim({ background: "#ffffff" })`. A baked soft shadow is semi-transparent, so `trim` keeps it and `flatten` renders it gray -- see Traps to drop it when the brief says no shadow.
@@ -104,7 +104,7 @@ import { extname, join } from "node:path";
 import sharp from "sharp";
 
 const inputDir = "attachments/photos";
-const outputDir = "output/photos";
+const outputDir = "work/photos";
 await mkdir(outputDir, { recursive: true });
 const names = (await readdir(inputDir)).filter((name) =>
   [".jpg", ".jpeg", ".png", ".webp"].includes(extname(name).toLowerCase()),
@@ -147,7 +147,7 @@ Opening the result matters, but model vision is unreliable for flat color and wh
 ```ts
 import sharp from "sharp";
 
-const { data, info } = await sharp("output/product-square.jpg")
+const { data, info } = await sharp("work/product-square.jpg")
   .raw()
   .toBuffer({ resolveWithObject: true });
 const px = (x: number, y: number) => {

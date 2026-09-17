@@ -37,7 +37,7 @@ converter.addRule("callout", {
 
 const markdown = converter.turndown(html);
 await mkdir("output", { recursive: true });
-await writeFile("output/article.md", `${markdown.trim()}\n`, "utf8");
+await writeFile("work/article.md", `${markdown.trim()}\n`, "utf8");
 ```
 
 From the task root, run it with `node <markdown-skill-path>/scripts/custom-convert.ts`. Use Turndown rules to encode the source document's actual semantics instead of applying broad text replacements after conversion.

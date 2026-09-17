@@ -34,7 +34,7 @@ result = MarkItDown(enable_plugins=False).convert_local(str(source))
 markdown = result.text_content
 
 # Perform task-specific cleanup or combine it with other content here.
-output = Path("output/input.md")
+output = Path("work/input.md")
 output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(markdown, encoding="utf-8")
 ```

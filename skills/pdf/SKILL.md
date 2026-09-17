@@ -11,7 +11,7 @@ Use bundled scripts for operations they directly cover. For content, layout, or 
 
 The skill installs locked versions of `reportlab`, PyMuPDF (`fitz`), `pdfplumber`, `pypdf`, and Pillow into the task environment. Run Python with `python`; do not reinstall these packages.
 
-Run commands from the task root. Put temporary code and previews under `work/` and final deliverables under `output/`. Run bundled scripts by the full path shown when the skill loads; do not change into the skill directory.
+Run commands from the task root. Put temporary code and previews under `work/` and final deliverables under `work/`. Run bundled scripts by the full path shown when the skill loads; do not change into the skill directory.
 
 Prefer a saved `.py` file for repeatable generation. If using a heredoc, quote its delimiter (`<<'PY'`) so shell expansion cannot alter dollar amounts or other document content.
 
@@ -42,7 +42,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
-output = Path("output/report.pdf")
+output = Path("work/report.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 styles = getSampleStyleSheet()
@@ -135,7 +135,7 @@ from pathlib import Path
 
 import fitz
 
-output = Path("output/chart.pdf")
+output = Path("work/chart.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 with fitz.open("attachments/chart.svg") as svg:
@@ -149,7 +149,7 @@ from pathlib import Path
 
 import fitz
 
-output = Path("output/chart-page.pdf")
+output = Path("work/chart-page.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 with fitz.open("attachments/chart.svg") as svg:
@@ -200,7 +200,7 @@ Validate before writing, then create a new PDF:
 
 ```bash
 python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf work/fields.json --validate-only
-python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf work/fields.json output/filled-form.pdf
+python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf work/fields.json work/filled-form.pdf
 ```
 
 The script writes page content, not editable form controls. It rejects rotated pages, overlapping or out-of-page boxes, and text that cannot fit at the minimum font size. Normalize page rotation before using it. Use only built-in PDF font aliases unless a task-specific script embeds the required font.
@@ -243,7 +243,7 @@ Use these scripts only for operations they directly cover. Read [`reference.md`]
 After every creation or meaningful modification, set `PDF_PATH` to the actual PDF that was created or changed:
 
 ```bash
-PDF_PATH=output/report.pdf
+PDF_PATH=work/report.pdf
 python <pdf-skill-path>/scripts/render-pages.py "$PDF_PATH" --output work/pdf-preview --dpi 150
 ```
 

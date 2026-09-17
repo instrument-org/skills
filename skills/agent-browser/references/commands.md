@@ -8,7 +8,7 @@ Reference for the commands commonly useful through Instrument's managed browser.
 agent-browser open <url>      # Navigate to URL (aliases: goto, navigate)
                               # Supports: https://, http://, about:, data:
                               # Auto-prepends https:// if no protocol given
-agent-browser open <path>     # Load a local file: output/report.html
+agent-browser open <path>     # Load a local file: work/report.html
 agent-browser read [url]      # Read active page text, or fetch URL as readable text
                               # Also accepts a local path, same as open
 agent-browser back            # Go back
