@@ -9,14 +9,14 @@ Use Python libraries directly when the work needs batching, model reuse, custom 
 
 ## Choose an approach
 
-| Need                                                   | Approach                                                    |
-| ------------------------------------------------------ | ----------------------------------------------------------- |
-| One image, text, or audio file with standard output    | Run the matching script                                     |
-| Many inputs or repeated inference                      | Write Python that loads the model once                      |
-| Similarity, ranking, aggregation, or custom thresholds | Compose the library APIs                                    |
-| A reusable artifact                                    | Write structured results to `work/` and record the model ID |
+| Need                                                   | Approach                                                   |
+| ------------------------------------------------------ | ---------------------------------------------------------- |
+| One image, text, or audio file with standard output    | Run the matching script                                    |
+| Many inputs or repeated inference                      | Write Python that loads the model once                     |
+| Similarity, ranking, aggregation, or custom thresholds | Compose the library APIs                                   |
+| A reusable artifact                                    | Write structured results to a file and record the model ID |
 
-Python packages share the task virtual environment, so custom recipes may live under `work/`. Run them from the task root so `attachments/`, `work/`, and `work/` resolve correctly.
+Python packages share the task virtual environment, so a custom recipe is a file of your own. Run it from the task root so relative paths resolve correctly.
 
 ## Optional dependencies
 
@@ -45,7 +45,7 @@ When the recording came from a URL, use the `media-download` skill instead of an
 For a local file, the transcriber wants mono 16 kHz audio. Produce it with the `ffmpeg` skill before transcribing, whatever the source container:
 
 ```bash
-ffmpeg -n -i "$INPUT" -vn -c:a pcm_s16le -ar 16000 -ac 1 work/audio.wav
+ffmpeg -n -i "$INPUT" -vn -c:a pcm_s16le -ar 16000 -ac 1 audio.wav
 ```
 
 `-vn` drops the video stream, so a video file needs no separate extraction step. This does not make the transcription itself faster, since the decoder only ever reads the audio stream. It is worth doing because it produces a small intermediate file, fixes the sample rate and channel count the model expects, and gives you a duration to plan against.
@@ -53,7 +53,7 @@ ffmpeg -n -i "$INPUT" -vn -c:a pcm_s16le -ar 16000 -ac 1 work/audio.wav
 Read the duration before deciding anything else:
 
 ```bash
-ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 work/audio.wav
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 audio.wav
 ```
 
 ### Choose a model against the duration
@@ -74,8 +74,8 @@ The spread inside each row is real: audio that sends the decoder into repetition
 Do not guess from that table when the recording is long. Calibrate on the machine you are actually running on:
 
 ```bash
-ffmpeg -n -i work/audio.wav -t 60 work/sample.wav
-time python <local-ml-skill-path>/scripts/speech-to-text.py work/sample.wav --model turbo
+ffmpeg -n -i audio.wav -t 60 sample.wav
+time python <local-ml-skill-path>/scripts/speech-to-text.py sample.wav --model turbo
 ```
 
 Multiply by the number of minutes in the recording, tell the user the estimate before starting the full run, and pick a smaller model if the answer is unreasonable.
@@ -87,7 +87,7 @@ Whisper spells unfamiliar proper nouns phonetically: a product name becomes two 
 Build a term list from the context you already have. Names in the surrounding filenames and folders, people and products in the task's own documents, and whatever the user called things in their request are all fair game, and the user is the best source of any the recording will use.
 
 ```bash
-python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --vocabulary "Instrument, Finalpoint, ripgrep, oxlint, tsgo"
+python <local-ml-skill-path>/scripts/speech-to-text.py audio.wav --vocabulary "Instrument, Finalpoint, ripgrep, oxlint, tsgo"
 ```
 
 Names, products, jargon, and acronyms. Not ordinary words the model already knows, and not so many that the list stops being about this recording; roughly the terms a new colleague would have to be told. `--vocabulary` sets both of Whisper's biasing inputs, which behave differently and are individually unreliable, so prefer it over passing either one by hand.
@@ -99,7 +99,7 @@ Repair what is left afterward, but expect much less of it.
 Pass `--output` for anything longer than a few minutes. Segments are written as they are produced, so a run that is interrupted leaves a usable partial transcript instead of nothing:
 
 ```bash
-python <local-ml-skill-path>/scripts/speech-to-text.py work/audio.wav --model turbo --vocabulary "..." --output work/transcript.txt
+python <local-ml-skill-path>/scripts/speech-to-text.py audio.wav --model turbo --vocabulary "..." --output transcript.txt
 ```
 
 There is no speaker diarization here. Whisper returns text and timings, not who was speaking. Say so rather than labeling speakers by inference, and do not reach for a diarization stack without agreeing the cost first: those models are a separate download, several of them are gated behind an account, and on a CPU they can cost more than the transcription.
@@ -108,7 +108,7 @@ There is no speaker diarization here. Whisper returns text and timings, not who 
 
 ### Reuse a classifier across a batch
 
-This reads one text per line and writes ranked labels as JSON. Save it as `work/classify-batch.py`, then run `python work/classify-batch.py`.
+This reads one text per line and writes ranked labels as JSON. Save it as `classify-batch.py`, then run `python classify-batch.py`.
 
 ```python
 import json
@@ -143,7 +143,7 @@ records = [
     }
     for text, result in zip(texts, predictions)
 ]
-Path("work/classifications.json").write_text(
+Path("classifications.json").write_text(
     json.dumps(records, indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
@@ -181,7 +181,7 @@ ranked = sorted(
     key=lambda item: item["score"],
     reverse=True,
 )
-Path("work/ranked.json").write_text(
+Path("ranked.json").write_text(
     json.dumps(ranked, indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
@@ -197,7 +197,7 @@ from pathlib import Path
 from rembg import new_session, remove
 
 session = new_session("u2net")
-destination = Path("work/background-removed")
+destination = Path("background-removed")
 destination.mkdir(parents=True, exist_ok=True)
 
 for source in Path("attachments").glob("*"):
@@ -221,7 +221,7 @@ model_name = "turbo"
 terms = "Instrument, Finalpoint, ripgrep, oxlint, tsgo"
 model = WhisperModel(model_name, device="cpu", compute_type="int8")
 segments, info = model.transcribe(
-    "work/audio.wav",
+    "audio.wav",
     vad_filter=True,
     condition_on_previous_text=False,
     initial_prompt=f"Glossary: {terms}.",
@@ -231,7 +231,7 @@ rows = [
     {"start": segment.start, "end": segment.end, "text": segment.text.strip()}
     for segment in segments
 ]
-Path("work/transcript.json").write_text(
+Path("transcript.json").write_text(
     json.dumps(
         {"language": info.language, "model": model_name, "segments": rows},
         indent=2,
@@ -239,7 +239,7 @@ Path("work/transcript.json").write_text(
     ),
     encoding="utf-8",
 )
-Path("work/transcript.txt").write_text(
+Path("transcript.txt").write_text(
     "\n".join(row["text"] for row in rows),
     encoding="utf-8",
 )

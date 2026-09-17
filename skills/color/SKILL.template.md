@@ -24,7 +24,7 @@ Dominant colors in a screenshot do not reveal which pixels are foreground and ba
 Generate candidates from the brand color:
 
 ```bash
-python <color-skill-path>/scripts/generate-palette.py "#2563EB" --json > work/blue-palette.json
+python <color-skill-path>/scripts/generate-palette.py "#2563EB" --json > blue-palette.json
 ```
 
 Assign roles from the interface requirements instead of treating shade numbers as semantics:

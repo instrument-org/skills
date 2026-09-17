@@ -6,9 +6,9 @@ the sheet views for pane/selection combinations Excel rejects. Excel reports
 either class as unreadable content and offers to repair the file.
 
 Examples:
-  python scripts/validate.py work/report.xlsx
-  python scripts/validate.py work/report.xlsx --fix
-  python scripts/validate.py work/report.xlsx --json
+  python scripts/validate.py report.xlsx
+  python scripts/validate.py report.xlsx --fix
+  python scripts/validate.py report.xlsx --json
 """
 
 import argparse

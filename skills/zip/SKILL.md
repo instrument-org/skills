@@ -23,7 +23,7 @@ Use the bundled scripts for ordinary archive creation, listing, and extraction. 
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-output = Path("work/package.zip")
+output = Path("package.zip")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 members = {
@@ -61,7 +61,7 @@ Archive member names are untrusted paths. Validate them before extraction, inclu
 from pathlib import Path, PurePosixPath
 from zipfile import ZipFile
 
-destination = Path("work/extracted").resolve()
+destination = Path("extracted").resolve()
 destination.mkdir(parents=True, exist_ok=False)
 wanted = {"data/report.csv", "manifest.json"}
 

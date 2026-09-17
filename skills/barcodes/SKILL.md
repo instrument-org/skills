@@ -47,8 +47,8 @@ if (result.error || !result.image || !result.svg) {
 }
 
 await Promise.all([
-  writeFile("work/check-in.svg", result.svg),
-  writeFile("work/check-in.png", Buffer.from(await result.image.arrayBuffer())),
+  writeFile("check-in.svg", result.svg),
+  writeFile("check-in.png", Buffer.from(await result.image.arrayBuffer())),
 ]);
 ```
 
@@ -87,7 +87,7 @@ const report = results.map((result) => ({
   valid: result.isValid,
 }));
 
-await writeFile("work/barcodes.json", JSON.stringify(report, null, 2));
+await writeFile("barcodes.json", JSON.stringify(report, null, 2));
 ```
 
 Restrict `formats` when the expected type is known. It reduces false positives and can make difficult scans faster.

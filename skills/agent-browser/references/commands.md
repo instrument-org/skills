@@ -8,7 +8,7 @@ Reference for the commands commonly useful through Instrument's managed browser.
 agent-browser open <url>      # Navigate to URL (aliases: goto, navigate)
                               # Supports: https://, http://, about:, data:
                               # Auto-prepends https:// if no protocol given
-agent-browser open <path>     # Load a local file: work/report.html
+agent-browser open <path>     # Load a local file: report.html
 agent-browser read [url]      # Read active page text, or fetch URL as readable text
                               # Also accepts a local path, same as open
 agent-browser back            # Go back
@@ -85,9 +85,9 @@ agent-browser keyboard type "jane@example.com"
 ## Uploads and downloads
 
 ```bash
-agent-browser upload @e1 work/document.pdf
-agent-browser upload @e1 work/front.png work/back.png
-agent-browser download @e5 work/report.pdf
+agent-browser upload @e1 document.pdf
+agent-browser upload @e1 front.png back.png
+agent-browser download @e5 report.pdf
 ```
 
 `download` clicks the control, authorizes the transfer, and waits for the browser download. A normal `click` is not a substitute. Command output reports the actual saved path, which may differ from the requested path.
@@ -120,7 +120,7 @@ agent-browser eval --stdin <<'EOF'
 })()
 EOF
 
-agent-browser download "#agent-browser-fetched-file" work/report.pdf
+agent-browser download "#agent-browser-fetched-file" report.pdf
 agent-browser eval --stdin <<'EOF'
 const anchor = document.getElementById("agent-browser-fetched-file");
 if (anchor instanceof HTMLAnchorElement) {
@@ -344,14 +344,14 @@ Instrument replaces upstream help with a managed-workspace summary. Use this ref
 ## Compare page states
 
 ```bash
-agent-browser snapshot > work/before.txt
+agent-browser snapshot > before.txt
 # Perform the interaction being tested.
-agent-browser diff snapshot --baseline work/before.txt
+agent-browser diff snapshot --baseline before.txt
 
-agent-browser screenshot work/before.png
+agent-browser screenshot before.png
 # Perform the visual change being tested.
-agent-browser diff screenshot --baseline work/before.png
-agent-browser diff screenshot --baseline work/before.png -o work/diff.png
+agent-browser diff screenshot --baseline before.png
+agent-browser diff screenshot --baseline before.png -o diff.png
 agent-browser diff url <url1> <url2>
 ```
 

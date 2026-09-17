@@ -72,7 +72,7 @@ for text in ["Expand the pilot", "Review results in 30 days"]:
 
 doc.core_properties.title = "Quarterly Review"
 doc.sections[0].footer.paragraphs[0].text = "Confidential"
-output = Path("work/quarterly-review.docx")
+output = Path("quarterly-review.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
 doc.save(output)
 ```
@@ -86,7 +86,7 @@ doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 `add_picture` needs a raster file, so draw or convert one first rather than
 hand-rolling a rasterizer: Pillow is installed for images composed in Python,
-and `ffmpeg` converts an image you already have. Write it under `work/` and
+and `ffmpeg` converts an image you already have. Save it beside the script and
 embed that path.
 
 ## Edit an existing document
@@ -101,7 +101,7 @@ from docx import Document
 doc = Document("attachments/input.docx")
 doc.add_heading("Appendix", level=1)
 doc.add_paragraph("Additional findings go here.")
-output = Path("work/edited.docx")
+output = Path("edited.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
 doc.save(output)
 ```
@@ -126,7 +126,7 @@ template.render(
     },
     autoescape=True,
 )
-output = Path("work/filled.docx")
+output = Path("filled.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
 template.save(output)
 ```

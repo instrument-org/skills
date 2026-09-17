@@ -87,7 +87,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 
 ## Critical invariants
 
-- Never fabricate a deep URL, identifier, or query string. Discover links from a provided page or use a URL supplied by the user. A file you produced is exempt: its path is not a guess, and `open work/report.html` is a normal navigation.
+- Never fabricate a deep URL, identifier, or query string. Discover links from a provided page or use a URL supplied by the user. A file you produced is exempt: its path is not a guess, and `open report.html` is a normal navigation.
 - Open a local file by the same path you would give any other tool, not as a `file://` URL or an absolute host path. Those forms address the real filesystem, which is often not where your working directory actually lives.
 - `snapshot -i` returns interactive elements, not all body copy. Use `get text body`, `get text main`, or another scoped region to read.
 - A ref may exist outside the viewport. Use `is visible` or `scrollintoview` when visibility, hover behavior, screenshots, or lazy loading matter.
@@ -114,7 +114,7 @@ Whether this environment can reach any other browser, and which flags select one
 ## Recipe: read and research
 
 ```bash
-agent-browser read https://example.com > work/page.txt
+agent-browser read https://example.com > page.txt
 agent-browser open https://example.com
 agent-browser snapshot -i --urls
 ```
@@ -126,7 +126,7 @@ agent-browser snapshot -i --urls
 An HTML deliverable is only done once it has been loaded and exercised. Reading back the source proves the file was written, not that it renders, that its scripts run, or that its data reached the page. Open it by the same path you would give any other tool and run the observe loop you would use on any site:
 
 ```bash
-agent-browser open work/report.html
+agent-browser open report.html
 agent-browser get text body
 agent-browser errors
 agent-browser screenshot
@@ -188,15 +188,15 @@ Use a screenshot when correctness depends on layout, visibility, clipping, hover
 
 ```bash
 agent-browser screenshot --annotate
-agent-browser screenshot work/page-viewport.png
-agent-browser pdf work/page-full.pdf
+agent-browser screenshot page-viewport.png
+agent-browser pdf page-full.pdf
 ```
 
 Read the resulting image. Annotated label `[N]` maps to ref `@eN`. Before capturing a below-the-fold or hover-only element, scroll it into view and establish the relevant state. Full-page screenshots are unavailable in the managed browser; capture successive viewports or export the full page to PDF. Reuse the newest image under `work/screenshots/` when it already shows the state you need.
 
 ## Recipe: structured extraction
 
-Prefer scoped text when prose is enough. Use `eval` only when repeated fields must remain associated or attributes contain the required values. Return JSON with source URLs and stable labels, save it under `work/`, then validate sample records against the page.
+Prefer scoped text when prose is enough. Use `eval` only when repeated fields must remain associated or attributes contain the required values. Return JSON with source URLs and stable labels, save it to a file, then validate sample records against the page.
 
 To collect image URLs, note that `read` and `get text` return prose, not `<img>` sources; enumerate `document.images` (`src`, `currentSrc`, `srcset`) with `eval`. Lazy images may expose placeholders until scrolled into view. Read `srcset`, `data-*` attributes, or the URL the detail page actually serves. Do not invent a higher-resolution URL by editing path segments or query parameters.
 
@@ -210,7 +210,7 @@ Use `download`, not `click`, on a control that triggers a browser download:
 
 ```bash
 agent-browser snapshot -i
-agent-browser download @e5 work/report.pdf
+agent-browser download @e5 report.pdf
 ```
 
 The command authorizes the transfer and waits for it. Inline PDF, image, SVG, and HTML responses do not produce a download event. For those, use the discovered public URL or same-origin `fetch()` in browser context. Check the command's reported output path, which may differ from the requested path, then inspect the saved file and confirm its type and content: a CDN can serve a different format than the extension implies, so a downloaded `.jpg` may actually be PNG-with-alpha.

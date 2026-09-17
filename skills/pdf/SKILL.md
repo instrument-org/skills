@@ -11,7 +11,7 @@ Use bundled scripts for operations they directly cover. For content, layout, or 
 
 The skill installs locked versions of `reportlab`, PyMuPDF (`fitz`), `pdfplumber`, `pypdf`, and Pillow into the task environment. Run Python with `python`; do not reinstall these packages.
 
-Run commands from the task root. Put temporary code and previews under `work/` and final deliverables under `work/`. Run bundled scripts by the full path shown when the skill loads; do not change into the skill directory.
+Run commands from the task root, and run bundled scripts by the full path shown when the skill loads; do not change into the skill directory.
 
 Prefer a saved `.py` file for repeatable generation. If using a heredoc, quote its delimiter (`<<'PY'`) so shell expansion cannot alter dollar amounts or other document content.
 
@@ -42,7 +42,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
-output = Path("work/report.pdf")
+output = Path("report.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 styles = getSampleStyleSheet()
@@ -135,7 +135,7 @@ from pathlib import Path
 
 import fitz
 
-output = Path("work/chart.pdf")
+output = Path("chart.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 with fitz.open("attachments/chart.svg") as svg:
@@ -149,7 +149,7 @@ from pathlib import Path
 
 import fitz
 
-output = Path("work/chart-page.pdf")
+output = Path("chart-page.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
 with fitz.open("attachments/chart.svg") as svg:
@@ -167,7 +167,7 @@ with fitz.open("attachments/chart.svg") as svg:
 
 PDF cannot preserve SVG or CSS animation. The renderer produces a static representation and may ignore animation styling. Tell the user when converting an animated source.
 
-Some SVG renderers also do not fully honor stylesheets or class selectors. Render and inspect the PDF after conversion. If critical colors, strokes, or text styling are lost, copy the SVG into `work/`, inline the required presentation attributes on that PDF-specific copy, and regenerate the PDF. Do not modify an already delivered SVG just to make its PDF rendering work.
+Some SVG renderers also do not fully honor stylesheets or class selectors. Render and inspect the PDF after conversion. If critical colors, strokes, or text styling are lost, make a PDF-specific copy of the SVG, inline the required presentation attributes on it, and regenerate the PDF. Do not modify an already delivered SVG just to make its PDF rendering work.
 
 ## Recipe: fill a non-interactive form
 
@@ -199,8 +199,8 @@ Run `fill-form.py --list-fields` first. If the PDF has no AcroForm fields, rende
 Validate before writing, then create a new PDF:
 
 ```bash
-python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf work/fields.json --validate-only
-python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf work/fields.json work/filled-form.pdf
+python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf fields.json --validate-only
+python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf fields.json filled-form.pdf
 ```
 
 The script writes page content, not editable form controls. It rejects rotated pages, overlapping or out-of-page boxes, and text that cannot fit at the minimum font size. Normalize page rotation before using it. Use only built-in PDF font aliases unless a task-specific script embeds the required font.
@@ -243,8 +243,8 @@ Use these scripts only for operations they directly cover. Read [`reference.md`]
 After every creation or meaningful modification, set `PDF_PATH` to the actual PDF that was created or changed:
 
 ```bash
-PDF_PATH=work/report.pdf
-python <pdf-skill-path>/scripts/render-pages.py "$PDF_PATH" --output work/pdf-preview --dpi 150
+PDF_PATH=report.pdf
+python <pdf-skill-path>/scripts/render-pages.py "$PDF_PATH" --output pdf-preview --dpi 150
 ```
 
 Then read every rendered PNG with the file-reading tool and compare it with the request. Command success, page count, and text extraction do not verify visual quality. Check for clipped or overlapping content, broken tables, missing images, literal markup, black boxes, unreadable glyphs, weak spacing, and blurry graphics. Fix the source and repeat the loop. Do not deliver until the latest inspection has zero visual or formatting defects.

@@ -17,16 +17,16 @@ Do not publish a page that carries something the reader would not hand a strange
 ## How
 
 ```sh
-node <skill>/share.mjs work/<slug>.html
-python <skill>/share.py work/<slug>.html
+node <skill>/share.mjs <slug>.html
+python <skill>/share.py <slug>.html
 ```
 
-The same script in two runtimes, no dependencies in either; take whichever is here. Prints the link on its first line, then what happened. Beside the page it writes `work/<slug>.share.json`: the id, the link, when it went up and when it expires, and the delete token, which exists nowhere else. Keep that file with the page; either script reads what the other wrote. The same command on an unchanged page reports the existing link; on an edited page it publishes the new version and names the earlier link still serving the old one.
+The same script in two runtimes, no dependencies in either; take whichever is here. Prints the link on its first line, then what happened. Beside the page it writes `<slug>.share.json`: the id, the link, when it went up and when it expires, and the delete token, which exists nowhere else. Keep that file with the page; either script reads what the other wrote. The same command on an unchanged page reports the existing link; on an edited page it publishes the new version and names the earlier link still serving the old one.
 
 ```sh
-node <skill>/share.mjs work/<slug>.html --check         # still up, and until when
-node <skill>/share.mjs work/<slug>.html --delete        # take the newest link down
-node <skill>/share.mjs work/<slug>.html --delete <id>   # take an earlier one down
+node <skill>/share.mjs <slug>.html --check         # still up, and until when
+node <skill>/share.mjs <slug>.html --delete        # take the newest link down
+node <skill>/share.mjs <slug>.html --delete <id>   # take an earlier one down
 ```
 
 After an edit, tell the reader which link is current. Delete the earlier one when they confirm nobody still needs it, not before: a link they already sent on that goes dead is worse than a stale copy that expires on its own.
@@ -38,7 +38,7 @@ Tell the reader what you kept: the link, that anyone holding it can read the pag
 `POST https://share.instrument.page/share` with `content-type: text/html` and the file as the body, from any origin. The body has to open with `<!doctype html>` and stay under 8 MB. It answers `201 {id, url, bytes, deleteToken}`, or `200 {id, url, bytes}` with no token when those bytes are already published, by anyone. `GET /share/<id>` answers `{id, url, expires}` or 404; `DELETE /share/<id>` with an `x-delete-token` header answers 204, 403 for a wrong token, 404 once gone. Twenty uploads a minute per address.
 
 ```sh
-curl -sS -H 'content-type: text/html' --data-binary @work/<slug>.html -o work/<slug>.share.json https://share.instrument.page/share
+curl -sS -H 'content-type: text/html' --data-binary @<slug>.html -o <slug>.share.json https://share.instrument.page/share
 ```
 
 On Windows that is `curl.exe`; in PowerShell, `curl` alone is an alias for something else.
