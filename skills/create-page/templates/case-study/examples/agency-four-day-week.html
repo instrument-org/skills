@@ -211,10 +211,16 @@
          the one element these pages style directly, the link.
          A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
          and scripts/check-ideas.ts fails when a starter's copy has drifted.
+         No import of tailwindcss opens this block, on purpose. Chrome's preload
+         scanner reads inline style text for imports before it honors the element's
+         type and fetches the name relative to the page, a 404 in every reader's
+         console. The browser build adds the import itself when the block carries
+         none, judged by a plain substring search of the whole block, comments
+         included, so the at-rule may not be spelled anywhere in here or the
+         framework silently goes unloaded.
          `static` matters: without it Tailwind emits only the variables some utility
          on the page uses, so a var(--color-...) in generated SVG can resolve to
          nothing and the fill falls back to black. */
-      @import "tailwindcss";
 
       /* Every color is `light-dark(light, dark)`, so the reader's setting picks the
          theme and a page is never written for one of them.
