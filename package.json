@@ -23,6 +23,7 @@
     "check:unused": "knip",
     "check:packages:dedupe": "pnpm dedupe --check",
     "check:packages:install": "pnpm install --frozen-lockfile",
+    "check:sheet": "node scripts/build-sheet.ts --check",
     "check:skills": "node scripts/check-skills-aggregate.ts",
     "check:skills-md": "node scripts/generate-skill-md.ts --check",
     "check:spelling": "node scripts/typos.ts",
@@ -39,7 +40,8 @@
     "syncpack": "syncpack",
     "update:actions": "actions-up",
     "capture": "node scripts/capture.ts",
-    "preview": "node scripts/preview.ts"
+    "preview": "node scripts/preview.ts",
+    "build:sheet": "node scripts/build-sheet.ts"
   },
   "devDependencies": {
     "@instrument-org/agent-hooks": "github:instrument-org/agent-hooks",
@@ -49,6 +51,7 @@
     "knip": "^6.34.0",
     "oxfmt": "0.61.0",
     "syncpack": "14.2.0",
+    "tailwindcss": "4.3.3",
     "tokenx": "^1.6.0",
     "turbo": "^2.10.12",
     "typescript": "^5.9.3",
