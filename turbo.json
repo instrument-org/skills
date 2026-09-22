@@ -129,6 +129,15 @@
         "scripts/ideas.ts"
       ],
       "outputs": []
+    },
+    "//#check:sheet": {
+      "inputs": [
+        "skills/create-page/starter.html",
+        "skills/create-page/templates/**",
+        "scripts/build-sheet.ts",
+        "scripts/ideas.ts"
+      ],
+      "outputs": []
     }
   }
 }
