@@ -19,6 +19,7 @@
 // it; take whichever runtime is here. No dependencies. INSTRUMENT_SHARE_ENDPOINT
 // overrides the share host, for a local or staging pages worker.
 
+import { realpathSync } from "node:fs";
 import { readFile, unlink, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -197,9 +198,11 @@ export async function remove(page, id) {
     : `Deleted ${target.url}. The link now answers 404.`;
 }
 
+// Node resolves symlinks before it names the module, so a skill folder
+// linked into an agent's skills directory only matches through realpath.
 if (
   process.argv[1] &&
-  pathToFileURL(process.argv[1]).href === import.meta.url
+  pathToFileURL(realpathSync(process.argv[1])).href === import.meta.url
 ) {
   const [page, flag, id] = process.argv.slice(2);
   if (!page || (flag && !["--check", "--delete"].includes(flag))) {
