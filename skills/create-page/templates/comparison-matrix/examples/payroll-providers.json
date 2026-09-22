@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Transposed, with providers as rows and seven attributes as columns, because four options with a sentence each read better as a scan-down list than as a wide grid; the summary column at the right is the row read for you, plain-toned so it never competes with the cells. A serif title, wide vertical spacing, and no photos, since payroll is software and the page's authority should come from the whitespace and the footnotes rather than from pictures; the best mark reads down a column, and the two quote-based prices are labeled as quotes in the cell and in the legend.",
   "illustrative": true,
-  "html_sha256": "c503589431d0291d9a432b0d26b01baad4286893c1dcc5610c1d5af799a1aaa4"
+  "html_sha256": "83673be0ea7851a399be7728fdeae3046e4bef627fd5b8c8ac1385be42e95591"
 }

@@ -118,7 +118,12 @@ const css = await buildSheet(starter);
 if (/<\/style/i.test(css)) throw new Error("compiled sheet carries a close tag");
 
 const indent = starter.slice(starter.lastIndexOf("\n", start) + 1, start);
-const block = `${SHEET_START}\n${indent}<style data-tailwind="floor">\n${css}${indent}</style>\n${indent}`;
+// `compiled` rather than a name of its own: the share host looks for exactly
+// this attribute when it compiles a page on the way to its link, and a sheet
+// under any other name is one it cannot see, so it would build a second and
+// publish both. Named this, the host replaces the floor with its own, which is
+// compiled over the finished page rather than over the vocabulary it came from.
+const block = `${SHEET_START}\n${indent}<style data-tailwind="compiled">\n${css}${indent}</style>\n${indent}`;
 const next = starter.slice(0, start) + block + starter.slice(end);
 
 if (next === starter) process.exit(0);
