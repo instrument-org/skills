@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Dense on purpose: the reader is a partner comparing on a laptop who wants the whole argument on about one screen, so every section below the title is text-sm with small margins and one focal layer. The picks are a ranked ledger rather than cards so the order is visible before a word is read, and the verdict is a two-column bordered band rather than a filled strip so the page opens quietly and the brand tone is spent only on the top row's rank circle and kicker.",
   "illustrative": true,
-  "html_sha256": "ce5a051a3b71db264a3f26643b987b36da677f4ec650243fa5f563429f928487"
+  "html_sha256": "a4bdb324b36cbf3f0e0a62ef99ce9518468961ea2df9d20d8ae3a9d52b437f63"
 }

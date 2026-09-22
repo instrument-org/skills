@@ -4,5 +4,5 @@
   "prompt": "Put the tab bar icon candidates on a board so we can judge them at 24 pixels and try alternatives for the map slot.",
   "model": "claude-fable-5-1",
   "note": "The sheet shape, and the example that uses the image element: every icon is a real SVG on the board, drawn on a 24-unit grid with a 2-unit stroke because that is what a phone renders, and each appears twice, at 96 to see and at 24 to judge. That second row is the argument, since two of them read the same only at 24, and the ring is round the small ones. Frames hold each round, so the reader can export 'Round two' on its own or drag a rejected icon back in. The alternatives for the map slot are the same shape again, so the reader tries them by dragging one into the row. Names are working names and the icons were drawn for this review.",
-  "html_sha256": "054deecc80bd149ed400fce2f3e6cc6ef6e9e8a7801d7c1fc6d191fd5983668b"
+  "html_sha256": "112c30e24c7a4ce6239be03e537d2d76c62cc4d130b40f68a87e768c5567b519"
 }

@@ -4,5 +4,5 @@
   "prompt": "Draw the bakery's new layout to scale from the measurements I took, and mark the two things I am worried about: the queue at the door and the way to the fire exit.",
   "model": "claude-fable-5-1",
   "note": "The plan shape. One meter is eighty board units and the grid is half a meter, so a reader who drags a table has moved it by a distance the plan can name, and the corner note says so. Walls are square boxes with a heavy stroke, openings are a short line in the background color over the wall, and rooms are frames so the kitchen exports on its own. The two worries are marker: the queue is a freehand stroke in from the door, the fire run is a dashed line from table six to the exit, and each has a note with a measurement and an arrow bound to what it measures. Measurements are the prompt's; furniture is at catalog size; the queue count is from three mornings at the door.",
-  "html_sha256": "599a3ce6bb6e750bf25576c84ef6fe029490ee2f5dd8df48eb9e03cab9f6ba02"
+  "html_sha256": "9b283a073d694bfa47347b590e39552ee774b327d60b3f18f5fbdb6ded946544"
 }
