@@ -57,15 +57,15 @@ fresh(chip("Frozen", "bg-error-100 text-error-700")); // ring, no pointer
 noted(someRow, "3 of 5", "new"); // any label you like
 ```
 
-`ann` alone goes inside anything already `relative`, which is how a ring lands on an element the kit built:
+`ann` alone goes inside any element and marks that element, which is how a ring lands on something the kit built:
 
 ```js
-`<div class="relative">${field("Card number", { value: "•••• 4417" })}${ann("click")}</div>`;
+`<div>${field("Card number", { value: "•••• 4417" })}${ann("click")}</div>`;
 ```
 
-The rings are `outline`, not `border`, so they sit outside the element and never change its size. `-inset-1.5` gives them a little air; on a dense row use `-inset-1`.
+The helpers leave an invisible marker in the element. After render, `drawMarks` measures each marked element against its frame and draws the ring and tag on one layer over the whole frame, so they never change the element's size and no `overflow-hidden` ancestor can clip them. The tag goes beside a narrow thing, above a wide one, and inside the corner of a whole pane.
 
-Every one of them carries the class `ann`, and that is what the marks button switches off:
+That layer carries the class `ann`, and so does anything else a reader may switch off; that is what the marks button hides:
 
 ```css
 body[data-marks="off"] .ann {

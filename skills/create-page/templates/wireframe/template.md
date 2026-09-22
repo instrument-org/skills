@@ -28,7 +28,7 @@ So: no thesis paragraph, no "what this settles" ledger, no reading notes, no evi
 
 **Show a sequence, not a screen.** One frame per state: resting, the moment of interaction, the result. A single screen shows what something looks like; a sequence shows what happens, which is what a proposal has to argue. Some subjects want a different axis — five states of one panel, three kinds of data, the same screen at three widths — and that is fine as long as the frames are doing comparative work. What is never fine is one frame and a paragraph.
 
-**Show the click, mark the new.** The reader has to see what was clicked to get from one frame to the next, and what changed because of it, and neither may look like part of the design. That is what `cursor`, `ann`, `noted`, `clickable` and `fresh` are for: a pointer on the thing being clicked, a dashed orange ring for the click, a dashed violet ring for what appeared. The colors are ones interfaces do not use for themselves, so they read as commentary. One click per frame. Never a green row, a highlighted tile, or a check mark standing in for either: those look like the product, and they are not.
+**Show the click, mark the new.** The reader has to see what was clicked to get from one frame to the next, and what changed because of it, and neither may look like part of the design. That is what `cursor`, `ann`, `noted`, `clickable` and `fresh` are for: an orange ring with a pointer in its tag for the thing being clicked, a violet ring for what appeared. They are drawn on a layer over the frame once it has laid out, so no clipped pane or scrolling column can cut one off. The colors are ones interfaces do not use for themselves, so they read as commentary. One click per frame. Never a green row, a highlighted tile, or a check mark standing in for either: those look like the product, and they are not.
 
 **And let the reader take them off.** The marks button in the title bar, and the `A` key, hide every annotation in the grid and in the enlarged view at once, so the same file is both the argument and the drawing on its own. It works because the rule hangs off the body and every annotation carries the class `ann`, which is the one thing to get right when you draw a mark by hand instead of calling the kit: a ring without that class is a ring that stays on when someone asked to see the design.
 
@@ -50,6 +50,10 @@ Corollaries:
 - Put the burden of proof early. Someone who stops halfway should already have seen the thing being argued.
 - Draw no chrome the proposal is not about. No sidebar, title bar, or tab strip unless they are in question, even though the kit makes drawing one a single call.
 - Draw the states nobody asks for: empty, loading, one item, too many items, denied, expired, offline. That is where a design is actually decided, and it is what separates a wireframe from a picture of a happy path.
+
+## A project's own kit
+
+The kit in `main.html` draws software in general. A project can carry one that draws its own product: when the folder you are working in, or one above it, has `.agents/wireframe-kit/KIT.md`, read it before drawing and use its functions in place of the neutral ones of the same name. Everything else on the page, the shell, the marks, the enlarged view, still comes from this template. A frame drawn from a project's kit is a claim about that product's real pieces, which is worth saying in the one line under the frames.
 
 ## What varies here
 
