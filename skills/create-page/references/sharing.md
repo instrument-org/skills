@@ -10,7 +10,13 @@ A copy of the file, byte for byte, at `https://<id>.instrument.page/`. Anyone wi
 
 - The reader asked for a link, or to send the page to someone. Publish.
 - The reader cannot open a file where they are, and you have no viewer of your own to show it in. Publish, and say in one line that you did and what that means: a copy anyone with the link can read, gone in thirty days, and you kept the token so you can take it down.
-- Otherwise, hand over the path and open the page in whatever this environment offers. The page's own Share button is there for the reader, and a link they did not ask for is a copy of their work on a server they did not choose.
+- Otherwise, hand over the path, open the page in whatever this environment offers, and offer the link in your closing line. Then stop and let them answer: a link they did not ask for is a copy of their work on a server they did not choose, and a reader who has just been handed a file is rarely the one to think of asking.
+
+The offer assumes nothing. Most readers have never met the idea and will not recognize "publish", "unlisted" or "expires", so say what happens in words that carry their own meaning: that you can put a copy of the page on the web at its own address, that only someone given the address can reach it, that nothing links to it and search engines are kept out, that it deletes itself after thirty days, and that you can take it down sooner. One sentence, one question, no jargon to decode. "Want me to put a private copy online? It gets its own address, only people you send it to can open it, and it deletes itself in a month" is the whole of it.
+
+Offer even where the file looks like enough. Whether the reader can open an HTML file at all, and see it whole rather than as text or a stripped preview, is a thing this environment usually cannot tell you and the reader has not been asked. The offer costs a sentence and settles it.
+
+Where publishing is refused by the environment rather than by the reader, say which host was blocked. A sandbox that allows only named hosts answers with a refusal naming `share.instrument.page`, which is a setting the reader can change and cannot guess. Name it, say what the alternative costs, and let them choose rather than quietly falling back to the host you are running on.
 
 Do not publish a page that carries something the reader would not hand a stranger without asking first: their own figures, names of private people, anything from files they marked private. Do not publish the starter, an example, or a page still carrying a placeholder or failing its checks; the script refuses the last two. Never post the link anywhere but back to the reader.
 
