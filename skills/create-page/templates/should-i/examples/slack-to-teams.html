@@ -2577,7 +2577,11 @@
       // its icon like any other.
       const decorate = () => {
         const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
-        for (const link of document.querySelectorAll('a[href^="https://"]')) {
+        // The credit carries the mark already; a second glyph beside it reads
+        // as a rendering fault rather than as provenance.
+        for (const link of document.querySelectorAll(
+          'a[href^="https://"]:not(.instrument-credit)',
+        )) {
           const icon = document.createElement("img");
           icon.alt = "";
           icon.className = "site-icon";
