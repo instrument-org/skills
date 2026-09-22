@@ -13,14 +13,17 @@
 // outcome every other rule in this skill is written to avoid.
 //
 // So the sheet is built here too, once, over the starter and every template's
-// main.html, and inlined ahead of the script tag. That set is what an agent
-// starts from, so a page keeps its look with scripts off; a class the agent
-// wrote itself is still the browser build's to resolve, and the script stays
-// for exactly that. The two are the same compiler on the same input, so the
-// later sheet lands on the earlier one rather than fighting it.
+// slots and finished examples, and inlined ahead of the script tag. That is
+// both what an agent starts from and what it reads before writing, so a page
+// keeps its look with scripts off; a class the agent invents past that
+// vocabulary is still the browser build's to resolve, and the script stays for
+// exactly that. The two are the same compiler on the same input, so the later
+// sheet lands on the earlier one rather than fighting it, and a page whose
+// scripts do run computes identically either way.
 //
-// The loop for any change that reaches every page: edit starter.html or a
-// template's main.html, run this, then `pnpm fix:shell` and `pnpm capture`.
+// The loop for any change that reaches every page: edit starter.html, a
+// template's main.html or an example, run this, then `pnpm fix:shell` and
+// `pnpm capture`.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -89,10 +92,17 @@ async function buildSheet(starter: string): Promise<string> {
         : Promise.resolve({ base, content, path: `virtual:${id}` });
     },
   });
-  const mains = listIdeas().map((idea) =>
+  // The examples as well as the slots. A template's main.html is a skeleton,
+  // and the classes that place a timeline's spine live in the finished pages
+  // rather than in it: over the skeletons alone, 34 of the 120 classes on one
+  // example were absent, among them every one that positions the spine, which
+  // is what broke when the framework was refused. They are also the pages an
+  // agent reads two of before writing, so this is the vocabulary it imitates.
+  const sources = listIdeas().flatMap((idea) => [
     readFileSync(join(idea.dir, "main.html"), "utf-8"),
-  );
-  return compiler.build(candidatesIn([starter, ...mains].join("\n")));
+    ...idea.examples.map((example) => readFileSync(example.htmlPath, "utf-8")),
+  ]);
+  return compiler.build(candidatesIn([starter, ...sources].join("\n")));
 }
 
 const starter = readFileSync(STARTER_PATH, "utf-8");

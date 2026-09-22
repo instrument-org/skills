@@ -75,7 +75,10 @@ function capture(chrome: string, htmlPath: string, pngPath: string) {
     shot,
     readFileSync(htmlPath, "utf-8").replace(
       "<head>",
-      "<head>\n    <script>window.__instrumentViewer = true;</script>\n    <style>:root { color-scheme: only light !important }</style>",
+      // The credit is for a reader whose scripts never ran. A capture is a tile
+      // on Instrument's own site, where saying who made the page is noise, and
+      // the widget the credit stands in for is kept out of a capture too.
+      "<head>\n    <script>window.__instrumentViewer = true;</script>\n    <style>:root { color-scheme: only light !important } .instrument-credit { display: none }</style>",
     ),
   );
   const result = spawnSync(
