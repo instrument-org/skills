@@ -1,6 +1,6 @@
 ---
 name: create-page
-description: "Use when the answer is more than a few paragraphs, or lays out steps, options, a comparison, or figures. One self-contained HTML page to scan, print, send on, or use. Forms: FAQ, timeline, how-to, checklist, itinerary, comparison, dashboard, data explorer, map, scorecard, brief, memo, case study, explainer, recommendation, wireframe, storyboard, whiteboard, playground, or a small working tool."
+description: "Use when the answer is more than a few paragraphs, or lays out steps, options, a comparison, or figures. Makes one self-contained HTML page: brief, checklist, comparison, dashboard, timeline, wireframe, or a small tool."
 ---
 
 # Create page
