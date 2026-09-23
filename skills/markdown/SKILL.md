@@ -1,6 +1,6 @@
 ---
 name: markdown
-description: "Convert between HTML and Markdown. Use when converting HTML to markdown, turndown, or html-to-md."
+description: "Convert HTML pages and fragments to Markdown."
 ---
 
 # Markdown

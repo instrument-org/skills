@@ -1,6 +1,6 @@
 ---
 name: ffmpeg
-description: "Process local video and audio with FFmpeg. Use when the user wants to inspect, convert, compress, trim, concatenate, resize, crop, rotate, speed up, slow down, extract frames or audio, replace or remove audio, normalize volume, create GIFs or slideshows, add subtitles or overlays, or troubleshoot codecs, containers, stream mapping, and media compatibility."
+description: "Convert, trim, compress, and edit local video and audio with FFmpeg, including GIFs, subtitles, and extracting audio."
 compatibility: "Requires ffmpeg and ffprobe on PATH."
 ---
 
