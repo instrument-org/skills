@@ -24,6 +24,12 @@ Everything else goes in the captions. A caption is the only prose on this page t
 
 So: no thesis paragraph, no "what this settles" ledger, no reading notes, no evidence footer. When a decision genuinely has to be argued, the argument is a [briefing memo](../briefing-memo/template.md) that links this page, not two sections bolted to it.
 
+## Naming it
+
+Name the page the way you would name a folder: the part of the product the frames are about, a colon, then what this version tries that its siblings do not. *Checkout: sold out mid-payment*, *Calendar connection: every state*, *Reply box: attachments as chips*. The part comes first so several takes on one question sort together in a folder, and it is in the words someone using the product would say, or the ones a project's kit lists. The claim the frames argue goes in the one line under the name, never in the name.
+
+No leading article, no pronoun, no word you coined for the idea, no version words (*final*, *v2*, *for real*), and sentence case. Three to seven words. The file is the same name, slugged, after the date: `2026-03-14-checkout-sold-out-mid-payment.html`. A revision keeps its name. The test is whether someone could find the page a month later remembering only which part of the product it was about; *The seam*, *It follows you* and *The dock stands up* all fail it.
+
 ## The two rules that matter
 
 **Show a sequence, not a screen.** One frame per state: resting, the moment of interaction, the result. A single screen shows what something looks like; a sequence shows what happens, which is what a proposal has to argue. Some subjects want a different axis — five states of one panel, three kinds of data, the same screen at three widths — and that is fine as long as the frames are doing comparative work. What is never fine is one frame and a paragraph.
