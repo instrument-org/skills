@@ -5,5 +5,5 @@
   "model": "claude-opus-5",
   "note": "The areas shape, where the shading is the argument: six parts of London drawn as rough polygons and colored by the one figure a commuter cares about, which is the minutes from the nearest station to the office at half past eight on a weekday. Those minutes came from Transport for London's own journey planner and the legend's three classes are facts about the journey rather than opinions about the area, so the coloring is honest even though the shapes are not boundaries; the sources say they were drawn by hand around landmarks Nominatim placed, and the legend says they are rough. The rings are one GeoJSON source with the fill chosen per feature by verdict, drawn under the labels and redrawn with the style, and a click on a shape is a click on its entry. The office is a star in the page's ink so it reads as the given and the numbered pins as the choices, and the first frame holds the shapes and the office together. Each entry sets its minutes large at the corner, names the line, and links the area to a Google Maps search; what each area is like is one line of shorthand, and rents are not stated, because no source gave one.",
   "illustrative": true,
-  "html_sha256": "723c2399bc71c973705c51b6cfde4dd740b504639fbe429beafcd0db5eb7e059"
+  "html_sha256": "2a6d52223f8d9de553ec8061a5441eb5c41862cd18bc841549b19a7e41e8ca2d"
 }

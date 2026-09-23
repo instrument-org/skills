@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Letter grades on a four-point scale, because the reader is a leadership team that thinks in report-card terms and the scale makes a C+ on search legible without a legend. The overall is a large letter in a brand badge, each dimension is a row with its letter and a short bar plus an evidence line, strengths and weaknesses are two plain bulleted columns with no icons, and the comparables are a small table so Confluence and Slab can be read dimension by dimension against Notion on one screen. Light, sans, calm, with every section directly on the background.",
   "illustrative": true,
-  "html_sha256": "2f9dd354efde252bc9ff6e14da3410ec60e74ce70b3fda77e986fe99cbc30794"
+  "html_sha256": "8c225ece45d91d4f57298eb9d532aef134646fcb7189905ea2654917573263a5"
 }

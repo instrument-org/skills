@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Scores out of ten as inline SVG dials in a three-column grid, with the overall as one larger dial, because a buyer scanning on a phone in a driveway reads a dial faster than a bar and a number out of ten maps to how people already talk about used cars. A representative photo of the model sits under the title so the page reads as being about a car, a walk-away callout precedes the strengths and weaknesses because the reader may be about to hand over money, and the comparables are three bordered cards with the subject first. The photo is representative of the category because the research is illustrative.",
   "illustrative": true,
-  "html_sha256": "31f0d315ee627f1f27f00851b5229cefd8e29487144f39a16484001e9e65cd35"
+  "html_sha256": "245dfa07438bd03c822825d9fe06f7b57ffcdbcfb76d1de61ca89ab6bf349636"
 }

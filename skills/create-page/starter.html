@@ -4195,6 +4195,34 @@
         white-space: nowrap;
       }
 
+      @media print {
+        @page {
+          margin: 12mm;
+        }
+
+        /* Only blocks small enough to move whole. A whole section is not. */
+        footer {
+          break-inside: avoid;
+        }
+      }
+    </style>
+    <!-- shell:end -->
+  </head>
+
+  <body class="bg-background font-sans text-foreground antialiased">
+    <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+      <!-- Paste the chosen template's main.html here. Every section it carries
+           is a slot the template names: keep the slots, and reorder, merge,
+           restyle and rebuild them freely. Delete every placeholder and every
+           comment like this one before you are done. -->
+    </main>
+    <!-- shell:start -->
+    <!-- shell:note Before the copy below, so a published page carries it too and
+         shows it wherever its own script is refused in turn. Its rules sit
+         beside it rather than in the head, so a page that keeps one keeps the
+         other, and the mark is sized in its own attributes, so a page that
+         somehow keeps neither shows a small glyph and a line of text. -->
+    <style>
       /* The credit, for a reader whose scripts never run. The widget is the
          real one: a pill that opens the card, offers the theme, and publishes
          a link. Where its script is refused, and an artifact host's policy
@@ -4231,8 +4259,6 @@
       }
 
       .instrument-credit svg {
-        width: 13px;
-        height: 13px;
         color: #2d9486;
       }
 
@@ -4243,40 +4269,18 @@
       }
 
       @media print {
-        @page {
-          margin: 12mm;
-        }
-
-        /* Only blocks small enough to move whole. A whole section is not. */
-        footer {
-          break-inside: avoid;
-        }
-
         .instrument-credit {
           display: none;
         }
       }
     </style>
-    <!-- shell:end -->
-  </head>
-
-  <body class="bg-background font-sans text-foreground antialiased">
-    <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
-      <!-- Paste the chosen template's main.html here. Every section it carries
-           is a slot the template names: keep the slots, and reorder, merge,
-           restyle and rebuild them freely. Delete every placeholder and every
-           comment like this one before you are done. -->
-    </main>
-    <!-- shell:start -->
-    <!-- shell:note Before the copy below, so a published page carries it too and
-         shows it wherever its own script is refused in turn. -->
     <a
       class="instrument-credit"
       href="https://tryinstrument.com/discover?utm_source=page"
       target="_blank"
       rel="noopener"
     >
-      <svg viewBox="0 0 72 72" fill="currentColor" aria-hidden="true">
+      <svg width="13" height="13" viewBox="0 0 72 72" fill="currentColor" aria-hidden="true">
         <path
           d="M69.379 49.505C64.035 62.695 51.106 72 36 72 20.896 72 7.965 62.696 2.623 49.505h66.756ZM71.331 29.067A36.18 36.18 0 0 1 72 36c0 2.724-.304 5.377-.877 7.928H46.288a7.431 7.431 0 1 1 0-14.862h25.042ZM26.47 29.067a7.432 7.432 0 0 1 0 14.862H.878A36.12 36.12 0 0 1 0 36.001c0-2.372.232-4.69.67-6.934h25.8ZM36 0c15.485 0 28.686 9.777 33.768 23.494H2.232C7.314 9.777 20.516 0 36.001 0Z"
         />

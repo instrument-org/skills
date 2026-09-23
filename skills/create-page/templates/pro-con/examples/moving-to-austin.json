@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "The archetype, light and sans: pros and cons side by side from the tablet width up, every point a row with an icon, a bold title, one checkable line, and three dots at the right edge filled by weight, with the scale explained once in a legend strip above the columns. Good for and bad for are two short paragraphs describing readers rather than restating the lists, and the bottom line is the page's only dark surface, a gray-900 strip at the end, because a reader who scrolled past two balanced columns needs the verdict to look different from everything above it.",
   "illustrative": true,
-  "html_sha256": "4cd5917db1e3c25df2b27bfb53ec1dd571019872edb178ac8423cc76fe0e359a"
+  "html_sha256": "e371b8b21e0c695137678abc49a087a6bb42ee081742c9f8628eaad39d6292b2"
 }

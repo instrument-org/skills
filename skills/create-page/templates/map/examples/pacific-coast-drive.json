@@ -5,5 +5,5 @@
   "model": "claude-opus-5",
   "note": "The drive shape. The road is the line OSRM returned through the twelve stops in order, 17,000 points simplified to 1,500 and carried as a six-kilobyte encoded polyline the page decodes into a GeoJSON line drawn under the style's labels, in brand through a token resolved to a color and redrawn whenever the theme changes the style. The legs' distances and times are the router's, rounded to the mile and five minutes, and the four figures in the card's header are sums of them. A leg through Big Sur whose time matched its distance was the check that the router had not detoured round a closure, and the sources name where to look before leaving. Each day's heading links to Google Maps directions through that day's stops, since the URL scheme takes nine waypoints and the whole drive has ten. Five of the twelve stops carry a photo, the ones a reader would want to recognize from the road, and the rest do not. The frame is the road rather than the stops, because the coast bows west of the straight line between them.",
   "illustrative": true,
-  "html_sha256": "662343d6d39b27941d2e1b5e6fa2e2c5896fae761d9bc3352d6b628a577b3924"
+  "html_sha256": "43a8eb40e0ec3ebf136f7d75857dd72b7916e3f4ad4073f1cf698bc89a614646"
 }

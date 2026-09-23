@@ -4126,53 +4126,6 @@
         white-space: nowrap;
       }
 
-      /* The credit, for a reader whose scripts never run. The widget is the
-         real one: a pill that opens the card, offers the theme, and publishes
-         a link. Where its script is refused, and an artifact host's policy
-         often refuses it, the page would otherwise say nothing about where it
-         came from at the moment it has an audience. So the mark ships in the
-         markup, shaped like the pill it stands in for, and steps aside the
-         instant the widget mounts its own element. Colors are literal rather
-         than tokens: this has to hold up in a copy whose stylesheet never
-         arrived either. */
-      .instrument-credit {
-        position: fixed;
-        right: 14px;
-        bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-        z-index: 2147483000;
-        display: inline-flex;
-        gap: 5px;
-        align-items: center;
-        height: 26px;
-        padding: 0 10px;
-        border: 1px solid light-dark(#e7e5e4, #44403c);
-        border-radius: 999px;
-        background: light-dark(#fff, #1c1917);
-        box-shadow:
-          0 1px 2px rgb(0 0 0 / 0.06),
-          0 5px 14px -6px rgb(0 0 0 / 0.18);
-        color: light-dark(#1c1917, #f5f5f4);
-        font: 500 11px/1 var(--font-sans, ui-sans-serif, system-ui, sans-serif);
-        text-decoration: none;
-        white-space: nowrap;
-      }
-
-      .instrument-credit:hover {
-        border-color: light-dark(#a9a29d, #79716b);
-      }
-
-      .instrument-credit svg {
-        width: 13px;
-        height: 13px;
-        color: #2d9486;
-      }
-
-      /* The widget mounts its own element, which carries the mark and more. Two
-         of them is one too many, and the widget is the better one. */
-      body:has(instrument-page) .instrument-credit {
-        display: none;
-      }
-
       @media print {
         @page {
           margin: 12mm;
@@ -4181,10 +4134,6 @@
         /* Only blocks small enough to move whole. A whole section is not. */
         footer {
           break-inside: avoid;
-        }
-
-        .instrument-credit {
-          display: none;
         }
       }
     </style>
@@ -4408,13 +4357,65 @@
     </main>
 
     <!-- shell:start -->
+    <style>
+      /* The credit, for a reader whose scripts never run. The widget is the
+         real one: a pill that opens the card, offers the theme, and publishes
+         a link. Where its script is refused, and an artifact host's policy
+         often refuses it, the page would otherwise say nothing about where it
+         came from at the moment it has an audience. So the mark ships in the
+         markup, shaped like the pill it stands in for, and steps aside the
+         instant the widget mounts its own element. Colors are literal rather
+         than tokens: this has to hold up in a copy whose stylesheet never
+         arrived either. */
+      .instrument-credit {
+        position: fixed;
+        right: 14px;
+        bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        z-index: 2147483000;
+        display: inline-flex;
+        gap: 5px;
+        align-items: center;
+        height: 26px;
+        padding: 0 10px;
+        border: 1px solid light-dark(#e7e5e4, #44403c);
+        border-radius: 999px;
+        background: light-dark(#fff, #1c1917);
+        box-shadow:
+          0 1px 2px rgb(0 0 0 / 0.06),
+          0 5px 14px -6px rgb(0 0 0 / 0.18);
+        color: light-dark(#1c1917, #f5f5f4);
+        font: 500 11px/1 var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .instrument-credit:hover {
+        border-color: light-dark(#a9a29d, #79716b);
+      }
+
+      .instrument-credit svg {
+        color: #2d9486;
+      }
+
+      /* The widget mounts its own element, which carries the mark and more. Two
+         of them is one too many, and the widget is the better one. */
+      body:has(instrument-page) .instrument-credit {
+        display: none;
+      }
+
+      @media print {
+        .instrument-credit {
+          display: none;
+        }
+      }
+    </style>
     <a
       class="instrument-credit"
       href="https://tryinstrument.com/discover?utm_source=page"
       target="_blank"
       rel="noopener"
     >
-      <svg viewBox="0 0 72 72" fill="currentColor" aria-hidden="true">
+      <svg width="13" height="13" viewBox="0 0 72 72" fill="currentColor" aria-hidden="true">
         <path
           d="M69.379 49.505C64.035 62.695 51.106 72 36 72 20.896 72 7.965 62.696 2.623 49.505h66.756ZM71.331 29.067A36.18 36.18 0 0 1 72 36c0 2.724-.304 5.377-.877 7.928H46.288a7.431 7.431 0 1 1 0-14.862h25.042ZM26.47 29.067a7.432 7.432 0 0 1 0 14.862H.878A36.12 36.12 0 0 1 0 36.001c0-2.372.232-4.69.67-6.934h25.8ZM36 0c15.485 0 28.686 9.777 33.768 23.494H2.232C7.314 9.777 20.516 0 36.001 0Z"
         />
