@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Opens with a balance bar, one segment per point sized by its weight in brand for and gray against, with the totals under the ends and a caption saying the lean is a lean, so the reader sees the tilt before a word of argument. Tight and sans: the pros and cons are two bordered cards side by side with the weight dots on every row, good for and bad for are icon-led lists, and the bottom line is a left-bordered band last, with a condition that names the number that would flip the answer.",
   "illustrative": true,
-  "html_sha256": "1169fff64f0b3d3201000048878631401b98b42fcff702e82f1a89dd0f82d450"
+  "html_sha256": "e56c3a2364d452007eed9e97c7f7d346f4497e33a558621883f2b328bd7c721d"
 }

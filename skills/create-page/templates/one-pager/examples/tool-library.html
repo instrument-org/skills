@@ -13,22 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <style>
       html {
-        visibility: hidden;
-        animation: instrument-floor 0s 3s forwards;
-        /* The paper's own color while the page waits, so a dark reader is not
-           shown a white window first. The values are the skin's page tokens. */
         color-scheme: light dark;
+        /* The skin's page tokens, before the stylesheet is in. */
         background: light-dark(#fafaf9, #141210);
-        /* The mark's ink and its faint swell, per theme. As properties rather
-           than light-dark() in the keyframes, which Chrome paints as nothing. */
-        --instrument-mark: #a8a29e;
-        --instrument-mark-faint: #d9d7d5;
-      }
-      @media (prefers-color-scheme: dark) {
-        html {
-          --instrument-mark: #57534e;
-          --instrument-mark-faint: #2f2c29;
-        }
       }
       /* A theme the reader chose over their system's, written on the root by
          the share widget's button or by whatever is showing the page. One
@@ -37,122 +24,11 @@
          holds from the first frame, before the stylesheet is compiled. */
       html[data-theme="light"] {
         color-scheme: light;
-        --instrument-mark: #a8a29e;
-        --instrument-mark-faint: #d9d7d5;
       }
       html[data-theme="dark"] {
         color-scheme: dark;
-        --instrument-mark: #57534e;
-        --instrument-mark-faint: #2f2c29;
-      }
-      html.instrument-ready {
-        visibility: visible;
-      }
-      @keyframes instrument-floor {
-        to {
-          visibility: visible;
-        }
-      }
-      /* The page fades in rather than appearing: once the theme resolves, or at
-         the floor when nothing resolves it. Per child of the body, since an
-         opacity on the body itself would take the mark down with it. */
-      body > * {
-        opacity: 0;
-        animation: instrument-page 0.5s ease-out 3s both;
-      }
-      @keyframes instrument-page {
-        to {
-          opacity: 1;
-        }
-      }
-      html.instrument-ready body > * {
-        animation: none;
-        opacity: 1;
-        transition: opacity 0.45s ease-out;
-      }
-      /* The mark. It shows inside the hidden document because visibility stops
-         cascading at an explicit value. Only where masks are understood: without
-         one this box would be a gray sheet over the page. */
-      @supports (mask-image: url("")) {
-        html::before {
-          content: "";
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          visibility: visible;
-          opacity: 0;
-          background: var(--instrument-mark);
-          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 520'%3E%3Cpath d='M436.675%20331.78C408.481%20401.395%20340.226%20450.5%20260.5%20450.5C180.774%20450.5%20112.519%20401.395%2084.3252%20331.78H436.675ZM446.977%20223.906C449.287%20235.748%20450.5%20247.982%20450.5%20260.5C450.5%20274.88%20448.899%20288.886%20445.872%20302.352H314.801C293.139%20302.351%20275.578%20284.791%20275.578%20263.129C275.578%20241.467%20293.139%20223.906%20314.801%20223.906H446.977ZM210.199%20223.906C231.861%20223.906%20249.422%20241.467%20249.422%20263.129C249.422%20284.791%20231.861%20302.352%20210.199%20302.352H75.1279C72.1008%20288.886%2070.5%20274.88%2070.5%20260.5C70.5%20247.982%2071.7131%20235.748%2074.0234%20223.906H210.199ZM260.5%2070.5C342.227%2070.5%20411.9%20122.101%20438.721%20194.5H82.2793C109.1%20122.101%20178.773%2070.5%20260.5%2070.5Z'/%3E%3C/svg%3E");
-          mask-position: center;
-          mask-size: 30px 30px;
-          mask-repeat: no-repeat;
-          animation:
-            instrument-mark-in 0.4s ease-out 0.75s forwards,
-            instrument-mark-out 0.3s ease-in 3s forwards,
-            instrument-breathe 1.8s ease-in-out 0.75s infinite;
-        }
-        html.instrument-ready::before {
-          animation: none;
-          opacity: 0;
-          visibility: hidden;
-          transition:
-            opacity 0.25s ease-in,
-            visibility 0s 0.25s;
-        }
-      }
-      @keyframes instrument-mark-in {
-        to {
-          opacity: 1;
-        }
-      }
-      @keyframes instrument-mark-out {
-        to {
-          opacity: 0;
-          visibility: hidden;
-        }
-      }
-      @keyframes instrument-breathe {
-        50% {
-          background-color: var(--instrument-mark-faint);
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        html::before {
-          animation:
-            instrument-mark-in 0s 0.75s forwards,
-            instrument-mark-out 0s 3s forwards;
-        }
-        body > *,
-        html.instrument-ready body > *,
-        html.instrument-ready::before {
-          animation-duration: 0s;
-          transition: none;
-        }
       }
     </style>
-    <script>
-      // --font-sans is declared in the @theme static block below, so it resolves
-      // once the compiled stylesheet is in the document and not a frame before.
-      (function () {
-        const show = () => {
-          document.documentElement.classList.add("instrument-ready");
-        };
-        (function poll() {
-          const theme = getComputedStyle(document.documentElement)
-            .getPropertyValue("--font-sans")
-            .trim();
-          if (theme !== "") show();
-          else requestAnimationFrame(poll);
-        })();
-        addEventListener(
-          "error",
-          (event) => {
-            if (event.target instanceof HTMLScriptElement) show();
-          },
-          true,
-        );
-      })();
-    </script>
     <script>
       // The theme the page shows, and the reader's say in it. `data-theme` on
       // the root overrides the system; nothing set means follow it. The choice
@@ -475,9 +351,7 @@
     --shadow-xl: 0 12px 24px -4px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
           0 6px 10px -6px light-dark(rgb(10 13 18 / 0.07), rgb(0 0 0 / 0.5)),
           0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.08));
-    --ease-in: cubic-bezier(0.4, 0, 1, 1);
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
-    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --aspect-video: 16 / 9;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -2785,14 +2659,6 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
-  .ease-in {
-    --tw-ease: var(--ease-in);
-    transition-timing-function: var(--ease-in);
-  }
-  .ease-in-out {
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-  }
   .ease-out {
     --tw-ease: var(--ease-out);
     transition-timing-function: var(--ease-out);
@@ -4413,13 +4279,10 @@
          what a script drew on it. -->
     <script>
       {
-        // A script that failed while the page was still parsing has already
-        // marked the root as shown; a copy starts held back, like the file. A
-        // theme the reader chose is on the root by now too, and a copy that
+        // A theme the reader chose is on the root by now, and a copy that
         // carried it would be pinned for every reader and hash differently for
         // each one who chose.
         const page = document.documentElement.cloneNode(true);
-        page.classList.remove("instrument-ready");
         delete page.dataset.theme;
         window.__instrumentSource = "<!doctype html>\n" + page.outerHTML;
       }

@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "The bullets are a two-column grid of small cards rather than a list, because a shop owner will scan for the one that touches their floor (insurance, storage, shipping) rather than read in order, and the catch is the only warning-toned card and spans the row so it cannot be skimmed past. The one figure is a six-bar inline SVG beside the headline, since the fire count is the argument for everything below it and photographs better than a table would.",
   "illustrative": true,
-  "html_sha256": "d0b457359f3aea7f8dcf1ce338b04df2fcbd36c43f48c770be690f97754f2cca"
+  "html_sha256": "83040dd882390e6577eb275af0d1f25832b1a901b78d0042b998eeeb66f0fb68"
 }
