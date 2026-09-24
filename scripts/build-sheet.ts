@@ -66,7 +66,9 @@ const CORE: Record<string, string> = {
  */
 function candidatesIn(html: string): string[] {
   const found = new Set<string>();
-  for (const match of html.matchAll(/\sclass\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)) {
+  for (const match of html.matchAll(
+    /\sclass\s*=\s*(?:"([^"]*)"|'([^']*)')/gi,
+  )) {
     for (const token of (match[1] ?? match[2] ?? "").split(/\s+/)) {
       if (token) found.add(token);
     }
@@ -78,7 +80,8 @@ function candidatesIn(html: string): string[] {
 /** What the browser build would have built for the starter and the templates. */
 async function buildSheet(starter: string): Promise<string> {
   let input = "";
-  for (const match of starter.matchAll(SOURCE_SHEETS)) input += `${match[1] ?? ""}\n`;
+  for (const match of starter.matchAll(SOURCE_SHEETS))
+    input += `${match[1] ?? ""}\n`;
   // The browser build's default for a page that does not import for itself.
   if (!input.includes("@import")) input = `@import "tailwindcss";${input}`;
   const compiler = await compile(input, {
@@ -115,7 +118,8 @@ if (start === -1 || end === -1 || end < start) {
 const css = await buildSheet(starter);
 // The sheet is raw text to the parser, ended by nothing but its own close tag,
 // so a sheet that carries one cannot be inlined.
-if (/<\/style/i.test(css)) throw new Error("compiled sheet carries a close tag");
+if (/<\/style/i.test(css))
+  throw new Error("compiled sheet carries a close tag");
 
 const indent = starter.slice(starter.lastIndexOf("\n", start) + 1, start);
 // `compiled` rather than a name of its own: the share host looks for exactly

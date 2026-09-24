@@ -26,9 +26,9 @@ So: no thesis paragraph, no "what this settles" ledger, no reading notes, no evi
 
 ## Naming it
 
-Name the page the way you would name a folder: the part of the product the frames are about, a colon, then what this version tries that its siblings do not. *Checkout: sold out mid-payment*, *Calendar connection: every state*, *Reply box: attachments as chips*. The part comes first so several takes on one question sort together in a folder, and it is in the words someone using the product would say, or the ones a project's kit lists. The claim the frames argue goes in the one line under the name, never in the name.
+Name the page the way you would name a folder: the part of the product the frames are about, a colon, then what this version tries that its siblings do not. _Checkout: sold out mid-payment_, _Calendar connection: every state_, _Reply box: attachments as chips_. The part comes first so several takes on one question sort together in a folder, and it is in the words someone using the product would say, or the ones a project's kit lists. The claim the frames argue goes in the one line under the name, never in the name.
 
-No leading article, no pronoun, no word you coined for the idea, no version words (*final*, *v2*, *for real*), and sentence case. Three to seven words. The file is the same name, slugged, after the date: `2026-03-14-checkout-sold-out-mid-payment.html`. A revision keeps its name. The test is whether someone could find the page a month later remembering only which part of the product it was about; *The seam*, *It follows you* and *The dock stands up* all fail it.
+No leading article, no pronoun, no word you coined for the idea, no version words (_final_, _v2_, _for real_), and sentence case. Three to seven words. The file is the same name, slugged, after the date: `2026-03-14-checkout-sold-out-mid-payment.html`. A revision keeps its name. The test is whether someone could find the page a month later remembering only which part of the product it was about; _The seam_, _It follows you_ and _The dock stands up_ all fail it.
 
 ## The two rules that matter
 
