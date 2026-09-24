@@ -17,6 +17,16 @@
         /* The skin's page tokens, before the stylesheet is in. */
         background: light-dark(#fafaf9, #141210);
       }
+      html.instrument-wait {
+        visibility: hidden;
+        /* A floor that needs no script, should the one that lifts it fail. */
+        animation: instrument-floor 0s 1s forwards;
+      }
+      @keyframes instrument-floor {
+        to {
+          visibility: visible;
+        }
+      }
       /* A theme the reader chose over their system's, written on the root by
          the share widget's button or by whatever is showing the page. One
          property does it, because every color in the skin is light-dark().
@@ -29,6 +39,22 @@
         color-scheme: dark;
       }
     </style>
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const show = () => {
+          root.classList.remove("instrument-wait");
+          if (root.classList.length === 0) root.removeAttribute("class");
+        };
+        root.classList.add("instrument-wait");
+        addEventListener("DOMContentLoaded", () => {
+          // Laid out first, so every face the page uses has been asked for
+          // and the fonts' promise waits on all of them.
+          void document.body.offsetHeight;
+          document.fonts.ready.then(show, show);
+        });
+      })();
+    </script>
     <script>
       // The theme the page shows, and the reader's say in it. `data-theme` on
       // the root overrides the system; nothing set means follow it. The choice
@@ -4431,6 +4457,9 @@
         // each one who chose.
         const page = document.documentElement.cloneNode(true);
         delete page.dataset.theme;
+        // The hold while the fonts load belongs to this visit, not the file.
+        page.classList.remove("instrument-wait");
+        if (page.classList.length === 0) page.removeAttribute("class");
         window.__instrumentSource = "<!doctype html>\n" + page.outerHTML;
       }
 

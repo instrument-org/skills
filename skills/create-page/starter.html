@@ -21,18 +21,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- shell:note The page is drawn from its first frame: the compiled floor
-         sheet below styles it before any script runs, so there is nothing to
-         hold it back for. A page held hidden until its scripts finished was a
-         blank page to everything that takes a picture without waiting for
-         them: the Finder's and Quick Look's previews, a link unfurled in chat,
-         the app's own thumbnails. Only the ground is set here, the paper's own
-         color in the reader's theme, so a dark reader is not shown a white
-         window while the rest arrives. -->
+         sheet below styles it before any script runs. What is left to arrive
+         is the type, and a page shown before it lands rewraps every line the
+         moment it does. So a script holds the page back until its fonts are
+         in, a second at most. The hold is set by that script and never by
+         the stylesheet alone, because whatever takes a picture of a file
+         without running it (the Finder's and Quick Look's previews, the app's
+         own thumbnails) would otherwise picture a blank sheet: a page hidden
+         in CSS and shown by a script is a page those never see. Only the
+         ground is drawn meanwhile, the paper's own color in the reader's
+         theme, so a dark reader is not shown a white window first. -->
     <style>
       html {
         color-scheme: light dark;
         /* The skin's page tokens, before the stylesheet is in. */
         background: light-dark(#fafaf9, #141210);
+      }
+      html.instrument-wait {
+        visibility: hidden;
+        /* A floor that needs no script, should the one that lifts it fail. */
+        animation: instrument-floor 0s 1s forwards;
+      }
+      @keyframes instrument-floor {
+        to {
+          visibility: visible;
+        }
       }
       /* A theme the reader chose over their system's, written on the root by
          the share widget's button or by whatever is showing the page. One
@@ -46,6 +59,22 @@
         color-scheme: dark;
       }
     </style>
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const show = () => {
+          root.classList.remove("instrument-wait");
+          if (root.classList.length === 0) root.removeAttribute("class");
+        };
+        root.classList.add("instrument-wait");
+        addEventListener("DOMContentLoaded", () => {
+          // Laid out first, so every face the page uses has been asked for
+          // and the fonts' promise waits on all of them.
+          void document.body.offsetHeight;
+          document.fonts.ready.then(show, show);
+        });
+      })();
+    </script>
     <!-- shell:note The theme contract, in the head so a remembered choice is on
          the root before anything paints. `data-theme` on <html> is the whole
          switch. `window.__instrumentTheme` is the one way to write it, so the
@@ -4157,6 +4186,9 @@
         // each one who chose.
         const page = document.documentElement.cloneNode(true);
         delete page.dataset.theme;
+        // The hold while the fonts load belongs to this visit, not the file.
+        page.classList.remove("instrument-wait");
+        if (page.classList.length === 0) page.removeAttribute("class");
         window.__instrumentSource = "<!doctype html>\n" + page.outerHTML;
       }
 

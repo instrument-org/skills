@@ -4,5 +4,5 @@
   "prompt": "I need a background pattern for the cover of a report, something like a halftone, and I want to play with it rather than get three options.",
   "model": "claude-opus-5",
   "note": "The generator shape, where the takeaway is the drawing itself: the poster is inline SVG on the stage and its source is the block underneath, and the two are one string. This is the one that uses the controls the others do not, an XY pad for where the light falls, two color wells, a select for the mark, and an action that reseeds the scatter; the scatter is drawn from a seeded generator so the same dials give the same picture on every open, which is what lets the opening poster be pasted into the HTML and redrawn identically. Dash mode points every mark at the light, which is what makes the pad worth turning. The figures are the mark count, the largest mark in poster units, and the file size, since a reader putting this on a cover wants to know it is small. The last line says plainly that nothing here rests on research, because a drawing has no source to cite.",
-  "html_sha256": "1c97eaa7f122d1927dcd171f85c8b6cf07f807efc03234e40983c3ba871b33bb"
+  "html_sha256": "d649788c7293dd98213cad025b9a51b5fee27553e99f0b6b66e5c5ac715418e7"
 }
