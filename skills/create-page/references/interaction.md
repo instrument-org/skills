@@ -222,6 +222,36 @@ Field observation from real readers: collapsed regions go unnoticed entirely, ev
 
 Blessed, and distinct from interaction: a script that emits repeated markup from a data array (bar rows, matrices, waffles, radial layouts). See `charts.md` and `diagrams.md` for recipes. The test: if you are about to paste the third near-identical sibling, generate instead.
 
+## The first view is in the markup
+
+A page whose content a script draws (a rotation that rebalances, a model with sliders, a list that filters, anything that reads responses) is empty with scripts off, in a preview pane, and in the copy the share widget keeps, unless its opening state is already in the HTML. Write it there with the same code that redraws it: keep the render functions in one place, run them once when building the page and paste their output into `<main>`, then let the module script call the same functions on every change. Two copies of the logic, one hand-written for the default and one in the script, drift apart on the first edit, and a figure the markup and the script disagree about is a page that contradicts itself.
+
+Text that depends on a value the reader can change belongs to the same rule. A note that says "pad in D" is wrong the moment the song is transposed; compute it from the key, or leave the key out of the note.
+
+## Controls with no script
+
+A switch between a few fixed views (seasons on a planting plan, weeks of a program, a before and an after) needs no JavaScript: radio inputs and `:has()` show the chosen one, and the control works in every copy of the page, scripts or not.
+
+```html
+<fieldset class="season-switch flex gap-2">
+  <label
+    ><input type="radio" name="season" value="spring" checked /> Spring</label
+  >
+  <label><input type="radio" name="season" value="fall" /> Fall</label>
+</fieldset>
+<style>
+  main:has(input[value="fall"]:checked) .plant {
+    fill: var(--fall);
+  }
+</style>
+```
+
+## A page that knows what time it is
+
+Now and next on a run of show, who is on call right now, day 2 of a recovery, 143 days until a notice is due: a page read on the day is worth most when it answers for that moment. Compute it from the clock at open, and give the reader who opens it early a way to look at any moment, a time picker or `#now=16:40` in the address, with the preview said in words so nobody mistakes it for the real time. Leave the markup in the plain state (the whole schedule, no "now" marked), so a copy opened with scripts off is not frozen at the minute it was written.
+
+Two traps. `new Date("2026-09-17")` is midnight UTC, which is the evening before in the Americas; write a date the reader will see as local noon, `new Date("2026-09-17T12:00")`. And a status computed from today changes on its own, which is right for a live plan and wrong for a figure the page states in prose, so say "as of" beside anything that will drift.
+
 ## Hover linking
 
 Optional garnish for dense figures: hovering a legend entry dims unrelated marks (toggle an `opacity-30` class on non-matching `data-series` elements). Never make hover the only way to read a value.

@@ -240,6 +240,17 @@ A page with an anchor, the office the commute runs to, the hotel the restaurants
 
 `frame(points)` in `main.html` fits a set of `[lat, lon]` points into the part of the panel the card leaves free, with a margin wide enough that a pin at the edge is whole, and caps the zoom at 16 so a page with one place, or two a block apart, opens on a neighborhood rather than a rooftop. An entry's click frames its own point at street zoom, or its ring on an areas page. On a drive, frame the line rather than the stops, since the road bows away from the straight line between them.
 
+## A map inside a longer page
+
+A site-visit plan, a day sheet, a house manual or a neighborhood guide is a document with a map in it rather than a map with a card on it. The script in `main.html` carries over nearly whole: the places are still read from the list, the pins are still DOM, and the plain drawing to scale still stands in when the library or the streets never arrive. Four things change.
+
+- **The page scrolls, so the map must not eat the scroll.** Pass `cooperativeGestures: true` to the `Map`, on a touch screen at least: one finger, or a wheel where it is on, scrolls the page, and a modifier key or two fingers moves the map, with MapLibre's own hint saying so. Without it a reader on a phone who lands on the map cannot get past it.
+- **The container is a box, not the window.** Give it a height (`h-[60vh]` on a phone, `lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]` beside the list on a laptop), and frame with an even padding, since there is no card to keep clear of.
+- **Several maps on one page each get their own call.** Tonight's venue and tomorrow's drive are two containers and two lists; wrap the kit in a function of the container and its list rather than copying it, and let each draw its own fallback.
+- **Clustered places with one far away need named frames.** Six stops within a mile and a hotel forty minutes out frame as a view of the whole county with the six in a smear. Offer two or three frames as buttons ("The venue", "In town", "Everything"), open on the one the reader needs first, and put the outlier in the list with its distance.
+
+A place the page invented on a real street has no card on Google Maps, so its link searches the pin's coordinates, `query=<lat>,<lon>`, rather than a name and street that would land on the whole road.
+
 ## Units
 
 A drive in the reader's units: miles for a US road, kilometers elsewhere, and both only when the readers are split. Hours and minutes rather than decimal hours. A leg's figure is rounded to the ten minutes and the whole mile, since the router's second is not a claim the page can stand behind.

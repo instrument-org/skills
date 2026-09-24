@@ -226,6 +226,41 @@ The third is a trap worth knowing: `overflow-x-auto` alone computes `overflow-y`
 
 Use this for the handful of blocks that need it, never as the default wrapper: a page where everything is wide has no column left to break out of.
 
+## A page shaped like a grid
+
+Some pages are a grid rather than a column with a wide block in it: a week of people against days, a rota, a season of Sundays, a floor plan, a cue sheet, a plant schedule. For those, raise `main` itself to `max-w-6xl` and print landscape; at `max-w-3xl` a people-by-days grid has cells too narrow to say anything in. What then goes wrong goes wrong in the same few places, so check each of them:
+
+- **A flex or grid child needs `min-w-0`.** Its minimum width is its content's by default, so one `nowrap` label or a table with a `min-w-*` inside it quietly widens the column past the page. Give a `grid` a base `grid-cols-1` too, or its implicit column sizes to the widest child on a phone.
+- **A fixed table takes its widths from its first row.** With `table-fixed` and a grouped header row on top (acts over scenes, weeks over days), the group row sets the columns and squeezes the label column to nothing. Declare the widths in a `<colgroup>`.
+- **On a phone, a grid either scrolls or becomes cards, and says which.** Days that are the point of the grid scroll sideways with the row labels pinned (`sticky left-0` on the first cell, with a background). Rows that are records (a line item, a task, a guest) become cards below `md`, each carrying its own labels, rather than a table squeezed to fit.
+- **A sticky filter bar is sticky from `md` up.** On a phone its chips wrap to three rows and the bar covers a third of the screen. Pin it on a wide screen, and let it scroll away on a narrow one.
+- **A person's own row is the most-used view.** A picker that dims everyone else and totals one person's hours or shifts, with its choice kept in the address (`#who=rosa`), turns one shared page into each reader's copy. It filters, it does not hide: typing a colleague's name shows theirs, so nothing private goes behind it.
+
+Categories that need a color each (teams, issues, departments, trades) outrun the skin, which has one saturated hue. Define a handful in the page's own style block as `light-dark()` pairs, mid-tones that sit on either paper, and always print the category's name beside its color: a reader in black and white, or with a color they cannot tell apart, still reads the grid.
+
+```css
+:root {
+  --cat-1: light-dark(#3b6fb6, #7fa8e0);
+  --cat-2: light-dark(#b5642a, #e0a068);
+  --cat-3: light-dark(#7a5bb0, #b39ae0);
+  --cat-4: light-dark(#2f8a5a, #6cc494);
+  --cat-5: light-dark(#b0476b, #e08aa8);
+  --cat-6: light-dark(#6b7280, #a3a9b3);
+}
+```
+
+A drawing of a physical thing (a label, a shelf set, a part) can be drawn at its real size: set the SVG's `viewBox` in hundredths of an inch and its `width` and `height` in CSS `in`. It is then the true size on paper, and near it on most screens, which is what lets a proof say "this is what we will print".
+
+## What the starter does for you
+
+The shell prints with sane margins, carries one icon set and pins a credit to the corner. Each has an edge worth knowing before it surprises you.
+
+- **Print.** The starter's 12 mm `@page` margin comes after the page's own style block, so a page that needs other margins (a script at true size, a label proof, a one-sheet that must be exactly one sheet) sets them with `!important`. A phone layout written as `@media (max-width: …)` also matches a portrait sheet when printing and stacks the printed page into phone cards, so scope phone rules `@media screen and (…)`. A block that has to fit one landscape sheet can take `zoom` inside `@media print`, and a count of the printed pages is the only proof it did.
+- **Icons.** The icon set is Phosphor's regular weight only. `ph-fill`, `ph-bold` and the other weights render nothing unless the page links that weight's stylesheet itself (the same package and version, `src/fill/style.css`), and a name the set does not have renders nothing too, with no error. Use names you have seen in the set, not ones that sound right.
+- **The credit.** A pill sits fixed at the bottom right of every page, the credit and then the share widget that replaces it. A bar or tray the page pins to the bottom of the screen leaves it room: padding of about 3.5rem on the right, or the same below.
+
+A headless screenshot, the usual way to look at a page from a script, has edges of its own: it will not lay a page out narrower than about 500 pixels, so a 390-wide picture of the page itself is a cropped 500-wide layout that looks like it overflows (frame the page in a 390-pixel `<iframe>` and take the picture of that); it takes the machine's theme; and it draws no map tiles, so judge a map by its pins.
+
 ## Quoting someone
 
 The distillation is the line, the quote is the support under it. Never the other way round, and never the quote alone.
