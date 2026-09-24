@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Engineering write-up, compact and sans at a wider measure: mono section labels and a mono stack line under the title, a week-by-week approach in a two-column grid, two dark code blocks, stacked at full width so no line clips, for the column and the scope, a before/after table of the architecture by concern, and results as a table with a caveat column instead of a strip, limited to what a team would pull from APM, the pager, billing, and pg_total_relation_size. The lessons section is titled as what the team would do differently, with a one-line list of what held up after it, and the apply-this box leads with a log audit as the first step so a reader can rule the case out in an afternoon.",
   "illustrative": true,
-  "html_sha256": "dc7a8b9b3f20c0e9132c638e1e6bd54ae834839896a29756d96c947c36b7c651"
+  "html_sha256": "de4d514b71e72916f515eb33686d21834543ac943eded2893301388b70aa5dea"
 }

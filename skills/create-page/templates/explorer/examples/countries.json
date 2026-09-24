@@ -4,5 +4,5 @@
   "prompt": "Give me population and income data for every country so I can slice it myself.",
   "model": "claude-opus-5",
   "note": "The plainest of the three, and included to show the template with the spectacle removed: no map, no globe, no time axis, 17 KB of data and 217 rows. What is left is the argument for the shape itself, which is that the breakdown control does the work a chart cannot: region and income group are two different cuts of the same rows and the page says outright that region is a filing system rather than a size, since South Asia is six countries and Sub-Saharan Africa is forty-eight. The scatter uses a log axis because the range runs four orders of magnitude, and says so under the chart rather than leaving the reader to notice.",
-  "html_sha256": "23242d7ea11c440f637da4a37754c0e6825f9d3e2ed0cd1fe44fc37e70fa95ba"
+  "html_sha256": "08b07b87610e799b490b68b959f6a208b101968df36a7cf8a73f21e61f8669d8"
 }

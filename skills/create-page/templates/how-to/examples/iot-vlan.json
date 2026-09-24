@@ -5,5 +5,5 @@
   "model": "claude-fable-5-1",
   "note": "Compact and all sans, with the step numbers in a left rail joined by a line on wide screens so the reader can count where they are, and each step's settings and console checks in a dark code block with the values to change picked out in brand green, because the reader is at a console copying field by field. The one warning-toned callout sits inside the firewall step where people lock themselves out, and a Variations list keyed to steps carries the newer zone-based firewall so the steps do not fork.",
   "illustrative": true,
-  "html_sha256": "06aa095aff8e99e4dc1dae38a8123cca60277b60f5b7914638b1160a3bf6601c"
+  "html_sha256": "284c128f92dc90222f4b14b3b45f8b50ebddf8dbb0bdfe48de6ecec5bdeea401"
 }

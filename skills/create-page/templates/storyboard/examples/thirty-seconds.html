@@ -20,7 +20,7 @@
       html.instrument-wait {
         visibility: hidden;
         /* A floor that needs no script, should the one that lifts it fail. */
-        animation: instrument-floor 0s 1s forwards;
+        animation: instrument-floor 0s 3s forwards;
       }
       @keyframes instrument-floor {
         to {
@@ -47,11 +47,31 @@
           if (root.classList.length === 0) root.removeAttribute("class");
         };
         root.classList.add("instrument-wait");
+        // --font-sans is declared by the stylesheet, compiled into the file
+        // or in the browser, so it resolves once either is in.
+        const styled = new Promise((resolve) => {
+          (function poll() {
+            const theme = getComputedStyle(root).getPropertyValue("--font-sans");
+            if (theme.trim() !== "") resolve();
+            else requestAnimationFrame(poll);
+          })();
+        });
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
         addEventListener("DOMContentLoaded", () => {
-          // Laid out first, so every face the page uses has been asked for
-          // and the fonts' promise waits on all of them.
-          void document.body.offsetHeight;
-          document.fonts.ready.then(show, show);
+          styled
+            .then(() => {
+              // Laid out first, so every face the page uses has been asked
+              // for and the fonts' promise waits on all of them.
+              void document.body.offsetHeight;
+              return document.fonts.ready;
+            })
+            .then(show, show);
         });
       })();
     </script>

@@ -20,17 +20,20 @@
     <script async src="https://tryinstrument.com/page.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- shell:note The page is drawn from its first frame: the compiled floor
-         sheet below styles it before any script runs. What is left to arrive
-         is the type, and a page shown before it lands rewraps every line the
-         moment it does. So a script holds the page back until its fonts are
-         in, a second at most. The hold is set by that script and never by
-         the stylesheet alone, because whatever takes a picture of a file
-         without running it (the Finder's and Quick Look's previews, the app's
-         own thumbnails) would otherwise picture a blank sheet: a page hidden
-         in CSS and shown by a script is a page those never see. Only the
-         ground is drawn meanwhile, the paper's own color in the reader's
-         theme, so a dark reader is not shown a white window first. -->
+    <!-- shell:note A script holds the page back until it is styled and its
+         fonts are in, so it is never seen unstyled or rewrapping when the
+         type lands. The compiled floor sheet below styles a page before any
+         script runs; a page without it (an agent copy of this file leaves it
+         out) waits on the browser build of Tailwind instead. The hold is set
+         by that script and never by the stylesheet alone, because whatever
+         takes a picture of a file without running it (the Finder's and Quick
+         Look's previews, the app's own thumbnails) would otherwise picture a
+         blank sheet: a page hidden in CSS and shown by a script is a page
+         those never see. Every way this can go wrong ends with the page
+         shown: a script that fails to load shows it at once, and the floor
+         shows it with no script at all. Only the ground is drawn meanwhile,
+         the paper's own color in the reader's theme, so a dark reader is not
+         shown a white window first. -->
     <style>
       html {
         color-scheme: light dark;
@@ -40,7 +43,7 @@
       html.instrument-wait {
         visibility: hidden;
         /* A floor that needs no script, should the one that lifts it fail. */
-        animation: instrument-floor 0s 1s forwards;
+        animation: instrument-floor 0s 3s forwards;
       }
       @keyframes instrument-floor {
         to {
@@ -67,11 +70,31 @@
           if (root.classList.length === 0) root.removeAttribute("class");
         };
         root.classList.add("instrument-wait");
+        // --font-sans is declared by the stylesheet, compiled into the file
+        // or in the browser, so it resolves once either is in.
+        const styled = new Promise((resolve) => {
+          (function poll() {
+            const theme = getComputedStyle(root).getPropertyValue("--font-sans");
+            if (theme.trim() !== "") resolve();
+            else requestAnimationFrame(poll);
+          })();
+        });
+        addEventListener(
+          "error",
+          (event) => {
+            if (event.target instanceof HTMLScriptElement) show();
+          },
+          true,
+        );
         addEventListener("DOMContentLoaded", () => {
-          // Laid out first, so every face the page uses has been asked for
-          // and the fonts' promise waits on all of them.
-          void document.body.offsetHeight;
-          document.fonts.ready.then(show, show);
+          styled
+            .then(() => {
+              // Laid out first, so every face the page uses has been asked
+              // for and the fonts' promise waits on all of them.
+              void document.body.offsetHeight;
+              return document.fonts.ready;
+            })
+            .then(show, show);
         });
       })();
     </script>
