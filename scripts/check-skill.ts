@@ -178,7 +178,8 @@ function validateNoAbsoluteSkillPaths(
 ): string[] {
   const errors: string[] = [];
   const escaped = folderName.replace(/[-]/g, "\\-");
-  const re = new RegExp(`skills/${escaped}/`);
+  // At a path boundary, so `agent-skills/<name>/` in a URL does not count.
+  const re = new RegExp(`(?<![\\w-])skills/${escaped}/`);
 
   const dirsToCheck = ["scripts"];
   const filesToCheck: string[] = [
