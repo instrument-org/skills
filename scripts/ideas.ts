@@ -155,11 +155,19 @@ export function shellBlocksOf(html: string): string[] {
   }
 }
 
+/** The compiled floor sheet `build-sheet.ts` writes into the starter. */
+const FLOOR_SHEET = /(<!-- sheet:start -->)[\s\S]*?(<!-- sheet:end -->)/;
+const FLOOR_SHEET_POINTER =
+  "$1\n    <!-- The compiled stylesheet is left out of the examples, which agents\n         read before writing. starter.html carries it, so a page copied from\n         the starter does too; here the browser build compiles the block above. -->\n    $2";
+
 /**
- * The starter's shell as a page must carry it, which is to say without the
- * notes. A note records why a line reads the way it does, which is worth having
- * where the shell is edited and is noise in the finished pages copied from it.
- * Comments inside the skin are CSS and survive, being no part of the HTML.
+ * The starter's shell as an example must carry it, which is to say without the
+ * notes or the floor sheet. A note records why a line reads the way it does,
+ * which is worth having where the shell is edited and is noise in the finished
+ * pages copied from it. The sheet is most of the starter's bytes, and an agent
+ * reading an example from the top would spend its read on generated CSS before
+ * reaching the page. Comments inside the skin are CSS and survive, being no
+ * part of the HTML.
  */
 export function pageShell(): string[] {
   const blocks = shellBlocksOf(readFileSync(STARTER_PATH, "utf-8"));
@@ -168,5 +176,7 @@ export function pageShell(): string[] {
       `starter.html has no ${SHELL_START} … ${SHELL_END} pair, so there is no shell to copy.`,
     );
   }
-  return blocks.map((block) => block.replaceAll(SHELL_NOTE, ""));
+  return blocks.map((block) =>
+    block.replaceAll(SHELL_NOTE, "").replace(FLOOR_SHEET, FLOOR_SHEET_POINTER),
+  );
 }
