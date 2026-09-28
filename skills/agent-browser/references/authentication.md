@@ -25,7 +25,7 @@ If the application does not change URL, wait for authenticated copy or a stable 
 
 ## OAuth, SSO, CAPTCHA, and two-factor flows
 
-OAuth redirects work when they stay in the same managed target. Popup-based OAuth and SSO flows are unavailable because the browser denies new windows and exposes only one page. If the site offers a same-window sign-in path, use that. Otherwise report the limitation.
+OAuth redirects work when they stay in the same managed target. Popup-based OAuth and SSO flows are unavailable because the browser denies the windows pages open. If the site offers a same-window sign-in path, use that. Otherwise report the limitation.
 
 Let the user complete provider consent, CAPTCHA, security-key, and two-factor steps in the visible browser. Do not automate a challenge whose purpose is human or device verification.
 

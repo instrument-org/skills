@@ -32,9 +32,9 @@ Do not use these upstream surfaces in Instrument:
 - `auth`, `state`, `session`, `connect`, or `close` subcommands
 - `batch`, `plugin`, `mcp`, `chat`, `inspect`, `stream`, `launch`, and the install, upgrade, doctor, and dashboard subcommands. Issue each command on its own rather than batching them.
 - `--session`, `--session-name`, `--config`, or `--namespace` flags
-- Popup-based workflows and anything else that needs a second page
+- Popup-based workflows (`window.open`)
 
-The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. The CDP bridge exposes only one page target, so nothing can create another page.
+The wrapper blocks session identity and config/plugin discovery because they would bypass the workspace-owned context. Tabs are the task's tabs of the user's chat, opened and closed through the `tab` commands; a page cannot open a window of its own.
 
 ## Targeting a browser outside the app
 
@@ -64,7 +64,7 @@ agent-browser open https://example.com/discovered-page
 agent-browser back
 ```
 
-The managed bridge exposes one page target, and a command that would otherwise open another page navigates the current one instead. If a task requires simultaneous pages, popup messaging, separate authenticated profiles, or isolated proxy contexts, explain the limitation and ask for a different workflow.
+Pages you want side by side are tabs (`tab new`, `tab <id>`). If a task requires popup messaging, separate authenticated profiles, or isolated proxy contexts, explain the limitation and ask for a different workflow.
 
 Pace a run of pages on one origin. A shell loop that opens eight of a site's pages back to back issues them faster than any person browses, and it costs you the remaining pages if the origin decides to refuse partway. Take the pages a few at a time, do the work for each before fetching the next, and treat a slow or refused page as a reason to stop rather than to retry harder.
 

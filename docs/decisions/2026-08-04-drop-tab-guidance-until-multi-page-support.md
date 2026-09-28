@@ -1,5 +1,7 @@
 # Drop tab guidance from the agent-browser skill until the browser supports multiple pages
 
+Status: superseded by [`2026-09-28-tab-guidance-for-a-task-browser.md`](2026-09-28-tab-guidance-for-a-task-browser.md).
+
 ## Context
 
 Instrument's managed browser is one `<webview>` guest per task and agent session, reached over a CDP bridge that intercepts `Target.createTarget` and redirects it to the existing target, navigating it when a URL was requested. There is no second page for a tab command to address.

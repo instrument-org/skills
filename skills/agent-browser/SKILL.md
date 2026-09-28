@@ -5,7 +5,7 @@ description: Automate a real browser: open sites, click, fill forms, log in, tak
 
 # Browser automation with agent-browser
 
-`agent-browser` is preinstalled and reuses one managed browser target for the current task and agent session. Use it as an adaptive observe, act, verify loop. Read [`references/commands.md`](references/commands.md) when a recipe needs a command or option not shown here. Open the relevant reference before guessing syntax or working around a failed command.
+`agent-browser` is preinstalled and reuses the task's managed browser for the current task and agent session: one tab, or the several tabs of the user's chat the task holds. Use it as an adaptive observe, act, verify loop. Read [`references/commands.md`](references/commands.md) when a recipe needs a command or option not shown here. Open the relevant reference before guessing syntax or working around a failed command.
 
 Screenshots without an explicit path are saved under `work/screenshots/`. Command output reports the actual path used for screenshots and downloads, which may differ from the requested path.
 
@@ -16,7 +16,7 @@ Screenshots without an explicit path are saved under `work/screenshots/`. Comman
 | Read or research a page          | `read [url]`; `get text body` for visible DOM |
 | Check a page you produced        | `open` its path, then observe as usual        |
 | Find controls                    | `snapshot -i`, optionally with `--urls`       |
-| Follow ordinary links            | Snapshot URLs, then `open` the discovered URL |
+| Follow ordinary links            | `click` the link; `--urls` shows its address  |
 | Fill forms or operate an app     | Repeated snapshot, action, and assertion      |
 | Understand a visual layout       | Screenshot and inspect the saved image        |
 | Extract structured repeated data | Scoped text first, browser `eval` if needed   |
@@ -95,7 +95,7 @@ The command map is for discovery, not a substitute for observing the page. Read 
 - Do not treat command success as task success. Verify visible text, URL, control state, downloaded content, or rendered appearance as appropriate.
 - Do not place passwords, tokens, cookies, or saved browser state in project files or command arguments.
 - Instrument manages the browser's connection, profile, state, and lifecycle, so a set of upstream subcommands and flags is blocked and [session-management.md](references/session-management.md) lists them. Issue each command on its own rather than batching, and diagnose with `console`, `errors`, `network`, and `screenshot` rather than `doctor` or `inspect`.
-- The browser exposes one page target. Additional pages and popup-based workflows are unavailable. Follow ordinary links by opening a URL discovered with `snapshot -i --urls` in the current target.
+- Commands act on the active tab. `tab list` shows the tabs you hold; `tab new --label <name> <url>` opens another and makes it active, leaving the last where it was; `tab <id or label>` switches, and refs do not carry across, so snapshot again; `tab close <id>` closes one you opened. A tab handed to you is the user's: work in it, never close it. Tabs stay in the user's chat after the task, so close scratch tabs and leave result pages open. A browser that answers it has one tab is a single page: work in it. Page popups (`window.open`) are unavailable.
 
 ## Recover from common failures
 

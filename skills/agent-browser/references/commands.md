@@ -254,11 +254,17 @@ agent-browser network requests                 # View tracked requests
 agent-browser network requests --filter api    # Filter requests
 ```
 
-## Single managed target
+## Tabs
 
-Instrument exposes one browser target per task and agent session. A command that would otherwise open another page reuses or navigates the current target instead. Page popups created with `window.open`, `target=_blank`, or equivalent link behavior are denied.
+```bash
+agent-browser tab list                         # The tabs this task holds; → marks the active one
+agent-browser tab new --label docs https://example.com/docs  # Open another tab and switch to it
+agent-browser tab docs                         # Switch by label or id (t1, t2, or the tab's own id)
+agent-browser click @e3 --new-tab              # Follow a link into a new tab
+agent-browser tab close docs                   # Close a tab you opened
+```
 
-For an ordinary link that would open a new window, use `snapshot -i --urls` and `open` its discovered URL in the current target. Record the current URL or use `back` when you need to return. Workflows that require simultaneous pages, an opener relationship, or popup messaging are unavailable.
+A task working for a chat holds tabs of the user's chat: the ones the conversation handed it, first one first, and the ones it opens. Commands act on the active tab, and refs belong to the tab they were read in, so snapshot again after a switch. A handed tab is the user's, and closing it only lets go of it. Tabs you open stay in the user's chat when the task ends, so close the ones that were only a step. A browser that answers `tab new` with "this browser has one tab" is a single page: work in it, and `back` to return. Page popups created with `window.open` are denied, so a workflow that needs an opener relationship or popup messaging is unavailable.
 
 ## Frames
 
