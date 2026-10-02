@@ -6,6 +6,12 @@ Every page carries a Share button that publishes a copy of itself to a public li
 
 A copy of the file, byte for byte, at `https://<id>.instrument.page/`. Anyone with the address can read it; nothing lists it, search engines are told to stay out, and it expires thirty days after it went up. The id is a hash of the bytes, so the same file always lands at the same link and an edited file gets a new one, while the old one goes on serving the old version until it expires. Publishing mints a delete token, handed back once and never again. The hosted copy runs sandboxed and may load only from the origins in `allowed-sources.json`, which is what a page obeys already, so a page that passes the offline test looks the same hosted as it does from disk. Its Share button becomes a save button.
 
+## What a hosted copy cannot do
+
+The host serves every copy under a `sandbox` policy without `allow-same-origin`, so the page runs with an opaque origin. There, `localStorage`, `sessionStorage`, IndexedDB and `document.cookie` throw a `SecurityError` on access, and Safari also throws from `history.pushState` and `history.replaceState`. A page that wraps storage in try/catch, as [`interaction.md`](interaction.md) asks, is unaffected. A page built by a framework that reads storage or routes through the history API at startup (a Slidev deck, most single-page app builds) goes blank with "The operation is insecure" in the console, while the same file works from disk. Guard those calls before publishing such a page, in a classic script at the top of `<head>` that runs before the framework: an in-memory stand-in for each storage object whose access throws, and history methods that fall back to `location.hash` when the original throws. To see what the host will do, serve the file locally with the header `Content-Security-Policy: sandbox allow-scripts` and open it in Chrome and Safari.
+
+The sandbox is the price of anonymous pages sharing one domain. Each page has its own subdomain, but cookies are scoped to the registrable domain, and `instrument.page` is not on the Public Suffix List: a page with a real origin could set cookies that every other page and the share host receive, and could install a service worker that outlives the page's deletion. Hosts such as `github.io` can give each site a real origin, storage included, because the list treats each of their subdomains as a site of its own. Until this domain is listed, hosted pages get no storage.
+
 ## When to publish
 
 - The reader asked for a link, or to send the page to someone. Publish.
