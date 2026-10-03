@@ -66,13 +66,21 @@ def main():
 
     try:
         from docxtpl import DocxTemplate
+        from jinja2.sandbox import ImmutableSandboxedEnvironment
     except ImportError:
         sys.exit(
             "docxtpl is unavailable. Reload this skill to retry dependency setup."
         )
 
     tpl = DocxTemplate(args.input)
-    tpl.render(context, autoescape=True)
+    # A template is untrusted input: the default Jinja environment lets an
+    # expression reach Python internals and run commands, so render in the
+    # sandbox, which only reads the values passed in.
+    tpl.render(
+        context,
+        jinja_env=ImmutableSandboxedEnvironment(autoescape=True),
+        autoescape=True,
+    )
     tpl.save(args.output)
     print(f"Rendered {len(context)} variable(s) -> {args.output}")
 

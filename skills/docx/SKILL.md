@@ -116,6 +116,7 @@ Word often splits visible text across formatting runs. Replacing `paragraph.text
 from pathlib import Path
 
 from docxtpl import DocxTemplate
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 
 template = DocxTemplate("attachments/template.docx")
 template.render(
@@ -124,6 +125,7 @@ template.render(
         "items": [{"name": "Discovery", "amount": 2500}],
         "approved": True,
     },
+    jinja_env=ImmutableSandboxedEnvironment(autoescape=True),
     autoescape=True,
 )
 output = Path("filled.docx")
@@ -139,7 +141,7 @@ Write Jinja expressions directly in the Word template:
 
 To repeat whole Word structures, use `docxtpl` structural tags in dedicated wrapper paragraphs or rows. For a repeated table row, put `{%tr for item in items %}` in its own row, the `{{ item.name }}` and other expressions in the next row, and `{%tr endfor %}` in a third row. Use `{%p ... %}` the same way to repeat a whole paragraph. The tag-only wrapper rows or paragraphs are removed during rendering.
 
-Keep each control tag in one Word run as required by `docxtpl`; Word can split visually continuous text into multiple XML runs. Keep `autoescape=True` so values containing `&`, `<`, or `>` remain valid Word XML. When sending Python through a shell heredoc, quote its delimiter as `<<'PY'` so shell expansion cannot alter currency text or template expressions.
+Keep each control tag in one Word run as required by `docxtpl`; Word can split visually continuous text into multiple XML runs. Always render in `ImmutableSandboxedEnvironment`: a template is untrusted input, and the default Jinja environment lets an expression in it run commands on the user's machine. Keep `autoescape=True` so values containing `&`, `<`, or `>` remain valid Word XML. When sending Python through a shell heredoc, quote its delimiter as `<<'PY'` so shell expansion cannot alter currency text or template expressions.
 
 ## Format traps
 
