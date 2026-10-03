@@ -190,6 +190,30 @@ class TestFillTemplate:
         assert "R&D <Q4>" in text
         assert "A > B" in text
 
+    def test_refuses_code_in_a_template(self, tmp_path):
+        from docx import Document
+
+        template = tmp_path / "hostile-template.docx"
+        marker = tmp_path / "pwned"
+        document = Document()
+        document.add_paragraph(
+            "{{ cycler.__init__.__globals__.os.popen('touch "
+            + str(marker)
+            + "').read() }}"
+        )
+        document.save(template)
+
+        result = run(
+            "fill-template.py",
+            str(template),
+            str(tmp_path / "out.docx"),
+            "--values",
+            "{}",
+        )
+
+        assert not marker.exists()
+        assert result.returncode != 0
+
     def test_repeats_table_rows_without_blank_rows(self, tmp_path):
         from docx import Document
 
