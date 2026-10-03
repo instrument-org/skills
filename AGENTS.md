@@ -44,6 +44,10 @@ Skills from this registry are installed into the user's workspace on demand. The
 
 Prefer `z.output` over `z.infer` for type inference.
 
+## Commit trailers
+
+A commit that makes a choice ends with decision trailers, so the reasoning outlives the session that held it: `Rejected: <alternative> | <reason>`, `Commits-to: <contract later code must keep>`, `Not-tested: <what was not checked>`, `Related: <sha>`, and `Tested:` only for checks beyond the unit suites. Each line must make sense to a reader who never saw the session; leave one out rather than pad it. A commit that makes no choice carries none. Vocabulary and examples: `skills-commit-message` skill.
+
 ## Repository knowledge base
 
 Durable, versioned docs are the system of record; prefer them over chat/history. Keep them evergreen and safe to share: leave out secrets and anything tied to one machine, person, or moment. See [`docs/README.md`](docs/README.md) for the taxonomy (`decisions/`, `findings/`, `plans/`).
