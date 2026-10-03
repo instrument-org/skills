@@ -32,10 +32,11 @@ Screenshots without an explicit path are saved under `work/screenshots/`. Comman
 5. Re-observe after navigation or a DOM change.
 6. Assert the requested result before reporting success.
 
+In the task browser, a call that ends on a page-changing command (`open`, `click`, `press`, `select`, `check`, a tab switch) comes back with the page's snapshot already attached, under `Page after`. Act on those refs rather than running `snapshot -i` again; take one yourself only for what it leaves out, or when nothing was attached, as with an external browser.
+
 ```bash
 agent-browser open https://example.com/form
-agent-browser snapshot -i
-# Read the returned refs before continuing.
+# Read the refs in the attached snapshot before continuing.
 
 agent-browser click @e1
 agent-browser keyboard type "jane@example.com"
@@ -49,7 +50,7 @@ Click and type rather than `fill`, which writes the value from script and sends 
 
 `open` reports the navigation, not the page: its checkmark can front a title like `Access to this page has been denied`, which is a refusal rather than a load.
 
-Refs can change after navigation, submission, or a dynamic rerender. Re-run `snapshot -i` before the next action instead of assuming an old ref still identifies the same element.
+Refs can change after navigation, submission, or a dynamic rerender. Act on the snapshot attached after the action that changed the page, or re-run `snapshot -i` when there is none, instead of assuming an old ref still identifies the same element.
 
 ## Wait for a condition, not for the network
 
