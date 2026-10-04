@@ -322,6 +322,10 @@
         ];
 
         // ---- render ----------------------------------------------------------
+        // Everything from here down sits in its own block, so the frames above
+        // may name a helper `stage` or `layout` without redeclaring one of these
+        // and blanking the page with a SyntaxError.
+        {
         const rack = document.querySelector("#rack");
 
         rack.innerHTML = states
@@ -599,4 +603,5 @@
         }).observe(stage);
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
+        }
       </script>
