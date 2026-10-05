@@ -1,6 +1,6 @@
 # Page families
 
-Status: proposed, 2026-09-11. Two of the moves below have landed (the whiteboard rebuilt on Excalidraw, the storyboard added); the rest are a proposal for the next round. Follows [`discover-ideas.md`](discover-ideas.md), which lists what exists.
+Status: abandoned, 2026-10-05, superseded by [`docs/decisions/2026-10-05-create-page-is-a-method-with-kits.md`](../../decisions/2026-10-05-create-page-is-a-method-with-kits.md): the capabilities this plan wanted to own one each (a map, a board, dials) are kits inside create-page, and wireframes are their own skill. Two of its moves had landed before that (the whiteboard rebuilt on Excalidraw, the storyboard added).
 
 ## What this is
 

@@ -1,6 +1,6 @@
 # Discover ideas
 
-Status: In progress. Sixteen templates exist with three examples each, now inside the `create-page` skill; the third wave is unscheduled. See [`docs/decisions/2026-09-09-one-page-skill-many-templates.md`](../../decisions/2026-09-09-one-page-skill-many-templates.md) for why they are one skill.
+Status: abandoned, 2026-10-05. create-page no longer has templates, so there are no ideas to build Discover from; see [`docs/decisions/2026-10-05-create-page-is-a-method-with-kits.md`](../../decisions/2026-10-05-create-page-is-a-method-with-kits.md). Before that: sixteen templates existed with three examples each, inside the `create-page` skill.
 
 ## What this is
 

@@ -1,5 +1,7 @@
 # One page skill, many templates
 
+Status: superseded by [`2026-10-05-create-page-is-a-method-with-kits.md`](2026-10-05-create-page-is-a-method-with-kits.md), which removes the templates. The catalog-budget argument below still holds.
+
 Sixteen skills that each made one kind of HTML page became one skill, `create-page`, holding sixteen templates.
 
 ## What forced it

@@ -1,6 +1,6 @@
 # The starter owns what every page shares
 
-Status: accepted, 2026-09-10
+Status: superseded by [`2026-10-05-create-page-is-a-method-with-kits.md`](2026-10-05-create-page-is-a-method-with-kits.md): create-page pages get their shared look and behavior from `lib/foundation.css` and `lib/foundation.js`, written in by `page.mjs`, and the starter lives on only as the wireframe skill's `shell.html`. Accepted 2026-09-10.
 
 ## What
 
