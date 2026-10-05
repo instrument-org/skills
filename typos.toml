@@ -25,6 +25,8 @@ extend-ignore-re = [
   # An encoded polyline is a road as one string of letters, and every few
   # characters of it spell a word: the same convention, for a string literal.
   "const [A-Z][A-Z0-9_]* = \"[^\"]*\";",
+  # English ordinal suffixes in a date pattern: 1st, 2nd, 3rd, 4th.
+  "\\(\\?:st\\|nd\\|rd\\|th\\)",
 ]
 
 # Third-party surface the skills quote verbatim. These sit here rather than

@@ -12,9 +12,9 @@ If the answer is no, the page is better without it. Whitespace, a heading, and a
 
 There is no ceiling on what a page may weigh. A page that carries a dozen product photos, or a dataset of thousands of rows, is carrying what the reader asked for. What there is no excuse for is a picture carrying bytes the reader's screen will never show, because those are paid by everyone the page is sent to and buy nothing.
 
-The recipe: **crop to the aspect the layout uses, resize to 720 pixels on the long edge, and encode JPEG at quality 78.** A product photo done that way is usually 40 to 80 KB. One that comes out over about 200 KB was not resized, and `check:ideas` holds the registry's own examples to that line so the shape an agent copies is a light one.
+The recipe: **crop to the aspect the layout uses, resize to 720 pixels on the long edge, and encode JPEG at quality 78.** A product photo done that way is usually 40 to 80 KB. One that comes out over about 200 KB was not resized.
 
-A template may go stricter and should say why. `comparison-matrix` uses 480 wide at quality 72 because its photos sit in table cells rendered at `width="480"`, and a matrix carries many of them; going stricter there is right, and going stricter without a reason is just a worse picture.
+Go stricter when the box is smaller, and say why: photos in the cells of a comparison table rendered at `width="480"` want 480 wide at quality 72, and a map's cards the same. Going stricter without a reason is just a worse picture.
 
 Never ship an image larger than the box it renders in. A 960-wide file in a 480-wide cell costs the reader four times the bytes for pixels their screen will never show.
 
@@ -42,7 +42,7 @@ def inline_photo(url: str, width: int = 720, quality: int = 78) -> str:
 
 Give every `<img>` a `width` and `height` so the line does not reflow as the page paints, and real `alt` text saying what the picture shows, not what it is of.
 
-Base64 costs a third more than the bytes it carries, so a 150 KB photo becomes a 200 KB attribute. Count the encoded size, which is what `check:ideas` measures.
+Base64 costs a third more than the bytes it carries, so a 150 KB photo becomes a 200 KB attribute. Count the encoded size.
 
 ## When there is no photo
 
@@ -53,28 +53,30 @@ Draw a stand-in instead, as **inline SVG**. A few flat shapes in the page's own 
 ```html
 <svg
   viewBox="0 0 480 360"
-  class="w-full rounded-md"
   role="img"
   aria-label="Upright commuter bicycle, shown as a diagram"
 >
-  <rect width="480" height="360" class="fill-gray-100" />
+  <rect width="480" height="360" class="wash" data-tone="muted" />
   <circle
     cx="140"
     cy="250"
     r="62"
-    class="fill-none stroke-gray-400"
+    class="outline"
+    style="--tone: var(--gray-400)"
     stroke-width="8"
   />
   <circle
     cx="340"
     cy="250"
     r="62"
-    class="fill-none stroke-gray-400"
+    class="outline"
+    style="--tone: var(--gray-400)"
     stroke-width="8"
   />
   <path
     d="M140 250 L215 160 L300 160 L340 250 M215 160 L250 250"
-    class="fill-none stroke-brand-600"
+    class="outline"
+    data-tone="accent"
     stroke-width="8"
     stroke-linejoin="round"
   />
@@ -85,6 +87,6 @@ Prefer this to a photo you are not sure you may use. A diagram that is honestly 
 
 Do not reach for a raster placeholder. A flat abstract shape is what SVG is for, and a PNG of the same thing is larger, blurrier when scaled, and has to be base64'd on top.
 
-## What the examples show
+## Real things, real photos
 
-The examples that carry photos carry real ones, of things that exist, because an example teaches by imitation: an agent that sees a real product photo learns to go and find the real product. That is the lesson, and it is worth the kilobytes. It is also why the stand-in above belongs here, in the recipe, rather than in the examples.
+Where a page carries photos, they are of the real things it names, found at their maker's or a licensed source and credited. A stand-in drawing is for when there is none you may use, and it is honestly a drawing.

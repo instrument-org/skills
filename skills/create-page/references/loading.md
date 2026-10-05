@@ -1,6 +1,6 @@
 # Loading a library
 
-Any library, from a short list of general-purpose package hosts. `cdn.jsdelivr.net/npm/` is the default and the one to reach for first: it mirrors every npm package file for file, builds any of them as a module at one URL shape (`/+esm`), and marks a pinned URL immutable. `esm.sh` is the second host, for the one thing a mirror cannot do: pin a single React through a whole import graph. `allowed-sources.json` at the registry root is the list, `pnpm check:ideas` holds every page to it, and the pages worker derives a hosted copy's `connect-src` from the same file.
+Any library, from a short list of general-purpose package hosts. `cdn.jsdelivr.net/npm/` is the default and the one to reach for first: it mirrors every npm package file for file, builds any of them as a module at one URL shape (`/+esm`), and marks a pinned URL immutable. `esm.sh` is the second host, for the one thing a mirror cannot do: pin a single React through a whole import graph. `page.mjs` fails a page that loads from anywhere else, and a hosted copy of a page may fetch only from the same hosts.
 
 Why the mirror first: some places a page is opened are frames whose Content Security Policy names a few plain CDNs and nothing else, and jsDelivr is on the lists seen so far where esm.sh is on none of them. A library that loads there draws its chart; one that cannot shows the page's offline branch, which is correct and worse.
 
@@ -77,21 +77,18 @@ const { Excalidraw } =
 createRoot(host).render(React.createElement(Excalidraw, props));
 ```
 
-A page that does this will not run inside the strict frames above, and its `template.md` says what it shows instead. An import map is the same thing written once: `<script type="importmap">` mapping `react`, `react-dom/` and the library to their pinned URLs, and bare names in the module after it. Reach for it when a page imports the same package from several places; a page with one import of each does not need it.
+A page that does this will not run inside the strict frames above, and says what it shows there instead. An import map is the same thing written once: `<script type="importmap">` mapping `react`, `react-dom/` and the library to their pinned URLs, and bare names in the module after it. Reach for it when a page imports the same package from several places; a page with one import of each does not need it.
 
-## What the templates already prove
+## Where the kits already use one
 
-| Library         | Shape                                                            | Where              |
-| --------------- | ---------------------------------------------------------------- | ------------------ |
-| Chart.js        | module, `/auto/+esm`, `.default`; or the UMD as a classic script | `tool`, `explorer` |
-| Observable Plot | module namespace                                                 | `dashboard`        |
-| Tabulator       | classic script by path, stylesheet                               | `explorer`         |
-| sql.js          | classic script by path, wasm by path                             | `explorer`         |
-| Leaflet         | classic script by path, stylesheet                               | `explorer`         |
-| MapLibre GL     | classic script by path, stylesheet; styles from OpenFreeMap      | `map`              |
-| Excalidraw      | esm.sh with `?deps`, stylesheet, assets                          | `whiteboard`       |
-| dialkit         | module, `/vanilla/+esm`, stylesheet                              | `playground`       |
+| Library     | Shape                                                       | Kit                |
+| ----------- | ----------------------------------------------------------- | ------------------ |
+| MapLibre GL | classic script by path, stylesheet; styles from OpenFreeMap | `kits/map/`        |
+| Excalidraw  | esm.sh with `?deps`, stylesheet, assets                     | `kits/whiteboard/` |
+| dialkit     | module, `/vanilla/+esm`, stylesheet                         | `kits/playground/` |
+
+Chart.js (`/auto/+esm`, `.default`), Observable Plot (a module namespace), Tabulator and sql.js (classic scripts by path) load the same ways.
 
 ## Say what it costs
 
-The starter spends about 85 KB on its framework and icon set together. A charting library is about the same again; Excalidraw is 1.2 MB, which the whiteboard earns because the board is the whole page. Name the cost in the template's `template.md` when a document kind needs something past a chart, and say there what the page shows while it loads and if it never does.
+The foundation's fonts are about 100 KB. A charting library is about the same again; Excalidraw is 1.2 MB, which a board earns because the board is the whole page. Say on the page what it shows while a library loads and if it never does.

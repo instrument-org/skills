@@ -31,9 +31,12 @@ const ENDPOINT =
 /** What the share host refuses over, so the refusal is read here first. */
 const MAX_BYTES = 8 * 1024 * 1024;
 
-/** Two placeholders every page starts with; a page still carrying one is not finished. */
+/** Two placeholders a page made from a kit starts with; a page still carrying one is not finished. */
 const PLACEHOLDERS = [
-  [/<title>\s*TITLE\s*<\/title>/i, "its <title> is still the starter's TITLE"],
+  [
+    /<title>\s*TITLE\s*<\/title>/i,
+    "its <title> is still the placeholder TITLE",
+  ],
   [
     /name="instrument:idea"\s+content="TEMPLATE@/i,
     "its instrument:idea meta still reads TEMPLATE",
@@ -80,7 +83,7 @@ export async function publish(page) {
   const head = bytes.subarray(0, 8192).toString("utf8");
   if (!/^\s*<!doctype html/i.test(head)) {
     throw new Error(
-      `${page} does not open with <!doctype html>, which the share host requires and every page from starter.html has`,
+      `${page} does not open with <!doctype html>, which the share host requires`,
     );
   }
   for (const [pattern, why] of PLACEHOLDERS) {

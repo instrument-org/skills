@@ -37,9 +37,9 @@ ENDPOINT = os.environ.get(
 # What the share host refuses over, so the refusal is read here first.
 MAX_BYTES = 8 * 1024 * 1024
 
-# Two placeholders every page starts with; a page still carrying one is not finished.
+# Two placeholders a page made from a kit starts with; a page still carrying one is not finished.
 PLACEHOLDERS = [
-    (re.compile(r"<title>\s*TITLE\s*</title>", re.I), "its <title> is still the starter's TITLE"),
+    (re.compile(r"<title>\s*TITLE\s*</title>", re.I), "its <title> is still the placeholder TITLE"),
     (
         re.compile(r'name="instrument:idea"\s+content="TEMPLATE@', re.I),
         "its instrument:idea meta still reads TEMPLATE",
@@ -111,7 +111,7 @@ def publish(page: Path) -> str:
     head = data[:8192].decode("utf-8", "replace")
     if not re.match(r"\s*<!doctype html", head, re.I):
         raise ShareError(
-            f"{page} does not open with <!doctype html>, which the share host requires and every page from starter.html has"
+            f"{page} does not open with <!doctype html>, which the share host requires"
         )
     for pattern, why in PLACEHOLDERS:
         if pattern.search(head):

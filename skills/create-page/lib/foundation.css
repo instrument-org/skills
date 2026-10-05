@@ -1,0 +1,1228 @@
+/* foundation.css: the whole look of a page. Plain elements are styled, a few
+   layout classes exist, and two attributes on <html> switch everything:
+   data-feel (the token set) and data-shape (widths, density, print).
+   Everything sits in one cascade layer, so any rule a page writes in its own
+   <style> wins without a fight over specificity. */
+
+@layer foundation {
+  /* The brand skin, verbatim values from create-page's skin block. */
+  :root {
+    color-scheme: light dark;
+    --gray-25: light-dark(#fdfdfc, #100e0d);
+    --gray-50: light-dark(#fafaf9, #141210);
+    --gray-100: light-dark(#f5f5f4, #1c1917);
+    --gray-200: light-dark(#e7e5e4, #292524);
+    --gray-300: light-dark(#d7d3d0, #3a3532);
+    --gray-400: light-dark(#a9a29d, #6a625c);
+    --gray-500: light-dark(#6d655f, #9a918a);
+    --gray-600: light-dark(#57534e, #b5aca5);
+    --gray-700: light-dark(#44403c, #d0c8c1);
+    --gray-800: light-dark(#292524, #e4ded9);
+    --gray-900: light-dark(#1c1917, #f1ede9);
+    --gray-950: light-dark(#171412, #faf8f6);
+    --brand-25: light-dark(#f1f4f2, #0d1615);
+    --brand-50: light-dark(#e2eae7, #102220);
+    --brand-100: light-dark(#c5d5d0, #143029);
+    --brand-200: light-dark(#9dbfb6, #1a463d);
+    --brand-400: #338c81;
+    --brand-500: #0e7869;
+    --brand-600: #0b6056;
+    --brand-700: light-dark(#0a4a42, #56c2b0);
+    --brand-800: light-dark(#093a34, #86d4c4);
+    --error-50: light-dark(#fbeef0, #26121a);
+    --error-100: light-dark(#f8e4e8, #331721);
+    --error-500: #b4324f;
+    --error-700: light-dark(#7a1f30, #ef8ba3);
+    --warning-50: light-dark(#fffaeb, #2a1c06);
+    --warning-100: light-dark(#fef0c7, #3a2608);
+    --warning-500: #f79009;
+    --warning-700: light-dark(#b54708, #f0b03f);
+    --success-50: light-dark(#e9f5eb, #0e2413);
+    --success-500: #29a845;
+    --success-700: light-dark(#176229, #6ddc85);
+    --yellow-50: light-dark(#fdf6e2, #241a09);
+    --yellow-500: #d58f4f;
+    --yellow-700: light-dark(#a25a3c, #e0a978);
+    --brown-100: light-dark(#f6f4f0, #1d1a16);
+    --brown-300: light-dark(#e8e3da, #2e2921);
+    --brown-700: light-dark(#7f6a4d, #c8b599);
+
+    --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --serif: "Roboto Serif", ui-serif, Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* Categorical: eight hues that hold in both themes, for people, teams,
+     households, trades, grades. data-c="1".."8" picks one. */
+    --c1: light-dark(#0e7869, #3fb3a0);
+    --c2: light-dark(#c2410c, #f08a4b);
+    --c3: light-dark(#4f46e5, #8b8cf6);
+    --c4: light-dark(#b4324f, #ec7c95);
+    --c5: light-dark(#a16207, #e0b04a);
+    --c6: light-dark(#0369a1, #4fb0e6);
+    --c7: light-dark(#7e22ce, #c084fc);
+    --c8: light-dark(#4d7c0f, #9ccc4a);
+
+    /* calm, the default feel: the house look. */
+    --ground: var(--gray-50);
+    --paper: light-dark(#ffffff, #1c1917);
+    --ink: var(--gray-950);
+    --ink-2: var(--gray-700);
+    --muted: var(--gray-500);
+    --line: var(--gray-200);
+    --line-2: var(--gray-300);
+    --accent: var(--brand-600);
+    --accent-ink: #fff;
+    --accent-text: var(--brand-700);
+    --wash: var(--brand-50);
+    --good: var(--success-700);
+    --good-wash: var(--success-50);
+    --warn: var(--warning-700);
+    --warn-wash: var(--warning-50);
+    --bad: light-dark(#b4324f, #ef8ba3);
+    --bad-wash: var(--error-50);
+    --body-font: var(--sans);
+    --head-font: var(--sans);
+    --label-font: var(--sans);
+    --head-weight: 650;
+    --head-track: -0.022em;
+    --head-case: none;
+    --head-style: normal;
+    --label-case: uppercase;
+    --label-track: 0.07em;
+    --radius: 0.6rem;
+    --rule: 1px;
+    --shadow:
+      0 1px 2px light-dark(rgb(10 13 18 / 0.05), rgb(0 0 0 / 0.4)),
+      0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.07));
+    --size: 16px;
+    --flow: 1rem;
+    --gap: 1rem;
+    --pad: 1.1rem;
+    --col: 42rem;
+    --wide: 64rem;
+    --gutter: 1.25rem;
+
+    --tone: var(--accent);
+    --tone-wash: var(--wash);
+    --accent-wash: var(--wash);
+  }
+  /* The share widget's theme switch writes data-theme on <html>. */
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  /* ---------- feels ---------- */
+
+  [data-feel="urgent"] {
+    --ground: light-dark(#fff, #120f0e);
+    --paper: light-dark(#fff, #1a1615);
+    --accent: var(--error-500);
+    --accent-text: var(--error-700);
+    --wash: var(--error-50);
+    --head-weight: 760;
+    --head-track: -0.03em;
+    --radius: 0.3rem;
+    --rule: 2px;
+    --line-2: var(--gray-900);
+    --label-font: var(--mono);
+    --label-track: 0.02em;
+    --shadow: 0 0 0 1px var(--line);
+  }
+  [data-feel="warm"] {
+    --ground: var(--brown-100);
+    --paper: light-dark(#fffdf9, #211d19);
+    --line: var(--brown-300);
+    --accent: light-dark(#a25a3c, #e0a978);
+    --accent-ink: light-dark(#fff, #1d1a16);
+    --accent-text: var(--yellow-700);
+    --wash: var(--yellow-50);
+    --head-font: var(--serif);
+    --head-weight: 500;
+    --head-track: -0.01em;
+    --label-case: none;
+    --label-track: 0;
+    --radius: 1rem;
+    --flow: 1.15rem;
+    --pad: 1.3rem;
+    --shadow:
+      0 1px 0 var(--brown-300),
+      0 8px 24px -12px light-dark(rgb(90 60 30 / 0.18), rgb(0 0 0 / 0.5));
+  }
+  [data-feel="crew"] {
+    --ground: light-dark(#fff, #0f0e0d);
+    --paper: light-dark(#f5f5f4, #1c1917);
+    --ink: light-dark(#0a0908, #fff);
+    --ink-2: light-dark(#292524, #e4ded9);
+    --muted: var(--gray-600);
+    --line: var(--gray-300);
+    --line-2: light-dark(#0a0908, #fff);
+    --accent: #f79009;
+    --accent-ink: #171412;
+    --accent-text: var(--warning-700);
+    --wash: var(--warning-100);
+    --head-weight: 800;
+    --head-track: -0.01em;
+    --head-case: uppercase;
+    --label-track: 0.04em;
+    --radius: 0.2rem;
+    --rule: 3px;
+    --size: 17px;
+    --shadow: 0 0 0 2px var(--line);
+  }
+  [data-feel="ledger"] {
+    --ground: light-dark(#fff, #121110);
+    --paper: light-dark(#fff, #181615);
+    --accent: var(--brand-700);
+    --accent-ink: light-dark(#fff, #0d1615);
+    --accent-text: var(--brand-700);
+    --wash: var(--gray-100);
+    --head-weight: 600;
+    --head-track: -0.015em;
+    --label-font: var(--mono);
+    --label-case: none;
+    --label-track: 0;
+    --radius: 0;
+    --size: 15px;
+    --flow: 0.8rem;
+    --gap: 0.75rem;
+    --pad: 0.85rem;
+    --shadow: 0 0 0 1px var(--line);
+  }
+  [data-feel="festive"] {
+    --ground: var(--brand-25);
+    --paper: light-dark(#fff, #14201e);
+    --accent: var(--brand-500);
+    --accent-text: var(--brand-700);
+    --wash: var(--brand-50);
+    --head-font: var(--serif);
+    --head-weight: 500;
+    --head-style: italic;
+    --head-track: -0.02em;
+    --radius: 1.25rem;
+    --flow: 1.2rem;
+    --pad: 1.4rem;
+    --shadow:
+      0 10px 30px -14px light-dark(rgb(11 96 86 / 0.35), rgb(0 0 0 / 0.6)),
+      0 0 0 1px var(--wash);
+  }
+
+  /* ---------- shapes ---------- */
+
+  [data-shape="card"] {
+    --col: 40rem;
+    --wide: 48rem;
+  }
+  [data-shape="read"] {
+    --col: 42rem;
+    --wide: 64rem;
+  }
+  [data-shape="sheet"] {
+    --col: 78rem;
+    --wide: 78rem;
+    --size: 15px;
+    --flow: 0.85rem;
+  }
+  [data-shape="wall"] {
+    --col: 110rem;
+    --wide: 110rem;
+    --size: 17px;
+  }
+
+  /* ---------- tones: data-c and data-tone feed --tone to whatever uses it ---------- */
+
+  [data-c="1"] {
+    --tone: var(--c1);
+  }
+  [data-c="2"] {
+    --tone: var(--c2);
+  }
+  [data-c="3"] {
+    --tone: var(--c3);
+  }
+  [data-c="4"] {
+    --tone: var(--c4);
+  }
+  [data-c="5"] {
+    --tone: var(--c5);
+  }
+  [data-c="6"] {
+    --tone: var(--c6);
+  }
+  [data-c="7"] {
+    --tone: var(--c7);
+  }
+  [data-c="8"] {
+    --tone: var(--c8);
+  }
+  [data-c] {
+    --tone-wash: color-mix(in oklab, var(--tone) 14%, var(--paper));
+  }
+  [data-tone="accent"] {
+    --tone: var(--accent);
+    --tone-wash: var(--wash);
+  }
+  [data-tone="good"] {
+    --tone: var(--good);
+    --tone-wash: var(--good-wash);
+  }
+  [data-tone="warn"] {
+    --tone: var(--warn);
+    --tone-wash: var(--warn-wash);
+  }
+  [data-tone="bad"] {
+    --tone: var(--bad);
+    --tone-wash: var(--bad-wash);
+  }
+  [data-tone="muted"] {
+    --tone: var(--muted);
+    --tone-wash: var(--gray-100);
+  }
+
+  /* ---------- the page frame: a breakout grid ----------
+   body and every top-level header/main/section/footer share three widths:
+   col (reading), wide (.bleed) and full (.full). */
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-size: var(--size);
+    -webkit-text-size-adjust: 100%;
+    background: var(--ground);
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 1rem/1.55 var(--body-font);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    display: grid;
+    align-content: start;
+    row-gap: calc(var(--flow) * 2);
+    padding-block: clamp(1.5rem, 5vw, 3.5rem) 5rem;
+    grid-template-columns:
+      [full-start] minmax(var(--gutter), 1fr)
+      [wide-start] minmax(0, calc((var(--wide) - var(--col)) / 2))
+      [col-start] min(var(--col), 100% - 2 * var(--gutter)) [col-end]
+      minmax(0, calc((var(--wide) - var(--col)) / 2)) [wide-end]
+      minmax(var(--gutter), 1fr) [full-end];
+  }
+  body > *,
+  :is(body > :is(header, main, section, footer, article)) > * {
+    grid-column: col;
+    min-width: 0;
+  }
+  body > :is(header, main, section, footer, article) {
+    grid-column: full;
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: var(--flow);
+    align-content: start;
+  }
+  /* A footer is often one bare line of text, which a subgrid would drop into the gutter. */
+  body > footer {
+    grid-column: col;
+    display: block;
+  }
+  body > footer > * + * {
+    margin-top: 0.5rem;
+  }
+  body > main {
+    row-gap: calc(var(--flow) * 2);
+  }
+  body > main > :is(section, article, header) {
+    grid-column: full;
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: var(--flow);
+  }
+  body > main > :is(section, article, header) > * {
+    grid-column: col;
+    min-width: 0;
+  }
+  /* A top-level section that is itself a layout (.split, .grid...) is one block in the column. */
+  body
+    > :is(header, main, section, footer, article):is(
+      .split,
+      .grid,
+      .rail,
+      .row,
+      .stack,
+      .cols
+    ) {
+    grid-column: col;
+  }
+  body
+    > :is(header, main, section, footer, article):is(
+      .split,
+      .grid,
+      .rail,
+      .row,
+      .stack,
+      .cols
+    )
+    > * {
+    grid-column: auto;
+  }
+  .bleed {
+    grid-column: wide !important;
+  }
+  body > :is(header, main, section, footer, article).bleed > *,
+  body > main > :is(section, article).bleed > * {
+    grid-column: wide;
+  }
+  .full {
+    grid-column: full !important;
+  }
+  body > script,
+  body > style,
+  body > template {
+    display: none;
+  }
+  :is(
+      body,
+      body > :is(header, main, section, footer, article),
+      body > main > :is(section, article, header)
+    )
+    > * {
+    margin-block: 0;
+  }
+  :is(body > :is(main, section, article), body > main > :is(section, article))
+    > h2:not(:first-child) {
+    margin-top: calc(var(--flow) * 0.6);
+  }
+
+  /* ---------- plain elements, made good ---------- */
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--head-font);
+    font-weight: var(--head-weight);
+    letter-spacing: var(--head-track);
+    text-transform: var(--head-case);
+    font-style: var(--head-style);
+    color: var(--ink);
+    text-wrap: balance;
+    margin: 0;
+  }
+  h1 {
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.3rem);
+    line-height: 1.04;
+  }
+  h2 {
+    font-size: clamp(1.3rem, 1.05rem + 0.9vw, 1.65rem);
+    line-height: 1.15;
+    margin-top: calc(var(--flow) * 0.75);
+  }
+  h3 {
+    font-size: 1.12rem;
+    line-height: 1.25;
+  }
+  h4,
+  .label {
+    font: 600 max(11px, 0.74rem)/1.3 var(--label-font);
+    text-transform: var(--label-case);
+    letter-spacing: var(--label-track);
+    color: var(--muted);
+    font-style: normal;
+  }
+  [data-shape="card"] h1 {
+    font-size: clamp(1.85rem, 1.3rem + 2vw, 2.45rem);
+  }
+  [data-shape="sheet"] h1,
+  [data-shape="wall"] h1 {
+    font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem);
+  }
+  p,
+  li,
+  dd,
+  figcaption,
+  td {
+    text-wrap: pretty;
+  }
+  p {
+    margin: 0;
+  }
+  * + p,
+  * + ul,
+  * + ol,
+  * + dl,
+  * + pre,
+  * + table,
+  * + figure,
+  * + blockquote,
+  * + details,
+  * + .scroll {
+    margin-top: calc(var(--flow) * 0.7);
+  }
+  hgroup {
+    display: grid;
+    gap: 0.55rem;
+  }
+  hgroup > p:first-child,
+  .kicker {
+    font: 600 max(11px, 0.76rem)/1.3 var(--label-font);
+    text-transform: var(--label-case);
+    letter-spacing: var(--label-track);
+    color: var(--accent-text);
+    margin: 0;
+  }
+  hgroup > :is(h1, h2) + p,
+  .lede {
+    font-size: 1.16rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 40em;
+    margin: 0;
+  }
+  a {
+    color: var(--accent-text);
+    text-decoration-line: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  }
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+  strong,
+  b {
+    font-weight: 650;
+  }
+  small,
+  .muted {
+    color: var(--muted);
+  }
+  small {
+    font-size: 0.86em;
+  }
+  mark {
+    background: var(--tone-wash);
+    color: inherit;
+    padding: 0 0.2em;
+    border-radius: 3px;
+    box-shadow: inset 0 -2px 0 var(--tone);
+  }
+  ul,
+  ol {
+    padding-left: 1.25em;
+    margin-bottom: 0;
+  }
+  li + li {
+    margin-top: 0.3em;
+  }
+  li::marker {
+    color: var(--muted);
+  }
+  hr {
+    border: 0;
+    border-top: var(--rule) solid var(--line);
+    margin: var(--flow) 0;
+    width: 100%;
+  }
+  code,
+  kbd,
+  samp {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    font-variant-ligatures: none;
+  }
+  :not(pre) > code {
+    background: var(--gray-100);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+  kbd {
+    border: 1px solid var(--line-2);
+    border-bottom-width: 2px;
+    padding: 0 0.35em;
+    border-radius: 4px;
+    background: var(--paper);
+  }
+  pre {
+    background: light-dark(#1c1917, #0c0b0a);
+    color: #e4ded9;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    font: 0.84rem/1.6 var(--mono);
+    font-variant-ligatures: none;
+  }
+  blockquote {
+    margin-inline: 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--tone);
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    color: var(--ink-2);
+  }
+  figure {
+    margin-inline: 0;
+  }
+  figcaption {
+    font-size: 0.86rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  img {
+    display: block;
+    border-radius: calc(var(--radius) * 0.6);
+  }
+  svg {
+    overflow: visible;
+  }
+  /* dt/dd pairs may be grouped in a <div> (valid HTML); the group must not become one grid cell. */
+  dl {
+    display: grid;
+    grid-template-columns: fit-content(40%) minmax(0, 1fr);
+    gap: 0.4rem 1.2rem;
+    margin-bottom: 0;
+  }
+  dl > div {
+    display: contents;
+  }
+  dt,
+  dd {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  dt {
+    color: var(--muted);
+    font-size: 0.9em;
+  }
+  dd {
+    margin: 0;
+  }
+  details {
+    border-top: 1px solid var(--line);
+    padding-top: 0.6rem;
+  }
+  details:last-child {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.6rem;
+  }
+  details + details {
+    margin-top: 0;
+  }
+  summary {
+    display: list-item;
+    cursor: pointer;
+    font-weight: 600;
+    list-style-position: outside;
+  }
+  summary::marker {
+    color: var(--muted);
+  }
+  details[open] > summary {
+    margin-bottom: 0.6rem;
+  }
+  footer {
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+  body > footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.1rem;
+    margin-top: var(--flow);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.94rem;
+  }
+  th {
+    text-align: left;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  /* Only column headers are labels; a row header (tbody th) reads as the row's name. */
+  :is(thead th, th[scope="col"]) {
+    font: 600 max(11px, 0.72rem)/1.3 var(--label-font);
+    text-transform: var(--label-case);
+    letter-spacing: var(--label-track);
+    color: var(--muted);
+    vertical-align: bottom;
+  }
+  th,
+  td {
+    padding: 0.5rem 0.65rem;
+    border-bottom: 1px solid var(--line);
+  }
+  :is(th, td):first-child {
+    padding-left: 0;
+  }
+  :is(th, td):last-child {
+    padding-right: 0;
+  }
+  thead th {
+    border-bottom: var(--rule) solid var(--line-2);
+  }
+  tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+  /* A toned cell or row is tinted, so a status or highlight is visible. */
+  :is(td, th):is([data-tone], [data-c]),
+  tr:is([data-tone], [data-c]) > :is(td, th) {
+    background: var(--tone-wash);
+  }
+  :is(td, th):is([data-tone], [data-c]):first-child,
+  tr:is([data-tone], [data-c]) > :first-child {
+    padding-left: 0.65rem;
+    box-shadow: inset 3px 0 0 var(--tone);
+  }
+  caption {
+    caption-side: bottom;
+    text-align: left;
+    font-size: 0.86rem;
+    color: var(--muted);
+    padding-top: 0.5rem;
+  }
+  button,
+  .button {
+    font: 600 0.9rem/1 var(--body-font);
+    color: var(--ink);
+    background: var(--paper);
+    cursor: pointer;
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    padding: 0.55rem 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  button:hover,
+  .button:hover {
+    border-color: var(--ink);
+  }
+  :is(button, .button):is([aria-pressed="true"], .on, .primary) {
+    background: var(--tone);
+    color: var(--accent-ink);
+    border-color: var(--tone);
+  }
+  [data-c] :is(button, .button):is([aria-pressed="true"], .on),
+  :is(button, .button)[data-c]:is([aria-pressed="true"], .on) {
+    color: #fff;
+  }
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+    background: var(--paper);
+    border: 1px solid var(--line-2);
+    border-radius: calc(var(--radius) * 0.6);
+    padding: 0.45rem 0.6rem;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 25%, transparent);
+  }
+
+  /* ---------- layout primitives ---------- */
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+  .stack > * {
+    margin: 0;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    align-items: center;
+  }
+  .row > * {
+    margin: 0;
+  }
+  .row.between {
+    justify-content: space-between;
+  }
+  .grid {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(var(--min, 15rem), 100%), 1fr)
+    );
+  }
+  .grid > * {
+    margin: 0;
+    min-width: 0;
+  }
+  .split {
+    display: grid;
+    gap: calc(var(--gap) * 2);
+    grid-template-columns: minmax(0, 1fr) var(--side, 19rem);
+    align-items: start;
+  }
+  .split > * {
+    margin: 0;
+    min-width: 0;
+  }
+  .split.flip {
+    grid-template-columns: var(--side, 19rem) minmax(0, 1fr);
+  }
+  .rail {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(var(--min, 14rem), 100%), 1fr)
+    );
+  }
+  .rail > * {
+    margin: 0;
+    min-width: 0;
+  }
+  .cols {
+    columns: var(--min, 16rem);
+    column-gap: calc(var(--gap) * 2);
+  }
+  .cols > * {
+    break-inside: avoid;
+  }
+  .panel {
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: var(--pad);
+  }
+  .inset {
+    background: var(--tone-wash);
+    border-radius: var(--radius);
+    padding: var(--pad);
+  }
+  .panel > * + *,
+  .inset > * + *,
+  aside > * + *,
+  li > * + *,
+  td > * + * {
+    margin-top: 0.5rem;
+  }
+  :is(.panel, .inset)[data-c],
+  :is(.panel, .inset)[data-tone] {
+    border-left: 4px solid var(--tone);
+  }
+  .hero {
+    margin-block: calc(var(--flow) * 0.5);
+  }
+  aside {
+    background: var(--tone-wash);
+    border-left: 3px solid var(--tone);
+    padding: 0.8rem 1rem;
+    border-radius: 0 calc(var(--radius) * 0.6) calc(var(--radius) * 0.6) 0;
+    font-size: 0.95rem;
+  }
+  .scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sticky {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--ground);
+    padding-block: 0.6rem;
+  }
+  .center {
+    text-align: center;
+    justify-items: center;
+  }
+
+  /* ---------- small pieces ---------- */
+
+  .stat {
+    display: grid;
+    gap: 0.2rem;
+    margin: 0;
+  }
+  .stat > :is(b, strong, data) {
+    font: var(--head-weight) clamp(2.4rem, 1.6rem + 3vw, 4rem)/1
+      var(--head-font);
+    letter-spacing: -0.035em;
+    color: var(--tone);
+    font-variant-numeric: tabular-nums;
+    font-style: var(--head-style);
+  }
+  .stat:not([data-tone], [data-c]) > :is(b, strong, data) {
+    color: var(--accent-text);
+  }
+  .stat > span,
+  .stat > small {
+    color: var(--ink-2);
+    font-size: 0.95rem;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font: 600 max(11px, 0.74rem)/1 var(--body-font);
+    padding: 0.3em 0.55em;
+    border-radius: 999px;
+    background: var(--tone-wash);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1px
+      color-mix(in oklab, var(--tone) 35%, transparent);
+    white-space: nowrap;
+  }
+  .dot::before {
+    content: "";
+    display: inline-block;
+    width: 0.62em;
+    height: 0.62em;
+    border-radius: 50%;
+    background: var(--tone);
+    margin-right: 0.4em;
+    vertical-align: 0.02em;
+  }
+  .bar {
+    --v: 50%;
+    display: block;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--gray-100);
+    overflow: hidden;
+  }
+  /* An untoned bar is neutral, so data-tone="accent" (or any tone) on one bar stands out. */
+  .bar::before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: var(--v);
+    background: var(--muted);
+    border-radius: inherit;
+  }
+  :is(.bar[data-tone], .bar[data-c], [data-tone] .bar, [data-c] .bar)::before {
+    background: var(--tone);
+  }
+  .n,
+  td.n,
+  th.n {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .mono {
+    font-family: var(--mono);
+    font-variant-ligatures: none;
+  }
+  ol.steps {
+    list-style: none;
+    padding: 0;
+    counter-reset: s;
+    display: grid;
+    gap: calc(var(--flow) * 0.9);
+  }
+  ol.steps > li {
+    counter-increment: s;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    column-gap: 0.8rem;
+    margin: 0;
+  }
+  ol.steps > li::before {
+    content: counter(s);
+    grid-row: span 9;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--tone);
+    color: var(--accent-ink);
+    font: 700 0.9rem/1 var(--body-font);
+  }
+  ul.plain,
+  ol.plain {
+    list-style: none;
+    padding: 0;
+  }
+  ul.ticks {
+    list-style: none;
+    padding: 0;
+  }
+  ul.ticks > li {
+    padding-left: 1.7rem;
+    position: relative;
+  }
+  ul.ticks > li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.2em;
+    width: 1.05rem;
+    height: 1.05rem;
+    border: 2px solid var(--line-2);
+    border-radius: 4px;
+  }
+
+  /* SVG drawn by hand: data-c / data-tone fill a shape; .outline strokes it. */
+  /* Colors set on the svg, not on its shapes, so a fill= or font-size= written
+   on a shape still wins: CSS rules outrank SVG presentation attributes. */
+  svg:not([fill]) {
+    fill: var(--ink);
+  }
+  svg {
+    font-family: var(--body-font);
+  }
+  svg [data-c],
+  svg [data-tone] {
+    fill: var(--tone);
+  }
+  svg .outline {
+    fill: none;
+    stroke: var(--tone, var(--ink));
+  }
+  svg .ink {
+    fill: var(--ink);
+  }
+  svg .muted {
+    fill: var(--muted);
+  }
+  svg .paper {
+    fill: var(--paper);
+  }
+  svg .ground {
+    fill: var(--ground);
+  }
+  svg .wash {
+    fill: var(--tone-wash);
+  }
+  svg .line {
+    fill: none;
+    stroke: var(--line-2);
+  }
+  svg .faint {
+    fill: none;
+    stroke: var(--line);
+  }
+
+  /* "Show me my part": data-who on things, buttons with data-show-who. */
+  .dim {
+    opacity: 0.22;
+    filter: grayscale(0.7);
+    transition: opacity 0.2s;
+  }
+  svg .dim {
+    opacity: 0.15;
+  }
+  .match {
+    transition: opacity 0.2s;
+  }
+  .today {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  /* Devices: each is a container, so its own container queries pick its phone layout. */
+  .dv {
+    container-type: inline-size;
+    min-width: 0;
+    max-width: 100%;
+    margin-inline: 0;
+  }
+  [data-device] {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .site-icon {
+    display: inline-block;
+    width: 0.8em;
+    height: 0.8em;
+    margin-right: 0.3em;
+    vertical-align: -0.05em;
+    border-radius: 2px;
+  }
+
+  /* ---------- phone: re-flow, not squeeze ---------- */
+
+  @media not (max-width: 40rem) {
+    .phone-only {
+      display: none !important;
+    }
+  }
+  @media (max-width: 40rem) {
+    :root {
+      --gutter: 1rem;
+      --pad: 0.95rem;
+    }
+    /* Dense feels and shapes (15px) are for wide screens and paper; a phone keeps
+     16px, so the rem sizes inside devices never fall under 11px. */
+    html {
+      font-size: max(var(--size), 16px);
+    }
+    .wide-only {
+      display: none !important;
+    }
+    .split,
+    .split.flip {
+      grid-template-columns: 1fr;
+    }
+    .rail {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 0.4rem;
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+      scroll-padding-inline: var(--gutter);
+    }
+    .rail > * {
+      flex: 0 0 84%;
+      scroll-snap-align: start;
+    }
+    table.cards thead {
+      display: none;
+    }
+    table.cards,
+    table.cards tbody,
+    table.cards tr,
+    table.cards td {
+      display: block;
+      width: 100%;
+    }
+    table.cards tr {
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    table.cards td {
+      border: 0;
+      padding: 0.1rem 0;
+      text-align: left;
+    }
+    table.cards td[data-label]::before {
+      content: attr(data-label) "  ";
+      color: var(--muted);
+      font-size: 0.8em;
+    }
+    table.cards td:first-child {
+      font-weight: 650;
+    }
+    table.cards td:empty {
+      display: none;
+    }
+    dl {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    dd + dt {
+      margin-top: 0.5rem;
+    }
+    body {
+      padding-block: 1.25rem 5rem;
+    }
+  }
+
+  /* ---------- print: paper has one theme ---------- */
+
+  @media screen {
+    .print-only {
+      display: none !important;
+    }
+  }
+  @page {
+    margin: 0.5in;
+  }
+  @page landscape {
+    size: landscape;
+  }
+  @media print {
+    :root {
+      color-scheme: only light !important;
+      --size: 12px;
+    }
+    html,
+    body {
+      background: #fff !important;
+    }
+    body {
+      padding: 0;
+      row-gap: 0.9rem;
+    }
+    [data-shape="sheet"] body,
+    [data-shape="wall"] body,
+    .print-landscape {
+      page: landscape;
+    }
+    .screen-only,
+    button:not(.keep),
+    .sticky:empty {
+      display: none !important;
+    }
+    .sticky {
+      position: static;
+    }
+    .rail {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    }
+    .phone-only {
+      display: none !important;
+    }
+    .panel,
+    .inset,
+    aside,
+    figure,
+    tr,
+    li,
+    .stat,
+    .avoid-break {
+      break-inside: avoid;
+    }
+    h2,
+    h3 {
+      break-after: avoid;
+    }
+    .panel {
+      box-shadow: 0 0 0 1px #d7d3d0;
+    }
+    .dim {
+      opacity: 1;
+      filter: none;
+    }
+    .today {
+      outline: none;
+    }
+    details::details-content {
+      content-visibility: visible;
+      display: block;
+    }
+    a {
+      color: inherit;
+    }
+    .page-break {
+      break-before: page;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
