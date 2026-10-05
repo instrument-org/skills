@@ -93,7 +93,9 @@
     "//#test:scripts": {
       "inputs": [
         "scripts/**",
-        "skills/create-page/templates/*/scripts/**",
+        "skills/create-page/kits/*/scripts/**",
+        "skills/create-page/lib/**",
+        "skills/*/share.*",
         "vitest.config.ts",
         "package.json"
       ],
@@ -107,35 +109,12 @@
       "inputs": ["scripts/**/*.ts", "*.ts", "tsconfig.json", "package.json"],
       "outputs": []
     },
-    "//#check:ideas": {
+    "//#check:page-skill": {
       "inputs": [
-        "skills/create-page/SKILL.md",
-        "skills/create-page/starter.html",
-        "skills/create-page/templates/**",
-        "captures/**",
-        "skin/theme.css",
-        "scripts/check-ideas.ts",
-        "scripts/ideas.ts",
+        "skills/create-page/**",
+        "allowed-sources.json",
+        "scripts/check-page-skill.ts",
         "scripts/check-skill.ts"
-      ],
-      "outputs": []
-    },
-    "//#check:contrast": {
-      "inputs": [
-        "skills/create-page/starter.html",
-        "skills/create-page/templates/**",
-        "skin/theme.css",
-        "scripts/check-contrast.ts",
-        "scripts/ideas.ts"
-      ],
-      "outputs": []
-    },
-    "//#check:sheet": {
-      "inputs": [
-        "skills/create-page/starter.html",
-        "skills/create-page/templates/**",
-        "scripts/build-sheet.ts",
-        "scripts/ideas.ts"
       ],
       "outputs": []
     }

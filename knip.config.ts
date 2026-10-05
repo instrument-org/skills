@@ -7,15 +7,16 @@ const config: KnipConfig = {
     },
   },
   ignore: [
-    // Read by scripts/ideas.ts as a file, not imported.
-    "skin/theme.css",
-    // The kits a create-page template ships for an agent to import from a
-    // script of its own, in the consuming project, and the share script the
-    // skill ships for an agent to run there. Nothing in this repo imports
-    // them, which is the point of them, and create-page carries no package.json
-    // for the workspace entry patterns above to hang off.
-    "skills/create-page/templates/*/scripts/**",
-    "skills/create-page/share.mjs",
+    // Scripts create-page and wireframe ship for an agent to run, or import
+    // from a script of its own, in the consuming project: the page builder and
+    // its internals, the kits' drawing libraries, and the share scripts.
+    // Nothing in this repo imports most of them, which is the point of them,
+    // and neither skill carries a package.json for the workspace entry
+    // patterns above to hang off.
+    "skills/create-page/**/*.mjs",
+    // The stylesheet and behaviors page.mjs reads as files and writes into a page.
+    "skills/create-page/lib/foundation.*",
+    "skills/wireframe/*.mjs",
   ],
   ignoreBinaries: [
     "actionlint", // Used by scripts/check-actions.ts

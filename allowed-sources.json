@@ -1,5 +1,5 @@
 {
-  "about": "What a page made by create-page may load, and what its script may build at runtime. scripts/check-ideas.ts holds every example to this file, and the pages worker in instrument-org/internal derives the connect-src of every hosted copy from it, so an origin added here needs a pages deploy there before hosted copies honor it. These pages are written by an agent reaching for whatever a page needs, so the list names the general-purpose package hosts rather than the packages we happened to think of: any library on any of them is fair game. What every entry does insist on is an exact version, since a page is an artifact someone opens in a year and an unpinned URL resolves to whatever is newest that day. Tags are matched by exact origin and path family, so a lookalike host does not pass; a pin is a pattern the path must also match.",
+  "about": "What a page made by create-page or wireframe may load, and what its script may build at runtime. create-page's lib/check.mjs holds every page to the tags, scripts/check-page-skill.ts holds that check to this file, and the pages worker in instrument-org/internal derives the connect-src of every hosted copy from it, so an origin added here needs a pages deploy there before hosted copies honor it. These pages are written by an agent reaching for whatever a page needs, so the list names the general-purpose package hosts rather than the packages we happened to think of: any library on any of them is fair game. What every entry does insist on is an exact version, since a page is an artifact someone opens in a year and an unpinned URL resolves to whatever is newest that day. Tags are matched by exact origin and path family, so a lookalike host does not pass; a pin is a pattern the path must also match.",
   "tags": [
     {
       "origin": "https://fonts.googleapis.com",
@@ -20,13 +20,13 @@
       "origin": "https://esm.sh",
       "path": "/",
       "pin": "^\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
-      "why": "The builder host. esm.sh serves any npm package as a module at one URL shape and, asked with ?deps=, resolves one React across a whole import graph, which a mirror cannot: each package's peer range resolves on its own there and a React component library arrives with several Reacts in it. Reach for it for that, and for a package the mirror's module build cannot handle. Framed viewers with a strict Content Security Policy do not name it, so a page that needs it says in its template what it shows there."
+      "why": "The builder host. esm.sh serves any npm package as a module at one URL shape and, asked with ?deps=, resolves one React across a whole import graph, which a mirror cannot: each package's peer range resolves on its own there and a React component library arrives with several Reacts in it. Reach for it for that, and for a package the mirror's module build cannot handle. Framed viewers with a strict Content Security Policy do not name it, so a page that needs it says what it shows there."
     },
     {
       "origin": "https://cdn.jsdelivr.net",
       "path": "/npm/",
       "pin": "^\\/npm\\/(?:@[\\w.-]+\\/)?[\\w.-]+@\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?(?:\\/|$)",
-      "why": "The default. Mirrors npm as published, file for file, so a classic script, a stylesheet or an asset is at its own path, and builds any file as a module at /+esm with its dependencies pinned on the same host. The starter's own framework and icon set come from here. It is the host a framed viewer's Content Security Policy is likeliest to name, which is what makes it first."
+      "why": "The default. Mirrors npm as published, file for file, so a classic script, a stylesheet or an asset is at its own path, and builds any file as a module at /+esm with its dependencies pinned on the same host. The icon set and the wireframe shell's framework come from here. It is the host a framed viewer's Content Security Policy is likeliest to name, which is what makes it first."
     },
     {
       "origin": "https://unpkg.com",
@@ -48,11 +48,11 @@
     },
     {
       "prefix": "https://tiles.openfreemap.org/",
-      "why": "The map template's streets: a style URL the script hands MapLibre, which then fetches the style's tiles, glyphs and sprites from the same host. OpenFreeMap hosts these for anyone's site with no key and no limit, commercial use included, which OpenStreetMap's own tile servers forbid for a distributed app. A page whose streets never arrive still draws its pins to scale and carries its places as a list."
+      "why": "The map kit's streets: a style URL the script hands MapLibre, which then fetches the style's tiles, glyphs and sprites from the same host. OpenFreeMap hosts these for anyone's site with no key and no limit, commercial use included, which OpenStreetMap's own tile servers forbid for a distributed app. A page whose streets never arrive still draws its pins to scale and carries its places as a list."
     },
     {
       "prefix": "https://tile.openstreetmap.org/",
-      "why": "Map tiles are a URL template a map library fills in per tile. A page whose tiles never arrive still carries its places as a list, which is the rule the map template is built around."
+      "why": "Map tiles are a URL template a map library fills in per tile. A page whose tiles never arrive still carries its places as a list, which is the rule the map kit is built around."
     },
     {
       "prefix": "https://www.openstreetmap.org/copyright",
