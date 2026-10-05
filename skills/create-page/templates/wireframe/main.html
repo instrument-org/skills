@@ -534,6 +534,9 @@
           viewerCounter.textContent = `${index + 1} / ${states.length}`;
           if (!viewer.open) viewer.showModal();
           fitFrame(); // The dialog is laid out by now, so the stage measures true.
+          // Replaced rather than pushed, so walking the set leaves one history
+          // entry and the address bar always holds a link to the frame on screen.
+          history.replaceState(null, "", `#frame-${index + 1}`);
         };
 
         const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
@@ -601,6 +604,21 @@
         new ResizeObserver(() => {
           if (viewer.open) fitFrame();
         }).observe(stage);
+
+        // ---- links to a frame ------------------------------------------------
+        // `#frame-3` opens the page on the third frame enlarged, numbered as the
+        // tiles are, so a link can send someone straight to the state in question.
+        const openFromHash = () => {
+          const match = /^#frame-(\d+)$/.exec(location.hash);
+          const index = match ? Number(match[1]) - 1 : -1;
+          if (index >= 0 && index < states.length) showFrame(index);
+        };
+
+        viewer.addEventListener("close", () => {
+          if (location.hash.startsWith("#frame-")) history.replaceState(null, "", location.pathname + location.search);
+        });
+        window.addEventListener("hashchange", openFromHash);
+        openFromHash();
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
         }

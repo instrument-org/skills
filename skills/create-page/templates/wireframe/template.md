@@ -38,6 +38,8 @@ No leading article, no pronoun, no word you coined for the idea, no version word
 
 **And let the reader take them off.** The marks button in the title bar, and the `A` key, hide every annotation in the grid and in the enlarged view at once, so the same file is both the argument and the drawing on its own. It works because the rule hangs off the body and every annotation carries the class `ann`, which is the one thing to get right when you draw a mark by hand instead of calling the kit: a ring without that class is a ring that stays on when someone asked to see the design.
 
+**Link to one frame by its number.** `#frame-3` after the page's address opens it on the third frame enlarged, and the address follows the enlarged view as the reader steps through it, so when you send someone to look at one state, send that link rather than the bare page.
+
 ## Draw at true size
 
 **Draw every frame at the size the thing really is.** A desktop window is 1280x800. A phone is 390x844. A settings panel is whatever it actually measures, around 520 wide. Use the ordinary type scale inside it: `text-sm`, `text-xs`, real padding, real spacing.
