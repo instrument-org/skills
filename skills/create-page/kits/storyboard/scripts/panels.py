@@ -29,13 +29,15 @@ which is the one mistake that reads as a drawing error.
 
 import math
 
-INK = "var(--color-gray-700)"
-SOFT = "var(--color-gray-400)"
-LINE = "var(--color-gray-300)"
-PALE = "var(--color-gray-100)"
-CARD = "var(--color-card)"
-ACCENT = "var(--color-brand-600)"
-ACCENT_PALE = "var(--color-brand-100)"
+INK = "var(--gray-700)"
+SOFT = "var(--gray-400)"
+# Words in the scene: the muted text color, which reads in both themes.
+MUTED = "var(--muted)"
+LINE = "var(--gray-300)"
+PALE = "var(--gray-100)"
+CARD = "var(--paper)"
+ACCENT = "var(--accent)"
+ACCENT_PALE = "var(--wash)"
 
 
 def _f(v) -> str:
@@ -63,7 +65,7 @@ def panel(parts: list, *, w=400, h=300, label="") -> str:
     """A panel of `w` by `h`. `label` becomes its aria-label: say what it shows."""
     aria = f' aria-label="{_esc(label)}"' if label else ""
     body = "".join(p for p in parts if p)
-    return f'<svg viewBox="0 0 {_f(w)} {_f(h)}" class="block w-full" role="img"{aria}>{body}</svg>'
+    return f'<svg viewBox="0 0 {_f(w)} {_f(h)}" style="display:block;width:100%;height:auto" role="img"{aria}>{body}</svg>'
 
 
 def FLOOR(h=300):
@@ -325,7 +327,7 @@ def bubble(x, y, text, tail, *, kind="say", tone=INK, fill=CARD, size=14) -> str
     return out
 
 
-def label(x, y, text, *, size=13, tone=SOFT, anchor="middle", weight=400) -> str:
+def label(x, y, text, *, size=13, tone=MUTED, anchor="middle", weight=400) -> str:
     """A word in the scene, muted unless it is the accent."""
     return (
         f'<text x="{_f(x)}" y="{_f(y)}" text-anchor="{anchor}" font-size="{_f(size)}" '
@@ -353,7 +355,7 @@ def move(x1, y1, x2, y2, word, *, tone=ACCENT) -> str:
     return (
         _s(f"M {_f(x1)} {_f(y1)} L {_f(x2)} {_f(y2)}", stroke=tone, width=2)
         + head
-        + label((x1 + x2) / 2, min(y1, y2) - 8, word, size=11, tone=tone, weight=600)
+        + label((x1 + x2) / 2, min(y1, y2) - 8, word, size=13, tone=tone, weight=600)
     )
 
 

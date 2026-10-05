@@ -1,6 +1,6 @@
 # Map patterns
 
-Vocabulary only a map uses. The panel, the card, the pins, the list-to-pin link, the phone sheet and the offline drawing are in `main.html` and do not change from map to map; what changes is the places, and the places are research done before the page is written. The recipes below are what to run at writing time, and what to add to the script for a drive or for areas.
+Vocabulary only a map uses. The panel, the card, the pins, the list-to-pin link, the phone sheet and the offline drawing are in `skeleton.html` and do not change from map to map; what changes is the places, and the places are research done before the page is written. The recipes below are what to run at writing time, and what to add to the script for a drive or for areas.
 
 ## The list is the data
 
@@ -70,11 +70,29 @@ def commons(query: str) -> dict:
     return {"thumb": image["thumburl"], "page": image["descriptionurl"], "license": meta["LicenseShortName"]["value"], "artist": meta["Artist"]["value"]}
 ```
 
-Look at the picture before using it: the first hit for a restaurant is as often a plate as a storefront, and either is fine so long as it is the place. Then crop it to 3:2 and encode it at 480 by 320, quality 72, with the `inline_photo` recipe in [`references/images.md`](../../references/images.md); a map's cards are small, and the popup reuses the card's image element rather than carrying a second copy. Credit every photo in the sources: author, license, and a link to its Commons page. `CC0`, `CC BY` and `CC BY-SA` are fine; leave a photo with any other license alone.
+Look at the picture before using it: the first hit for a restaurant is as often a plate as a storefront, and either is fine so long as it is the place. Then crop it to 3:2 and encode it at 480 by 320, quality 72, with the recipe below; a map's cards are small, and the popup reuses the card's image element rather than carrying a second copy. Credit every photo in the sources: author, license, and a link to its Commons page. `CC0`, `CC BY` and `CC BY-SA` are fine; leave a photo with any other license alone.
+
+```python
+import base64, io, urllib.request
+from PIL import Image  # pip install pillow
+
+def inline_photo(url: str, w: int = 480, h: int = 320, quality: int = 72) -> str:
+    """Center-crops to w:h, resizes, and returns a data: URI to paste as the img src."""
+    req = urllib.request.Request(url, headers={"User-Agent": "instrument-page/1.0"})
+    img = Image.open(io.BytesIO(urllib.request.urlopen(req).read())).convert("RGB")
+    scale = max(w / img.width, h / img.height)
+    img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
+    left, top = (img.width - w) // 2, (img.height - h) // 2
+    out = io.BytesIO()
+    img.crop((left, top, left + w, top + h)).save(out, "JPEG", quality=quality, optimize=True, progressive=True)
+    return "data:image/jpeg;base64," + base64.b64encode(out.getvalue()).decode()
+```
+
+Write the `img` with `width="480" height="320"` and real `alt` text.
 
 ## Colors the map can paint
 
-MapLibre's paint properties take color strings, and every gray in the skin is a `light-dark()` pair as text, so a token is resolved through a real property before it is handed over. The probe is in `main.html`'s script as `tone`:
+MapLibre's paint properties take color strings, and most foundation tokens are `light-dark()` pairs as text, so a token is resolved through a real property before it is handed over. Add this probe to the page's script as `tone`:
 
 ```js
 const probe = document.createElement("span");
@@ -152,7 +170,7 @@ map.on("style.load", () => {
       source: "route",
       layout: { "line-join": "round", "line-cap": "round" },
       paint: {
-        "line-color": tone("--color-brand-500"),
+        "line-color": tone("--accent"),
         "line-width": 4,
         "line-opacity": 0.9,
       },
@@ -163,7 +181,7 @@ map.on("style.load", () => {
 frame(line);
 ```
 
-GeoJSON is `[lon, lat]` where the list and the polyline are `[lat, lon]`; the swap happens once, here. The stops are the list's entries as usual, each with its leg to the next one written in: the distance in the reader's units, the time as hours and minutes, and the day it falls on, with a directions link on each day's heading. The offline drawing gets the same line, projected with the pins' `x` and `y`, as a `<polyline>` in `stroke-brand-500`, and its extent is the line's rather than the stops'.
+GeoJSON is `[lon, lat]` where the list and the polyline are `[lat, lon]`; the swap happens once, here. The stops are the list's entries as usual, each with its leg to the next one written in: the distance in the reader's units, the time as hours and minutes, and the day it falls on, with a directions link on each day's heading. The offline drawing gets the same line, projected with the pins' `x` and `y`, as a `<polyline class="outline" data-tone="accent">`, and its extent is the line's rather than the stops'.
 
 ## Areas: shading with a judgment
 
@@ -174,10 +192,10 @@ const verdictColor = () => [
   "match",
   ["get", "verdict"],
   "near",
-  tone("--color-brand-500"),
+  tone("--accent"),
   "change",
-  tone("--color-warning-500"),
-  tone("--color-gray-400"),
+  tone("--warning-500"),
+  tone("--gray-400"),
 ];
 map.on("style.load", () => {
   const labels = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
@@ -226,7 +244,7 @@ map.on("mouseleave", "areas", () => {
 });
 ```
 
-Each entry carries a small square of its verdict's color before its line, so the list and the shading agree without a trip to the legend; the same move ties any entry to a color the map gives it. A polygon's ring closes on itself, so the first corner is repeated at the end. A ring drawn by hand is five to eight corners placed on streets and landmarks the geocoder returned, and the sources say it was drawn by hand. Geocode the corners rather than guessing them: a neighborhood remembered a kilometer east is an opinion about the wrong streets. The offline drawing gets the same rings as `<polygon>`s in the verdict's `fill-*` class.
+Each entry carries a small square of its verdict's color before its line, so the list and the shading agree without a trip to the legend; the same move ties any entry to a color the map gives it. A polygon's ring closes on itself, so the first corner is repeated at the end. A ring drawn by hand is five to eight corners placed on streets and landmarks the geocoder returned, and the sources say it was drawn by hand. Geocode the corners rather than guessing them: a neighborhood remembered a kilometer east is an opinion about the wrong streets. The offline drawing gets the same rings as `<polygon>`s with the verdict's `data-tone` (`accent`, `warn`, `muted`) and `class="wash"` plus an `outline` copy, so both themes hold.
 
 A circle is arithmetic, and is honest when its rule is on the page. MapLibre has no circle-in-meters, so draw one as a polygon of 64 points round the center, 1,200 m out for a fifteen-minute walk at eighty meters a minute, and let the legend say so in those words.
 
@@ -234,18 +252,18 @@ Minutes for a commute come from the transport authority's own planner where one 
 
 ## The anchor pin
 
-A page with an anchor, the office the commute runs to, the hotel the restaurants are near, gives it a pin that is not a number: a star in the page's ink, so the numbered pins read as the choices and the anchor as the given. It is a DOM marker like the others, `<div class="pin pin-anchor"><span><i class="ph ph-star"></i></span></div>`, with `.pin-anchor span { background: var(--color-primary); color: var(--color-primary-foreground); }`, and it is in the frame with the shapes.
+A page with an anchor, the office the commute runs to, the hotel the restaurants are near, gives it a pin that is not a number: a star in the page's ink, so the numbered pins read as the choices and the anchor as the given. It is a DOM marker like the others, `<div class="pin pin-anchor"><span><i class="ph ph-star"></i></span></div>`, with `.pin-anchor span { background: var(--ink); color: var(--paper); }` (and the current pin then takes a ring instead of ink), and it is in the frame with the shapes.
 
 ## Framing
 
-`frame(points)` in `main.html` fits a set of `[lat, lon]` points into the part of the panel the card leaves free, with a margin wide enough that a pin at the edge is whole, and caps the zoom at 16 so a page with one place, or two a block apart, opens on a neighborhood rather than a rooftop. An entry's click frames its own point at street zoom, or its ring on an areas page. On a drive, frame the line rather than the stops, since the road bows away from the straight line between them.
+`frame(points)` in `skeleton.html` fits a set of `[lat, lon]` points into the part of the panel the card leaves free, with a margin wide enough that a pin at the edge is whole, and caps the zoom at 16 so a page with one place, or two a block apart, opens on a neighborhood rather than a rooftop. An entry's click frames its own point at street zoom, or its ring on an areas page. On a drive, frame the line rather than the stops, since the road bows away from the straight line between them.
 
 ## A map inside a longer page
 
-A site-visit plan, a day sheet, a house manual or a neighborhood guide is a document with a map in it rather than a map with a card on it. The script in `main.html` carries over nearly whole: the places are still read from the list, the pins are still DOM, and the plain drawing to scale still stands in when the library or the streets never arrive. Four things change.
+A site-visit plan, a day sheet, a house manual or a neighborhood guide is a document with a map in it rather than a map with a card on it. The script in `skeleton.html` carries over nearly whole: the places are still read from the list, the pins are still DOM, and the plain drawing to scale still stands in when the library or the streets never arrive. Four things change.
 
 - **The page scrolls, so the map must not eat the scroll.** Pass `cooperativeGestures: true` to the `Map`, on a touch screen at least: one finger, or a wheel where it is on, scrolls the page, and a modifier key or two fingers moves the map, with MapLibre's own hint saying so. Without it a reader on a phone who lands on the map cannot get past it.
-- **The container is a box, not the window.** Give it a height (`h-[60vh]` on a phone, `lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]` beside the list on a laptop), and frame with an even padding, since there is no card to keep clear of.
+- **The container is a box, not the window.** Give it a height in the page's own style (`height: 60vh` on a phone; `position: sticky; top: 1rem; height: calc(100vh - 2rem)` beside the list in a `.split` on a laptop), drop the `fixed` main, and let the list be ordinary page content, and frame with an even padding, since there is no card to keep clear of.
 - **Several maps on one page each get their own call.** Tonight's venue and tomorrow's drive are two containers and two lists; wrap the kit in a function of the container and its list rather than copying it, and let each draw its own fallback.
 - **Clustered places with one far away need named frames.** Six stops within a mile and a hotel forty minutes out frame as a view of the whole county with the six in a smear. Offer two or three frames as buttons ("The venue", "In town", "Everything"), open on the one the reader needs first, and put the outlier in the list with its distance.
 

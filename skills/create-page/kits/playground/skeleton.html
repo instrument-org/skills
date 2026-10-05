@@ -1,0 +1,132 @@
+<!doctype html>
+<!-- direction: reader="WHO turns the dials, and what they paste the result into" point="WHAT the opening setting already shows, in one line" conflicts="none" shape=read feel=calm hero="the thing on a stage at the opening setting, the dials beside it" -->
+<html lang="en" data-shape="read" data-feel="calm">
+<head>
+<title>NAME OF THE THING, 10 words or fewer</title>
+<meta name="description" content="One sentence for the link unfurl: what is on the stage and what the dials settle.">
+<!-- dialkit's own stylesheet, by path and pinned. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialkit@2.0.2/dist/vanilla/styles.css">
+<style>
+  /* The stage and its dials share one row from a laptop up and stack on a phone. */
+  .bench { --side: 300px; align-items: start; }
+  #stage { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2rem 3.5rem; min-height: 18rem; padding: 2rem 1.5rem; border-radius: var(--radius); background: var(--gray-100); box-shadow: inset 0 0 0 1px var(--line); }
+  #thing { width: 16rem; max-width: 100%; height: 10rem; border-radius: 24px; background: var(--paper); }
+  #figures { grid-template-columns: auto; gap: .2rem; }
+  #figures dd { font: 650 1.4rem/1.2 var(--head-font); }
+  #figures dd small { font: 400 .85rem var(--body-font); color: var(--muted); }
+  /* Inline mode draws a bare panel: give it the column's width and a card's frame. */
+  #dials .dialkit-root { position: static; width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); }
+  #settings { padding: var(--pad); background: var(--paper); border-radius: var(--radius); box-shadow: var(--shadow); font-size: .85rem; }
+  #settings dd { font-family: var(--mono); }
+  #css { max-height: 18rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+  @media (min-width: 60rem) { #dials { position: sticky; top: 1rem; } }
+</style>
+</head>
+<body>
+  <header>
+    <hgroup>
+      <p>KICKER: for whom, from what</p>
+      <h1>NAME OF THE THING</h1>
+      <p>ONE LINE: what is on the stage and what to do with the dials.</p>
+    </hgroup>
+    <p class="row">
+      <!-- Reset is the page's, since the panel has none; it shows once there are dials. -->
+      <button id="reset" hidden>Reset</button>
+      <!-- A stage that moves adds <button id="replay">Replay</button> here (patterns.md, "Anything that moves replays"). -->
+    </p>
+  </header>
+
+  <main>
+    <section class="bleed">
+      <div class="split bench">
+        <!-- The stage: the thing at its opening settings, in HTML, so it shows with scripts off. -->
+        <div id="stage" class="hero" role="img" aria-label="WHAT IS ON THE STAGE">
+          <div id="thing"></div>
+          <!-- What the dials work out to: arithmetic over the settings shown, and nothing else. Delete it when there is nothing true to compute. -->
+          <dl id="figures">
+            <dt class="label">A figure</dt>
+            <dd><span id="figure" class="n">24</span> <small>its unit, and what it means</small></dd>
+          </dl>
+        </div>
+        <!-- The dials. Written here as the opening settings in words; the panel replaces this list when it arrives. -->
+        <div id="dials">
+          <dl id="settings">
+            <dt>Radius</dt><dd>24 px</dd>
+            <dt>Accent</dt><dd>#0e7869</dd>
+          </dl>
+          <p id="dials-note" hidden><small>The dials did not arrive, which takes the network. These are the settings the page opened with, and what is below is theirs.</small></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- The takeaway: written for the opening settings (render once, paste back what the script wrote) and rewritten as the dials move. -->
+    <section id="take">
+      <div class="row between"><h2>The CSS</h2><button data-copy="#css">Copy</button></div>
+      <pre id="css">.thing {
+  border-radius: 24px;
+  background: #0e7869;
+}</pre>
+    </section>
+  </main>
+
+  <footer>
+    <p>The opening values are WHERE THEY CAME FROM. The dials are <a href="https://github.com/joshpuckett/dialkit">dialkit</a>, which needs the network; the stage and the CSS do not. What you set stays in this browser and nowhere else, and Reset puts it back.</p>
+  </footer>
+
+  <script type="module">
+    const $ = (s) => document.querySelector(s);
+    const thing = $("#thing");
+
+    // The dials in dialkit's notation. This one object is the panel, the opening values, and what the offline list shows.
+    const CONFIG = {
+      radius: [24, 0, 64, 1],
+      accent: "#0e7869",
+    };
+
+    // The defaults, read out of the config, so the page has its values before the panel arrives.
+    const resolve = (config) =>
+      Object.fromEntries(
+        Object.entries(config).flatMap(([key, v]) => {
+          if (Array.isArray(v)) return [[key, v[0]]];
+          if (v && typeof v === "object") {
+            if (v.type === "action") return [];
+            if (v.type === "spring" || v.type === "easing") return [[key, v]];
+            if (v.type === "pad") return [[key, { x: v.x?.[0] ?? 0, y: v.y?.[0] ?? 0 }]];
+            if ("type" in v) return [[key, v.default ?? v.options?.[0]?.value ?? v.options?.[0] ?? ""]];
+            return [[key, resolve(v)]];
+          }
+          return [[key, v]];
+        }),
+      );
+    let values = resolve(CONFIG);
+
+    // One render, from every value to every output, on every change.
+    const render = () => {
+      thing.style.borderRadius = `${values.radius}px`;
+      thing.style.background = values.accent;
+      $("#figure").textContent = values.radius;
+      $("#css").textContent = `.thing {\n  border-radius: ${values.radius}px;\n  background: ${values.accent};\n}`;
+    };
+    render();
+
+    // dialkit, pinned, in the page's own column, told the theme the page shows.
+    const theme = () => window.__instrumentTheme();
+    try {
+      const { createDialKit, createDialRoot } = await import("https://cdn.jsdelivr.net/npm/dialkit@2.0.2/vanilla/+esm");
+      const root = createDialRoot({ target: $("#dials"), mode: "inline", theme: theme() });
+      document.addEventListener("instrument:theme", () => (root.element.dataset.theme = theme()));
+      // The id keys what the reader sets in their browser: make it this page's own.
+      const kit = createDialKit("PANEL NAME", CONFIG, { id: "playground-SLUG", persist: true });
+      $("#settings").remove();
+      $("#reset").hidden = false;
+      $("#reset").addEventListener("click", () => kit.resetValues());
+      kit.subscribe((next) => {
+        values = next;
+        render();
+      });
+    } catch {
+      $("#dials-note").hidden = false;
+    }
+  </script>
+</body>
+</html>

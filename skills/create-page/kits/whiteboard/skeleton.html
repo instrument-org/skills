@@ -1,0 +1,160 @@
+<!doctype html>
+<!-- direction: reader="WHO OPENS IT, AND WHAT THEY WILL MOVE" point="WHAT THE ARRANGEMENT SHOWS, IN ONE LINE" conflicts="none" shape=wall feel=calm hero="the board itself, with the finding in marker beside what it is about" -->
+<html lang="en" data-shape="wall" data-feel="calm">
+<head>
+<title>NAME OF THE BOARD</title>
+<meta name="description" content="One sentence for the link unfurl: what is on the board and what it shows.">
+<link rel="stylesheet" href="https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/index.css">
+<style>
+  /* The page is the board: it fills the window and nothing scrolls. */
+  html, body { height: 100%; overflow: hidden; }
+  .board { position: fixed; inset: 0; margin: 0; background: #fff; }
+  #sketch, #editor { position: absolute; inset: 0; }
+  #sketch svg { display: block; width: 100%; height: 100%; }
+  #sketch text { font-family: Inter, system-ui, sans-serif; }
+  /* The name, small, in the one strip Excalidraw leaves free: the middle of its
+     footer on a wide window, under its top bar on a phone. It never takes a click. */
+  .board-name { position: fixed; z-index: 5; display: block; left: 50%; bottom: 1rem; transform: translateX(-50%); width: max-content; max-width: min(30rem, calc(100vw - 22rem)); pointer-events: none; text-align: center; background: var(--paper); border-radius: var(--radius); box-shadow: var(--shadow); padding: .35rem .8rem; }
+  .board-name h1 { font-size: .95rem; line-height: 1.3; letter-spacing: -0.01em; }
+  .board-name p { font-size: .8rem; line-height: 1.35; color: var(--muted); }
+  @media (max-width: 40rem) {
+    .board-name { bottom: auto; top: 4.25rem; max-width: calc(100vw - 2rem); }
+  }
+</style>
+</head>
+<body>
+  <!-- The board first, so the name card is not read as words above it. -->
+  <figure class="board hero" data-zoom aria-label="The board: WHAT IS ON IT, IN ONE SENTENCE">
+    <div id="sketch"></div>
+    <div id="editor"></div>
+  </figure>
+  <header class="board-name">
+    <h1>NAME OF THE BOARD</h1>
+    <p>ONE LINE: what the arrangement shows.</p>
+  </header>
+
+  <!-- The scene, as Excalidraw reads it and as the kit wrote it: paste the
+       kit's scene.json here whole. This block is the document; the editor and
+       the sketch are views of it. -->
+  <script type="application/json" id="scene">{"type": "excalidraw", "version": 2, "source": "tryinstrument.com", "elements": [{"id": "a", "type": "rectangle", "x": 0, "y": 0, "width": 200, "height": 80, "backgroundColor": "#f6efe6", "boundElements": [{"id": "at", "type": "text"}, {"id": "ab", "type": "arrow"}]}, {"id": "at", "type": "text", "x": 12, "y": 28, "width": 176, "height": 25, "text": "a thing", "originalText": "a thing", "fontSize": 20, "fontFamily": 1, "textAlign": "center", "verticalAlign": "middle", "containerId": "a"}, {"id": "b", "type": "rectangle", "x": 320, "y": 0, "width": 200, "height": 80, "boundElements": [{"id": "bt", "type": "text"}, {"id": "ab", "type": "arrow"}]}, {"id": "bt", "type": "text", "x": 332, "y": 28, "width": 176, "height": 25, "text": "what it leads to", "originalText": "what it leads to", "fontSize": 20, "fontFamily": 1, "textAlign": "center", "verticalAlign": "middle", "containerId": "b"}, {"id": "ab", "type": "arrow", "x": 206, "y": 40, "width": 108, "height": 0, "points": [[0, 0], [108, 0]], "startBinding": {"elementId": "a", "focus": 0, "gap": 6}, "endBinding": {"elementId": "b", "focus": 0, "gap": 6}, "endArrowhead": "arrow"}, {"id": "n", "type": "text", "x": 0, "y": 140, "width": 520, "height": 18, "text": "Where this came from, written on the board.", "originalText": "Where this came from, written on the board.", "fontSize": 14, "fontFamily": 2, "strokeColor": "#6d655f"}], "appState": {"viewBackgroundColor": "#ffffff", "name": "NAME OF THE BOARD"}, "files": {}}</script>
+
+  <script type="module">
+    const scene = JSON.parse(document.querySelector("#scene").textContent);
+    const elements = scene.elements.filter((e) => !e.isDeleted);
+    const files = scene.files ?? {};
+
+    // --- the sketch: nothing loaded, nothing fetched ------------------------
+    // The same scene as plain SVG, fitted to the window. It shows until the
+    // editor lands, and for good if the editor never does.
+    const esc = (s) => s.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"));
+    const dash = (e) => (e.strokeStyle === "dashed" ? ' stroke-dasharray="8 6"' : "");
+    const paint = (e, fill = e.backgroundColor) =>
+      ` fill="${fill && fill !== "transparent" ? fill : "none"}" stroke="${e.strokeColor || "#1e1e1e"}" stroke-width="${e.strokeWidth || 2}"${dash(e)}`;
+    const words = (e, x, y, anchor) =>
+      e.text.split("\n").map((line, i) =>
+        `<text x="${x}" y="${y + i * e.fontSize * 1.25}" text-anchor="${anchor}" font-size="${e.fontSize}" fill="${e.strokeColor || "#1e1e1e"}">${esc(line)}</text>`).join("");
+    const byId = new Map(elements.map((e) => [e.id, e]));
+    const piece = (e) => {
+      const { x, y, width: w, height: h } = e;
+      switch (e.type) {
+        case "rectangle":
+          return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${e.roundness ? 12 : 0}"${paint(e)}/>`;
+        case "ellipse":
+          return `<ellipse cx="${x + w / 2}" cy="${y + h / 2}" rx="${w / 2}" ry="${h / 2}"${paint(e)}/>`;
+        case "diamond":
+          return `<polygon points="${x + w / 2},${y} ${x + w},${y + h / 2} ${x + w / 2},${y + h} ${x},${y + h / 2}"${paint(e)}/>`;
+        case "frame":
+          return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6 5"/>` +
+            `<text x="${x}" y="${y - 8}" font-size="14" fill="#6d655f">${esc(e.name || "")}</text>`;
+        case "image":
+          return files[e.fileId] ? `<image href="${files[e.fileId].dataURL}" x="${x}" y="${y}" width="${w}" height="${h}"/>` : "";
+        case "freedraw":
+        case "line":
+        case "arrow": {
+          const pts = e.points.map(([px, py]) => [x + px, y + py]);
+          let out = `<polyline points="${pts.map((p) => p.join(",")).join(" ")}"${paint(e, "transparent")} stroke-linecap="round" stroke-linejoin="round"/>`;
+          if (e.type === "arrow" && e.endArrowhead !== null) {
+            const [[hx, hy], [tx, ty]] = [pts[pts.length - 2], pts[pts.length - 1]];
+            const a = Math.atan2(ty - hy, tx - hx);
+            for (const s of [1, -1]) {
+              out += `<line x1="${tx}" y1="${ty}" x2="${tx - Math.cos(a + s * 0.45) * 13}" y2="${ty - Math.sin(a + s * 0.45) * 13}"${paint(e, "transparent")} stroke-linecap="round"/>`;
+            }
+          }
+          return out;
+        }
+        case "text": {
+          const host = e.containerId && byId.get(e.containerId);
+          if (host && host.type !== "arrow" && host.type !== "line") {
+            const lines = e.text.split("\n").length;
+            return words(e, host.x + host.width / 2, host.y + host.height / 2 - ((lines - 1) * e.fontSize * 1.25) / 2 + e.fontSize * 0.35, "middle");
+          }
+          return words(e, x, y + e.fontSize, "start");
+        }
+        default:
+          return "";
+      }
+    };
+    const xs = elements.flatMap((e) => [e.x, e.x + e.width]);
+    const ys = elements.flatMap((e) => [e.y, e.y + e.height]);
+    const [x0, y0, x1, y1] = [Math.min(...xs) - 60, Math.min(...ys) - 60, Math.max(...xs) + 60, Math.max(...ys) + 60];
+    const sketch = document.querySelector("#sketch");
+    // The sketch keeps clear of the name card: the strip under it on a wide
+    // window, the strip above it on a phone.
+    const card = document.querySelector(".board-name");
+    const clear = () => {
+      const r = card.getBoundingClientRect();
+      const below = r.top > innerHeight / 2;
+      sketch.style.top = below ? "0" : `${Math.ceil(r.bottom + 8)}px`;
+      sketch.style.bottom = below ? `${Math.ceil(innerHeight - r.top + 8)}px` : "0";
+    };
+    clear();
+    addEventListener("resize", clear);
+    sketch.innerHTML =
+      `<svg viewBox="${x0} ${y0} ${x1 - x0} ${y1 - y0}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(scene.appState?.name || "The board")}">` +
+      `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="${scene.appState?.viewBackgroundColor || "#ffffff"}"/>` +
+      elements.map(piece).join("") + "</svg>";
+
+    // --- which theme the page shows ---------------------------------------------
+    // The foundation answers with the share widget's choice and a viewer's pin
+    // taken into account, and fires instrument:theme whenever it changes.
+    const theme = () => window.__instrumentTheme?.() ?? "light";
+    // Excalidraw's own dark mode is this filter over a light canvas.
+    const tint = () => (sketch.style.filter = theme() === "dark" ? "invert(93%) hue-rotate(180deg)" : "");
+    tint();
+    document.addEventListener("instrument:theme", tint);
+
+    // --- the editor -------------------------------------------------------------
+    // About 1.2 MB, which the board earns because the board is the page. Fonts
+    // and locales are fetched relative to the asset path, so it is set before
+    // the module is asked for. One React through the whole graph, or none of it
+    // mounts: that is what ?deps= is for.
+    window.EXCALIDRAW_ASSET_PATH = "https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/";
+    try {
+      const React = await import("https://esm.sh/react@19.2.5");
+      const { createRoot } = await import("https://esm.sh/react-dom@19.2.5/client");
+      const { Excalidraw } = await import("https://esm.sh/@excalidraw/excalidraw@0.18.1?deps=react@19.2.5,react-dom@19.2.5");
+      createRoot(document.querySelector("#editor")).render(
+        React.createElement(Excalidraw, {
+          initialData: { elements, appState: scene.appState, files },
+          theme: theme(),
+          excalidrawAPI: (api) => {
+            // The scene lands a tick after the editor does. Fit the whole board
+            // to the window once it has, then let the sketch go.
+            let polls = 0;
+            const settle = () => {
+              const drawn = api.getSceneElements();
+              if (!drawn.length && polls++ < 600) return requestAnimationFrame(settle);
+              api.scrollToContent(drawn, { fitToContent: true, animate: false });
+              sketch.remove();
+            };
+            requestAnimationFrame(settle);
+            document.addEventListener("instrument:theme", () => api.updateScene({ appState: { theme: theme() } }));
+          },
+        }),
+      );
+    } catch {
+      // The sketch stays, and the page is the board it was written as.
+    }
+  </script>
+</body>
+</html>

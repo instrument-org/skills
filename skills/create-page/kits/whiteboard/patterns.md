@@ -1,17 +1,17 @@
 # Whiteboard patterns
 
-Vocabulary only a board uses. The page, the fallback drawing and the editor mount are in `main.html` and do not change from board to board; what changes is the scene, and the scene is written with the kit below.
+Technique only a board uses. The page, the fallback drawing and the editor mount are in `skeleton.html` and do not change from board to board; what changes is the scene, and the scene is written with the kit below.
 
 ## The kit
 
 It ships, in both languages, as a library you import rather than code to copy:
 
-- `scripts/board.mjs` -- `node`, no dependencies
-- `scripts/board.py` -- `python`, no dependencies
+- `scripts/board.mjs`: `node`, no dependencies
+- `scripts/board.py`: `python`, no dependencies
 
 The same functions, the same arguments and the same output; take whichever language the rest of the task is in. Run either directly (`node board.mjs`, `python board.py`) to write a sample scene and check it runs in your environment before writing a board.
 
-Write a script of your own, import the kit **by its full path from where you are**, and call `write` at the end. Then paste the JSON it writes into the page's `#scene` block.
+Write a script of your own, import the kit **by its full path from where you are**, and call `write` at the end. Then paste the JSON it writes into the `#scene` block of your copy of `skeleton.html`, and build with `page.mjs`.
 
 Writing the JSON by hand instead is possible and is a bad trade: the two references every board depends on have to point both ways, and the kit is what makes them. `write` refuses a scene where one does not, rather than leaving you a board whose labels Excalidraw silently drops.
 
@@ -46,7 +46,7 @@ import {
   RED,
   SAND,
   SAGE,
-} from "<skill>/templates/whiteboard/scripts/board.mjs";
+} from "<skill>/kits/whiteboard/scripts/board.mjs";
 
 text(40, 0, "How a refund moves", { size: 28 });
 text(40, 42, "drawn from the ticket log, week of 2 March", {
@@ -78,7 +78,7 @@ The same board in Python, which is the same calls with keyword arguments:
 ```python
 import sys
 
-sys.path.insert(0, "<skill>/templates/whiteboard/scripts")
+sys.path.insert(0, "<skill>/kits/whiteboard/scripts")
 from board import MUTED, SAND, SAGE, arrow, box, diamond, text, write
 
 text(40, 0, "How a refund moves", size=28)

@@ -1,13 +1,13 @@
 # Storyboard patterns
 
-Vocabulary only a storyboard uses. The page is plain HTML: a header, a grid of `<figure>`s, one line under. What takes work is the panels, and the panels are composed from the kit below.
+Vocabulary only a storyboard uses. The page is plain HTML on the stylesheet: a header, a `.grid` of `<figure>`s marked `hero`, and a footer saying what the beats rest on. What takes work is the panels, and the panels are composed from the kit below.
 
 ## The kit
 
 It ships, in both languages, as a library you import rather than code to copy:
 
-- `scripts/panels.mjs` -- `node`, no dependencies
-- `scripts/panels.py` -- `python`, no dependencies
+- `<skill>/kits/storyboard/scripts/panels.mjs`: `node`, no dependencies
+- `<skill>/kits/storyboard/scripts/panels.py`: `python`, no dependencies
 
 The same functions, the same arguments, the same SVG out; take whichever language the rest of the task is in. Run either directly (`node panels.mjs`, `python panels.py`) to print a sample panel and check it runs in your environment.
 
@@ -42,7 +42,7 @@ import {
   label,
   panel,
   person,
-} from "<skill>/templates/storyboard/scripts/panels.mjs";
+} from "<skill>/kits/storyboard/scripts/panels.mjs";
 
 const F = FLOOR(); // 268, for the default 400 by 300
 const ash = person(150, F, { arm: "hold" });
@@ -53,7 +53,7 @@ const svg = panel(
     ash.svg,
     box(ash.hand[0] - 6, ash.hand[1] - 4, { w: 30, h: 34 }),
     clock(340, 62, 8, 55),
-    label(271, F - 96, "PASS ONLY", { size: 11, weight: 600 }),
+    label(271, F - 96, "PASS ONLY", { weight: 600 }),
   ],
   { label: "Ash outside a closed door holding a bag, clock at 08:55" },
 );
@@ -78,7 +78,7 @@ panel([
 
 **Moments in a day.** 400 by 300 panels in a grid of three, a number top left, a time top right, the caption under, a line of speech under that in italic when there is one.
 
-**A shot list.** 480 by 270 panels two across. The top left says the number and the kind of shot (`WIDE`, `CLOSE`), the top right the timecode in monospace. The caption is what the camera sees; the line said over it is the second column, in monospace and the brand color, because it is copy. `closeup(x, bottom)` is the head-and-shoulders for a close shot, cropped by the panel edge; `move(x1, y1, x2, y2, "PAN")` draws a camera move as a thin accent arrow outside the picture's own logic.
+**A shot list.** 480 by 270 panels two across. The top left says the number and the kind of shot (`WIDE`, `CLOSE`), the top right the timecode in monospace. The caption is what the camera sees; the line said over it is the second column, in monospace and `var(--accent)`, because it is copy. `closeup(x, bottom)` is the head-and-shoulders for a close shot, cropped by the panel edge; `move(x1, y1, x2, y2, "PAN")` draws a camera move as a thin accent arrow outside the picture's own logic.
 
 **Two tracks.** One wide panel per row, 560 by 260, the person in the left two thirds and a `phone` at one size in the right third, with a dashed rule between and the caption to the right of the panel. Keep the phone at the same position in every row, so the screens line up down the page and the eye compares them.
 
@@ -92,4 +92,8 @@ panel([
 
 ## The rest of the set
 
-`door` (`open: true` for an open one), `counter`, `desk`, `table`, `screen` (a monitor, `lines` of grey text, `stand: false` for a laptop lid), `box` (a parcel or a bag), `van` (`facing: -1` to point it left), `clock(x, y, hour, minute)`, `dots(x, y)` for waiting, `bubble(x, y, text, [tailX, tailY], { kind: "say" | "think" })`, and `label(x, y, text)` for a word in the scene, in the muted tone unless it is the accent.
+`door` (`open: true` for an open one), `counter`, `desk`, `table`, `screen` (a monitor, `lines` of grey text, `stand: false` for a laptop lid), `box` (a parcel or a bag), `van` (`facing: -1` to point it left), `clock(x, y, hour, minute)`, `dots(x, y)` for waiting, `bubble(x, y, text, [tailX, tailY], { kind: "say" | "think" })`, and `label(x, y, text)` for a word in the scene, in `MUTED` (the stylesheet's `--muted`, which reads in both themes) unless it is the accent. Keep it at its default size of 13 or more: a 400-wide panel is drawn about 350 pixels wide on a phone, and the check fails text under 11 pixels there.
+
+## Colors
+
+The kit paints with the stylesheet's tokens, so a panel follows the reader's theme and the page's `data-feel`: `INK` is `--gray-700`, `SOFT` `--gray-400` (strokes only, never words), `LINE` `--gray-300`, `PALE` `--gray-100`, `CARD` `--paper`, `MUTED` `--muted`, `ACCENT` `--accent` and `ACCENT_PALE` `--wash`. Pass any of them, or another token as `var(--name)`, wherever a call takes `tone`, `stroke` or `fill`.

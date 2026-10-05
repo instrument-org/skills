@@ -1,6 +1,6 @@
-# Patterns: the playground's own vocabulary
+# Playground patterns
 
-Everything in `references/` still applies to the line above the stage and the line under it. These are the pieces only a page with dials needs.
+The pieces only a page with dials needs. Everything else on the page (the header, the source line) is ordinary foundation HTML, and `skeleton.html` beside this file has all of it wired together.
 
 ## The config is the document
 
@@ -91,7 +91,7 @@ kit.subscribe((next) => {
 });
 ```
 
-`subscribe` calls back at once with the current values and then on every change, so the first call replaces what `render()` already drew with the same thing, or with what the reader left it at last time. The theme is asked of the shell rather than the media query: `window.__instrumentTheme()` answers what the page shows, a viewer's pin and the reader's own choice included, and `instrument:theme` fires on document for either kind of change, so the panel follows the page.
+`subscribe` calls back at once with the current values and then on every change, so the first call replaces what `render()` already drew with the same thing, or with what the reader left it at last time. The theme is asked of the page rather than the media query: `window.__instrumentTheme()` answers what the page shows, a viewer's pin and the reader's own choice included, and `instrument:theme` fires on document for either kind of change, so the panel follows the page.
 
 The stylesheet goes in as a `<link>` by path, `https://cdn.jsdelivr.net/npm/dialkit@2.0.2/dist/vanilla/styles.css`, and the panel's root is given the column's width and a card's frame, since inline mode draws a bare panel:
 
@@ -99,9 +99,9 @@ The stylesheet goes in as a `<link>` by path, `https://cdn.jsdelivr.net/npm/dial
 #dials .dialkit-root {
   position: static;
   width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  background: var(--color-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
 }
 ```
 
@@ -122,7 +122,7 @@ Say in the last line that this is where it goes. A reader who has arrived at som
 
 ## Render everything, on every change, once the hand pauses
 
-One function reads every value and writes every output, the stage and the takeaway and the figures, the same shape as the tool's `draw()`. A slider fires many times a second mid-drag, so anything expensive to restart, a replayed motion above all, waits for the hand to pause:
+One function reads every value and writes every output: the stage, the takeaway and the figures. A slider fires many times a second mid-drag, so anything expensive to restart, a replayed motion above all, waits for the hand to pause:
 
 ```js
 let pending;
@@ -179,7 +179,7 @@ const physics = (m) => {
 };
 ```
 
-Position `x(t)` and speed `v(t)` then follow from the damping ratio, under, critical or over, and the page walks `t` in 50 ms steps until `|1 - x| ≤ 0.005` and `|v| ≤ 0.01` per second. The `bottom-sheet` example carries the whole of it in forty lines and states the rule in its last line, which is what lets a reader check the figure.
+Position `x(t)` and speed `v(t)` then follow from the damping ratio, under, critical or over, and the page walks `t` in 50 ms steps until `|1 - x| ≤ 0.005` and `|v| ≤ 0.01` per second. The whole of it is about forty lines; state the rule in the page's last line, which is what lets a reader check the figure.
 
 ## The takeaway, in the reader's own format
 
@@ -192,7 +192,7 @@ $("#motion").textContent =
   `<motion.div\n  transition={{ type: "spring", visualDuration: 0.45, bounce: 0.25 }}\n/>`;
 ```
 
-Copy is the tool's pattern, with the same fallback when the clipboard is refused inside a frame: point at the text, which is already on the page and selectable. Write the opening takeaway into the HTML by rendering the page once and pasting back what the script produced, never by typing it, since a sampled easing is eighty numbers and a reader can check whether the two agree.
+Copy is foundation's `<button data-copy="#css">Copy</button>`, which copies the element's text. When the clipboard is refused inside a frame the text is still on the page and selectable, so say so beside the button or in the source line. Write the opening takeaway into the HTML by rendering the page once and pasting back what the script produced, never by typing it, since a sampled easing is eighty numbers and a reader can check whether the two agree.
 
 ## A figure beside the stage
 
@@ -200,7 +200,9 @@ Arithmetic over the dials, in the reader's units, with a word that says what it 
 
 ```html
 <dt>Damping ratio</dt>
-<dd><span id="zeta">0.75</span> <span>under, so it bounces once</span></dd>
+<dd>
+  <span id="zeta" class="n">0.75</span> <small>under, so it bounces once</small>
+</dd>
 ```
 
 The word is the part that earns the figure its place. A contrast ratio is a number; "passes AA for body text" is what the reader wanted. A settle time is a number; "longer than a tap feels" is the judgment the page can make from the number alone.
@@ -222,4 +224,4 @@ pane.addBinding(params, "accent");
 pane.on("change", () => render(params));
 ```
 
-Its values live in the object you bind, so `params` is the config and the defaults at once and no `resolve()` is needed; its theme is a set of `--tp-*` variables rather than a `data-theme`. Reach for it for the control, not for the look: dialkit's spring editor and its inferred ranges are the reason the template defaults to dialkit.
+Its values live in the object you bind, so `params` is the config and the defaults at once and no `resolve()` is needed; its theme is a set of `--tp-*` variables rather than a `data-theme`. Reach for it for the control, not for the look: dialkit's spring editor and its inferred ranges are the reason this kit defaults to dialkit.

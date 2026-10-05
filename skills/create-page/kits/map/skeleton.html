@@ -1,0 +1,259 @@
+<!doctype html>
+<!-- direction: reader="WHO opens it, on what, to go where" point="WHAT the places' positions say that a list would not" conflicts="none" shape=card feel=calm hero="the map, framed on the places, with the list in a card over it" -->
+<html lang="en" data-shape="card" data-feel="calm">
+<head>
+<title>NAME OF THE MAP, 10 words or fewer</title>
+<meta name="description" content="ONE SENTENCE for the link unfurl: how many places, where, and why these.">
+<!-- MapLibre's own stylesheet, by path and pinned. The streets come from
+     OpenFreeMap's styles, Liberty by day and Fiord by night. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css">
+<style>
+  /* The page is the map: main is fixed to the window, the map fills it, and
+     one card floats over it and scrolls on its own. */
+  body > main.map-page { position: fixed; inset: 0; display: block; overflow: hidden; margin: 0; padding: 0; max-width: none; }
+  #map { position: absolute; inset: 0; margin: 0; background: var(--ground); }
+  #map > p { padding: .75rem; font-size: .8rem; color: var(--muted); }
+  #panel { position: absolute; top: 1rem; left: 1rem; z-index: 10; display: flex; flex-direction: column; width: 23rem; max-width: calc(100vw - 2rem); max-height: calc(100dvh - 2rem); background: color-mix(in srgb, var(--paper) 95%, transparent); backdrop-filter: blur(8px); border-radius: var(--radius); box-shadow: var(--shadow), 0 10px 30px light-dark(rgb(0 0 0 / .12), rgb(0 0 0 / .5)); }
+  #panel > header { padding: 1rem; border-bottom: 1px solid var(--line); }
+  #panel h1 { font-size: 1.15rem; line-height: 1.25; }
+  #panel hgroup { gap: .35rem; }
+  #panel hgroup > p:last-child { font-size: .82rem; line-height: 1.45; color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-top: .5rem; font-size: .75rem; color: var(--muted); }
+  .legend i { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .35rem; vertical-align: middle; background: var(--accent); }
+  .legend i.other { background: var(--gray-400); }
+  #places { list-style: none; margin: 0; padding: 0 1rem; flex: 1; min-height: 0; overflow-y: auto; }
+  #places > li { display: flex; gap: .75rem; margin: 0 -1rem; padding: .75rem 1rem; border-top: 1px solid var(--line); cursor: pointer; }
+  #places > li:first-child { border-top: 0; }
+  #places > li[aria-current="true"] { background: var(--wash); }
+  #places .num { flex: none; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font: 600 .72rem/1 var(--sans); }
+  #places h3 { font-size: .92rem; margin: 0; }
+  #places li > div > * + * { margin-top: .15rem; }
+  #places .what { font-size: .78rem; color: var(--muted); }
+  #places .why { font-size: .84rem; line-height: 1.45; margin-top: .25rem; }
+  #places .out { display: flex; flex-wrap: wrap; gap: 0 .75rem; font-size: .78rem; margin-top: .35rem; }
+  /* A place's picture; the small site icons the foundation adds to links are left alone. */
+  #places img:not(.site-icon) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; margin-top: .5rem; }
+  #source { margin: 0; padding: .5rem 1rem; border-top: 1px solid var(--line); border-bottom: 0; font-size: .75rem; line-height: 1.4; color: var(--muted); }
+  #source summary { font-weight: 500; }
+  #source ul { padding-left: 1rem; margin-top: .4rem; }
+  /* The map's own furniture, on the page's card. */
+  .maplibregl-map { font-family: var(--sans); }
+  .maplibregl-canvas:focus { outline: none; }
+  .maplibregl-ctrl-group { background: var(--paper); box-shadow: var(--shadow); }
+  .maplibregl-ctrl-group button + button { border-top-color: var(--line); }
+  .maplibregl-ctrl.maplibregl-ctrl-attrib.maplibregl-compact { background: transparent; box-shadow: none; color: var(--muted); font-size: 11px; line-height: 20px; border-radius: 10px; padding: 0; }
+  .maplibregl-ctrl.maplibregl-ctrl-attrib.maplibregl-compact-show { background: var(--paper); box-shadow: var(--shadow); padding: 0 28px 0 8px; }
+  .maplibregl-ctrl-attrib a { color: inherit; text-decoration: none; }
+  .maplibregl-ctrl-attrib-button { background-color: transparent; opacity: .45; }
+  .maplibregl-ctrl-bottom-right { bottom: 2.75rem; }
+  .maplibregl-popup-content { background: var(--paper); color: var(--ink); padding: 0; border-radius: 12px; box-shadow: var(--shadow); font: inherit; }
+  .maplibregl-popup-anchor-bottom .maplibregl-popup-tip, .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip, .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip { border-top-color: var(--paper); }
+  .maplibregl-popup-anchor-top .maplibregl-popup-tip, .maplibregl-popup-anchor-top-left .maplibregl-popup-tip, .maplibregl-popup-anchor-top-right .maplibregl-popup-tip { border-bottom-color: var(--paper); }
+  .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: var(--paper); }
+  .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--paper); }
+  .maplibregl-popup-close-button { color: var(--muted); font-size: 16px; padding: 2px 7px; }
+  .popup { width: 15rem; font-size: .84rem; line-height: 1.4; }
+  .popup img:not(.site-icon) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 12px 12px 0 0; }
+  .popup div { padding: .6rem .75rem; }
+  /* The control glyphs are black drawings; on dark they turn white. */
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) :is(.maplibregl-ctrl button .maplibregl-ctrl-icon, .maplibregl-ctrl-attrib-button) { filter: invert(1); } }
+  :root[data-theme="dark"] :is(.maplibregl-ctrl button .maplibregl-ctrl-icon, .maplibregl-ctrl-attrib-button) { filter: invert(1); }
+  /* A pin is the entry's number in an accent circle; the pointed-at pin takes ink. */
+  .pin span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font: 600 12px/1 var(--sans); box-shadow: 0 0 0 2px var(--paper), var(--shadow); cursor: pointer; }
+  .pin.is-current span { background: var(--ink); color: var(--paper); }
+  /* The plain-ground drawing when the streets never arrive. */
+  #map svg.plain { width: 100%; height: 100%; }
+  #map .plain-note { position: absolute; top: .75rem; right: .75rem; max-width: 16rem; text-align: right; font-size: .75rem; color: var(--muted); }
+  /* On a phone the card is a sheet across the bottom, just under half the
+     screen, and the whole sheet scrolls as one. */
+  @media (max-width: 639px) {
+    #panel { inset: auto 0 0 0; display: block; width: auto; max-width: none; height: 46dvh; max-height: none; overflow-y: auto; border-radius: 16px 16px 0 0; padding-bottom: 3rem; }
+    #places { overflow: visible; }
+  }
+  @media print {
+    body > main.map-page { position: static; }
+    #map { position: static; height: 60vh; }
+    #panel { position: static; width: auto; max-height: none; max-width: none; box-shadow: none; }
+    #places { overflow: visible; }
+  }
+  @page { size: landscape; }
+</style>
+</head>
+<body>
+<main class="map-page">
+  <!-- The map, framed on the places by the script. With the network off the
+       script draws the same pins on plain ground from the list's coordinates. -->
+  <div id="map" class="hero" role="region" aria-label="Map of the places in the card"><p>The map draws here with scripts on. The places are in the card, with their positions.</p></div>
+
+  <div id="panel">
+    <header>
+      <hgroup>
+        <p>Map · HOW MANY places</p>
+        <h1>NAME OF THE MAP</h1>
+        <p>ONE LINE: what these places are, who picked them, what to do with the map.</p>
+      </hgroup>
+      <!-- Only when the pins mean more than one thing. -->
+      <p class="legend"><span><i></i>WHAT ACCENT MEANS</span><span><i class="other"></i>WHAT GRAY MEANS</span></p>
+    </header>
+
+    <!-- The places are the data: every pin is an entry here, in map order, and
+         carries its own position. The entry's click goes to its pin; links out
+         are small, under the entry, never on the name. -->
+    <ol id="places">
+      <li data-lat="40.7223" data-lon="-73.9874">
+        <span class="num">1</span>
+        <div>
+          <h3>Katz's Delicatessen</h3>
+          <p class="what">Lower East Side · deli</p>
+          <p class="why">WHY IT IS ON THIS PAGE, and what to do or order there.</p>
+          <p class="out"><a href="https://www.katzsdelicatessen.com/">katzsdelicatessen.com</a><a href="https://www.google.com/maps/search/?api=1&amp;query=Katz%27s%20Delicatessen%2C%20205%20E%20Houston%20St%2C%20New%20York">Google Maps</a></p>
+        </div>
+      </li>
+      <li data-lat="40.7196" data-lon="-73.9896">
+        <span class="num">2</span>
+        <div>
+          <h3>Russ &amp; Daughters Cafe</h3>
+          <p class="what">Lower East Side · appetizing</p>
+          <p class="why">WHY IT IS ON THIS PAGE.</p>
+          <p class="out"><a href="https://www.google.com/maps/search/?api=1&amp;query=Russ%20%26%20Daughters%20Cafe%2C%20127%20Orchard%20St%2C%20New%20York">Google Maps</a></p>
+        </div>
+      </li>
+      <li data-lat="40.7305" data-lon="-74.0021">
+        <span class="num">3</span>
+        <div>
+          <h3>Joe's Pizza</h3>
+          <p class="what">West Village · pizza by the slice</p>
+          <p class="why">WHY IT IS ON THIS PAGE.</p>
+          <p class="out"><a href="https://www.google.com/maps/search/?api=1&amp;query=Joe%27s%20Pizza%2C%207%20Carmine%20St%2C%20New%20York">Google Maps</a></p>
+        </div>
+      </li>
+    </ol>
+
+    <details id="source">
+      <summary>Sources and credits</summary>
+      <ul>
+        <li>Positions from <a href="https://nominatim.openstreetmap.org/">Nominatim</a> over OpenStreetMap, read DATE, rounded to four decimals.</li>
+        <li>Hours and prices are not stated; check each place before going.</li>
+        <li>Map by <a href="https://maplibre.org/">MapLibre</a> over <a href="https://openfreemap.org/">OpenFreeMap</a>, © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. With the network off the pins draw to scale and this list is unchanged.</li>
+      </ul>
+    </details>
+  </div>
+</main>
+
+<!-- MapLibre as published, before the module, since it installs a global. -->
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+<script type="module">
+  const panel = document.querySelector("#map");
+  const card = document.querySelector("#panel");
+  const phone = () => !matchMedia("(min-width: 640px)").matches;
+  const STYLE = { light: "https://tiles.openfreemap.org/styles/liberty", dark: "https://tiles.openfreemap.org/styles/fiord" };
+  const theme = () => window.__instrumentTheme();
+
+  // The places are the list: one copy of every fact.
+  const places = [...document.querySelectorAll("#places [data-lat]")].map((el, i) => ({
+    el, n: i + 1, lat: Number(el.dataset.lat), lon: Number(el.dataset.lon),
+    name: el.querySelector("h3")?.textContent.trim() ?? String(i + 1),
+  }));
+  const bounds = places.map((p) => [p.lat, p.lon]);
+
+  const light = (which) => {
+    for (const p of places) {
+      if (p === which) p.el.setAttribute("aria-current", "true");
+      else p.el.removeAttribute("aria-current");
+      p.marker?.getElement().classList.toggle("is-current", p === which);
+    }
+    which?.el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  };
+
+  // A popup repeats the entry, cloning its picture so the bytes are carried once.
+  const popup = (p) => {
+    const box = document.createElement("div");
+    box.className = "popup";
+    const img = p.el.querySelector("img:not(.site-icon)");
+    if (img) box.append(img.cloneNode());
+    const body = document.createElement("div");
+    const b = document.createElement("b");
+    b.textContent = `${p.n}. ${p.name}`;
+    body.append(b, document.createElement("br"), p.el.querySelector(".why")?.textContent ?? "");
+    box.append(body);
+    return box;
+  };
+
+  // A map, if the library arrived and the browser draws WebGL.
+  let map;
+  if (typeof maplibregl !== "undefined") {
+    try {
+      const probe = document.createElement("canvas");
+      if (!probe.getContext("webgl2") && !probe.getContext("webgl")) throw new Error("no WebGL");
+      panel.replaceChildren();
+      map = new maplibregl.Map({ container: panel, style: STYLE[theme()], attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false });
+      map.touchZoomRotate.disableRotation();
+    } catch {
+      map = undefined;
+    }
+  }
+
+  if (map) {
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    const attribution = new maplibregl.AttributionControl({ compact: true });
+    map.addControl(attribution, phone() ? "top-right" : "bottom-right");
+    map.once("load", () => attribution._container.classList.remove("maplibregl-compact-show"));
+    document.addEventListener("instrument:theme", () => map.setStyle(STYLE[theme()]));
+    // Anything drawn on the map itself (a road, a shape) is added here, since a new style starts with none of it.
+    map.on("style.load", () => {});
+
+    // Frames points in the part of the window the card leaves free.
+    const frame = (points, options = {}) => {
+      const box = points.reduce((acc, [lat, lon]) => acc.extend([lon, lat]), new maplibregl.LngLatBounds());
+      const rect = card.getBoundingClientRect();
+      const padding = phone()
+        ? { top: 40, left: 40, right: 40, bottom: Math.min(innerHeight - rect.top + 40, innerHeight * 0.6) }
+        : { top: 40, right: 56, bottom: 88, left: Math.min(rect.right + 40, innerWidth * 0.6) };
+      map.fitBounds(box, { padding, maxZoom: 16, duration: 0, ...options });
+    };
+
+    for (const p of places) {
+      const el = document.createElement("div");
+      el.className = "pin";
+      el.innerHTML = `<span>${p.n}</span>`;
+      p.marker = new maplibregl.Marker({ element: el, anchor: "center" })
+        .setLngLat([p.lon, p.lat])
+        .setPopup(new maplibregl.Popup({ offset: 18, maxWidth: "none" }).setDOMContent(popup(p)))
+        .addTo(map);
+      el.addEventListener("click", () => light(p));
+      p.el.addEventListener("click", (event) => {
+        if (event.target.closest("a")) return;
+        frame([[p.lat, p.lon]], { maxZoom: Math.max(map.getZoom(), 15), duration: 600 });
+        if (!p.marker.getPopup().isOpen()) p.marker.togglePopup();
+        light(p);
+      });
+    }
+    frame(bounds);
+  } else {
+    // No map: the same pins on plain ground, to scale, in the part of the
+    // window the card leaves free. A degree of longitude is shorter than one
+    // of latitude by the cosine of the latitude.
+    const lats = bounds.map(([lat]) => lat), lons = bounds.map(([, lon]) => lon);
+    const [s, n, w, e] = [Math.min(...lats), Math.max(...lats), Math.min(...lons), Math.max(...lons)];
+    const k = Math.cos((((s + n) / 2) * Math.PI) / 180);
+    const box = panel.getBoundingClientRect(), rect = card.getBoundingClientRect();
+    const W = Math.max(320, Math.round(box.width)), H = Math.max(240, Math.round(box.height));
+    const pad = 40, inset = { left: pad, right: pad, top: pad + 48, bottom: pad }; // the top clears the note
+    if (phone()) inset.bottom += H - rect.top; else inset.left += rect.right;
+    const spanX = Math.max((e - w) * k, 0.002), spanY = Math.max(n - s, 0.002);
+    const scale = Math.min((W - inset.left - inset.right) / spanX, (H - inset.top - inset.bottom) / spanY);
+    const x = (lon) => inset.left + (W - inset.left - inset.right - spanX * scale) / 2 + (lon - w) * k * scale;
+    const y = (lat) => inset.top + (H - inset.top - inset.bottom - spanY * scale) / 2 + (n - lat) * scale;
+    // A scale bar in round kilometers, bottom left of the free area, clear of the share pill: a degree of latitude is 111 km.
+    const kmPerPx = 111 / scale;
+    const km = [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500].find((v) => v / kmPerPx >= 60) ?? 500;
+    panel.innerHTML = `<svg class="plain" viewBox="0 0 ${W} ${H}" role="img" aria-label="The places, to scale, without streets">
+      ${places.map((p) => `<circle cx="${x(p.lon).toFixed(1)}" cy="${y(p.lat).toFixed(1)}" r="12" data-tone="accent"/><text x="${x(p.lon).toFixed(1)}" y="${(y(p.lat) + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="600" style="fill: var(--accent-ink)">${p.n}</text>`).join("")}
+      <line x1="${inset.left}" y1="${H - inset.bottom + 22}" x2="${(inset.left + km / kmPerPx).toFixed(1)}" y2="${H - inset.bottom + 22}" class="outline" stroke-width="2"/>
+      <text x="${inset.left}" y="${H - inset.bottom + 16}" font-size="12" class="muted">${km} km</text>
+    </svg><p class="plain-note">The streets need the network. These are the same places, to scale.</p>`;
+    for (const p of places) p.el.addEventListener("click", () => light(p));
+  }
+</script>
+</body>
+</html>

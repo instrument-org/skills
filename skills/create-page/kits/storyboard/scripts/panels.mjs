@@ -20,13 +20,15 @@
 
 import { pathToFileURL } from "node:url";
 
-export const INK = "var(--color-gray-700)";
-export const SOFT = "var(--color-gray-400)";
-export const LINE = "var(--color-gray-300)";
-export const PALE = "var(--color-gray-100)";
-export const CARD = "var(--color-card)";
-export const ACCENT = "var(--color-brand-600)";
-export const ACCENT_PALE = "var(--color-brand-100)";
+export const INK = "var(--gray-700)";
+export const SOFT = "var(--gray-400)";
+/** Words in the scene: the muted text color, which reads in both themes. */
+export const MUTED = "var(--muted)";
+export const LINE = "var(--gray-300)";
+export const PALE = "var(--gray-100)";
+export const CARD = "var(--paper)";
+export const ACCENT = "var(--accent)";
+export const ACCENT_PALE = "var(--wash)";
 
 const s = (d, { stroke = INK, width = 2, fill = "none", cap = "round" } = {}) =>
   `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" stroke-linecap="${cap}" stroke-linejoin="round"/>`;
@@ -41,7 +43,7 @@ const esc = (t) =>
 /** A panel of `w` by `h`. `label` becomes its aria-label: say what it shows. */
 export function panel(parts, { w = 400, h = 300, label = "" } = {}) {
   const aria = label ? ` aria-label="${esc(label)}"` : "";
-  return `<svg viewBox="0 0 ${w} ${h}" class="block w-full" role="img"${aria}>${parts.filter(Boolean).join("")}</svg>`;
+  return `<svg viewBox="0 0 ${w} ${h}" style="display:block;width:100%;height:auto" role="img"${aria}>${parts.filter(Boolean).join("")}</svg>`;
 }
 
 /** The floor line's y for a panel of height `h`, so any aspect keeps everyone
@@ -360,7 +362,7 @@ export function label(
   x,
   y,
   text,
-  { size = 13, tone = SOFT, anchor = "middle", weight = 400 } = {},
+  { size = 13, tone = MUTED, anchor = "middle", weight = 400 } = {},
 ) {
   return `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="${size}" fill="${tone}" font-weight="${weight}" style="font-family:inherit">${esc(text)}</text>`;
 }
@@ -389,7 +391,7 @@ export function move(x1, y1, x2, y2, word, { tone = ACCENT } = {}) {
     s(`M ${x1} ${y1} L ${x2} ${y2}`, { stroke: tone, width: 2 }) +
     head +
     label((x1 + x2) / 2, Math.min(y1, y2) - 8, word, {
-      size: 11,
+      size: 13,
       tone,
       weight: 600,
     })
