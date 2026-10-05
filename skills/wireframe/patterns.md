@@ -1,6 +1,6 @@
 # Patterns: the wireframe's own vocabulary
 
-Everything in `references/` still applies to the prose around the frames. These are the pieces only a page made of drawings needs.
+The pieces a page made of drawings needs, beyond what `README.md` says.
 
 ## The frame, and why it is two elements
 
@@ -19,7 +19,7 @@ A frame is an outer box sized to the scaled result and an inner box laid out at 
 </div>
 ```
 
-The outer box is what the grid lays out; the inner box is what the drawing lives in. Only `--s` moves. Everything the template needs is Tailwind arbitrary values and CSS variables, so the page carries no stylesheet of its own.
+The outer box is what the grid lays out; the inner box is what the drawing lives in. Only `--s` moves. Everything the kit needs is Tailwind arbitrary values and CSS variables, so the page carries no stylesheet of its own.
 
 `--s` starts at a plausible value in the inline style so the first paint is not full-size, and the layout pass overwrites it a moment later.
 

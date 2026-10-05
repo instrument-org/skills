@@ -4,14 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TITLE</title>
-    <!-- Lineage: the template that made this file. Set it to the template name. -->
+    <!-- Lineage: the skill that made this file. -->
     <meta name="instrument:idea" content="TEMPLATE@1" />
     <!-- shell:start -->
-    <!-- shell:note Everything inside a shell:start … shell:end pair is shared by
-         every page and owned by this file. Edit it here, then `pnpm fix:shell`
-         to carry it to the examples and `pnpm capture` to reshoot them. A
-         shell:note is the exception that stays behind: the pages get the lines,
-         not the reasons. Anything a page may vary goes outside the pairs. -->
+    <!-- shell:note Everything inside a shell:start … shell:end pair is the
+         wireframe skill's shell: the look its frames are drawn in, and the
+         behavior every wireframe page gets. A page leaves it as it is.
+         Anything a page may vary goes outside the pairs. -->
     <!-- shell:note The Instrument mark, white on brand-600, the pair the app
          itself ships. Inline because a page is a file someone opens from a
          folder, offline or years later, and a URL is a thing that stops
@@ -170,10 +169,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" />
     <style type="text/tailwindcss">
       /* skin:start */
-      /* The one look every idea shares: Studio's theme as Tailwind tokens, plus
-         the one element these pages style directly, the link.
-         A starter inlines this block verbatim inside its <style type="text/tailwindcss">,
-         and scripts/check-ideas.ts fails when a starter's copy has drifted.
+      /* Studio's theme as Tailwind tokens, plus the one element these pages
+         style directly, the link.
          No import of tailwindcss opens this block, on purpose. Chrome's preload
          scanner reads inline style text for imports before it honors the element's
          type and fetches the name relative to the page, a 404 in every reader's
@@ -362,8 +359,8 @@
       }
       /* skin:end */
     </style>
-    <!-- shell:note The sheet the block above compiles to, built over this file
-         and every template's main.html by `pnpm build:sheet`. It is here for
+    <!-- shell:note The sheet the block above compiles to, compiled ahead of
+         time, so the skill's own classes paint before any script runs. It is here for
          the readers whose scripts never run: a chat viewer that strips them, an
          artifact host whose policy refuses the CDN, a mail preview, a file
          opened offline. Those readers get the page rather than the markup in a
@@ -4056,12 +4053,11 @@
     <!-- shell:end -->
 
     <!-- shell:note A page's own CSS goes here, between the framework above and
-         the shared behavior below: outside the pairs, so fix:shell leaves it
-         alone. Several examples carry print rules or a rating scale here. -->
+         the shared behavior below, outside the pairs. -->
 
     <!-- shell:start -->
     <style>
-      /* Page behavior every template gets. Nothing here is decoration a reader
+      /* Page behavior every wireframe page gets. Nothing here is decoration a reader
          would miss offline; each rule degrades to exactly what the page does
          without it. */
 
@@ -4117,10 +4113,8 @@
 
   <body class="bg-background font-sans text-foreground antialiased">
     <main class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
-      <!-- Paste the chosen template's main.html here. Every section it carries
-           is a slot the template names: keep the slots, and reorder, merge,
-           restyle and rebuild them freely. Delete every placeholder and every
-           comment like this one before you are done. -->
+      <!-- new.mjs pastes main.html here. Delete every placeholder
+           and every comment like this one before you are done. -->
     </main>
     <!-- shell:start -->
     <!-- shell:note Before the copy below, so a published page carries it too and
