@@ -4,11 +4,11 @@ import { describe, expect, it } from "vitest";
 import {
   panel,
   label,
-} from "../skills/create-page/templates/storyboard/scripts/panels.mjs";
+} from "../skills/create-page/kits/storyboard/scripts/panels.mjs";
 
 const PANELS_DIR = join(
   import.meta.dirname,
-  "../skills/create-page/templates/storyboard/scripts",
+  "../skills/create-page/kits/storyboard/scripts",
 );
 
 function python(code: string): string {
@@ -27,7 +27,7 @@ describe("storyboard panels kit", () => {
         label: 'A "quoted" & <label>',
       }),
     ).toMatchInlineSnapshot(
-      `"<svg viewBox="0 0 400 300" class="block w-full" role="img" aria-label="A &quot;quoted&quot; &amp; &lt;label>"><text x="10" y="10" text-anchor="middle" font-size="13" fill="var(--color-gray-400)" font-weight="400" style="font-family:inherit">say &quot;hi&quot; &amp; &lt;go></text></svg>"`,
+      `"<svg viewBox="0 0 400 300" style="display:block;width:100%;height:auto" role="img" aria-label="A &quot;quoted&quot; &amp; &lt;label>"><text x="10" y="10" text-anchor="middle" font-size="13" fill="var(--muted)" font-weight="400" style="font-family:inherit">say &quot;hi&quot; &amp; &lt;go></text></svg>"`,
     );
   });
 

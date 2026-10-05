@@ -199,10 +199,10 @@ describe.each(RUNTIMES)("share via %s", (runtime, script) => {
   });
 
   it.each([
-    ["<title>TITLE</title>", "<title>Heat pumps</title>", "starter's TITLE"],
+    ["<title>TITLE</title>", "<title>Heat pumps</title>", "placeholder TITLE"],
     ['content="TEMPLATE@1"', 'content="explainer@1"', "still reads TEMPLATE"],
   ])(
-    "refuses a page still carrying the starter's %s",
+    "refuses a page still carrying the placeholder %s",
     async (placeholder, finished, message) => {
       writeFileSync(page, PAGE.replace(finished, placeholder));
       const { code, out } = await share();
