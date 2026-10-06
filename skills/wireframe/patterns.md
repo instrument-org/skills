@@ -1,10 +1,10 @@
-# Patterns: the wireframe's own vocabulary
+# Wireframe patterns
 
-The pieces a page made of drawings needs, beyond what `README.md` says.
+How the pieces of a wireframe page work, beyond what `SKILL.md` covers.
 
-## The frame, and why it is two elements
+## How a frame is built
 
-A frame is an outer box sized to the scaled result and an inner box laid out at true size:
+Each frame is two nested boxes. The outer box takes the scaled size, and the inner box is laid out at true size and scaled down into it:
 
 ```html
 <div
@@ -19,11 +19,11 @@ A frame is an outer box sized to the scaled result and an inner box laid out at 
 </div>
 ```
 
-The outer box is what the grid lays out; the inner box is what the drawing lives in. Only `--s` moves. Everything the kit needs is Tailwind arbitrary values and CSS variables, so the page carries no stylesheet of its own.
+The grid lays out the outer box, and the drawing lives in the inner one. Only `--s` changes. Everything here is Tailwind arbitrary values and CSS variables, so the page needs no stylesheet of its own.
 
-`--s` starts at a plausible value in the inline style so the first paint is not full-size, and the layout pass overwrites it a moment later.
+The inline style gives `--s` a reasonable starting value, so the first paint isn't full size. The layout pass replaces it a moment later.
 
-## Sizes worth knowing
+## Common sizes
 
 | Thing              | Draw it at            |
 | ------------------ | --------------------- |
@@ -37,19 +37,19 @@ The outer box is what the grid lays out; the inner box is what the drawing lives
 | A dropdown or menu | 240x320               |
 | A toast or banner  | 380x72                |
 
-Set `SLOT_H` near the height most frames in the file scale to. A file of phones wants a taller slot than a file of windows; a file that mixes them wants the taller one, so nothing in it is squeezed to a strip.
+Set `SLOT_H` close to the height most frames in the file scale to. A file of phones needs a taller slot than a file of windows. If a file mixes them, use the taller slot so no frame gets squeezed into a strip.
 
-## The state that is not a moment
+## Three ways a set of frames can vary
 
-The `states` array does not have to be a sequence in time. Three axes come up:
+The `states` array doesn't have to be a sequence in time. There are three common setups:
 
-- **Moments.** Resting, the interaction, the result. The default, and what most proposals need.
-- **Conditions.** One panel in every state it can be in: empty, loading, one item, many, denied, expired, offline. Use `panel` and a small `w`/`h`, and the grid fits five or six across.
-- **Widths.** The same screen at 1440, 900 and 390, arguing that the layout survives. Expensive to write, so only when the responsive behavior is the thing in question.
+- **Moments.** Before, during and after an interaction. This is the default, and most proposals need it.
+- **Conditions.** One panel in every state it can be in: empty, loading, one item, many, denied, expired, offline. Use `panel` with a small `w` and `h`, and the grid fits five or six across.
+- **Widths.** The same screen at 1440, 900 and 390, to show the layout holds up. These take a lot of work, so only draw them when the responsive behavior is the question.
 
-Whichever axis, the captions have to be comparative. If every caption would read the same with the frame swapped, the frames are not doing work.
+Whichever you pick, each note should say how its frame differs from the others. If you could swap two frames and their notes would still fit, the frames aren't telling the reader anything.
 
-## Marking without decorating
+## Marks
 
 ```js
 clickable(btn("Freeze card", { cls: "bg-error-600 text-white" })); // ring + pointer
@@ -57,15 +57,15 @@ fresh(chip("Frozen", "bg-error-100 text-error-700")); // ring, no pointer
 noted(someRow, "3 of 5", "new"); // any label you like
 ```
 
-`ann` alone goes inside any element and marks that element, which is how a ring lands on something the kit built:
+You can also put `ann` on its own inside any element to mark that element. That's how you put a ring on something the kit built:
 
 ```js
 `<div>${field("Card number", { value: "•••• 4417" })}${ann("click")}</div>`;
 ```
 
-The helpers leave an invisible marker in the element. After render, `drawMarks` measures each marked element against its frame and draws the ring and tag on one layer over the whole frame, so they never change the element's size and no `overflow-hidden` ancestor can clip them. The tag goes beside a narrow thing, above a wide one, and inside the corner of a whole pane.
+Each helper leaves an invisible marker inside the element. After render, `drawMarks` measures every marked element against its frame and draws the ring and tag on one layer over the whole frame. That way a mark never changes the element's size, and no `overflow-hidden` parent can clip it. The tag goes beside a narrow element, above a wide one, and inside the corner of a whole pane.
 
-That layer carries the class `ann`, and so does anything else a reader may switch off; that is what the marks button hides:
+That layer has the class `ann`, as does anything else the reader can switch off. The marks button hides them all with one rule:
 
 ```css
 body[data-marks="off"] .ann {
@@ -73,9 +73,9 @@ body[data-marks="off"] .ann {
 }
 ```
 
-One rule on the body covers the grid and the enlarged copy of a frame both, because the enlarged copy is a clone that lands inside the same body. So a mark you draw by hand rather than through the kit needs that class or it survives being switched off, which is worse than not offering the switch. A callout the reader should never lose is not an annotation and belongs inside the frame as real interface.
+The rule sits on the body, so it covers both the grid and the enlarged view, which is a copy of the frame placed inside the same body. If you draw a mark by hand instead of through the kit, give it the `ann` class. Otherwise it stays visible after the reader hides marks, which is worse than having no button at all. If the reader should never lose a callout, it isn't an annotation. Draw it inside the frame as real interface.
 
-## Bars
+## Grey bars
 
 ```js
 bars("100%", "78%", "62%"); // a paragraph
@@ -83,14 +83,14 @@ bars("46%"); // a name
 bars("100%", "100%", "34%"); // a paragraph that ends mid-line
 ```
 
-Wrap them in `space-y-2.5`. Vary the last width: three bars all at 100% read as a table, not as prose.
+Wrap them in `space-y-2.5`. Vary the width of the last bar, because three bars at 100% look like a table rather than a paragraph.
 
-## Deleting the kit
+## Delete what you don't use
 
-The kit is a starting point, not furniture. A file that draws six phones has no use for `win`, `web`, `shell`, `grid` or `group`, and every one of them left behind is a function the next reader has to check for callers. Delete what you do not call.
+The kit in `main.html` is a starting point. A file that draws six phones has no use for `win`, `web`, `shell`, `grid` or `group`, and every one you leave behind is a function the next reader has to check for callers. Delete whatever you don't call.
 
-The same goes the other way: anything the frames repeat and the kit does not cover should become a small function returning a string. That is most of what keeps these files short, and it is why a six-frame file is not six copies of one window.
+It works the other way too. If your frames repeat something the kit doesn't cover, write a small function that returns it as a string. That's most of what keeps these files short, and it's why a six-frame file isn't six copies of one window.
 
 ## Printing
 
-The tiles carry `break-inside-avoid`, so the grid prints without a frame straddling a page break. The frames print at whatever scale the layout pass last set, which is the scale on screen, so print from a window the width you want on paper. The enlarged view and the grid toggle are `print:hidden` where they exist; nothing else needs a print rule.
+Tiles have `break-inside-avoid`, so no frame splits across a page break when you print. Frames print at the scale they have on screen, so print from a window the width you want on paper. The enlarged view and the grid toggle have `print:hidden`, and nothing else needs a print rule.

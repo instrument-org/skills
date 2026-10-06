@@ -52,13 +52,13 @@
       </style>
 
       <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
-        <!-- A name and, at most, one line. The name is the part of the product
-             and what this take tries ("Checkout: sold out mid-payment"); the
-             claim goes in the line. Everything a reader needs after looking goes
-             in the captions. There is no thesis paragraph on this page. -->
+        <!-- The page name is the part of the product and what this version
+             tries ("Checkout: sold out mid-payment"). The line under it says
+             what we're proposing. Everything else goes in the frame notes, so
+             this page has no intro paragraph. -->
         <div class="min-w-0 flex-1">
           <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">TITLE</h1>
-          <p class="truncate text-[12px] text-muted-foreground">ONE LINE: what is being proposed and what these frames are meant to settle.</p>
+          <p class="truncate text-[12px] text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
         </div>
 
         <!-- The legend, which is two words because the marks are two colors. -->
@@ -305,12 +305,14 @@
         const fresh = (inner, cls = "") => noted(inner, "new", "new", { cls });
 
         // ---- the frames ------------------------------------------------------
-        // Order these the way you would talk through them. The caption says what
-        // the frame PROVES, not what it depicts.
+        // Order frames the way you'd walk a teammate through them. Name each one
+        // like an artboard ("Choose a plan"), and write its note as one sentence
+        // in the first person saying what we're doing on that screen and why.
+        // SKILL.md has the full rules for titles and notes.
         const states = [
           {
-            title: "State name",
-            note: "What this frame proves, not what it shows.",
+            title: "Screen name",
+            note: "Say in one first-person sentence what we're doing on this screen and why.",
             body: win(
               "Application",
               shell(
