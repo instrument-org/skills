@@ -27,6 +27,24 @@ options:
   --footer FOOTER
 ```
 
+## `check-pdf.py` Check a finished PDF for defects that are easy to miss in a render: lines printed over each other, text off the page, type too small to read, the wrong page count, a stranded last page, and a one-page document that stops partway down.
+
+```text
+usage: check-pdf.py [-h] [--pages PAGES] input
+
+Check a finished PDF for overlapping lines, text off the page, tiny type, the
+wrong page count, a stranded last page, and a one-pager that stops partway
+down
+
+positional arguments:
+  input          PDF file to check
+
+options:
+  -h, --help     show this help message and exit
+  --pages PAGES  Page count the request asked for, e.g. 1 for a one-pager;
+                 also checks that a one-page document fills its page
+```
+
 ## `create-pdf.py` Create a quick PDF from simple text or Markdown using reportlab.
 
 ```text

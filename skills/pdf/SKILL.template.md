@@ -1,15 +1,15 @@
 ---
 name: pdf
-description: "Read, create, and edit PDF files (.pdf): extract text and tables, merge, split, fill forms, render pages, and watermark."
+description: "Read, create, and edit PDF files (.pdf): design new documents in HTML printed by the browser, extract text and tables, merge, split, fill forms, and watermark."
 ---
 
 # PDF
 
-Use bundled scripts for operations they directly cover. For content, layout, or other generative work, write Python against the preinstalled libraries using the recipes below.
+A PDF someone will read is a designed page, and the best layout engine here is the browser. Write a new document as HTML and CSS, print it with `agent-browser pdf`, check it, and look at what printed. Use the bundled scripts for closed operations on existing PDFs, and the Python libraries for the cases below where a program beats a stylesheet.
 
 ## Runtime
 
-The skill installs locked versions of `reportlab`, PyMuPDF (`fitz`), `pdfplumber`, `pypdf`, and Pillow into the task environment. Run Python with `python`; do not reinstall these packages.
+The skill installs locked versions of `reportlab`, PyMuPDF (`fitz`), `pdfplumber`, `pypdf`, and Pillow into the task environment. Run Python with `python`; do not reinstall these packages. `agent-browser`, the task's browser, is a shell command; where it is not available, build with ReportLab instead.
 
 Run commands from the task root, and run bundled scripts by the full path shown when the skill loads; do not change into the skill directory.
 
@@ -17,20 +17,89 @@ Prefer a saved `.py` file for repeatable generation. If using a heredoc, quote i
 
 ## Choose an approach
 
-| Need                                            | Approach                              |
-| ----------------------------------------------- | ------------------------------------- |
-| New report, invoice, or flowing document        | Write a ReportLab Platypus script     |
-| SVG to vector PDF or SVG placed on a PDF page   | Write a PyMuPDF script                |
-| Quick text/Markdown document with simple images | Use `create-pdf.py`                   |
-| Fill an interactive AcroForm                    | Use `fill-form.py`                    |
-| Fill a scanned or non-interactive form          | Use `overlay-form.py`                 |
-| One PDF page per raster image                   | Use `image-to-pdf.py`                 |
-| Closed operation on an existing PDF             | Use the matching bundled script       |
-| Confirm appearance                              | Render every page, then read the PNGs |
+| Need                                                                                           | Approach                                              |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| A document a person reads: proposal, one-pager, letter, resume, report, invoice, handout, menu | Write HTML and CSS, print it with `agent-browser pdf` |
+| Hundreds of pages generated from data, or every element at fixed coordinates                   | Write a ReportLab Platypus script                     |
+| SVG to vector PDF or SVG placed on a PDF page                                                  | Write a PyMuPDF script                                |
+| Fill an interactive AcroForm                                                                   | Use `fill-form.py`                                    |
+| Fill a scanned or non-interactive form                                                         | Use `overlay-form.py`                                 |
+| One PDF page per raster image                                                                  | Use `image-to-pdf.py`                                 |
+| Closed operation on an existing PDF                                                            | Use the matching bundled script                       |
+| Confirm a finished PDF                                                                         | `check-pdf.py`, then render every page and read it    |
 
-## Recipe: flowing document with ReportLab
+## Recipe: design in HTML, print with the browser
 
-Use Platypus for documents whose content must wrap and flow across pages. Keep the generation script so layout fixes are repeatable.
+CSS gives you a grid, real tables, a type scale, running headers and page breaks without placing anything by coordinate, so trying a different layout is an edit rather than a rewrite. The browser is Chromium, so what you check is what prints.
+
+**Decide the design first**, in a comment at the top of the file: who reads it and what they do next; the one element that should be loudest; what recedes; and the structure the content falls into. Hierarchy comes from size, weight and gray, not from making every heading bold. Structure is usually a grid: labels in a narrow column with their content aligned in a second one, a table wherever there are figures to compare or add up, a timeline as rows rather than paragraphs. "Simple" or "minimal" means few type sizes, one or two grays, and generous space, not the absence of a grid. "Neutral" means white paper and gray ink; tint the page only when asked.
+
+**Write `work/<name>.html`** on these mechanics:
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Document title</title>
+    <style>
+      @page {
+        size: letter;
+        margin: 0.75in;
+        @bottom-right {
+          content: counter(page) " of " counter(pages);
+          font-size: 8pt;
+          color: #888;
+        }
+      }
+      html {
+        font-family:
+          -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        font-size: 10pt;
+        line-height: 1.45;
+        color: #1c1c1c;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-variant-numeric: tabular-nums;
+      }
+      h2 {
+        break-after: avoid;
+      }
+      tr,
+      figure {
+        break-inside: avoid;
+      }
+    </style>
+  </head>
+  <body>
+    ...
+  </body>
+</html>
+```
+
+- `@page` sets the paper: `letter` (8.5 x 11 in, 7 in wide inside 0.75 in margins), `A4`, or `landscape` after either. Size type and space in `pt` or `in`; body text between 9 and 11pt.
+- Margin boxes (`@top-left`, `@bottom-center`, ...) carry running headers, footers and page numbers; `counter(pages)` is the total. `break-before: page` starts a new page.
+- When the request gives a page count, design for it from the start. If the print runs over, cut or tighten copy and spacing before shrinking type. A one-page document fills its page or ends deliberately, never with an empty band below.
+- A background on `html` or `body` stops at the print margins and leaves a white frame. A tinted sheet needs `@page { margin: 0 }` with the margin moved to padding on a wrapper, which gives up the margin boxes.
+- A chart is inline SVG drawn from the data, computed by a short script, never a screenshot.
+- The system font stack above is always there. A web font from Google Fonts works when the computer is online; confirm in the rendered pages that it printed.
+
+**Print, check, render and look.** Pass `--pages` only when the request named a page count. After editing the HTML, run `agent-browser open` again before printing, or you print the old page.
+
+```bash
+agent-browser open work/<name>.html
+agent-browser pdf work/<name>.pdf
+python <pdf-skill-path>/scripts/check-pdf.py work/<name>.pdf --pages 1
+python <pdf-skill-path>/scripts/render-pages.py work/<name>.pdf --output pdf-preview --dpi 110
+```
+
+**Review it as a designer would, then revise.** Is exactly one thing loudest? Do labels, dates and footers recede? Do columns and numbers line up down the page? Are figures in a table, right-aligned, with any total set apart? If a revision still reads like a word processor's defaults, change the structure, not the numbers. Keep the HTML beside the PDF in `work/`, so a later change is an edit to the page and a reprint.
+
+## Recipe: data-generated document with ReportLab
+
+Use Platypus when the document is a program's output at a scale where markup would be a program anyway, such as hundreds of pages of generated tables, or when every element sits at fixed coordinates. Let flowables place the content; hand-set `drawString` positions are how lines end up printed over each other. Keep the generation script so layout fixes are repeatable.
 
 ```python
 from pathlib import Path
@@ -222,16 +291,19 @@ Use these scripts only for operations they directly cover. Read [`reference.md`]
 
 {{GENERATED_SCRIPT_INDEX}}
 
-## Mandatory visual verification
+## Check, then look
 
-After every creation or meaningful modification, set `PDF_PATH` to the actual PDF that was created or changed:
+After every creation or meaningful change, check the PDF that was actually written, then render every page:
 
 ```bash
-PDF_PATH=report.pdf
+PDF_PATH=work/report.pdf
+python <pdf-skill-path>/scripts/check-pdf.py "$PDF_PATH"
 python <pdf-skill-path>/scripts/render-pages.py "$PDF_PATH" --output pdf-preview --dpi 150
 ```
 
-Then read every rendered PNG with the file-reading tool and compare it with the request. Command success, page count, and text extraction do not verify visual quality. Check for clipped or overlapping content, broken tables, missing images, literal markup, black boxes, unreadable glyphs, weak spacing, and blurry graphics. Fix the source and repeat the loop. Do not deliver until the latest inspection has zero visual or formatting defects.
+`check-pdf.py` prints one `FAIL` line per measured problem: lines printed over each other, text off the page, type under 6pt, the wrong page count, a stranded last page, and, with `--pages 1`, a one-pager that stops partway down. Fix each one in the source, never by hiding it, and run it again until it prints `pass`.
+
+Then read every rendered PNG with the file-reading tool and compare it with the request. The check measures geometry, not design: clipped content, broken tables, missing images, literal markup, black boxes, weak spacing, and blurry graphics are yours to see. Do not deliver until the check passes and the latest look finds nothing to fix.
 
 ## Existing-PDF notes
 

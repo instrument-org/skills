@@ -619,3 +619,69 @@ class TestOverlayForm:
         assert result.returncode != 0
         assert message in result.stderr
         assert not output.exists()
+
+
+def draw_pdf(path: Path, pages: list[list[tuple[float, float, float, str]]]) -> Path:
+    """Write a Letter PDF whose pages hold `(x, baseline from top, size, text)` strings."""
+    from reportlab.pdfgen import canvas
+
+    c = canvas.Canvas(str(path), pagesize=(612, 792))
+    for lines in pages:
+        for x, top, size, text in lines:
+            c.setFont("Helvetica", size)
+            c.drawString(x, 792 - top, text)
+        c.showPage()
+    c.save()
+    return path
+
+
+# A body of evenly spaced lines reaching most of the way down a Letter page.
+FULL_PAGE = [(72, 90 + 14 * i, 10, f"Line {i} of an ordinary paragraph") for i in range(44)]
+
+
+class TestCheckPdf:
+    @pytest.fixture(autouse=True)
+    def _deps(self):
+        pytest.importorskip("reportlab")
+        pytest.importorskip("fitz")
+
+    @pytest.mark.parametrize(
+        ("name", "lines"),
+        [
+            ("ordinary page", FULL_PAGE),
+            ("title over a tight subtitle", [(72, 90, 26, "Priya Raman"), (72, 110, 10.5, "Senior Product Designer")] + FULL_PAGE[3:]),
+            ("label column on the content's baseline", [(72, 90, 8, "SCOPE"), (180, 90, 10, "Up to 16 pages and 10 projects")] + FULL_PAGE[2:]),
+        ],
+    )
+    def test_passes_sound_layouts(self, tmp_path, name, lines):
+        pdf = draw_pdf(tmp_path / "ok.pdf", [lines])
+        result = run("check-pdf.py", str(pdf), "--pages", "1")
+        assert result.returncode == 0, result.stdout
+        assert result.stdout.strip().endswith("pass")
+
+    def test_fails_lines_printed_over_each_other(self, tmp_path):
+        lines = FULL_PAGE + [(72, 96, 10, "Week 2 Build the site and migrate")]
+        result = run("check-pdf.py", str(draw_pdf(tmp_path / "x.pdf", [lines])))
+        assert result.returncode == 1
+        assert "FAIL overlap: page 1" in result.stdout
+
+    def test_fails_text_off_the_page(self, tmp_path):
+        lines = FULL_PAGE + [(560, 300, 10, "a line that runs past the right edge")]
+        result = run("check-pdf.py", str(draw_pdf(tmp_path / "x.pdf", [lines])))
+        assert "FAIL off-page: page 1" in result.stdout
+
+    def test_fails_type_too_small_to_read(self, tmp_path):
+        lines = FULL_PAGE + [(72, 760, 5, "fine print")]
+        result = run("check-pdf.py", str(draw_pdf(tmp_path / "x.pdf", [lines])))
+        assert "FAIL tiny-type: page 1: 5.0pt" in result.stdout
+
+    def test_fails_a_one_pager_that_spills_onto_a_second_page(self, tmp_path):
+        pdf = draw_pdf(tmp_path / "x.pdf", [FULL_PAGE, [(72, 90, 10, "Reply to confirm scope.")]])
+        result = run("check-pdf.py", str(pdf), "--pages", "1")
+        assert "FAIL page-count: document: 2 pages, asked for 1" in result.stdout
+        assert "FAIL stranded: page 2" in result.stdout
+
+    def test_fails_a_one_pager_that_stops_partway_down_only_when_asked_for_one_page(self, tmp_path):
+        pdf = draw_pdf(tmp_path / "x.pdf", [FULL_PAGE[:20]])
+        assert "FAIL empty-band: page 1" in run("check-pdf.py", str(pdf), "--pages", "1").stdout
+        assert run("check-pdf.py", str(pdf)).returncode == 0
