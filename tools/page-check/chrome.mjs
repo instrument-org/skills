@@ -1,76 +1,105 @@
-// Headless Chrome over the DevTools protocol, with no npm dependency (Node 22
-// has fetch and WebSocket built in). Every wait has a deadline, and every
+// Headless Chromium over the DevTools protocol, with no npm dependency (Node
+// 22 has fetch and WebSocket built in). Every wait has a deadline, and every
 // failure throws a ChromeError whose message says what happened, so a caller
-// can never mistake "Chrome did not run" for "the page is fine".
+// can never mistake "Chromium did not run" for "the page is fine".
+//
+// A development and eval tool only: nothing under skills/ imports it.
 
 import { spawn } from "node:child_process";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { join, win32 as win } from "node:path";
+import { join } from "node:path";
 
 export class ChromeError extends Error {}
 
-// Where each platform installs Chrome, Chromium and Edge, in that order of
-// preference. CHROME (or CHROME_PATH) overrides the search; when it is set
-// and wrong, that is the error, rather than a quiet fall back to another browser.
-const BROWSERS = {
-  darwin: (home) =>
-    [
-      "Google Chrome.app/Contents/MacOS/Google Chrome",
-      "Chromium.app/Contents/MacOS/Chromium",
-      "Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    ].flatMap((app) => [
-      join("/Applications", app),
-      join(home, "Applications", app),
-    ]),
-  win32: (_home, env) =>
-    [env.PROGRAMFILES, env["PROGRAMFILES(X86)"], env.LOCALAPPDATA]
-      .filter(Boolean)
-      .flatMap((root) => [
-        win.join(root, "Google", "Chrome", "Application", "chrome.exe"),
-        win.join(root, "Chromium", "Application", "chrome.exe"),
-        win.join(root, "Microsoft", "Edge", "Application", "msedge.exe"),
-      ]),
-  linux: (_home, env) => [
-    ...[
-      "google-chrome",
-      "google-chrome-stable",
-      "chromium",
-      "chromium-browser",
-      "microsoft-edge",
-      "microsoft-edge-stable",
-    ].flatMap((name) =>
-      (env.PATH || "/usr/bin")
-        .split(":")
-        .filter(Boolean)
-        .map((dir) => join(dir, name)),
-    ),
-    "/opt/google/chrome/chrome",
-    "/snap/bin/chromium",
+// Downloaded browsers only. A browser the user installed in /Applications (or
+// Program Files, or /usr/bin) is never launched: on macOS, starting the user's
+// real Chrome from another app raises an App Management permission prompt
+// attributed to that app, and an updater-managed browser is not a fixed thing
+// to measure against anyway.
+const CACHES = {
+  darwin: (home) => [
+    join(home, ".agent-browser", "browsers"),
+    join(home, "Library", "Caches", "ms-playwright"),
+    join(home, ".cache", "puppeteer"),
+  ],
+  win32: (home, env) => [
+    join(home, ".agent-browser", "browsers"),
+    join(env.LOCALAPPDATA || join(home, "AppData", "Local"), "ms-playwright"),
+    join(home, ".cache", "puppeteer"),
+  ],
+  linux: (home) => [
+    join(home, ".agent-browser", "browsers"),
+    join(home, ".cache", "ms-playwright"),
+    join(home, ".cache", "puppeteer"),
   ],
 };
+// The headless shell first: a plain binary with no app bundle and no updater.
+const BINARIES = [
+  /^chrome-headless-shell(\.exe)?$/,
+  /^headless_shell(\.exe)?$/,
+  /^Google Chrome for Testing$/,
+  /^Chromium$/,
+  /^chrome(\.exe)?$/,
+];
 
-// Returns { bin } for the browser to run, or { error } saying where it looked.
+// Every file under dir, a few levels down, as [path, name]. Browser caches are
+// <cache>/<browser>-<version>/<platform>/<binary>, or that inside an .app bundle.
+function walk(dir, depth, exists = existsSync, read = readdirSync) {
+  if (depth < 0 || !exists(dir)) return [];
+  let entries;
+  try {
+    entries = read(dir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  return entries.flatMap((e) =>
+    e.isDirectory()
+      ? walk(join(dir, e.name), depth - 1, exists, read)
+      : [[join(dir, e.name), e.name]],
+  );
+}
+
+// Returns { bin } for the browser to run, or { error } saying how to get one.
+// PAGE_CHECK_CHROME overrides the search; when it is set and wrong, that is
+// the error, rather than a quiet fall back to another browser.
+/**
+ * @param {{
+ *   env?: Record<string, string | undefined>,
+ *   platform?: string,
+ *   home?: string,
+ *   exists?: (path: string) => boolean,
+ *   read?: (dir: string, options: { withFileTypes: true }) => { name: string, isDirectory(): boolean }[],
+ * }} [options]
+ * @returns {{ bin: string, error?: undefined } | { bin?: undefined, error: string }}
+ */
 export function findChrome({
   env = process.env,
   platform = process.platform,
   home = homedir(),
   exists = existsSync,
+  read = readdirSync,
 } = {}) {
-  const override = env.CHROME || env.CHROME_PATH;
+  const override = env.PAGE_CHECK_CHROME;
   if (override)
     return exists(override)
       ? { bin: override }
-      : { error: `CHROME is set to ${override}, which does not exist` };
-  const looked = [
-    ...new Set((BROWSERS[platform] ?? BROWSERS.linux)(home, env)),
-  ];
-  const bin = looked.find((p) => exists(p));
-  return bin
-    ? { bin }
-    : {
-        error: `no Chrome, Chromium or Edge found (looked in ${looked.length} places, such as ${looked.slice(0, 2).join(" and ")}); set CHROME=/path/to/chrome`,
-      };
+      : {
+          error: `PAGE_CHECK_CHROME is set to ${override}, which does not exist`,
+        };
+  const roots = (CACHES[platform] ?? CACHES.linux)(home, env);
+  const found = roots.flatMap((root) => walk(root, 6, exists, read));
+  for (const re of BINARIES) {
+    const hits = found
+      .filter(([, name]) => re.test(name))
+      .map(([path]) => path)
+      // The newest download first: cache folders end in a version or a revision.
+      .sort((a, b) => b.localeCompare(a, "en", { numeric: true }));
+    if (hits.length) return { bin: hits[0] };
+  }
+  return {
+    error: `no downloaded Chromium found in ${roots.join(", ")}. Set PAGE_CHECK_CHROME=/path/to/chromium, or download one with \`npx playwright install chromium-headless-shell\`. A browser installed in Applications is never used.`,
+  };
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -100,7 +129,7 @@ export async function launch({ timeoutMs = 15000 } = {}) {
   const { bin, error } = findChrome();
   if (!bin) throw new ChromeError(error);
   const profile = mkdtempSync(
-    join(process.env.TMPDIR || tmpdir(), "create-page-chrome-"),
+    join(process.env.TMPDIR || tmpdir(), "page-check-chrome-"),
   );
   const args = [
     "--headless=new",
@@ -110,7 +139,6 @@ export async function launch({ timeoutMs = 15000 } = {}) {
     "--no-default-browser-check",
     "--hide-scrollbars",
     "--mute-audio",
-    "--allow-file-access-from-files",
     "--disable-background-timer-throttling",
     "--disable-renderer-backgrounding",
     "--disable-extensions",

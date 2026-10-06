@@ -40,5 +40,5 @@ const page = shell
   );
 writeFileSync(out, tagRepo(page, repoName(process.cwd())));
 console.log(
-  `${out}: written. Draw the frames in its \`states\` array, then: node <skill>/look.mjs ${out}`,
+  `${out}: written. Draw the frames in its \`states\` array, then open it in your browser tool and check its errors and a screenshot.`,
 );

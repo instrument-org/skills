@@ -96,6 +96,7 @@
         "skills/create-page/kits/*/scripts/**",
         "skills/create-page/lib/**",
         "skills/*/share.*",
+        "tools/**",
         "vitest.config.ts",
         "package.json"
       ],
@@ -106,7 +107,13 @@
       "outputs": []
     },
     "//#check:types": {
-      "inputs": ["scripts/**/*.ts", "*.ts", "tsconfig.json", "package.json"],
+      "inputs": [
+        "scripts/**/*.ts",
+        "tools/**/*.mjs",
+        "*.ts",
+        "tsconfig.json",
+        "package.json"
+      ],
       "outputs": []
     },
     "//#check:page-skill": {

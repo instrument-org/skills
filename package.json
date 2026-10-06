@@ -34,6 +34,7 @@
     "test": "turbo run test",
     "test:scripts": "vitest run --project scripts",
     "generate:skills-md": "node scripts/generate-skill-md.ts",
+    "page-check": "node tools/page-check/check.mjs",
     "syncpack": "syncpack",
     "update:actions": "actions-up"
   },

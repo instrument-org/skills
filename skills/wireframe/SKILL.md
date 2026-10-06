@@ -18,7 +18,6 @@ When someone asks for a wireframe, a mockup, a layout sketch or "what would that
 - `new.mjs`: writes a new wireframe page from the two files below. Inside a git repository it names the repository in an `instrument:repo` meta, so a folder of wireframes from several products can be told apart.
 - `repo.mjs`: that name and that meta, for a project's own kit to call when it builds pages itself.
 - `shell.html`: the page shell: Studio's theme as Tailwind tokens, the compiled sheet, the pinned Tailwind browser build, the icon set, the share widget and its Share button. Frames are drawn in Tailwind's vocabulary, as are projects' own wireframe kits. Leave its `shell:start` ... `shell:end` regions alone.
-- `look.mjs`: renders a page in headless Chrome at 1280 and on a 390 phone, writes the screenshots, and reports script errors. Set `CHROME=/path/to/chrome` if it finds none.
 - `share.mjs` and `share.py`: publish a finished page to a link (below).
 - `main.html`: the title bar, the frame grid, the neutral kit of software pieces (`win`, `web`, `phone`, `panel`, `shell`, `navItem`, `group`, `btn`, `field`, `toggle`, `chip`, `grid`, `empty`, `bars`), the marks, the enlarged view, and the `states` array you fill.
 - `patterns.md`: the frame's two-element shape, sizes worth knowing, the three axes a set of states can vary along, marking without decorating, bars, and printing.
@@ -54,11 +53,15 @@ const states = [
 ];
 ```
 
-Look at it before you hand it over (a module script that throws leaves the grid blank):
+Look at it in your browser tool before you hand it over, since a module script that throws leaves the grid blank:
 
 ```
-node <skill>/look.mjs 2026-10-05-checkout-sold-out-mid-payment.html
+agent-browser open 2026-10-05-checkout-sold-out-mid-payment.html
+agent-browser errors
+agent-browser screenshot checkout.png
 ```
+
+`errors` must come back empty; fix the page's script until it does. Then look at the screenshot: every frame drawn, its caption under it, nothing cut off. The page must sit in the task folder (or a folder the user granted) for the browser to open it. With no browser tool, tell the user the page is unchecked.
 
 ## Rules
 
