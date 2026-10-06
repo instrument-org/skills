@@ -308,3 +308,46 @@ class TestEdit:
 
         assert result.returncode == 2
         assert "must be supplied together" in result.stderr
+
+
+class TestPreview:
+    def test_writes_a_page_holding_the_document_at_its_page_size(self, tmp_path):
+        pytest.importorskip("docx")
+        from docx import Document
+
+        source = tmp_path / "report.docx"
+        doc = Document()
+        doc.add_paragraph("Hello")
+        doc.save(str(source))
+        result = run("preview.py", str(source))
+        assert result.returncode == 0, result.stderr
+        out = tmp_path / "report.preview.html"
+        # python-docx's default section is US Letter, 816 x 1056 px.
+        assert json.loads(result.stdout) == {"preview": str(out), "pageSize": [816, 1056]}
+        page = out.read_text()
+        assert "@page { size: 816px 1056px; margin: 0; }" in page
+        assert "@extend-ai/react-docx@0.8.4" in page
+
+
+class TestRenderPages:
+    def test_renders_each_printed_page(self, tmp_path):
+        pymupdf = pytest.importorskip("pymupdf")
+        pdf = tmp_path / "report.preview.pdf"
+        with pymupdf.open() as doc:
+            for _ in range(2):
+                doc.new_page(width=612, height=792)
+            doc.save(str(pdf))
+        result = run("render-pages.py", str(pdf), "--output", str(tmp_path / "pages"))
+        assert result.returncode == 0, result.stderr
+        assert sorted(p.name for p in (tmp_path / "pages").iterdir()) == ["page-001.png", "page-002.png"]
+
+    def test_refuses_a_preview_printed_before_its_pages_were_laid_out(self, tmp_path):
+        pymupdf = pytest.importorskip("pymupdf")
+        pdf = tmp_path / "early.pdf"
+        with pymupdf.open() as doc:
+            doc.new_page(width=612, height=792).insert_text((48, 80), "This preview was printed before its pages were laid out.")
+            doc.save(str(pdf))
+        result = run("render-pages.py", str(pdf), "--output", str(tmp_path / "pages"))
+        assert result.returncode == 1
+        assert "printed before its pages were laid out" in result.stderr
+        assert not (tmp_path / "pages").exists()

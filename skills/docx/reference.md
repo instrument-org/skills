@@ -81,3 +81,36 @@ options:
   --list-placeholders   Print all {{ variable }} names found in the template
                         and exit
 ```
+
+## `preview.py` Write an HTML page that lays out a Word document page by page, for the agent's browser to open, print and look at.
+
+```text
+usage: preview.py [-h] [--output OUTPUT] input
+
+Write an HTML page that lays out a .docx page by page for the browser to print
+and look at
+
+positional arguments:
+  input            Input .docx file
+
+options:
+  -h, --help       show this help message and exit
+  --output OUTPUT  HTML file to write (default: <input>.preview.html beside
+                   the document)
+```
+
+## `render-pages.py` Render the pages of a printed preview.py page to PNG images, refusing a print taken before the document was laid out.
+
+```text
+usage: render-pages.py [-h] [--output OUTPUT] [--dpi DPI] input
+
+Render the PDF printed from a preview.py page to one PNG per page
+
+positional arguments:
+  input            PDF printed from the preview page with agent-browser pdf
+
+options:
+  -h, --help       show this help message and exit
+  --output OUTPUT  Output directory (default: .)
+  --dpi DPI        Resolution (default: 110)
+```

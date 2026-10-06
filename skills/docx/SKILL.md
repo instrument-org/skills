@@ -9,7 +9,7 @@ Use `python-docx` and `docxtpl` directly for composed documents and custom edits
 
 ## Dependencies
 
-The app installs the locked `python-docx`, `docxtpl`, and Pillow dependencies when this skill is loaded. Run Python with `python`; do not repeat installation.
+The app installs the locked `python-docx`, `docxtpl`, Pillow, and PyMuPDF dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. Pages are laid out for review in the task's browser (`agent-browser`) by the same renderer Instrument shows Word files with.
 
 ## Choose an approach
 
@@ -40,7 +40,7 @@ section.left_margin = Inches(0.8)
 section.right_margin = Inches(0.8)
 
 normal = doc.styles["Normal"]
-normal.font.name = "Aptos"
+normal.font.name = "Arial"
 normal.font.size = Pt(10.5)
 
 title = doc.add_heading("Quarterly Review", level=0)
@@ -150,10 +150,21 @@ Keep each control tag in one Word run as required by `docxtpl`; Word can split v
 - Widths are constrained by the section margins. Word may reflow tables that exceed the usable page width.
 - A new section can change headers, footers, margins, and page orientation.
 - Page numbers and some advanced Word fields require lower-level XML. Preserve existing fields when editing a template unless the task requires rebuilding them.
+- Name fonts both Word and the preview have, such as Arial, Georgia, Verdana and Times New Roman. A font missing where the document is opened is substituted, Aptos on older Word included, and the preview substitutes it too, so line breaks and page breaks there are only exact for fonts this computer has.
 
 ## Quality gate
 
-Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. When LibreOffice or Word is available, render or open the result and inspect every page for clipping, awkward page breaks, table overflow, and missing glyphs. When neither is, open each image you generated at its own path and look at it: reopening the document proves a picture is present, never that it looks right. Say plainly when the document itself was not rendered.
+Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. Then look at every page:
+
+```bash
+python <docx-skill-path>/scripts/preview.py work/report.docx
+agent-browser open work/report.preview.html
+agent-browser wait --fn "document.body.dataset.ready || document.body.dataset.error"
+agent-browser pdf work/report.preview.pdf
+python <docx-skill-path>/scripts/render-pages.py work/report.preview.pdf --output work/report-pages
+```
+
+Read every page image and check for clipping, awkward page breaks, tables running past the margins, missing images, and missing glyphs. Fix the generator, rebuild, and look again. The preview needs a network connection to load its renderer; if `document.body.dataset.error` is set or the page never becomes ready, open each image you generated at its own path instead, and say plainly that the document itself was not rendered.
 
 ## Script reference
 
@@ -163,3 +174,5 @@ Use scripts for bounded convenience operations. Full options are in [`reference.
 - `edit.py`: Edit an existing Word document: add content, modify paragraphs, or do find-and-replace.
 - `extract-text.py`: Extract text from a Word document (.docx).
 - `fill-template.py`: Fill a .docx Jinja2 template using docxtpl -- supports {{ var }}, {% for %}, {% if %}.
+- `preview.py`: Write an HTML page that lays out a Word document page by page, for the agent's browser to open, print and look at.
+- `render-pages.py`: Render the pages of a printed preview.py page to PNG images, refusing a print taken before the document was laid out.
