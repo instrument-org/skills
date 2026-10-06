@@ -13,6 +13,11 @@ description: Generate a git commit message matching the Instrument Skills regist
 - **No conventional types.** Drop `feat:`/`fix:`/`refactor:`/`chore:` etc. Let the description imply the nature of the change.
 - **Description:** lowercase, no period, under ~72 chars. Start with a concrete verb and name the skill or capability affected, then the observable behavior: `add Apple Numbers support`, `document screenshot locations`, `generate skill reference files`.
 - **Standalone subject:** write a history label, not a sentence from the implementation story. Avoid starting with articles or pronouns; personification, metaphors, comparisons, and contrast clauses belong in the body. Prefer the skill behavior over an implementation detail unless that detail is the public contract.
+- **Plain verbs, not `draw`:** history since mid-2026 uses `draw` for icons, layout, rendering, and content alike; don't copy it. Pick the verb for what changed:
+  - An icon: `use <icon> for <thing>`, or `change <thing> icon to <icon>` for a swap: `use the starter's icon weight for wireframe cursors`.
+  - How something looks or is laid out: `show <thing> as <form>`, or name the property: `show wireframe marks on an overlay`, `make frames true size`.
+  - When or how it paints: `render`: `render a page from its first frame instead of holding it hidden`.
+  - Where its content comes from: `build`, `read`, or `load` from a source: `build a wireframe page from shell.html and main.html`.
 - **Check:** someone scanning `git log --oneline` should identify the skill and behavior without reading the diff or task. Rewrite the subject if they cannot.
 - **Body:** use a body for context, rationale, follow-on detail, or edge cases an agent will need later. Keep that detail out of the subject.
 - **Trailers:** a commit that makes a choice ends with decision trailers (below). Styling, copy, and mechanical commits carry none.
