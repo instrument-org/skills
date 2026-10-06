@@ -109,10 +109,10 @@ Then check the layout in your browser tool. `lib/probe.js` loads the page into h
 
 ```
 agent-browser open page.html
-agent-browser eval "$(cat <skill>/lib/probe.js)"
+agent-browser eval --stdin < <skill>/lib/probe.js
 ```
 
-Read the lines it returns and fix every FAIL, then run `page.mjs` again, reopen the page and run the probe again until it returns `pass`. Then `agent-browser screenshot page.png` and look at it. The page must sit in the task folder (or a folder the user granted) for the browser to open it. Another browser tool works the same way: open the file, evaluate `lib/probe.js` in it, and read what it returns. With no browser tool, the static check is the whole check: tell the user the layout is unchecked.
+Read the lines it returns and fix every FAIL, then run `page.mjs` again, reopen the page and run the probe again until it returns `pass`. Then `agent-browser screenshot page.png` and look at it. The page must sit in the task folder (or a folder the user granted) for the browser to open it. Pass the script on stdin as shown, not as an argument: a script given as an argument can be rewritten or cut by the shell or the tool before the page sees it. Another browser tool works the same way: open the file, evaluate `lib/probe.js` in it, and read what it returns. With no browser tool, the static check is the whole check: tell the user the layout is unchecked.
 
 ## 6. Rules every page keeps
 

@@ -2,7 +2,7 @@
 // agent's own browser tool, for example:
 //
 //   agent-browser open page.html
-//   agent-browser eval "$(cat <skill>/lib/probe.js)"
+//   agent-browser eval --stdin < <skill>/lib/probe.js
 //
 // It loads the page into hidden frames of its own at 1280x900 (light, then
 // dark), at the 1104x590 link preview and at a 390x844 phone, measures each,
