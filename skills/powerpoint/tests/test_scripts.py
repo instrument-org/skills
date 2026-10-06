@@ -278,3 +278,58 @@ class TestReplace:
         )
         assert "Updated" in all_text
         assert "Slide Two" not in all_text
+
+
+class TestPreview:
+    def test_writes_a_page_holding_the_deck_at_its_slide_size(self, sample_pptx, tmp_path):
+        out = tmp_path / "deck.preview.html"
+        result = run("preview.py", str(sample_pptx), "--output", str(out))
+        assert result.returncode == 0, result.stderr
+        summary = json.loads(result.stdout)
+        # python-pptx's default deck is 10 x 7.5 in, 960 x 720 px.
+        assert summary == {"preview": str(out), "slides": 2, "slideSize": [960, 720]}
+        page = out.read_text()
+        assert "@page { size: 960px 720px; margin: 0; }" in page
+        assert "@extend-ai/react-pptx@0.1.2" in page
+        import base64
+
+        assert base64.b64encode(sample_pptx.read_bytes()).decode() in page
+
+    def test_writes_beside_the_deck_by_default(self, sample_pptx, tmp_path):
+        deck = tmp_path / "pitch.pptx"
+        deck.write_bytes(sample_pptx.read_bytes())
+        assert run("preview.py", str(deck)).returncode == 0
+        assert (tmp_path / "pitch.preview.html").exists()
+
+
+class TestThumbnailFromPrintedPdf:
+    def test_grids_a_printed_preview_without_libreoffice(self, tmp_path):
+        fitz = pytest.importorskip("fitz")
+        pytest.importorskip("PIL")
+        pdf = tmp_path / "deck.preview.pdf"
+        with fitz.open() as doc:
+            for _ in range(3):
+                doc.new_page(width=960, height=540)
+            doc.save(str(pdf))
+        result = subprocess.run(
+            [sys.executable, str(SCRIPTS / "thumbnail.py"), str(pdf), "thumbs", "--width", "200"],
+            capture_output=True,
+            text=True,
+            cwd=tmp_path,
+            env={"PATH": ""},
+        )
+        assert result.returncode == 0, result.stderr
+        assert "Found 3 slide(s)" in result.stdout
+        assert (tmp_path / "thumbs.jpg").exists()
+
+    def test_refuses_a_preview_printed_before_its_slides_were_drawn(self, tmp_path):
+        fitz = pytest.importorskip("fitz")
+        pdf = tmp_path / "early.pdf"
+        with fitz.open() as doc:
+            page = doc.new_page(width=960, height=540)
+            page.insert_text((48, 80), "This preview was printed before its slides were drawn.")
+            doc.save(str(pdf))
+        result = run("thumbnail.py", str(pdf), str(tmp_path / "thumbs"))
+        assert result.returncode == 1
+        assert "printed before its slides were drawn" in result.stderr
+        assert not (tmp_path / "thumbs.jpg").exists()

@@ -5,11 +5,11 @@ description: "Read, create, and edit PowerPoint presentations (.pptx), including
 
 # PowerPoint
 
-Use `python-pptx` directly for composed presentations and custom edits. The bundled scripts are conveniences for extraction, inventory, replacement, quick text-only decks, and optional thumbnail rendering.
+Use `python-pptx` directly for composed presentations and custom edits. The bundled scripts are conveniences for extraction, inventory, replacement, quick text-only decks, and drawing the slides so you can look at them.
 
 ## Dependencies
 
-The app installs the locked `python-pptx`, Pillow, and PyMuPDF dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. LibreOffice is an optional system dependency used only for visual rendering.
+The app installs the locked `python-pptx`, Pillow, and PyMuPDF dependencies when this skill is loaded. Run Python with `python`; do not repeat installation. Slides are drawn for review in the task's browser (`agent-browser`) by the same renderer Instrument shows decks with; LibreOffice, when installed, is an alternative.
 
 ## Choose an approach
 
@@ -20,7 +20,7 @@ The app installs the locked `python-pptx`, Pillow, and PyMuPDF dependencies when
 | Create a quick text-only deck  | `create.py` is acceptable                                            |
 | Extract or inventory content   | Use `extract-text.py` or `inventory.py`                              |
 | Replace plain text across runs | Use `replace.py --find ... --replace ...`                            |
-| Render an overview             | Use `thumbnail.py` when LibreOffice is available                     |
+| Look at the slides             | `preview.py`, print with `agent-browser pdf`, then `thumbnail.py`    |
 
 ## Compose a slide
 
@@ -60,7 +60,7 @@ title_frame.clear()
 title_frame.margin_left = 0
 run = title_frame.paragraphs[0].add_run()
 run.text = "Quarterly Review"
-run.font.name = "Aptos Display"
+run.font.name = "Georgia"
 run.font.size = Pt(30)
 run.font.bold = True
 run.font.color.rgb = RGBColor(26, 31, 44)
@@ -153,18 +153,36 @@ prs.save(output)
 
 Assigning `shape.text` or clearing a text frame can erase run-level formatting. For existing designs, edit the smallest possible run or use the plain cross-run replacement script only when inheriting the first run's formatting is acceptable. Inventory JSON keys are shape positions in that exact deck, not durable identifiers across deck revisions.
 
+## Design a deck
+
+- One message per slide, written as its title: "East and North carried the quarter", not "Regional results".
+- One loud element per slide (the number, the chart, the claim) and everything else quieter in size and gray.
+- Titles sit at the same position, size and color on every content slide; vary the body layout across slides instead.
+- Figures go in native charts (`add_chart`) so they stay editable, with a title, data labels and colors from the deck's palette rather than the library default.
+- Body text at 14pt or more on a 13.33 in slide, 0.5 in clear of every edge, and no slide that is only a title and bullets when a chart, a number or a picture would carry it.
+
 ## Layout traps
 
 - Coordinates and sizes use English Metric Units; use `Inches` and `Pt` instead of unexplained integers.
 - Shapes are drawn in insertion order. Later shapes appear above earlier ones.
 - Slide layouts and placeholder indices depend on the presentation template.
-- PowerPoint may substitute fonts that are unavailable on the viewing machine.
+- Name fonts both PowerPoint and the preview have, such as Arial, Georgia, Verdana and Times New Roman. A font missing where the deck is opened is substituted, Aptos on older Office included, and the preview substitutes it too, so text fit there is only exact for fonts this computer has.
 - Text frames do not reliably shrink text to fit. Reserve enough height and inspect the rendered result.
 - Keep all shape bounds inside the slide and leave safe margins near each edge.
 
 ## Quality gate
 
-Reopen the output with `Presentation(...)` and verify slide count, dimensions, shape bounds, expected text, tables, charts, images, and notes. Run `inventory.py` and `extract-text.py`. When LibreOffice is available, render the deck with `thumbnail.py` and inspect every slide for clipping, overlap, tiny text, image distortion, and poor contrast. State when only structural verification was possible.
+Reopen the output with `Presentation(...)` and verify slide count, dimensions, shape bounds, expected text, tables, charts, images, and notes. Run `inventory.py` and `extract-text.py`. Then look at every slide:
+
+```bash
+python <powerpoint-skill-path>/scripts/preview.py work/deck.pptx
+agent-browser open work/deck.preview.html
+agent-browser wait --fn "document.body.dataset.ready || document.body.dataset.error"
+agent-browser pdf work/deck.preview.pdf
+python <powerpoint-skill-path>/scripts/thumbnail.py work/deck.preview.pdf work/deck-thumbs
+```
+
+Read the grid, and run `thumbnail.py --cols 1 --width 1200` on the same PDF for a slide that needs a closer look. Check for clipping, overlap, text running out of its box, tiny text, distorted images, poor contrast, and titles that move between slides. Fix the generator, rebuild, and look again. The preview needs a network connection to load its renderer; if `document.body.dataset.error` is set or the page never becomes ready, say that the deck was checked structurally only.
 
 ## Script reference
 
@@ -173,5 +191,6 @@ Use scripts for bounded convenience operations. Full options are in [`reference.
 - `create.py`: Create a PowerPoint presentation (.pptx) from a JSON slide definition.
 - `extract-text.py`: Extract text from a PowerPoint presentation (.pptx).
 - `inventory.py`: Inventory all text shapes in a .pptx file.
+- `preview.py`: Write an HTML page that draws every slide of a deck, for the agent's browser to open, print and look at.
 - `replace.py`: Replace text in a .pptx presentation using an inventory JSON.
-- `thumbnail.py`: Render a PowerPoint presentation as a thumbnail grid image.
+- `thumbnail.py`: Render a deck's slides as a thumbnail grid image.

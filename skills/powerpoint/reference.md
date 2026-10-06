@@ -48,6 +48,23 @@ options:
   --output OUTPUT  Save JSON to file (default: stdout)
 ```
 
+## `preview.py` Write an HTML page that draws every slide of a deck, for the agent's browser to open, print and look at.
+
+```text
+usage: preview.py [-h] [--output OUTPUT] input
+
+Write an HTML page that draws every slide of a .pptx for the browser to print
+and look at
+
+positional arguments:
+  input            Input .pptx file
+
+options:
+  -h, --help       show this help message and exit
+  --output OUTPUT  HTML file to write (default: <input>.preview.html beside
+                   the deck)
+```
+
 ## `replace.py` Replace text in a .pptx presentation using an inventory JSON.
 
 ```text
@@ -70,19 +87,22 @@ options:
                         Replacement text (simple mode)
 ```
 
-## `thumbnail.py` Render a PowerPoint presentation as a thumbnail grid image.
+## `thumbnail.py` Render a deck's slides as a thumbnail grid image.
 
 ```text
-usage: thumbnail.py [-h] [--cols COLS] [--dpi DPI] input [output_prefix]
+usage: thumbnail.py [-h] [--cols COLS] [--dpi DPI] [--width WIDTH]
+                    input [output_prefix]
 
-Render .pptx slides as a thumbnail grid
+Render a deck's slides as a thumbnail grid
 
 positional arguments:
-  input          Input .pptx file
+  input          The PDF printed from a preview.py page, or a .pptx when
+                 LibreOffice is installed
   output_prefix  Output filename prefix (default: thumbnails)
 
 options:
   -h, --help     show this help message and exit
   --cols COLS
   --dpi DPI
+  --width WIDTH  Width of each slide in pixels (default: 280)
 ```
