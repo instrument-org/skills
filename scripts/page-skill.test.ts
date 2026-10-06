@@ -24,9 +24,11 @@ const filesUnder = (dir: string): string[] =>
 
 // A skill runs inside the user's app. Starting a process from there (the
 // user's own browser above all) can raise an operating system permission
-// prompt in that app's name, and publishing a page is the reader's to do with
-// the page's own Share button. So nothing either page skill ships may start a
-// process or send anything over the network, in code or in a recipe.
+// prompt in that app's name, so nothing either page skill ships may start a
+// process. Nothing may send anything over the network either, except the
+// share scripts: some hosts cannot load the page's Share button or reach the
+// share endpoint from it, so publishing goes through share.mjs, share.py or the
+// curl recipe in references/sharing.md.
 const FORBIDDEN: [RegExp, string][] = [
   [/\bchild_process\b/, "child_process"],
   [
@@ -46,7 +48,9 @@ const FORBIDDEN: [RegExp, string][] = [
   ],
 ];
 
-describe("create-page and wireframe launch nothing and send nothing", () => {
+const SHARE = /(^|\/)(share\.(mjs|py)|references\/sharing\.md)$/;
+
+describe("create-page and wireframe launch nothing and send only through share", () => {
   const files = ["create-page", "wireframe"].flatMap((skill) =>
     filesUnder(join(SKILLS, skill)),
   );
@@ -59,12 +63,26 @@ describe("create-page and wireframe launch nothing and send nothing", () => {
     "%s",
     (_name, file) => {
       const text = readFileSync(file, "utf-8");
-      const found = FORBIDDEN.filter(([re]) => re.test(text)).map(
+      const rules = SHARE.test(file)
+        ? FORBIDDEN.filter(([, what]) => what !== "a network write")
+        : FORBIDDEN;
+      const found = rules.filter(([re]) => re.test(text)).map(
         ([re, what]) => `${what}: ${text.match(re)?.[0]}`,
       );
       expect(found).toEqual([]);
     },
   );
+});
+
+// The wireframe skill installs on its own, so it carries copies of
+// create-page's share scripts rather than a path into another skill. A fix
+// has to land in both.
+describe("wireframe's copies", () => {
+  it.each(["share.mjs", "share.py"])("%s matches create-page's", (file) => {
+    expect(readFileSync(join(SKILLS, "wireframe", file), "utf-8")).toBe(
+      readFileSync(join(SKILLS, "create-page", file), "utf-8"),
+    );
+  });
 });
 
 describe("page.mjs", () => {

@@ -9,7 +9,7 @@ const config: KnipConfig = {
   ignore: [
     // Scripts create-page and wireframe ship for an agent to run, or import
     // from a script of its own, in the consuming project: the page builder and
-    // its internals, and the kits' drawing libraries.
+    // its internals, the kits' drawing libraries, and the share scripts.
     // Nothing in this repo imports most of them, which is the point of them,
     // and neither skill carries a package.json for the workspace entry
     // patterns above to hang off.
