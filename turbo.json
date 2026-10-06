@@ -95,7 +95,6 @@
         "scripts/**",
         "skills/create-page/kits/*/scripts/**",
         "skills/create-page/lib/**",
-        "skills/*/share.*",
         "tools/**",
         "vitest.config.ts",
         "package.json"

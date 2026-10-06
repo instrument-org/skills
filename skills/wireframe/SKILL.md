@@ -18,7 +18,6 @@ When someone asks for a wireframe, a mockup, a layout sketch or "what would that
 - `new.mjs`: writes a new wireframe page from the two files below. Inside a git repository it names the repository in an `instrument:repo` meta, so a folder of wireframes from several products can be told apart.
 - `repo.mjs`: that name and that meta, for a project's own kit to call when it builds pages itself.
 - `shell.html`: the page shell: Studio's theme as Tailwind tokens, the compiled sheet, the pinned Tailwind browser build, the icon set, the share widget and its Share button. Frames are drawn in Tailwind's vocabulary, as are projects' own wireframe kits. Leave its `shell:start` ... `shell:end` regions alone.
-- `share.mjs` and `share.py`: publish a finished page to a link (below).
 - `main.html`: the title bar, the frame grid, the neutral kit of software pieces (`win`, `web`, `phone`, `panel`, `shell`, `navItem`, `group`, `btn`, `field`, `toggle`, `chip`, `grid`, `empty`, `bars`), the marks, the enlarged view, and the `states` array you fill.
 - `patterns.md`: the frame's two-element shape, sizes worth knowing, the three axes a set of states can vary along, marking without decorating, bars, and printing.
 
@@ -81,4 +80,4 @@ When the folder you work in, or one above it, has `.agents/wireframe-kit/KIT.md`
 
 ## Hand it over
 
-Open the page in whatever this environment offers and give the path. Where the reader cannot open a file from where they are, or asked for a link, publish it: `node <skill>/share.mjs page.html` (or `python <skill>/share.py page.html`) puts a copy at its own unlisted address, served for thirty days, and prints the link and a delete token; `--delete` takes it down. Otherwise offer that in one plain sentence ("Want me to put a private copy online? Only people you send the address to can open it, and it deletes itself in a month") and let them answer. Never publish a page carrying the reader's private figures or names without asking.
+Open the page in whatever this environment offers and give the path. Never publish it yourself: the page carries a Share button, and putting a copy online is the reader's choice, made there. When they ask for a link, tell them to press Share on the page: it puts a copy at its own unlisted address for thirty days.

@@ -15,17 +15,6 @@ import { repoName, tagRepo } from "../skills/wireframe/repo.mjs";
 
 const SKILLS = join(import.meta.dirname, "../skills");
 
-// The wireframe skill installs on its own, so it carries copies of
-// create-page's share scripts rather than a path into another skill. A fix
-// has to land in both.
-describe("wireframe's copies", () => {
-  it.each(["share.mjs", "share.py"])("%s matches create-page's", (file) => {
-    expect(readFileSync(join(SKILLS, "wireframe", file), "utf-8")).toBe(
-      readFileSync(join(SKILLS, "create-page", file), "utf-8"),
-    );
-  });
-});
-
 describe("page.mjs", () => {
   const PAGE = join(SKILLS, "create-page", "page.mjs");
   const run = promisify(execFile);
