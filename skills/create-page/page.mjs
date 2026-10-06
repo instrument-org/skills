@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // node <skill>/page.mjs page.html [more.html] --inputs <input files> request.md
-// Builds each page in place (stylesheet, fonts, behaviors), checks it in
-// Chrome, writes <name>.desktop.png, <name>.preview.png, <name>.phone.png.
+// Builds each page in place (stylesheet, fonts, behaviors) and checks what
+// the file itself shows; lib/probe.js checks layout in a browser tool.
 // Prints only FAIL lines and one closing line. Internals live in lib/.
 import { relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";

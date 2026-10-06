@@ -2,17 +2,16 @@
 //
 // Build: strips what an earlier run wrote, draws any data-device elements
 // (when the skill ships devices), and writes the foundation (fonts,
-// stylesheet, behaviors, share widget) into <head>. Check: file rules, then
-// Chrome at 1280x900 (light and dark), the 1104x590 link preview, and a
-// 390-wide phone. Prints only FAIL lines and one closing line.
-// Exit 0 pass, 1 FAIL, 2 bad command, 3 Chrome could not render (NOT checked).
+// stylesheet, behaviors, share widget) into <head>. Check: every rule that
+// can be read from the file itself, over a small parse of its HTML. What
+// only layout can show (overlaps, clipping, phone width and text size,
+// contrast, the first screen) is lib/probe.js, run in a browser.
+// Starts no process and opens no browser. Prints only FAIL lines and one
+// closing line. Exit 0 pass, 1 FAIL, 2 bad command.
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve, basename } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
-import { launch, ChromeError } from "./chrome.mjs";
-import { probe } from "./probe.mjs";
-import { spec } from "./spec.mjs";
+import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const CMD = process.env.PAGE_CMD || "node page.mjs";
@@ -23,9 +22,6 @@ export const LIMITS = {
   para: 60,
   above: 45,
   prose: 40,
-  firstDesk: 260,
-  firstPreview: 150,
-  tiny: 11,
 };
 const FEELS = ["calm", "urgent", "warm", "crew", "ledger", "festive"];
 const SHAPES = ["card", "read", "sheet", "wall"];
@@ -47,24 +43,6 @@ const MARK =
 const SHARE = '<script async src="https://tryinstrument.com/page.js"></script>';
 
 const FIX = {
-  overlap:
-    "give each label its own space: move one, wrap it, or shorten it; hiding it or shrinking it under 11px fails other rules",
-  clipped:
-    "let the box grow or the text wrap (drop the fixed width or height, nowrap, ellipsis, line-clamp), or shorten the words",
-  offscreen:
-    "find the fixed width, min-width or nowrap that pushes it out and make it fluid",
-  "svg-outside":
-    "move or shorten the label, or widen the viewBox so the label sits inside the drawing",
-  "leaves-box":
-    "shorten the label, break it into two lines, or put a number in the box and the name in a key beside the drawing",
-  covered: "move the dot or the label so both show",
-  tiny: "make it render at 11px or more on a 390px phone. Inside an SVG that scales down, put the words in HTML beside the drawing (a key or list), or give phones their own simpler version (.phone-only)",
-  contrast:
-    'color text with --ink, --ink-2 or --muted on --paper or --ground, and with --paper (SVG class="paper") on a colored fill; a fixed color or a faded opacity fails in one of the two themes',
-  hscroll:
-    "make that element fluid (max-width:100%, minmax(0,1fr), flex-wrap, no px min-width); overflow-x:hidden on body only cuts it off",
-  "scroller-drawing":
-    "a drawing must fit the phone: drop the min-width so it scales, and give phones a stacked or listed version of whatever is then too small",
   token:
     "use a token the stylesheet defines (--ink --ink-2 --muted --line --accent --good --warn --bad --c1..--c8 and their -wash) or define it in your <style>",
 };
@@ -131,15 +109,35 @@ function assemble(own, styles, css, js) {
 
 // ---------- text helpers ----------
 
+const ENTITIES = {
+  nbsp: " ",
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  lsquo: "‘",
+  rsquo: "'",
+  ldquo: "“",
+  rdquo: "”",
+  hellip: "…",
+  ndash: "–",
+  mdash: "—",
+  middot: "·",
+  times: "×",
+  minus: "−",
+  thinsp: " ",
+  ensp: " ",
+  emsp: " ",
+};
 const decode = (s) =>
-  s
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;|&rsquo;/g, "'")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n));
+  s.replace(/&(#x[\da-f]+|#\d+|[a-z]+\d*);/gi, (m, e) =>
+    e[0] === "#"
+      ? String.fromCodePoint(
+          e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : +e.slice(1),
+        )
+      : (ENTITIES[e] ?? m),
+  );
 const visibleText = (html) =>
   decode(
     html
@@ -449,154 +447,336 @@ function quoteChecks(quotes, inputs, push) {
   }
 }
 
-// ---------- in-page rules ----------
+// ---------- a small HTML parse ----------
 
-function pageRules({ desk, prev, deskSpec, prevSpec, phone, phoneSpec }, push) {
-  // Probe findings, FAIL rules only.
-  const merged = new Map(),
-    tiny = new Map();
-  for (const [label, res] of [
-    ["1280", desk],
-    ["1280 dark", prev.dark],
-    ["390", phone],
-  ]) {
-    for (const is of res.issues) {
-      if (is.rule === "tiny") {
-        const t = tiny.get(is.group) ?? { n: 0, min: 99, ex: [] };
-        t.n++;
-        t.min = Math.min(t.min, is.fs);
-        if (t.ex.length < 3 && !t.ex.includes(is.text)) t.ex.push(is.text);
-        tiny.set(is.group, t);
-        continue;
+// Enough of a parse to read the page the way a reader meets it: elements with
+// their attributes, text in document order, raw-text elements skipped whole.
+// Unclosed p, li, td, tr, dt, dd and option close the way browsers close them.
+const VOID = new Set(
+  "area base br col embed hr img input link meta param source track wbr".split(
+    " ",
+  ),
+);
+const RAW = new Set(["script", "style", "textarea", "title", "template"]);
+const CLOSES_P =
+  /^(address|article|aside|blockquote|details|div|dl|fieldset|figcaption|figure|footer|form|h[1-6]|header|hgroup|hr|main|menu|nav|ol|p|pre|section|table|ul)$/;
+const IMPLIED = {
+  li: ["li"],
+  dt: ["dt", "dd"],
+  dd: ["dt", "dd"],
+  td: ["td", "th"],
+  th: ["td", "th"],
+  tr: ["tr", "td", "th"],
+  option: ["option"],
+};
+const SCOPE = /^(ul|ol|dl|table|tbody|thead|tfoot|select|datalist)$/;
+
+function parse(html) {
+  let n = 0;
+  const root = { tag: "#root", attrs: {}, kids: [], parent: null, i: n++ };
+  let at = root;
+  const close = (tag) => {
+    for (let e = at; e && e !== root; e = e.parent)
+      if (e.tag === tag) {
+        at = e.parent;
+        return;
       }
-      const rule =
-        is.rule === "scroller"
-          ? is.kind === "drawing"
-            ? "scroller-drawing"
-            : null
-          : is.rule;
-      if (!rule || !FIX[rule]) continue;
-      if (label === "1280 dark" && rule !== "contrast") continue;
-      const key = `${rule}|${is.where}|${is.text}|${is.other ?? ""}`;
-      if (!merged.has(key)) merged.set(key, { rule, is, at: [] });
-      if (!merged.get(key).at.includes(label)) merged.get(key).at.push(label);
+  };
+  const re =
+    /<!--[\s\S]*?-->|<![^>]*>|<(\/?)([a-zA-Z][\w:-]*)((?:\s+[^\s=/>"']+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?)*)\s*(\/?)>/g;
+  let last = 0;
+  const text = (t) => {
+    if (t) at.kids.push({ text: decode(t), parent: at, i: n++ });
+  };
+  for (let m; (m = re.exec(html));) {
+    text(html.slice(last, m.index));
+    last = re.lastIndex;
+    if (!m[2]) continue;
+    const tag = m[2].toLowerCase();
+    if (m[1]) {
+      close(tag);
+      continue;
     }
+    if (at.tag === "p" && CLOSES_P.test(tag)) at = at.parent;
+    for (const t of IMPLIED[tag] ?? [])
+      for (let e = at; e && e !== root && !SCOPE.test(e.tag); e = e.parent)
+        if (e.tag === t) {
+          at = e.parent;
+          break;
+        }
+    const attrs = {};
+    for (const a of m[3].matchAll(
+      /([^\s=/>"']+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g,
+    ))
+      attrs[a[1].toLowerCase()] = decode(a[2] ?? a[3] ?? a[4] ?? "");
+    const el = { tag, attrs, kids: [], parent: at, i: n++ };
+    at.kids.push(el);
+    if (RAW.has(tag)) {
+      const end = html.slice(last).search(new RegExp(`</${tag}\\s*>`, "i"));
+      const body = end < 0 ? html.slice(last) : html.slice(last, last + end);
+      el.kids.push({ text: body, parent: el, i: n++, raw: true });
+      last = end < 0 ? html.length : last + end;
+      re.lastIndex = last;
+    } else if (!VOID.has(tag) && !m[4]) at = el;
   }
-  for (const { rule, is, at } of merged.values())
-    push(
-      rule,
-      `${is.where}${is.text ? ` "${is.text}"` : ""}`,
-      `${is.measure} at ${at.join(" and ")}`,
-      FIX[rule],
-    );
-  for (const [g, t] of tiny)
-    push(
-      "tiny",
-      g,
-      `${t.n} text(s) under ${LIMITS.tiny}px at 390 (smallest ${t.min.toFixed(1)}px): ${t.ex.map((x) => `"${x}"`).join(", ")}`,
-      FIX.tiny,
-    );
-  for (const t of desk.tokens || [])
-    push(
-      "token",
-      `var(${t})`,
-      "this custom property is defined nowhere",
-      FIX.token,
-    );
+  text(html.slice(last));
+  return root;
+}
 
-  // Headline.
-  const h1 = deskSpec.h1;
-  if (h1 && h1.words > LIMITS.h1)
+const all = (node, out = []) => {
+  for (const k of node.kids ?? []) {
+    out.push(k);
+    all(k, out);
+  }
+  return out;
+};
+const textOf = (node, skip = () => false) =>
+  node.text !== undefined
+    ? node.raw
+      ? ""
+      : node.text
+    : skip(node)
+      ? " "
+      : (node.kids ?? []).map((k) => textOf(k, skip)).join("");
+const closest = (node, test) => {
+  for (let e = node; e && e.tag !== "#root"; e = e.parent)
+    if (e.tag && test(e)) return e;
+  return null;
+};
+const classes = (el) => (el.attrs?.class ?? "").split(/\s+/);
+const hasClass = (el, c) => classes(el).includes(c);
+const where = (el) => {
+  const parts = [];
+  for (let e = el; e && e.tag !== "#root" && e.tag !== "body"; e = e.parent) {
+    if (parts.length >= 3) break;
+    if (e.attrs.id) {
+      parts.unshift("#" + e.attrs.id);
+      break;
+    }
+    const cls = classes(e).filter(Boolean).slice(0, 2);
+    parts.unshift(e.tag + (cls.length ? "." + cls.join(".") : ""));
+  }
+  return parts.join(" > ") || el.tag;
+};
+const clip = (t, n) => t.replace(/\s+/g, " ").trim().slice(0, n);
+
+// Laid out inline by default, so their text belongs to the block around them.
+const INLINE = new Set(
+  "a abbr b bdi bdo br cite code data del dfn em i ins kbd label mark q s samp small span strong sub sup time u var wbr".split(
+    " ",
+  ),
+);
+// Text a reader never sees as prose: code, drawings, things marked hidden.
+const SKIP = (el) =>
+  /^(script|style|template|noscript|svg|pre|code|head)$/.test(el.tag) ||
+  el.attrs["aria-hidden"] === "true";
+// Not on the first screens at 1280: hidden, folded away, or for another medium.
+const OFFSCREEN = (el) =>
+  "hidden" in el.attrs ||
+  hasClass(el, "print-only") ||
+  hasClass(el, "phone-only") ||
+  (el.tag !== "summary" &&
+    el.parent?.tag === "details" &&
+    !("open" in el.parent.attrs));
+
+// What the page says, read from the file: the headline, the hero, every text
+// block in document order, drawings, quotes and device guards.
+function readPage(own) {
+  const root = parse(own);
+  const nodes = all(root);
+  const els = nodes.filter((x) => x.tag);
+  const body = els.find((e) => e.tag === "body") ?? root;
+  const h1 = els.find((e) => e.tag === "h1");
+  const hero = els.find(
+    (e) =>
+      (hasClass(e, "hero") || "data-hero" in e.attrs) && !closest(e, OFFSCREEN),
+  );
+  const blocks = new Map();
+  for (const t of nodes) {
+    if (t.text === undefined || t.raw || !t.text.trim()) continue;
+    if (closest(t.parent, SKIP)) continue;
+    let b = t.parent;
+    while (b && b !== body && b.tag !== "#root" && INLINE.has(b.tag))
+      b = b.parent;
+    if (!b || b === body || b.tag === "#root") continue;
+    if (!blocks.has(b)) blocks.set(b, { el: b, i: t.i, text: "" });
+    blocks.get(b).text += t.text;
+  }
+  const words = (b) => wordsOf(b.text);
+  const list = [...blocks.values()].map((b) => {
+    const w = words(b);
+    const heading = /^h[1-6]$/.test(b.el.tag);
+    return {
+      ...b,
+      words: w,
+      heading,
+      prose: !heading && (/^(li|td)$/.test(b.el.tag) ? w >= 30 : w >= 15),
+      offscreen: !!closest(b.el, OFFSCREEN),
+      footer: !!closest(b.el, (e) => e.tag === "footer"),
+      inHero: !!(hero && closest(b.el, (e) => e === hero)),
+    };
+  });
+  const drawings = els.filter(
+    (e) =>
+      /^(svg|img|canvas|video|iframe)$/.test(e.tag) &&
+      !closest(e.parent, (a) => a.tag === "svg") &&
+      !closest(e, OFFSCREEN) &&
+      // An icon, not a drawing.
+      !(Number(e.attrs.width) < 40 || Number(e.attrs.height) < 24),
+  );
+  // Words before the hero starts: every text node ahead of it in the file.
+  let above = 0,
+    aboveText = [];
+  if (hero && !(h1 && closest(h1, (e) => e === hero)))
+    for (const t of nodes) {
+      if (t.i >= hero.i) break;
+      if (t.text === undefined || t.raw || !t.text.trim()) continue;
+      if (closest(t.parent, (e) => SKIP(e) || OFFSCREEN(e))) continue;
+      above += wordsOf(t.text);
+      aboveText.push(clip(t.text, 40));
+    }
+  const quotes = els
+    .filter((e) => /^(blockquote|q)$/.test(e.tag) || "data-quote" in e.attrs)
+    .filter(
+      (q) =>
+        !closest(
+          q.parent,
+          (a) => /^(blockquote|q)$/.test(a.tag) || "data-quote" in a.attrs,
+        ),
+    )
+    .map((q) => {
+      const credit = (e) =>
+        /^(cite|footer|figcaption|small)$/.test(e.tag) ||
+        hasClass(e, "who") ||
+        "data-src-label" in e.attrs;
+      const inner = all(q).find((e) => e.tag === "cite");
+      const fig = closest(q, (e) => e.tag === "figure");
+      const figCite = fig
+        ? all(fig).find(
+            (e) =>
+              e.tag === "cite" && closest(e, (a) => a.tag === "figcaption"),
+          )
+        : null;
+      return {
+        where: where(q),
+        text: clip(textOf(q, credit), 4000),
+        src: clip(
+          q.attrs["data-src"] ||
+            (inner && textOf(inner)) ||
+            (figCite && textOf(figCite)) ||
+            "",
+          200,
+        ),
+        device: !!closest(q, (e) => "data-device" in e.attrs),
+      };
+    })
+    .filter((q) => q.text);
+  const dvFails = els
+    .filter((e) => "data-dv-fail" in e.attrs)
+    .map((f) => {
+      const host = closest(f, (e) => "data-device" in e.attrs);
+      return {
+        device: host ? host.attrs["data-device"] : "?",
+        where: where(host ?? f),
+        msg: f.attrs["data-dv-fail"],
+      };
+    });
+  return {
+    h1: h1 && clip(textOf(h1, SKIP), 160),
+    hero,
+    heroWhere: hero && where(hero),
+    blocks: list,
+    drawings,
+    above,
+    aboveText: aboveText.join(" / ").slice(0, 120),
+    quotes,
+    dvFails,
+  };
+}
+
+// Prose share, approximated from the file. What matters is how much of the
+// first two 1280x900 screens is prose; without layout, every block counts its
+// words (a heading twice, for its size) and each drawing counts as 150 words
+// of non-prose, about what a half-screen chart displaces at reading width, in
+// file order until 500 words' worth, about two screens. The hero counts as at
+// least one drawing, since a script often draws it from data at load. Prose
+// is a block of 15+ words, or 30+ in a list item or a table cell.
+const SCREENS = 500,
+  DRAWING = 150;
+function proseShare(page) {
+  const inHero = (el) => !!(page.hero && closest(el, (e) => e === page.hero));
+  let hero = 0;
+  const items = [
+    ...page.blocks
+      .filter((b) => !b.offscreen && !b.footer)
+      .map((b) => ({
+        el: b.el,
+        i: b.i,
+        units: b.heading ? 2 * b.words : b.words,
+        prose: b.prose,
+      })),
+    ...page.drawings.map((d) => ({ el: d, i: d.i, units: DRAWING })),
+  ].filter((it) => !(inHero(it.el) && (hero += it.units)));
+  if (page.hero)
+    items.push({
+      i: page.hero.i,
+      units: Math.max(DRAWING, hero),
+      prose: false,
+    });
+  items.sort((a, b) => a.i - b.i);
+  let total = 0,
+    prose = 0;
+  for (const it of items) {
+    if (total >= SCREENS) break;
+    const u = Math.min(it.units, SCREENS - total);
+    total += u;
+    if (it.prose) prose += u;
+  }
+  return total ? Math.round((100 * prose) / total) : 0;
+}
+
+// ---------- page rules read from the file ----------
+
+function pageRules(page, push) {
+  if (page.h1 && wordsOf(page.h1) > LIMITS.h1)
     push(
       "long-headline",
-      `h1 "${h1.text}"`,
-      `${h1.words} words`,
+      `h1 "${page.h1}"`,
+      `${wordsOf(page.h1)} words`,
       `say the answer in ${LIMITS.h1} words or fewer; move the rest into the lede or the hero`,
     );
-
-  // First screen and link preview: the headline plus the hero.
-  for (const [name, s, need, what] of [
-    ["first-screen", deskSpec, LIMITS.firstDesk, "the 1280x900 first screen"],
-    ["preview", prevSpec, LIMITS.firstPreview, "the 1104x590 link preview"],
-  ]) {
-    if (!s.h1) continue;
-    const miss = [];
-    if (s.h1.bottom > s.H) miss.push(`the h1 ends at y=${s.h1.bottom}`);
-    if (!s.hero) continue;
-    const vis = Math.max(
-      0,
-      Math.min(s.hero.bottom, s.H) - Math.max(s.hero.top, 0),
-    );
-    if (!s.hero.containsH1 && vis < Math.min(need, s.hero.height))
-      miss.push(
-        `only ${vis}px of the hero (${s.hero.where}, starts at y=${s.hero.top}) shows`,
-      );
-    if (miss.length)
-      push(
-        name,
-        what,
-        miss.join("; "),
-        `shorten the header (kicker, a headline of ${LIMITS.h1} words or fewer, a lede of one or two short sentences) and put the hero right after it, or make the hero itself shorter at the top`,
-      );
-  }
-  if (!deskSpec.hero)
+  if (!page.hero)
     push(
       "no-hero",
       "the page",
       'nothing is marked class="hero"',
       'mark the one thing the page is built around with class="hero"; it must show in the first screen',
     );
-  if (deskSpec.aboveHero > LIMITS.above)
+  if (page.above > LIMITS.above)
     push(
       "header-words",
       "above the hero",
-      `${deskSpec.aboveHero} words before the hero starts ("${deskSpec.aboveHeroText}")`,
+      `${page.above} words before the hero starts ("${page.aboveText}")`,
       `keep what comes before the hero to ${LIMITS.above} words: a kicker, the headline, one short lede; the rest goes below the hero`,
     );
-
-  // Paragraphs and prose share.
-  const long = deskSpec.blocks
+  for (const b of page.blocks
     .filter((b) => !b.heading && b.words > LIMITS.para)
-    .sort((a, b) => b.words - a.words);
-  for (const b of long)
+    .sort((a, b) => b.words - a.words))
     push(
       "long-paragraph",
-      `${b.where} "${b.text}"`,
+      `${where(b.el)} "${clip(b.text, 70)}"`,
       `${b.words} words`,
       `split it, cut it to ${LIMITS.para} words or fewer, or turn it into something seen: a list, a table, a labeled drawing`,
     );
-  if (deskSpec.share && deskSpec.share.pct > LIMITS.prose)
+  const pct = proseShare(page);
+  if (pct > LIMITS.prose)
     push(
       "prose-heavy",
-      "the first two screens (y 0..1800 at 1280)",
-      `prose (blocks of 15+ words) is ${deskSpec.share.pct}% of what is shown`,
+      "the first two screens",
+      `prose (blocks of 15+ words) is about ${pct}% of what comes first, counting words, with a drawing as 150`,
       `bring it under ${LIMITS.prose}%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below or into one <details>`,
     );
-
-  for (const [label, sp] of [
-    ["1280", deskSpec],
-    ["390", phoneSpec],
-  ])
-    for (const x of (sp.spills || []).slice(0, 4))
-      push(
-        "spills",
-        `${x.where} "${x.text}"`,
-        `runs ${x.by}px outside its box (${x.box}) at ${label}`,
-        "let it wrap or set it smaller so it fits its box (a long figure in a narrow card is the usual cause), or give the box more width",
-      );
-  if ((deskSpec.bigFigures || []).length > 2)
-    push(
-      "figure-wall",
-      "the first two screens",
-      `${deskSpec.bigFigures.length} figures set big: ${deskSpec.bigFigures
-        .slice(0, 5)
-        .map((t) => `"${t}"`)
-        .join(", ")}`,
-      "a row of big numbers is a dashboard, not an answer: keep at most two big figures and show the comparison they make as a chart, bars on one scale, or a short table",
-    );
-
-  // Devices' own truth guards.
-  for (const f of deskSpec.dvFails)
+  for (const f of page.dvFails)
     push(
       "device-guard",
       `${f.where} (${f.device})`,
@@ -607,7 +787,7 @@ function pageRules({ desk, prev, deskSpec, prevSpec, phone, phoneSpec }, push) {
 
 // ---------- report ----------
 
-function report(file, fails, shots) {
+function report(file, fails) {
   const out = [];
   const per = new Map();
   for (const f of fails) {
@@ -617,14 +797,13 @@ function report(file, fails, shots) {
   }
   for (const [r, n] of per)
     if (n > 6) out.push(`FAIL ${r}: ${n - 6} more like the above -> same fix`);
-  const pics = shots.length ? ` Pictures: ${shots.join(", ")}.` : "";
   if (fails.length)
     out.push(
-      `${basename(file)}: ${fails.length} FAIL. Fix each by fixing what it names, then run again.${pics}`,
+      `${basename(file)}: ${fails.length} FAIL. Fix each by fixing what it names, then run again.`,
     );
   else
     out.push(
-      `${basename(file)}: pass.${pics} If you can view images, look at the preview and phone pictures; if you cannot, you are done (never decode them with a script).`,
+      `${basename(file)}: pass, as far as the file shows. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5).`,
     );
   console.log(out.join("\n"));
 }
@@ -634,13 +813,11 @@ function report(file, fails, shots) {
 export async function main(argv, { prerender = null, cmd } = {}) {
   const files = [],
     inputFiles = [];
-  let timeoutS = 60;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--inputs")
       while (argv[i + 1] && !argv[i + 1].startsWith("--"))
         inputFiles.push(argv[++i]);
-    else if (a === "--timeout") timeoutS = Number(argv[++i]) || timeoutS;
     else if (a.startsWith("--")) {
       console.log(`unknown flag ${a}`);
       return 2;
@@ -667,8 +844,7 @@ export async function main(argv, { prerender = null, cmd } = {}) {
   const css = readFileSync(join(here, "foundation.css"), "utf8");
   const js = readFileSync(join(here, "foundation.js"), "utf8");
 
-  // Build every file first, so the pages are usable even if Chrome fails.
-  const built = [];
+  let exit = 0;
   for (const f of files) {
     const path = resolve(f);
     const fails = [];
@@ -685,129 +861,29 @@ export async function main(argv, { prerender = null, cmd } = {}) {
       own = r.html;
       styles = r.styles;
     }
-    const html = assemble(own, styles, css, js);
-    writeFileSync(path, html);
-    const st = fileChecks(own0, push, inputText);
+    writeFileSync(path, assemble(own, styles, css, js));
+    fileChecks(own0, push, inputText);
+    const page = readPage(own);
+    pageRules(page, push);
+    quoteChecks(page.quotes, inputs, push);
+    // A token used and declared nowhere, unless a script names it (and so may set it).
     const defined = new Set(
       [...(css + own).matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]),
     );
-    const maybe = [
-      ...new Set([...own0.matchAll(/var\((--[\w-]+)\)/g)].map((m) => m[1])),
-    ].filter((t) => !defined.has(t));
-    built.push({ path, fails, push, st, maybe });
-  }
-
-  let chrome = null;
-  const timer = setTimeout(
-    () => {
-      console.log(
-        `FAIL chrome-timeout: Chrome did not finish within ${timeoutS}s -> the page is built but NOT checked. Run the command once more; if it times out again, tell the user plainly that the page is unchecked.`,
-      );
-      chrome?.close();
-      process.exit(3);
-    },
-    timeoutS * 1000 * files.length,
-  );
-  timer.unref();
-  try {
-    chrome = await launch();
-  } catch (e) {
-    for (const b of built)
-      for (const f of b.fails)
-        console.log(`FAIL ${f.rule}: ${f.where}: ${f.measure} -> ${f.fix}`);
-    console.log(
-      `FAIL chrome: ${e instanceof ChromeError ? "" : "unexpected error: "}${e.message} -> the layout, first-screen, phone and quote checks did NOT run, so the page is NOT checked. If Chrome is installed elsewhere, set CHROME=/path/to/chrome and rerun; if you cannot, tell the user plainly that the page is unchecked.`,
-    );
-    return 3;
-  }
-  let exit = 0;
-  try {
-    for (const b of built) {
-      const P = chrome.page,
-        url = pathToFileURL(b.path).href,
-        stem = b.path.replace(/\.html?$/i, "");
-      const runProbe = (o) =>
-        P.evaluate(`(${probe.toString()})(${JSON.stringify(o)})`, 30000);
-      const runSpec = (o) =>
-        P.evaluate(`(${spec.toString()})(${JSON.stringify(o)})`, 30000);
-      const frame = () =>
-        P.evaluate(
-          "new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))",
+    const used = [...own0.matchAll(/var\((--[\w-]+)\)/g)].map((m) => m[1]);
+    for (const t of new Set(used))
+      if (
+        !defined.has(t) &&
+        own0.split(t).length - 1 === used.filter((u) => u === t).length
+      )
+        push(
+          "token",
+          `var(${t})`,
+          "this custom property is defined nowhere",
+          FIX.token,
         );
-      const shots = [];
-      await P.viewport(1280, 900);
-      await P.navigate(url);
-      const desk = await runProbe({
-        collect: true,
-        desktop: true,
-        contrast: true,
-        tokens: b.maybe,
-      });
-      const deskSpec = await runSpec({ H: 900 });
-      const fullH = Math.min(desk.docH, 4000);
-      await P.viewport(1280, fullH);
-      await frame();
-      writeFileSync(
-        `${stem}.desktop.png`,
-        await P.screenshot({ width: 1280, height: fullH }),
-      );
-      shots.push(`${basename(stem)}.desktop.png`);
-      await P.viewport(1280, 900, { dark: true });
-      await frame();
-      // Let color transitions on a theme change finish, or contrast is read mid-fade.
-      await new Promise((r) => setTimeout(r, 600));
-      const dark = await runProbe({ contrast: true });
-      await P.viewport(1104, 590);
-      await P.navigate(url);
-      const prevSpec = await runSpec({ H: 590 });
-      writeFileSync(
-        `${stem}.preview.png`,
-        await P.screenshot({ width: 1104, height: 590 }),
-      );
-      shots.push(`${basename(stem)}.preview.png`);
-      await P.viewport(390, 844, { mobile: true });
-      await P.navigate(url);
-      const phone = await runProbe({
-        collect: false,
-        phone: true,
-        tiny: LIMITS.tiny,
-      });
-      const phoneSpec = await runSpec({ H: 844 });
-      const ph = Math.min(phone.docH, 5000);
-      if (ph !== 844) await P.viewport(390, ph, { mobile: true });
-      await frame();
-      writeFileSync(
-        `${stem}.phone.png`,
-        await P.screenshot({ width: 390, height: ph }),
-      );
-      shots.push(`${basename(stem)}.phone.png`);
-      pageRules(
-        { desk, prev: { dark }, deskSpec, prevSpec, phone, phoneSpec },
-        b.push,
-      );
-      quoteChecks(deskSpec.quotes, inputs, b.push);
-      if (process.env.PAGE_DEBUG)
-        console.log(
-          JSON.stringify({
-            h1: deskSpec.h1,
-            hero: deskSpec.hero,
-            prevHero: prevSpec.hero,
-            prevH1: prevSpec.h1,
-            share: deskSpec.share,
-            above: deskSpec.aboveHero,
-          }),
-        );
-      report(b.path, b.fails, shots);
-      if (b.fails.length) exit = 1;
-    }
-  } catch (e) {
-    console.log(
-      `FAIL chrome: ${e.message} -> the page is NOT checked. Run once more; if it fails again, tell the user plainly that the page is unchecked and why.`,
-    );
-    exit = 3;
-  } finally {
-    chrome.close();
-    clearTimeout(timer);
+    report(path, fails);
+    if (fails.length) exit = 1;
   }
   return exit;
 }

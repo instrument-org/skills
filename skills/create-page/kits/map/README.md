@@ -52,7 +52,7 @@ Five cheap eats in Manhattan, measured from a hotel at Union Square.
 
 4. When pins mean two things (walkable or not), give the others `data-kind="far"`, keep the legend, and add `.pin.far span, #places .num.far { background: var(--gray-500); color: var(--paper); }` with the pin's class set from `p.el.dataset.kind`. When all pins are one kind, delete the legend.
 5. Write the sources as a short list: geocoder and date, how minutes were computed, what is not stated (hours, prices), the map credit.
-6. Run `page.mjs`, fix every FAIL, and look at the desktop and phone pictures. To see the offline drawing, copy the page with the MapLibre script URL broken and check that copy too.
+6. Build and check it as SKILL.md step 5 says (`page.mjs`, then `lib/probe.js` in your browser), fix every FAIL, and look at the page. To see the offline drawing, copy the page with the MapLibre script URL broken and check that copy too.
 
 ## Rules that make it work
 

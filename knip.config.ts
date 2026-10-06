@@ -14,8 +14,10 @@ const config: KnipConfig = {
     // and neither skill carries a package.json for the workspace entry
     // patterns above to hang off.
     "skills/create-page/**/*.mjs",
-    // The stylesheet and behaviors page.mjs reads as files and writes into a page.
+    // The stylesheet and behaviors page.mjs reads as files and writes into a
+    // page, and the layout probe an agent's browser tool evaluates.
     "skills/create-page/lib/foundation.*",
+    "skills/create-page/lib/probe.js",
     "skills/wireframe/*.mjs",
   ],
   ignoreBinaries: [

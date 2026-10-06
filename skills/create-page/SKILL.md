@@ -1,13 +1,13 @@
 ---
 name: create-page
-description: "Use when an answer is longer than a few paragraphs, better seen than read, or will be shared: a plan, comparison, pick, steps, timeline, figures, map, board, or small tool. Makes one self-contained HTML page that leads with the point, checked in Chrome."
+description: "Use when an answer is longer than a few paragraphs, better seen than read, or will be shared: a plan, comparison, pick, steps, timeline, figures, map, board, or small tool. Makes one self-contained HTML page that leads with the point, and checks it."
 ---
 
 # Create page
 
 You write one HTML file by hand: plain elements, inline SVG, a little script where it helps the reader. A stylesheet you never read makes plain HTML look like the house; two attributes on `<html>` set its shape and feel. Your job is what no stylesheet can do: find the point, then show it. There are no page types to pick from: every page is designed for its reader, from the method below, the recipes, and a kit when the page needs one.
 
-`<skill>` below is the full path to this skill's folder. Run commands from the task folder. Never open `lib/`: it is internals, and the command prints all you need.
+`<skill>` below is the full path to this skill's folder. Run commands from the task folder. Never open `lib/`: it is internals, and the commands print all you need.
 
 ## 1. Analyze before you design
 
@@ -101,9 +101,18 @@ Save the user's request word for word as `request.md`, and each source you resea
 node <skill>/page.mjs page.html --inputs <every input file> request.md
 ```
 
-It adds the stylesheet, fonts and behaviors, renders the page in Chrome (1280x900, the 1104x590 link preview, dark mode, a 390px phone), prints one `FAIL rule: where: measurement -> fix` line per problem, and writes `page.desktop.png`, `page.preview.png` and `page.phone.png`. It measures what the rules above ask: headline length, the hero in the first screen, prose, overlaps and clipping, phone text, contrast in both themes, quotes against the inputs, weekdays against dates, allowed hosts.
+It adds the stylesheet, fonts and behaviors, and checks what the file itself shows: headline and title length, words before the hero, paragraph length, how much of the top is prose, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, em dashes and the direction comment. It prints one `FAIL rule: where: measurement -> fix` line per problem. It starts nothing and writes nothing but the page.
 
-It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`. Then look at the preview and phone pictures if you can view images. If it says Chrome could not render, set `CHROME=/path/to/chrome` if you know one, or tell the user the page is unchecked.
+It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`.
+
+Then check the layout in your browser tool. `lib/probe.js` loads the page into hidden frames at 1280x900 in light and dark, at the 1104x590 link preview and on a 390px phone, and returns FAIL lines for overlaps, clipping, sideways scroll, phone text under 11px, contrast in both themes, the headline and hero in the first screen, and text spilling out of its box. It leaves the window as it found it.
+
+```
+agent-browser open page.html
+agent-browser eval "$(cat <skill>/lib/probe.js)"
+```
+
+Read the lines it returns and fix every FAIL, then run `page.mjs` again, reopen the page and run the probe again until it returns `pass`. Then `agent-browser screenshot page.png` and look at it. The page must sit in the task folder (or a folder the user granted) for the browser to open it. Another browser tool works the same way: open the file, evaluate `lib/probe.js` in it, and read what it returns. With no browser tool, the static check is the whole check: tell the user the layout is unchecked.
 
 ## 6. Rules every page keeps
 

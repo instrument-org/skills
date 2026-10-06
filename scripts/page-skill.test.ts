@@ -1,12 +1,16 @@
+import { execFile } from "node:child_process";
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   type PathLike,
+  readdirSync,
   readFileSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
 import { findChrome } from "../skills/create-page/lib/chrome.mjs";
 import { repoName, tagRepo } from "../skills/wireframe/repo.mjs";
@@ -148,6 +152,70 @@ describe("wireframe's copies", () => {
     expect(readFileSync(join(SKILLS, "wireframe", "chrome.mjs"), "utf-8")).toBe(
       readFileSync(join(SKILLS, "create-page", "lib", "chrome.mjs"), "utf-8"),
     );
+  });
+});
+
+describe("page.mjs", () => {
+  const PAGE = join(SKILLS, "create-page", "page.mjs");
+  const run = promisify(execFile);
+  const page = (body: string) => `<!doctype html>
+<!-- direction: reader="parents" point="the late bus costs less" shape=read feel=calm hero="two bars" -->
+<html lang="en" data-shape="read" data-feel="calm">
+<head><title>The late bus costs less</title><meta name="description" content="The 4:10 bus is $12 cheaper per child than the 3:30 bus."></head>
+<body>${body}</body></html>`;
+  const check = async (
+    body: string,
+    inputs = "The quote says $48 and $36.",
+  ) => {
+    const dir = mkdtempSync(join(tmpdir(), "page-mjs-"));
+    writeFileSync(join(dir, "page.html"), page(body));
+    writeFileSync(join(dir, "request.md"), inputs);
+    const result = await run(
+      "node",
+      [PAGE, "page.html", "--inputs", "request.md"],
+      { cwd: dir },
+    ).catch((e: { stdout: string; code: number }) => e);
+    return {
+      code: "code" in result ? result.code : 0,
+      stdout: result.stdout.trim(),
+      files: readdirSync(dir).sort(),
+      built: readFileSync(join(dir, "page.html"), "utf-8"),
+    };
+  };
+
+  it("builds a page in place and writes nothing beside it", async () => {
+    const result = await check(
+      `<header><h1>The late bus costs less</h1></header><section class="hero"><svg viewBox="0 0 10 10" width="400" height="200"></svg></section>`,
+    );
+    expect(result.code).toBe(0);
+    expect(result.files).toEqual(["page.html", "request.md"]);
+    expect(result.built).toContain("<!-- foundation:start");
+    expect(result.built).toContain("__instrumentSnap(document.currentScript)");
+    expect(result.stdout).toMatchInlineSnapshot(
+      `"page.html: pass, as far as the file shows. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
+    );
+    expect(existsSync(join(SKILLS, "create-page", "lib", "probe.js"))).toBe(
+      true,
+    );
+  });
+
+  it("reads the reading rules from the file", async () => {
+    const long = Array.from({ length: 64 }, () => "bus").join(" ");
+    const result = await check(
+      `<header><p>${long}</p><h1>One two three four five six seven eight nine ten eleven</h1></header>
+<section><p>${long}</p><blockquote>&ldquo;We ship on Friday&rdquo; <cite>Maya</cite></blockquote><p>Wed Oct 8, 2026</p></section>`,
+    );
+    expect(result.code).toBe(1);
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "FAIL weekday: "Wed Oct 8, 2026": Oct 8, 2026 is a Thursday -> compute weekdays with a script, never by hand, and fix every date on the page
+      FAIL long-headline: h1 "One two three four five six seven eight nine ten eleven": 11 words -> say the answer in 10 words or fewer; move the rest into the lede or the hero
+      FAIL no-hero: the page: nothing is marked class="hero" -> mark the one thing the page is built around with class="hero"; it must show in the first screen
+      FAIL long-paragraph: header > p "bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bu": 64 words -> split it, cut it to 60 words or fewer, or turn it into something seen: a list, a table, a labeled drawing
+      FAIL long-paragraph: section > p "bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bu": 64 words -> split it, cut it to 60 words or fewer, or turn it into something seen: a list, a table, a labeled drawing
+      FAIL prose-heavy: the first two screens: prose (blocks of 15+ words) is about 81% of what comes first, counting words, with a drawing as 150 -> bring it under 40%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below or into one <details>
+      FAIL quote: section > blockquote "“We ship on Friday”": these words are not in any input, word for word -> copy the exact words from the input (an ellipsis may join two exact pieces), or say it as your own summary without quote marks; if it is not a quote at all, use <aside> or <p>, not <blockquote>
+      page.html: 7 FAIL. Fix each by fixing what it names, then run again."
+    `);
   });
 });
 
