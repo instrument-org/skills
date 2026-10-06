@@ -8,12 +8,64 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
 import { repoName, tagRepo } from "../skills/wireframe/repo.mjs";
 
 const SKILLS = join(import.meta.dirname, "../skills");
+
+const filesUnder = (dir: string): string[] =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory()
+      ? filesUnder(join(dir, entry.name))
+      : [join(dir, entry.name)],
+  );
+
+// A skill runs inside the user's app. Starting a process from there (the
+// user's own browser above all) can raise an operating system permission
+// prompt in that app's name, and publishing a page is the reader's to do with
+// the page's own Share button. So nothing either page skill ships may start a
+// process or send anything over the network, in code or in a recipe.
+const FORBIDDEN: [RegExp, string][] = [
+  [/\bchild_process\b/, "child_process"],
+  [
+    /(?<![.\w])(spawn|spawnSync|exec|execSync|execFile|execFileSync|fork)\s*\(/,
+    "a process call",
+  ],
+  [/\bsubprocess\b/, "subprocess"],
+  [/\bos\.(system|popen|exec\w*|spawn\w*)\b/, "a Python process call"],
+  [/\bDeno\.Command\b|\bBun\.spawn\b/, "a process call"],
+  [/\bmethod\s*[:=]\s*["'`]?(POST|PUT|PATCH|DELETE)\b/i, "a network write"],
+  [/\bsendBeacon\b|\bXMLHttpRequest\b|\bnew\s+WebSocket\b/, "a network write"],
+  [/\brequests\.(post|put|patch|delete)\b/, "a network write"],
+  [/\burlopen\([^)]*\bdata\s*=/, "a network write"],
+  [
+    /\bcurl\b[^\n]*(\s-X\s*(POST|PUT|PATCH|DELETE)|\s--data|\s-d\s)/,
+    "a network write",
+  ],
+];
+
+describe("create-page and wireframe launch nothing and send nothing", () => {
+  const files = ["create-page", "wireframe"].flatMap((skill) =>
+    filesUnder(join(SKILLS, skill)),
+  );
+
+  it("finds the files", () => {
+    expect(files.length).toBeGreaterThan(10);
+  });
+
+  it.each(files.map((file) => [relative(SKILLS, file), file]))(
+    "%s",
+    (_name, file) => {
+      const text = readFileSync(file, "utf-8");
+      const found = FORBIDDEN.filter(([re]) => re.test(text)).map(
+        ([re, what]) => `${what}: ${text.match(re)?.[0]}`,
+      );
+      expect(found).toEqual([]);
+    },
+  );
+});
 
 describe("page.mjs", () => {
   const PAGE = join(SKILLS, "create-page", "page.mjs");

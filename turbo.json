@@ -93,8 +93,8 @@
     "//#test:scripts": {
       "inputs": [
         "scripts/**",
-        "skills/create-page/kits/*/scripts/**",
-        "skills/create-page/lib/**",
+        "skills/create-page/**",
+        "skills/wireframe/**",
         "tools/**",
         "vitest.config.ts",
         "package.json"
