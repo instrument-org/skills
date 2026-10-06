@@ -1,6 +1,6 @@
 # Agents publish pages the reader cannot open
 
-Status: accepted, 2026-09-13
+Status: superseded by [`2026-10-06-page-skills-launch-nothing-and-never-publish.md`](2026-10-06-page-skills-launch-nothing-and-never-publish.md), which removes `share.mjs` and `share.py`: publishing is the reader's, with the page's Share button. Accepted 2026-09-13.
 
 ## What
 

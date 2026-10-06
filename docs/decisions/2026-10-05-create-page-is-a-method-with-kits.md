@@ -1,6 +1,6 @@
 # create-page is a method with kits, not a router over templates
 
-Status: accepted, 2026-10-05. Supersedes [`2026-09-09-one-page-skill-many-templates.md`](2026-09-09-one-page-skill-many-templates.md) and [`2026-09-10-the-starter-owns-what-every-page-shares.md`](2026-09-10-the-starter-owns-what-every-page-shares.md).
+Status: accepted, 2026-10-05. Supersedes [`2026-09-09-one-page-skill-many-templates.md`](2026-09-09-one-page-skill-many-templates.md) and [`2026-09-10-the-starter-owns-what-every-page-shares.md`](2026-09-10-the-starter-owns-what-every-page-shares.md). Its Chrome check and wireframe's copied share and Chrome scripts are superseded by [`2026-10-06-page-skills-launch-nothing-and-never-publish.md`](2026-10-06-page-skills-launch-nothing-and-never-publish.md).
 
 ## Context
 
