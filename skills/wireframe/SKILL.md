@@ -15,7 +15,8 @@ When someone asks for a wireframe, a mockup, a layout sketch or "what would that
 
 `<skill>` is the full path to this skill's folder; run commands from the task folder.
 
-- `new.mjs`: writes a new wireframe page from the two files below.
+- `new.mjs`: writes a new wireframe page from the two files below. Inside a git repository it names the repository in an `instrument:repo` meta, so a folder of wireframes from several products can be told apart.
+- `repo.mjs`: that name and that meta, for a project's own kit to call when it builds pages itself.
 - `shell.html`: the page shell: Studio's theme as Tailwind tokens, the compiled sheet, the pinned Tailwind browser build, the icon set, the share widget and its Share button. Frames are drawn in Tailwind's vocabulary, as are projects' own wireframe kits. Leave its `shell:start` ... `shell:end` regions alone.
 - `look.mjs`: renders a page in headless Chrome at 1280 and on a 390 phone, writes the screenshots, and reports script errors. Set `CHROME=/path/to/chrome` if it finds none.
 - `share.mjs` and `share.py`: publish a finished page to a link (below).

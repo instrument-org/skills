@@ -1,7 +1,15 @@
-import { type PathLike, readFileSync } from "node:fs";
-import { join } from "node:path";
+import {
+  mkdirSync,
+  mkdtempSync,
+  type PathLike,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { findChrome } from "../skills/create-page/lib/chrome.mjs";
+import { repoName, tagRepo } from "../skills/wireframe/repo.mjs";
 
 const SKILLS = join(import.meta.dirname, "../skills");
 
@@ -140,5 +148,90 @@ describe("wireframe's copies", () => {
     expect(readFileSync(join(SKILLS, "wireframe", "chrome.mjs"), "utf-8")).toBe(
       readFileSync(join(SKILLS, "create-page", "lib", "chrome.mjs"), "utf-8"),
     );
+  });
+});
+
+describe("wireframe's repo meta", () => {
+  const tree = (files: Record<string, string>) => {
+    const root = mkdtempSync(join(tmpdir(), "repo-meta-"));
+    for (const [path, body] of Object.entries(files)) {
+      mkdirSync(dirname(join(root, path)), { recursive: true });
+      writeFileSync(join(root, path), body);
+    }
+    return root;
+  };
+  const origin = (url: string) =>
+    `[core]\n\tbare = false\n[remote "origin"]\n\turl = ${url}\n\tfetch = +refs/heads/*:refs/remotes/origin/*\n`;
+
+  it.each<[string, Record<string, string>, string, string | undefined]>([
+    ["no repository", { "a/b.txt": "" }, "a", undefined],
+    [
+      "an https remote, from a subfolder",
+      {
+        "app/.git/config": origin("https://github.com/acme/widget.git"),
+        "app/src/x": "",
+      },
+      "app/src",
+      "widget",
+    ],
+    [
+      "an ssh remote",
+      { "app/.git/config": origin("git@github.com:acme/widget.git") },
+      "app",
+      "widget",
+    ],
+    [
+      "no remote: the checkout's folder",
+      { "my-app/.git/config": "[core]\n" },
+      "my-app",
+      "my-app",
+    ],
+    [
+      "a worktree reads the main checkout's remote",
+      {
+        "main/.git/config": origin("https://github.com/acme/widget"),
+        "main/.git/worktrees/feature/commondir": "../..",
+        "feature-x/.git": "gitdir: ../main/.git/worktrees/feature\n",
+      },
+      "feature-x",
+      "widget",
+    ],
+    [
+      "a worktree with no remote: the main checkout's folder",
+      {
+        "main/.git/config": "[core]\n",
+        "main/.git/worktrees/feature/commondir": "../..",
+        "feature-x/.git": "gitdir: ../main/.git/worktrees/feature\n",
+      },
+      "feature-x",
+      "main",
+    ],
+    [
+      "a submodule reads its own remote",
+      {
+        "app/.git/config": origin("https://github.com/acme/widget.git"),
+        "app/.git/modules/lib/config": origin(
+          "https://github.com/acme/parts.git",
+        ),
+        "app/lib/.git": "gitdir: ../.git/modules/lib\n",
+      },
+      "app/lib",
+      "parts",
+    ],
+  ])("%s", (_, files, from, expected) => {
+    expect(repoName(join(tree(files), from))).toBe(expected);
+  });
+
+  it("puts the meta after instrument:idea, once", () => {
+    const page = `<head>\n    <meta name="instrument:idea" content="wireframe@1" />\n  </head>`;
+    const tagged = tagRepo(page, 'a"b');
+    expect(tagged).toMatchInlineSnapshot(`
+      "<head>
+          <meta name="instrument:idea" content="wireframe@1" />
+          <meta name="instrument:repo" content="a&quot;b" />
+        </head>"
+    `);
+    expect(tagRepo(tagged, "other")).toBe(tagged);
+    expect(tagRepo(page, undefined)).toBe(page);
   });
 });

@@ -3,10 +3,12 @@
 // Writes a new wireframe page: this skill's shell.html with main.html inside
 // <main>, the name in the title and the h1. Then edit the `states` array
 // between "// ---- the frames" and "// ---- render" in the page, and delete
-// the helpers you do not call. Refuses to overwrite an existing file.
+// the helpers you do not call. Run from inside a git repository, it names the
+// repository in an `instrument:repo` meta. Refuses to overwrite an existing file.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { repoName, tagRepo } from "./repo.mjs";
 
 const [out, name = "TITLE"] = process.argv.slice(2);
 if (!out) {
@@ -36,7 +38,7 @@ const page = shell
     () =>
       `<main class="flex min-h-dvh flex-col px-4 pb-8 sm:px-6">\n${main}\n    </main>`,
   );
-writeFileSync(out, page);
+writeFileSync(out, tagRepo(page, repoName(process.cwd())));
 console.log(
   `${out}: written. Draw the frames in its \`states\` array, then: node <skill>/look.mjs ${out}`,
 );
