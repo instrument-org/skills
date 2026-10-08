@@ -5,7 +5,7 @@ description: "Use when asked to wireframe, mock up or sketch a product screen or
 
 # Wireframe
 
-This skill draws a flow through a piece of software as a grid of frames. We draw each frame at the real size of the screen and scale it down to fit, with a title and a short note under it. Click marks and "new" marks sit on a layer over each frame, and the reader can hide them with a button or the `A` key. Tapping a frame enlarges it, and adding `#frame-3` to the URL opens the page with the third frame enlarged.
+This skill draws a flow through a piece of software as a grid of frames. We draw each frame at the real size of the screen and scale it down to fit, with a title and a short note under it. Click marks and "new" marks sit on a layer over each frame, and the reader can hide them with a button or the `A` key. Tapping a frame enlarges it, and adding `?frame=3` to the URL opens the page with the third frame enlarged.
 
 ## When to use it
 

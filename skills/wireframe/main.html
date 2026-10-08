@@ -538,7 +538,7 @@
           fitFrame(); // The dialog is laid out by now, so the stage measures true.
           // Replaced rather than pushed, so walking the set leaves one history
           // entry and the address bar always holds a link to the frame on screen.
-          history.replaceState(null, "", `#frame-${index + 1}`);
+          setFrameParam(index + 1);
         };
 
         const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
@@ -608,19 +608,28 @@
         }).observe(stage);
 
         // ---- links to a frame ------------------------------------------------
-        // `#frame-3` opens the page on the third frame enlarged, numbered as the
+        // `?frame=3` opens the page on the third frame enlarged, numbered as the
         // tiles are, so a link can send someone straight to the state in question.
-        const openFromHash = () => {
-          const match = /^#frame-(\d+)$/.exec(location.hash);
-          const index = match ? Number(match[1]) - 1 : -1;
-          if (index >= 0 && index < states.length) showFrame(index);
+        // A query rather than a fragment, because a fragment never reaches the
+        // server that answers the link.
+        const setFrameParam = (number) => {
+          const url = new URL(location.href);
+          if (number === null) url.searchParams.delete("frame");
+          else url.searchParams.set("frame", String(number));
+          // A srcdoc or sandboxed host refuses any rewrite beyond the fragment,
+          // and the page works the same without the link.
+          try {
+            history.replaceState(null, "", url);
+          } catch {}
         };
 
-        viewer.addEventListener("close", () => {
-          if (location.hash.startsWith("#frame-")) history.replaceState(null, "", location.pathname + location.search);
-        });
-        window.addEventListener("hashchange", openFromHash);
-        openFromHash();
+        const openFromQuery = () => {
+          const index = Number(new URLSearchParams(location.search).get("frame")) - 1;
+          if (Number.isInteger(index) && index >= 0 && index < states.length) showFrame(index);
+        };
+
+        viewer.addEventListener("close", () => setFrameParam(null));
+        openFromQuery();
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
         }
