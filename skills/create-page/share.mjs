@@ -28,9 +28,6 @@ const ENDPOINT =
   process.env.INSTRUMENT_SHARE_ENDPOINT ??
   "https://share.instrument.page/share";
 
-/** What the share host refuses over, so the refusal is read here first. */
-const MAX_BYTES = 8 * 1024 * 1024;
-
 /** Two placeholders a page made from a kit starts with; a page still carrying one is not finished. */
 const PLACEHOLDERS = [
   [
@@ -75,11 +72,6 @@ async function lookup(id) {
 
 export async function publish(page) {
   const bytes = await readFile(page);
-  if (bytes.byteLength > MAX_BYTES) {
-    throw new Error(
-      `${page} is ${(bytes.byteLength / 1024 / 1024).toFixed(1)} MB; the share host takes up to 8 MB. Check its images for bytes the box they render in never shows.`,
-    );
-  }
   const head = bytes.subarray(0, 8192).toString("utf8");
   if (!/^\s*<!doctype html/i.test(head)) {
     throw new Error(
@@ -99,8 +91,11 @@ export async function publish(page) {
     headers: { "content-type": "text/html" },
     method: "POST",
   });
+  // Size is left to the host, which counts what it refuses.
   if (response.status === 413)
-    throw new Error("the share host refused the page as too large");
+    throw new Error(
+      `the share host refused ${page} as too large: it is ${(bytes.byteLength / 1024 / 1024).toFixed(1)} MB and the host takes up to 8 MB. Check its images for bytes the box they render in never shows.`,
+    );
   if (response.status === 415)
     throw new Error("the share host refused the page as not HTML");
   if (response.status === 429) {

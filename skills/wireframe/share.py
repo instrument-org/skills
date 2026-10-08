@@ -34,9 +34,6 @@ ENDPOINT = os.environ.get(
     "INSTRUMENT_SHARE_ENDPOINT", "https://share.instrument.page/share"
 )
 
-# What the share host refuses over, so the refusal is read here first.
-MAX_BYTES = 8 * 1024 * 1024
-
 # Two placeholders a page made from a kit starts with; a page still carrying one is not finished.
 PLACEHOLDERS = [
     (re.compile(r"<title>\s*TITLE\s*</title>", re.I), "its <title> is still the placeholder TITLE"),
@@ -104,10 +101,6 @@ def lookup(page_id: str):
 
 def publish(page: Path) -> str:
     data = page.read_bytes()
-    if len(data) > MAX_BYTES:
-        raise ShareError(
-            f"{page} is {len(data) / 1024 / 1024:.1f} MB; the share host takes up to 8 MB. Check its images for bytes the box they render in never shows."
-        )
     head = data[:8192].decode("utf-8", "replace")
     if not re.match(r"\s*<!doctype html", head, re.I):
         raise ShareError(
@@ -118,8 +111,11 @@ def publish(page: Path) -> str:
             raise ShareError(f"{page} is not finished: {why}. Publishing would make it public.")
 
     status, answer = request("POST", ENDPOINT, data, {"content-type": "text/html"})
+    # Size is left to the host, which counts what it refuses.
     if status == 413:
-        raise ShareError("the share host refused the page as too large")
+        raise ShareError(
+            f"the share host refused {page} as too large: it is {len(data) / 1024 / 1024:.1f} MB and the host takes up to 8 MB. Check its images for bytes the box they render in never shows."
+        )
     if status == 415:
         raise ShareError("the share host refused the page as not HTML")
     if status == 429:
