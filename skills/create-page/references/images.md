@@ -18,15 +18,17 @@ Go stricter when the box is smaller, and say why: photos in the cells of a compa
 
 Never ship an image larger than the box it renders in. A 960-wide file in a 480-wide cell costs the reader four times the bytes for pixels their screen will never show.
 
-## Inlining it
+## Embedding it
 
-Every image is a `data:` URI. A `src` pointing at a URL or a relative path breaks the promise the whole page rests on: it has to open from a USB stick, with no network, years later.
+Every image ends up inside the file as a `data:` URI, because the page has to open from a USB stick, with no network, years later, and a hosted copy loads no image from anywhere else. You never write the base64: name the image in `src` (or SVG `href`, `poster`, CSS `url()`) by a path relative to the page or by its URL, and `page.mjs` reads it, checks it is an image no larger than its box, and puts the bytes in. The path or URL does not survive into the page. An image it cannot read, that is not an image, or that is bigger than its box stays as written and fails, so resize it and run again.
+
+Resize a photo to a file beside the page and name that file:
 
 ```python
-import base64, io, urllib.request
+import io, urllib.request
 from PIL import Image
 
-def inline_photo(url: str, width: int = 720, quality: int = 78) -> str:
+def save_photo(url: str, path: str, width: int = 720, quality: int = 78) -> None:
     raw = urllib.request.urlopen(
         urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     ).read()
@@ -34,11 +36,10 @@ def inline_photo(url: str, width: int = 720, quality: int = 78) -> str:
     if image.width > width:
         height = round(image.height * width / image.width)
         image = image.resize((width, height), Image.LANCZOS)
-    buffer = io.BytesIO()
-    image.save(buffer, "JPEG", quality=quality, optimize=True, progressive=True)
-    encoded = base64.b64encode(buffer.getvalue()).decode()
-    return f"data:image/jpeg;base64,{encoded}"
+    image.save(path, "JPEG", quality=quality, optimize=True, progressive=True)
 ```
+
+A URL that already serves a photo at the right size can go in `src` as it is.
 
 Give every `<img>` a `width` and `height` so the line does not reflow as the page paints, and real `alt` text saying what the picture shows, not what it is of.
 

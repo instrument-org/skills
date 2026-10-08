@@ -101,7 +101,7 @@ Save the user's request word for word as `request.md`, and each source you resea
 node <skill>/page.mjs page.html --inputs <every input file> request.md
 ```
 
-It adds the stylesheet, fonts and behaviors, and checks what the file itself shows: headline and title length, words before the hero, paragraph length, how much of the top is prose, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, em dashes and the direction comment. It prints one `FAIL rule: where: measurement -> fix` line per problem. It starts nothing and writes nothing but the page.
+It embeds every image the page names by path or URL, adds the stylesheet, fonts and behaviors, and checks what the file itself shows: headline and title length, words before the hero, paragraph length, how much of the top is prose, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, em dashes and the direction comment. It prints an `embedded` line for each image it put in, one `FAIL rule: where: measurement -> fix` line per problem, and a closing line with the page's size. It starts nothing, writes nothing but the page, and reaches the network only to download an image the page names by URL.
 
 It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`.
 
@@ -122,7 +122,7 @@ Read the lines it returns and fix every FAIL, then run `page.mjs` again, reopen 
 - When options end in different states (one leaves you owning something, the other nothing), never call one cheaper without saying so. A pick says what it loses on and what would flip it.
 - Show disagreements between sources instead of silently picking one. Where research is thin, the footer says so.
 - A named product, vendor or place links to its maker's or owner's home page, never a deep link, search result or affiliate link.
-- Single file: images as `data:` URIs or SVG ([`references/images.md`](references/images.md)); only the build's fonts and exact-version libraries from cdn.jsdelivr.net/npm, unpkg, esm.sh or cdnjs may load ([`references/loading.md`](references/loading.md)), and with the network off every fact is still in the HTML. No em dashes.
+- Single file: name a resized image by its path or URL and `page.mjs` embeds it, or draw it as SVG ([`references/images.md`](references/images.md)); only the build's fonts and exact-version libraries from cdn.jsdelivr.net/npm, unpkg, esm.sh or cdnjs may load ([`references/loading.md`](references/loading.md)), and with the network off every fact is still in the HTML. No em dashes.
 
 ## 7. Options and sculpting
 

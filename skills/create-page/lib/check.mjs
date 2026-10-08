@@ -1,17 +1,21 @@
 // Build and check one or more pages. Called by ../page.mjs; not read by the agent.
 //
-// Build: strips what an earlier run wrote, draws any data-device elements
+// Build: strips what an earlier run wrote, embeds the images it names by
+// path or URL (embed.mjs), draws any data-device elements
 // (when the skill ships devices), and writes the foundation (fonts,
 // stylesheet, behaviors, share widget) into <head>. Check: every rule that
 // can be read from the file itself, over a small parse of its HTML. What
 // only layout can show (overlaps, clipping, phone width and text size,
 // contrast, the first screen) is lib/probe.js, run in a browser.
-// Starts no process and opens no browser. Prints only FAIL lines and one
-// closing line. Exit 0 pass, 1 FAIL, 2 bad command.
+// Starts no process and opens no browser; reaches the network only to download
+// an image the page names by URL. Prints one line per image embedded, FAIL
+// lines, and one closing line with the page's size. Exit 0 pass, 1 FAIL, 2 bad
+// command.
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
+import { embedImages } from "./embed.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const CMD = process.env.PAGE_CMD || "node page.mjs";
@@ -23,6 +27,8 @@ export const LIMITS = {
   above: 45,
   prose: 40,
 };
+// What the share host takes; the 413 message in share.mjs and share.py names it too.
+const SHARE_MAX_BYTES = 8 * 1024 * 1024;
 const FEELS = ["calm", "urgent", "warm", "crew", "ledger", "festive"];
 const SHAPES = ["card", "read", "sheet", "wall"];
 const ALLOWED = [
@@ -161,7 +167,7 @@ const stream = (s) =>
 
 // ---------- file checks ----------
 
-function fileChecks(own, push, inputText) {
+function fileChecks(own, push, inputText, reported = new Set()) {
   const htmlTag = own.match(/<html\b[^>]*>/i)?.[0] ?? "";
   const shape = htmlTag.match(/data-shape\s*=\s*"([^"]*)"/)?.[1];
   const feel = htmlTag.match(/data-feel\s*=\s*"([^"]*)"/)?.[1];
@@ -280,7 +286,8 @@ function fileChecks(own, push, inputText) {
       !/rel=["']?(stylesheet|preload|modulepreload)/.test(m[0])
     )
       continue;
-    if (url.startsWith("data:") || url.startsWith("#")) continue;
+    if (url.startsWith("data:") || url.startsWith("#") || reported.has(url))
+      continue;
     if (!/^https?:/.test(url))
       push(
         "local-file",
@@ -297,7 +304,7 @@ function fileChecks(own, push, inputText) {
       );
   }
   for (const m of own.matchAll(/url\((['"]?)(https?:[^)'"]+)\1\)/g))
-    if (!ALLOWED.some((r) => r.test(m[2])))
+    if (!ALLOWED.some((r) => r.test(m[2])) && !reported.has(m[2]))
       push("host", "CSS url()", `loads ${m[2]}`, "inline it as a data: URI");
   weekdays(text, inputText, push);
   return { shape, feel, title };
@@ -787,8 +794,8 @@ function pageRules(page, push) {
 
 // ---------- report ----------
 
-function report(file, fails) {
-  const out = [];
+function report(file, fails, embedded, bytes) {
+  const out = embedded.map((line) => `embedded ${line}`);
   const per = new Map();
   for (const f of fails) {
     per.set(f.rule, (per.get(f.rule) || 0) + 1);
@@ -797,13 +804,18 @@ function report(file, fails) {
   }
   for (const [r, n] of per)
     if (n > 6) out.push(`FAIL ${r}: ${n - 6} more like the above -> same fix`);
+  const mb = (n) => `${(n / 1024 / 1024).toFixed(1)} MB`;
+  const size =
+    bytes > SHARE_MAX_BYTES
+      ? `It is ${mb(bytes)}, over the ${mb(SHARE_MAX_BYTES)} a link takes: shrink its images or data before sharing it.`
+      : `It is ${bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : mb(bytes)}.`;
   if (fails.length)
     out.push(
-      `${basename(file)}: ${fails.length} FAIL. Fix each by fixing what it names, then run again.`,
+      `${basename(file)}: ${fails.length} FAIL. Fix each by fixing what it names, then run again. ${size}`,
     );
   else
     out.push(
-      `${basename(file)}: pass, as far as the file shows. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5).`,
+      `${basename(file)}: pass, as far as the file shows. ${size} Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5).`,
     );
   console.log(out.join("\n"));
 }
@@ -850,7 +862,13 @@ export async function main(argv, { prerender = null, cmd } = {}) {
     const fails = [];
     const push = (rule, where, measure, fix) =>
       fails.push({ rule, where, measure, fix });
-    const own0 = stripBuilt(readFileSync(path, "utf8"));
+    const embedded = await embedImages(
+      stripBuilt(readFileSync(path, "utf8")),
+      dirname(path),
+      ALLOWED,
+      push,
+    );
+    const own0 = embedded.html;
     let own = own0,
       styles = new Map();
     if (prerender) {
@@ -861,8 +879,9 @@ export async function main(argv, { prerender = null, cmd } = {}) {
       own = r.html;
       styles = r.styles;
     }
-    writeFileSync(path, assemble(own, styles, css, js));
-    fileChecks(own0, push, inputText);
+    const built = assemble(own, styles, css, js);
+    writeFileSync(path, built);
+    fileChecks(own0, push, inputText, embedded.failed);
     const page = readPage(own);
     pageRules(page, push);
     quoteChecks(page.quotes, inputs, push);
@@ -882,7 +901,7 @@ export async function main(argv, { prerender = null, cmd } = {}) {
           "this custom property is defined nowhere",
           FIX.token,
         );
-    report(path, fails);
+    report(path, fails, embedded.embedded, Buffer.byteLength(built));
     if (fails.length) exit = 1;
   }
   return exit;
