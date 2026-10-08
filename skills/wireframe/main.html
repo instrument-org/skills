@@ -58,7 +58,7 @@
              this page has no intro paragraph. -->
         <div class="min-w-0 flex-1">
           <h1 class="truncate text-[15px] font-semibold tracking-[-0.01em]">TITLE</h1>
-          <p class="truncate text-[12px] text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
+          <p id="line" class="truncate text-[12px] text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
         </div>
 
         <!-- The legend, which is two words because the marks are two colors. -->
@@ -539,6 +539,7 @@
           // Replaced rather than pushed, so walking the set leaves one history
           // entry and the address bar always holds a link to the frame on screen.
           setFrameParam(index + 1);
+          describe(index);
         };
 
         const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
@@ -612,6 +613,23 @@
         // tiles are, so a link can send someone straight to the state in question.
         // A query rather than a fragment, because a fragment never reaches the
         // server that answers the link.
+        // The line under the title is the page's description, which a link to
+        // it shows under the title; a link to a frame describes that frame.
+        const description =
+          document.querySelector('meta[name="description"]') ??
+          document.head.appendChild(Object.assign(document.createElement("meta"), { name: "description" }));
+        const pageLine = document.querySelector("#line")?.textContent.trim() ?? "";
+        const describe = (index) => {
+          if (index === null) {
+            description.content = pageLine;
+            return;
+          }
+          const note = document.createElement("div");
+          note.innerHTML = states[index].note;
+          description.content = `${index + 1}. ${states[index].title}. ${note.textContent.trim()}`;
+        };
+        describe(null);
+
         const setFrameParam = (number) => {
           const url = new URL(location.href);
           if (number === null) url.searchParams.delete("frame");
@@ -628,7 +646,10 @@
           if (Number.isInteger(index) && index >= 0 && index < states.length) showFrame(index);
         };
 
-        viewer.addEventListener("close", () => setFrameParam(null));
+        viewer.addEventListener("close", () => {
+          setFrameParam(null);
+          describe(null);
+        });
         openFromQuery();
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
