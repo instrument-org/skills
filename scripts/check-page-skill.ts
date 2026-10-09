@@ -1,8 +1,8 @@
-// Checks what create-page and wireframe promise beyond the per-skill rules:
+// Checks what instrument-page and wireframe promise beyond the per-skill rules:
 //
 //   1. Each description fits the routing budget. Both share the agent's skill
 //      index with every other skill, so they are held well under the spec's 1024.
-//   2. create-page's SKILL.md names every kit README, every reference and every
+//   2. instrument-page's SKILL.md names every kit README, every reference and every
 //      cookbook recipe. The runtime hands an agent at most fifty filenames from a
 //      loaded skill, so a file the router does not name is one an agent may never
 //      see, and a recipe it does not name is one it will not look for.
@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 import { parseFrontmatter } from "./check-skill.ts";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const PAGE_SKILL = join(REPO_ROOT, "skills", "create-page");
+const PAGE_SKILL = join(REPO_ROOT, "skills", "instrument-page");
 const WIREFRAME_SKILL = join(REPO_ROOT, "skills", "wireframe");
 const DESCRIPTION_MAX_LENGTH = 400;
 const MAX_FILES = 50;
@@ -127,4 +127,4 @@ if (errors.length > 0) {
   for (const error of errors) console.log(`❌ ${error}`);
   process.exit(1);
 }
-console.log("create-page and wireframe checks passed");
+console.log("instrument-page and wireframe checks passed");

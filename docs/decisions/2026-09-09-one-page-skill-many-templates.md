@@ -2,7 +2,7 @@
 
 Status: superseded by [`2026-10-05-create-page-is-a-method-with-kits.md`](2026-10-05-create-page-is-a-method-with-kits.md), which removes the templates. The catalog-budget argument below still holds.
 
-Sixteen skills that each made one kind of HTML page became one skill, `create-page`, holding sixteen templates.
+Sixteen skills that each made one kind of HTML page became one skill, `instrument-page`, holding sixteen templates.
 
 ## What forced it
 
@@ -26,7 +26,7 @@ The `idea.json` tags — decide, learn, do, persuade — look like a grouping an
 
 That gap is the seam. Splitting by tag would have copied the shared method four times and left the same drift in four places instead of sixteen.
 
-Grouping is by **medium and method**: one skill per thing you produce and the way you produce it. The test for whether a new artifact joins `create-page` or starts a sibling skill is whether it copies the same `starter.html` and carries `skin/theme.css` verbatim. A deck or a spreadsheet model needs its own refusals, its own fixed-and-free contract, and a different file to hand over, so it would be a sibling.
+Grouping is by **medium and method**: one skill per thing you produce and the way you produce it. The test for whether a new artifact joins `instrument-page` or starts a sibling skill is whether it copies the same `starter.html` and carries `skin/theme.css` verbatim. A deck or a spreadsheet model needs its own refusals, its own fixed-and-free contract, and a different file to hand over, so it would be a sibling.
 
 ## What drift looked like
 
@@ -49,12 +49,12 @@ A full load also copies about 3 MB into the task. That was accepted rather than 
 
 ## What was removed
 
-`visual-answer` was deleted rather than kept beside this. It was the skill that taught us the shape, and sixteen templates plus a shared method is what it taught; its description also claimed ground the templates now cover and was the second largest in the catalog. Its vocabulary survives as `create-page/references`, adapted where it described machinery only its own shell had — an orientation strip, copy buttons on every `pre`, a width attribute, automatic syntax highlighting — none of which exists here.
+`visual-answer` was deleted rather than kept beside this. It was the skill that taught us the shape, and sixteen templates plus a shared method is what it taught; its description also claimed ground the templates now cover and was the second largest in the catalog. Its vocabulary survives as `instrument-page/references`, adapted where it described machinery only its own shell had — an orientation strip, copy buttons on every `pre`, a width attribute, automatic syntax highlighting — none of which exists here.
 
 ## Names
 
 Three levels, deliberately not the same word:
 
-- **`create-page`** is the skill. A verb, because it makes something, and it leaves `create-deck` and `create-sheet` free as siblings.
+- **`instrument-page`** is the skill. A verb, because it makes something, and it leaves `create-deck` and `create-sheet` free as siblings.
 - **Template** is one document kind, to the agent and in the registry. Not "shape", and not "starter": `starter.html` is the thing that gets **copied**, `template.md` is the thing that gets **read**, and an agent that confuses the two fills in the wrong file.
 - **Idea** is the same folder on the website, and stays. It was chosen so non-technical visitors are not confused, and it is baked into URLs, components, and analytics. `idea.json` keeps its name because every field in it is Discover presentation. `scripts/ideas.ts` is the seam and the only place both names appear.

@@ -1,10 +1,10 @@
 # Page families
 
-Status: abandoned, 2026-10-05, superseded by [`docs/decisions/2026-10-05-create-page-is-a-method-with-kits.md`](../../decisions/2026-10-05-create-page-is-a-method-with-kits.md): the capabilities this plan wanted to own one each (a map, a board, dials) are kits inside create-page, and wireframes are their own skill. Two of its moves had landed before that (the whiteboard rebuilt on Excalidraw, the storyboard added).
+Status: abandoned, 2026-10-05, superseded by [`docs/decisions/2026-10-05-create-page-is-a-method-with-kits.md`](../../decisions/2026-10-05-create-page-is-a-method-with-kits.md): the capabilities this plan wanted to own one each (a map, a board, dials) are kits inside instrument-page, and wireframes are their own skill. Two of its moves had landed before that (the whiteboard rebuilt on Excalidraw, the storyboard added).
 
 ## What this is
 
-A regrouping of the `create-page` templates from the reader's side, and a set of new page kinds that each own one capability rather than sharing a kitchen sink. The trigger was two findings. First, that one host can serve any library as a module with its React deduplicated ([`2026-09-11-esm-sh-serves-every-library.md`](../../decisions/2026-09-11-esm-sh-serves-every-library.md)), which makes a page built on a real editor, a real map or a real grid an ordinary page rather than a special case. Second, that the three `explorer` examples each load four libraries, so an agent that wants a map learns it from a page that is mostly a database, and an agent that wants a grid learns it from a page that is mostly a map.
+A regrouping of the `instrument-page` templates from the reader's side, and a set of new page kinds that each own one capability rather than sharing a kitchen sink. The trigger was two findings. First, that one host can serve any library as a module with its React deduplicated ([`2026-09-11-esm-sh-serves-every-library.md`](../../decisions/2026-09-11-esm-sh-serves-every-library.md)), which makes a page built on a real editor, a real map or a real grid an ordinary page rather than a special case. Second, that the three `explorer` examples each load four libraries, so an agent that wants a map learns it from a page that is mostly a database, and an agent that wants a grid learns it from a page that is mostly a map.
 
 The rule that bounds all of it is unchanged: a library adds motion, precision or scale to something already on the page, and is never the only copy of a fact.
 

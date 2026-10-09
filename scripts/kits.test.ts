@@ -4,11 +4,11 @@ import { describe, expect, it } from "vitest";
 import {
   panel,
   label,
-} from "../skills/create-page/kits/storyboard/scripts/panels.mjs";
+} from "../skills/instrument-page/kits/storyboard/scripts/panels.mjs";
 
 const PANELS_DIR = join(
   import.meta.dirname,
-  "../skills/create-page/kits/storyboard/scripts",
+  "../skills/instrument-page/kits/storyboard/scripts",
 );
 
 function python(code: string): string {

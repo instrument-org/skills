@@ -1,6 +1,6 @@
 # Pages follow the reader's theme
 
-A page made by `create-page` renders light or dark according to the reader's system setting, or to a choice the reader makes on the page itself. The agent writing one never chooses, and never writes a `dark:` variant.
+A page made by `instrument-page` renders light or dark according to the reader's system setting, or to a choice the reader makes on the page itself. The agent writing one never chooses, and never writes a `dark:` variant.
 
 Before this, the skin was one light palette and `SKILL.md` said so: "a page that has to look right in two themes is a page that looks wrong in one of them." That held only while nobody could check. The reason it stopped holding is below.
 

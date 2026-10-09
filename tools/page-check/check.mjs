@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // node tools/page-check/check.mjs page.html [more.html] [--inputs <files>] [--no-build] [--out <dir>]
 //
-// The full create-page check, for evals and development: page.mjs's build
+// The full instrument-page check, for evals and development: page.mjs's build
 // and static check (skipped with --no-build), then the skill's own
 // lib/probe.js run in headless Chromium, the same script an agent runs in its
 // browser tool, then screenshots at 1280 (full page), the 1104x590 link
@@ -13,13 +13,13 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { main as build } from "../../skills/create-page/lib/check.mjs";
+import { main as build } from "../../skills/instrument-page/lib/check.mjs";
 import { ChromeError, launch } from "./chrome.mjs";
 
 const PROBE = readFileSync(
   join(
     dirname(fileURLToPath(import.meta.url)),
-    "../../skills/create-page/lib/probe.js",
+    "../../skills/instrument-page/lib/probe.js",
   ),
   "utf8",
 );
@@ -51,7 +51,7 @@ if (!files.length) {
 let exit = 0;
 if (doBuild) {
   const code = await build([...files, ...rest], {
-    cmd: "node skills/create-page/page.mjs",
+    cmd: "node skills/instrument-page/page.mjs",
   });
   if (code === 2) process.exit(2);
   if (code) exit = 1;

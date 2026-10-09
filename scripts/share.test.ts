@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-const SKILL = join(import.meta.dirname, "../skills/create-page");
+const SKILL = join(import.meta.dirname, "../skills/instrument-page");
 
 // The two files promise the same commands, the same sidecar and the same
 // words, so every case below runs against both, and one crosses over.

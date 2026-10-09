@@ -4,7 +4,7 @@ Status: superseded by [`2026-09-13-jsdelivr-first-esm-sh-for-react-graphs.md`](2
 
 ## What
 
-Every `create-page` page loads its framework, its icon set and any library from `https://esm.sh`, pinned to an exact version, and from nowhere else but Google Fonts and the share widget. `scripts/check-ideas.ts` holds the origin list and rejects an esm.sh URL whose package is not pinned to `major.minor.patch`. `skills/create-page/references/loading.md` says how a page loads a thing in each of the four shapes the host offers: a module import, a file as published (`?raw`), a stylesheet or asset by path, and a React component library with its React deduplicated (`?deps=`).
+Every `instrument-page` page loads its framework, its icon set and any library from `https://esm.sh`, pinned to an exact version, and from nowhere else but Google Fonts and the share widget. `scripts/check-ideas.ts` holds the origin list and rejects an esm.sh URL whose package is not pinned to `major.minor.patch`. `skills/instrument-page/references/loading.md` says how a page loads a thing in each of the four shapes the host offers: a module import, a file as published (`?raw`), a stylesheet or asset by path, and a React component library with its React deduplicated (`?deps=`).
 
 The offline test is unchanged: a library may add motion, precision or scale to something already on the page, and may never be the only copy of a fact.
 

@@ -4,7 +4,7 @@ Status: accepted, 2026-09-13
 
 ## What
 
-`create-page` ships `share.mjs` and `share.py` beside its starter, which publish a finished page to the same public link the page's own Share button makes, and `references/sharing.md`, which says when an agent may do that on the reader's behalf: when the reader asked for a link, or when the reader cannot open a file where they are and the harness offers no viewer. Otherwise the agent hands over the path and leaves Share to the reader. The script keeps the delete token in a `<slug>.share.json` beside the page, refuses a page still carrying the starter's placeholders, and on an edited page names the earlier link still serving the old version rather than deleting it. SKILL.md's last step points at both.
+`instrument-page` ships `share.mjs` and `share.py` beside its starter, which publish a finished page to the same public link the page's own Share button makes, and `references/sharing.md`, which says when an agent may do that on the reader's behalf: when the reader asked for a link, or when the reader cannot open a file where they are and the harness offers no viewer. Otherwise the agent hands over the path and leaves Share to the reader. The script keeps the delete token in a `<slug>.share.json` beside the page, refuses a page still carrying the starter's placeholders, and on an edited page names the earlier link still serving the old version rather than deleting it. SKILL.md's last step points at both.
 
 ## Why
 

@@ -1,16 +1,16 @@
-# create-page is a method with kits, not a router over templates
+# instrument-page is a method with kits, not a router over templates
 
 Status: accepted, 2026-10-05. Supersedes [`2026-09-09-one-page-skill-many-templates.md`](2026-09-09-one-page-skill-many-templates.md) and [`2026-09-10-the-starter-owns-what-every-page-shares.md`](2026-09-10-the-starter-owns-what-every-page-shares.md). Its Chrome check, and wireframe's copied Chrome scripts, are superseded by [`2026-10-06-page-skills-launch-nothing.md`](2026-10-06-page-skills-launch-nothing.md).
 
 ## Context
 
-`create-page` was a router over twenty-eight templates, each a `template.md`, a `main.html` pasted into one shared `starter.html`, a `patterns.md`, and three finished examples. The skill told the agent to pick the template that fit, read two examples, and fill the slots.
+`instrument-page` was a router over twenty-eight templates, each a `template.md`, a `main.html` pasted into one shared `starter.html`, a `patterns.md`, and three finished examples. The skill told the agent to pick the template that fit, read two examples, and fill the slots.
 
 Agents did exactly that. A template is a strong prior: the agent grabbed the nearest one, filled it in, and produced pages that looked like the examples with the words swapped, whatever the material was. The template's slots decided what the page led with, so the point the inputs implied (the later email that corrects the flyer, the cheaper quote that leaves out the ride home) was rarely the headline. Across a three-round evaluation of several page skills on held-out tasks, the template router scored worst. The replacement below, built and iterated in that evaluation, won the held-out exam for both of the cheaper models it was run with.
 
 ## Decision
 
-`create-page` has no page types. It is:
+`instrument-page` has no page types. It is:
 
 - **A method** in `SKILL.md`: analyze the inputs one at a time, find the point nobody asked about, direct a shape (`card`, `read`, `sheet`, `wall`), a feel and a hero, lead with the point, and keep the rules every page keeps.
 - **A stylesheet the agent never reads**: `lib/foundation.css` and `lib/foundation.js`. Plain elements are already designed, a short list of layout classes exists, and `data-shape` and `data-feel` on `<html>` switch the rest. The skin's palette, type and theme contract (`data-theme`, `instrument:theme`, `window.__instrumentTheme`) carry over, so pages still follow the reader's theme and the share widget still works.

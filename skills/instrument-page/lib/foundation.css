@@ -5,7 +5,7 @@
    <style> wins without a fight over specificity. */
 
 @layer foundation {
-  /* The brand skin, verbatim values from create-page's skin block. */
+  /* The brand skin, verbatim values from instrument-page's skin block. */
   :root {
     color-scheme: light dark;
     --gray-25: light-dark(#fdfdfc, #100e0d);

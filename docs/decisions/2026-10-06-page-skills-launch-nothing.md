@@ -4,7 +4,7 @@ Status: accepted, 2026-10-06. Supersedes the Chrome check in [`2026-10-05-create
 
 ## Context
 
-`create-page`'s `page.mjs` and `wireframe`'s `look.mjs` found the user's installed Chrome (in `/Applications` on macOS) and ran it headless to measure and screenshot a page. Run from inside Instrument, that raised a macOS App Management permission prompt attributed to Instrument: the user saw the app they were working in ask to manage another app, for a step they never asked for.
+`instrument-page`'s `page.mjs` and `wireframe`'s `look.mjs` found the user's installed Chrome (in `/Applications` on macOS) and ran it headless to measure and screenshot a page. Run from inside Instrument, that raised a macOS App Management permission prompt attributed to Instrument: the user saw the app they were working in ask to manage another app, for a step they never asked for.
 
 ## Decision
 

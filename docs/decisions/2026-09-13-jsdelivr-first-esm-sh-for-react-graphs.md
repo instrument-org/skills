@@ -4,7 +4,7 @@ Status: accepted, 2026-09-13. Supersedes [`2026-09-11-esm-sh-serves-every-librar
 
 ## What
 
-Every `create-page` page loads its framework, its icon set and any library from `https://cdn.jsdelivr.net/npm/`, pinned to an exact version: a module at `<pkg>@1.2.3/+esm`, and a classic script, a stylesheet or an asset at the file's own path. `https://esm.sh` stays on the list for one job, a React component library, where `?deps=` pins one React through the whole import graph. `references/loading.md` teaches the shapes; the whiteboard is the one template on esm.sh, and its `template.md` says what a strict frame shows instead.
+Every `instrument-page` page loads its framework, its icon set and any library from `https://cdn.jsdelivr.net/npm/`, pinned to an exact version: a module at `<pkg>@1.2.3/+esm`, and a classic script, a stylesheet or an asset at the file's own path. `https://esm.sh` stays on the list for one job, a React component library, where `?deps=` pins one React through the whole import graph. `references/loading.md` teaches the shapes; the whiteboard is the one template on esm.sh, and its `template.md` says what a strict frame shows instead.
 
 ## Why
 

@@ -1,10 +1,10 @@
 # The starter owns what every page shares
 
-Status: superseded by [`2026-10-05-create-page-is-a-method-with-kits.md`](2026-10-05-create-page-is-a-method-with-kits.md): create-page pages get their shared look and behavior from `lib/foundation.css` and `lib/foundation.js`, written in by `page.mjs`, and the starter lives on only as the wireframe skill's `shell.html`. Accepted 2026-09-10.
+Status: superseded by [`2026-10-05-create-page-is-a-method-with-kits.md`](2026-10-05-create-page-is-a-method-with-kits.md): instrument-page pages get their shared look and behavior from `lib/foundation.css` and `lib/foundation.js`, written in by `page.mjs`, and the starter lives on only as the wireframe skill's `shell.html`. Accepted 2026-09-10.
 
 ## What
 
-`skills/create-page/starter.html` is the single source for every line a page does not choose for itself: the tab icon, the share widget, the type, the framework, the skin, the page behavior, and the link-icon script. Each sits inside a `<!-- shell:start -->` … `<!-- shell:end -->` pair. `pnpm fix:shell` copies those regions into all 48 examples, and `pnpm check:ideas` fails when one has drifted.
+`skills/instrument-page/starter.html` is the single source for every line a page does not choose for itself: the tab icon, the share widget, the type, the framework, the skin, the page behavior, and the link-icon script. Each sits inside a `<!-- shell:start -->` … `<!-- shell:end -->` pair. `pnpm fix:shell` copies those regions into all 48 examples, and `pnpm check:ideas` fails when one has drifted.
 
 There are three pairs rather than one because the shared parts are not contiguous: a page may put its own CSS between the framework and the shared behavior, and several examples do. Anything outside the pairs belongs to the page.
 

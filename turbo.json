@@ -93,7 +93,7 @@
     "//#test:scripts": {
       "inputs": [
         "scripts/**",
-        "skills/create-page/**",
+        "skills/instrument-page/**",
         "skills/wireframe/**",
         "tools/**",
         "vitest.config.ts",
@@ -117,7 +117,7 @@
     },
     "//#check:page-skill": {
       "inputs": [
-        "skills/create-page/**",
+        "skills/instrument-page/**",
         "allowed-sources.json",
         "scripts/check-page-skill.ts",
         "scripts/check-skill.ts"

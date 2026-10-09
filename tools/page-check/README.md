@@ -1,12 +1,12 @@
 # page-check
 
-The full create-page check in headless Chromium, for evals and development. It is outside `skills/` on purpose: an installed skill starts no process and opens no browser, so the check an agent runs there is `page.mjs` (static) plus the skill's own `lib/probe.js` evaluated in the agent's browser tool. This tool runs those same two pieces, and adds screenshots.
+The full instrument-page check in headless Chromium, for evals and development. It is outside `skills/` on purpose: an installed skill starts no process and opens no browser, so the check an agent runs there is `page.mjs` (static) plus the skill's own `lib/probe.js` evaluated in the agent's browser tool. This tool runs those same two pieces, and adds screenshots.
 
 ```sh
 pnpm page-check page.html [more.html] [--inputs <files>] [--no-build] [--out <dir>]
 ```
 
-For each page it runs `page.mjs`'s build and static check (skipped with `--no-build`), opens the page in Chromium over the DevTools protocol, evaluates `skills/create-page/lib/probe.js` and prints what it returns, then writes `<name>.desktop.png` (1280 wide, full page), `<name>.preview.png` (1104x590) and `<name>.phone.png` (390 wide) beside the page or into `--out`. Exit 0 pass, 1 FAIL, 2 bad command, 3 Chromium could not run.
+For each page it runs `page.mjs`'s build and static check (skipped with `--no-build`), opens the page in Chromium over the DevTools protocol, evaluates `skills/instrument-page/lib/probe.js` and prints what it returns, then writes `<name>.desktop.png` (1280 wide, full page), `<name>.preview.png` (1104x590) and `<name>.phone.png` (390 wide) beside the page or into `--out`. Exit 0 pass, 1 FAIL, 2 bad command, 3 Chromium could not run.
 
 ## Which browser
 

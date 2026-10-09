@@ -51,8 +51,8 @@ const FORBIDDEN: [RegExp, string][] = [
 
 const SHARE = /(^|\/)(share\.(mjs|py)|references\/sharing\.md)$/;
 
-describe("create-page and wireframe launch nothing and send only through share", () => {
-  const files = ["create-page", "wireframe"].flatMap((skill) =>
+describe("instrument-page and wireframe launch nothing and send only through share", () => {
+  const files = ["instrument-page", "wireframe"].flatMap((skill) =>
     filesUnder(join(SKILLS, skill)),
   );
 
@@ -67,27 +67,27 @@ describe("create-page and wireframe launch nothing and send only through share",
       const rules = SHARE.test(file)
         ? FORBIDDEN.filter(([, what]) => what !== "a network write")
         : FORBIDDEN;
-      const found = rules.filter(([re]) => re.test(text)).map(
-        ([re, what]) => `${what}: ${text.match(re)?.[0]}`,
-      );
+      const found = rules
+        .filter(([re]) => re.test(text))
+        .map(([re, what]) => `${what}: ${text.match(re)?.[0]}`);
       expect(found).toEqual([]);
     },
   );
 });
 
 // The wireframe skill installs on its own, so it carries copies of
-// create-page's share scripts rather than a path into another skill. A fix
+// instrument-page's share scripts rather than a path into another skill. A fix
 // has to land in both.
 describe("wireframe's copies", () => {
-  it.each(["share.mjs", "share.py"])("%s matches create-page's", (file) => {
+  it.each(["share.mjs", "share.py"])("%s matches instrument-page's", (file) => {
     expect(readFileSync(join(SKILLS, "wireframe", file), "utf-8")).toBe(
-      readFileSync(join(SKILLS, "create-page", file), "utf-8"),
+      readFileSync(join(SKILLS, "instrument-page", file), "utf-8"),
     );
   });
 });
 
 describe("page.mjs", () => {
-  const PAGE = join(SKILLS, "create-page", "page.mjs");
+  const PAGE = join(SKILLS, "instrument-page", "page.mjs");
   const run = promisify(execFile);
   const page = (body: string) => `<!doctype html>
 <!-- direction: reader="parents" point="the late bus costs less" shape=read feel=calm hero="two bars" -->
@@ -125,7 +125,7 @@ describe("page.mjs", () => {
     expect(result.stdout).toMatchInlineSnapshot(
       `"page.html: pass, as far as the file shows. It is 34 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
     );
-    expect(existsSync(join(SKILLS, "create-page", "lib", "probe.js"))).toBe(
+    expect(existsSync(join(SKILLS, "instrument-page", "lib", "probe.js"))).toBe(
       true,
     );
   });
@@ -151,7 +151,7 @@ describe("page.mjs", () => {
 });
 
 describe("page.mjs embeds images", () => {
-  const PAGE = join(SKILLS, "create-page", "page.mjs");
+  const PAGE = join(SKILLS, "instrument-page", "page.mjs");
   const run = promisify(execFile);
   // A PNG header is all the check reads: the signature and the IHDR size.
   const png = (width: number, height: number) => {
@@ -163,7 +163,10 @@ describe("page.mjs embeds images", () => {
     b.writeUInt32BE(height, 20);
     return b;
   };
-  const build = async (body: string, beside: Record<string, Buffer | string>) => {
+  const build = async (
+    body: string,
+    beside: Record<string, Buffer | string>,
+  ) => {
     const dir = mkdtempSync(join(tmpdir(), "page-embed-"));
     writeFileSync(
       join(dir, "page.html"),
