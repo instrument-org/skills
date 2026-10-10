@@ -47,6 +47,18 @@ After an edit, tell the reader which link is current. Delete the earlier one whe
 
 Tell the reader what you kept: the link, that anyone holding it can read the page, the day it expires, and that `--delete` takes it down.
 
+## Reading a page from its link
+
+A page that draws itself with script holds little in its bytes, and a wireframe holds almost nothing but its title until its script runs. So the link answers with what you can read, by what you ask for:
+
+- Asking for Markdown, as most fetch tools do, gets the page as it was drawn, as Markdown, with its address in the front matter. Every heading, caption and note is there, and pictures carried inline are left out.
+- Not asking for it, as `curl` does, gets the page as it was drawn, as HTML with every script taken out. Read this when you need the layout or the classes, since it is the page itself rather than a description of it.
+
+```sh
+curl -sSL -H 'accept: text/markdown' https://<id>.instrument.page/
+curl -sSL https://<id>.instrument.page/
+```
+
 ## The endpoint, for when neither runtime is there
 
 `POST https://share.instrument.page/share` with `content-type: text/html` and the file as the body, from any origin. The body has to open with `<!doctype html>` and stay under 8 MB. It answers `201 {id, url, bytes, deleteToken}`, or `200 {id, url, bytes}` with no token when those bytes are already published, by anyone. `GET /share/<id>` answers `{id, url, expires}` or 404; `DELETE /share/<id>` with an `x-delete-token` header answers 204, 403 for a wrong token, 404 once gone. Twenty uploads a minute per address.

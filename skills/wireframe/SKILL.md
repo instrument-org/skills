@@ -1,6 +1,6 @@
 ---
 name: wireframe
-description: "Use when asked to wireframe, mock up or sketch a product screen or UI flow, or when an interface is being argued about in prose. Draws software as true-size frames across states, with click marks and captions, in one self-contained HTML page."
+description: "Use when asked to wireframe, mock up or sketch a product screen or UI flow, or when an interface is being argued about in prose. Draws software as true-size frames across states, with click marks and captions, in one self-contained HTML page. Also use it to read a wireframe someone sent as a link."
 ---
 
 # Wireframe
@@ -115,3 +115,7 @@ If the folder you're working in, or a folder above it, has `.agents/wireframe-ki
 ## Hand it over
 
 Give the user its path, and show the page in this environment's preview of local files if it has one. If the reader can't open a file from where they are, or they asked for a link or to share, send or post the page, publish it yourself with `node <skill>/share.mjs page.html` (or `python <skill>/share.py page.html`); don't point them at the Share button instead. Never publish it with a host's own tool, such as a claude.ai Artifact, a canvas or a gist: the host blocks the page's scripts and Share button and keeps a copy `--delete` can't reach. The script puts a copy at its own unlisted address for thirty days and prints the link and a delete token, and `--delete` takes it down. Otherwise, including when they only say someone else will see it, offer it in one plain sentence ("Want me to put a private copy online? Only people you send the address to can open it, and it deletes itself in a month.") and wait for their answer. Never publish a page with the reader's private figures or names in it without asking first.
+
+## Reading a wireframe from its link
+
+A wireframe draws its frames with script, so its bytes hold the title and little else, and the link answers with what you can read instead. A fetch tool that asks for Markdown gets every frame's screen text, title and note. Fetched without asking for Markdown, as `curl <link>` does, the same address answers with the page as it was drawn: every frame's HTML and classes, with the scripts taken out. Read that HTML when you are building from a wireframe, since it is the layout itself. When you talk about a frame, give its number and title, so the reader can find it.
