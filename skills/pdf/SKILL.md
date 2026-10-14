@@ -9,9 +9,9 @@ A PDF someone will read is a designed page, and the best layout engine here is t
 
 ## Runtime
 
-The skill installs locked versions of `reportlab`, PyMuPDF (`fitz`), `pdfplumber`, `pypdf`, and Pillow into the task environment. Run Python with `python`; do not reinstall these packages. `agent-browser`, the task's browser, is a shell command; where it is not available, build with ReportLab instead.
+The app installs locked versions of `reportlab`, PyMuPDF (`fitz`), `pdfplumber`, `pypdf`, and Pillow when this skill is loaded. Run Python with `python`; do not reinstall these packages. `agent-browser`, the task's browser, is a shell command; where it is not available, build with ReportLab instead.
 
-Run commands from the task root, and run bundled scripts by the full path shown when the skill loads; do not change into the skill directory.
+Run commands from your work folder, and run bundled scripts by the full path shown when the skill loads; do not change into the skill directory.
 
 Prefer a saved `.py` file for repeatable generation. If using a heredoc, quote its delimiter (`<<'PY'`) so shell expansion cannot alter dollar amounts or other document content.
 
@@ -34,7 +34,7 @@ CSS gives you a grid, real tables, a type scale, running headers and page breaks
 
 **Decide the design first**, in a comment at the top of the file: who reads it and what they do next; the one element that should be loudest; what recedes; and the structure the content falls into. Hierarchy comes from size, weight and gray, not from making every heading bold. Structure is usually a grid: labels in a narrow column with their content aligned in a second one, a table wherever there are figures to compare or add up, a timeline as rows rather than paragraphs. "Simple" or "minimal" means few type sizes, one or two grays, and generous space, not the absence of a grid. "Neutral" means white paper and gray ink; tint the page only when asked.
 
-**Write `work/<name>.html`** on these mechanics:
+**Write `<job>/<name>.html`** on these mechanics:
 
 ```html
 <!doctype html>
@@ -89,13 +89,13 @@ CSS gives you a grid, real tables, a type scale, running headers and page breaks
 **Print, check, render and look.** Pass `--pages` only when the request named a page count. After editing the HTML, run `agent-browser open` again before printing, or you print the old page.
 
 ```bash
-agent-browser open work/<name>.html
-agent-browser pdf work/<name>.pdf
-python <pdf-skill-path>/scripts/check-pdf.py work/<name>.pdf --pages 1
-python <pdf-skill-path>/scripts/render-pages.py work/<name>.pdf --output pdf-preview --dpi 110
+agent-browser open <job>/<name>.html
+agent-browser pdf <job>/<name>.pdf
+python <pdf-skill-path>/scripts/check-pdf.py <job>/<name>.pdf --pages 1
+python <pdf-skill-path>/scripts/render-pages.py <job>/<name>.pdf --output pdf-preview --dpi 110
 ```
 
-**Review it as a designer would, then revise.** Is exactly one thing loudest? Do labels, dates and footers recede? Do columns and numbers line up down the page? Are figures in a table, right-aligned, with any total set apart? If a revision still reads like a word processor's defaults, change the structure, not the numbers. Keep the HTML beside the PDF in `work/`, so a later change is an edit to the page and a reprint.
+**Review it as a designer would, then revise.** Is exactly one thing loudest? Do labels, dates and footers recede? Do columns and numbers line up down the page? Are figures in a table, right-aligned, with any total set apart? If a revision still reads like a word processor's defaults, change the structure, not the numbers. Keep the HTML beside the PDF in the job's folder, so a later change is an edit to the page and a reprint.
 
 ## Recipe: data-generated document with ReportLab
 
@@ -180,6 +180,8 @@ story.append(table)
 ReportLab does not automatically constrain images to the document frame. Add the fitted image to `story` before `doc.build(story)`.
 
 ```python
+import os
+
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Image as PDFImage
 
@@ -191,7 +193,11 @@ def fitted_image(path: str, max_width: float, max_height: float) -> PDFImage:
 
 
 story.append(
-    fitted_image("attachments/chart.png", frame_width, frame_height * 0.55)
+    fitted_image(
+        os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "chart.png"),
+        frame_width,
+        frame_height * 0.55,
+    )
 )
 ```
 
@@ -200,6 +206,7 @@ For mixed Markdown and images, `create-pdf.py` is a quick convenience. Put a Mar
 ## Recipe: convert SVG to vector PDF
 
 ```python
+import os
 from pathlib import Path
 
 import fitz
@@ -207,13 +214,14 @@ import fitz
 output = Path("chart.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
-with fitz.open("attachments/chart.svg") as svg:
+with fitz.open(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "chart.svg")) as svg:
     output.write_bytes(svg.convert_to_pdf())
 ```
 
 To place SVG content on a larger PDF page while keeping it vector:
 
 ```python
+import os
 from pathlib import Path
 
 import fitz
@@ -221,7 +229,7 @@ import fitz
 output = Path("chart-page.pdf")
 output.parent.mkdir(parents=True, exist_ok=True)
 
-with fitz.open("attachments/chart.svg") as svg:
+with fitz.open(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "chart.svg")) as svg:
     with fitz.open("pdf", svg.convert_to_pdf()) as vector_pdf:
         with fitz.open() as document:
             page = document.new_page(width=612, height=792)
@@ -268,8 +276,8 @@ Run `fill-form.py --list-fields` first. If the PDF has no AcroForm fields, rende
 Validate before writing, then create a new PDF:
 
 ```bash
-python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf fields.json --validate-only
-python <pdf-skill-path>/scripts/overlay-form.py attachments/form.pdf fields.json filled-form.pdf
+python <pdf-skill-path>/scripts/overlay-form.py "$INSTRUMENT_ATTACHMENTS/form.pdf" fields.json --validate-only
+python <pdf-skill-path>/scripts/overlay-form.py "$INSTRUMENT_ATTACHMENTS/form.pdf" fields.json filled-form.pdf
 ```
 
 The script writes page content, not editable form controls. It rejects rotated pages, overlapping or out-of-page boxes, and text that cannot fit at the minimum font size. Normalize page rotation before using it. Use only built-in PDF font aliases unless a task-specific script embeds the required font.
@@ -313,7 +321,7 @@ Use these scripts only for operations they directly cover. Read [`reference.md`]
 After every creation or meaningful change, check the PDF that was actually written, then render every page:
 
 ```bash
-PDF_PATH=work/report.pdf
+PDF_PATH=<job>/report.pdf
 python <pdf-skill-path>/scripts/check-pdf.py "$PDF_PATH"
 python <pdf-skill-path>/scripts/render-pages.py "$PDF_PATH" --output pdf-preview --dpi 150
 ```

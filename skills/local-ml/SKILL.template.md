@@ -16,7 +16,7 @@ Use Python libraries directly when the work needs batching, model reuse, custom 
 | Similarity, ranking, aggregation, or custom thresholds | Compose the library APIs                                   |
 | A reusable artifact                                    | Write structured results to a file and record the model ID |
 
-Python packages share the task virtual environment, so a custom recipe is a file of your own. Run it from the task root so relative paths resolve correctly.
+Packages you `pip install` go into your work folder's environment, so a custom recipe is a file of your own there. Run it from the work folder so relative paths resolve correctly.
 
 ## Optional dependencies
 
@@ -112,13 +112,15 @@ This reads one text per line and writes ranked labels as JSON. Save it as `class
 
 ```python
 import json
+import os
 from pathlib import Path
 
 from transformers import pipeline
 
 model_id = "MoritzLaurer/deberta-v3-base-zeroshot-v2.0"
 labels = ["urgent", "routine", "spam"]
-source_text = Path("attachments/messages.txt").read_text(encoding="utf-8")
+source = Path(os.environ["INSTRUMENT_ATTACHMENTS"], "messages.txt")
+source_text = source.read_text(encoding="utf-8")
 texts = [
     line.strip()
     for line in source_text.splitlines()
@@ -157,13 +159,15 @@ Normalized embeddings make the dot product a cosine-similarity score. The defaul
 
 ```python
 import json
+import os
 from pathlib import Path
 
 from sentence_transformers import SentenceTransformer
 
 model_id = "BAAI/bge-small-en-v1.5"
 query = "How do I reset my password?"
-source_text = Path("attachments/articles.txt").read_text(encoding="utf-8")
+source = Path(os.environ["INSTRUMENT_ATTACHMENTS"], "articles.txt")
+source_text = source.read_text(encoding="utf-8")
 documents = [
     line.strip()
     for line in source_text.splitlines()
@@ -192,6 +196,7 @@ Path("ranked.json").write_text(
 Creating a session loads the model. Reuse it for every image in the batch.
 
 ```python
+import os
 from pathlib import Path
 
 from rembg import new_session, remove
@@ -200,7 +205,7 @@ session = new_session("u2net")
 destination = Path("background-removed")
 destination.mkdir(parents=True, exist_ok=True)
 
-for source in Path("attachments").glob("*"):
+for source in Path(os.environ["INSTRUMENT_ATTACHMENTS"]).glob("*"):
     if source.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp"}:
         continue
     result = remove(source.read_bytes(), session=session)

@@ -10,7 +10,7 @@ OUTPUT_FORMATS = ".csv, .tsv, .xlsx, or .parquet"
 
 BRIDGE = (
     "Apple Numbers and legacy .xls files need the TypeScript compatibility bridge: "
-    "node scripts/numbers-bridge.ts <input> --output <output>"
+    'node "$INSTRUMENT_SKILL_DIR/scripts/numbers-bridge.ts" <input> --output <output>'
 )
 
 PYARROW_MISSING = (

@@ -97,6 +97,8 @@ prs.save(output)
 Use Pillow only to read dimensions, then place the image with preserved aspect ratio:
 
 ```python
+import os
+
 from PIL import Image
 
 def contain_image(slide, path, left, top, width, height):
@@ -110,7 +112,7 @@ def contain_image(slide, path, left, top, width, height):
 
 contain_image(
     slide,
-    "attachments/chart.png",
+    os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "chart.png"),
     Inches(6.2), Inches(1.7), Inches(6.2), Inches(4.6),
 )
 ```
@@ -138,11 +140,12 @@ slide.shapes.add_chart(
 Template layout indices vary. Inspect the deck and target stable shape names when possible:
 
 ```python
+import os
 from pathlib import Path
 
 from pptx import Presentation
 
-prs = Presentation("attachments/template.pptx")
+prs = Presentation(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "template.pptx"))
 slide = prs.slides[0]
 by_name = {shape.name: shape for shape in slide.shapes}
 by_name["Title"].text = "Updated title"
@@ -175,11 +178,11 @@ Assigning `shape.text` or clearing a text frame can erase run-level formatting. 
 Reopen the output with `Presentation(...)` and verify slide count, dimensions, shape bounds, expected text, tables, charts, images, and notes. Run `inventory.py` and `extract-text.py`. Then look at every slide:
 
 ```bash
-python <powerpoint-skill-path>/scripts/preview.py work/deck.pptx
-agent-browser open work/deck.preview.html
+python <powerpoint-skill-path>/scripts/preview.py <job>/deck.pptx
+agent-browser open <job>/deck.preview.html
 agent-browser wait --fn "document.body.dataset.ready || document.body.dataset.error"
-agent-browser pdf work/deck.preview.pdf
-python <powerpoint-skill-path>/scripts/thumbnail.py work/deck.preview.pdf work/deck-thumbs
+agent-browser pdf <job>/deck.preview.pdf
+python <powerpoint-skill-path>/scripts/thumbnail.py <job>/deck.preview.pdf <job>/deck-thumbs
 ```
 
 Read the grid, and run `thumbnail.py --cols 1 --width 1200` on the same PDF for a slide that needs a closer look. Check for clipping, overlap, text running out of its box, tiny text, distorted images, poor contrast, and titles that move between slides. Fix the generator, rebuild, and look again. The preview needs a network connection to load its renderer; if `document.body.dataset.error` is set or the page never becomes ready, say that the deck was checked structurally only.

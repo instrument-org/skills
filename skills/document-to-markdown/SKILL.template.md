@@ -25,11 +25,12 @@ The app installs the locked `markitdown` dependency when this skill is loaded. R
 Use the library directly when conversion is one step in a larger Python task:
 
 ```python
+import os
 from pathlib import Path
 
 from markitdown import MarkItDown
 
-source = Path("attachments/input.docx")
+source = Path(os.environ["INSTRUMENT_ATTACHMENTS"], "input.docx")
 result = MarkItDown(enable_plugins=False).convert_local(str(source))
 markdown = result.text_content
 

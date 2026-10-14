@@ -20,15 +20,17 @@ Use the bundled scripts for ordinary archive creation, listing, and extraction. 
 ## Recipe: create an archive with exact member paths
 
 ```python
+import os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 output = Path("package.zip")
 output.parent.mkdir(parents=True, exist_ok=True)
 
+attachments = Path(os.environ["INSTRUMENT_ATTACHMENTS"])
 members = {
-    Path("attachments/report.csv"): "data/report.csv",
-    Path("attachments/readme.txt"): "README.txt",
+    attachments / "report.csv": "data/report.csv",
+    attachments / "readme.txt": "README.txt",
 }
 
 with ZipFile(output, "x", compression=ZIP_DEFLATED) as archive:
@@ -41,9 +43,10 @@ Mode `"x"` refuses to overwrite an existing deliverable. Use a new output path w
 ## Recipe: inspect or read members without extracting
 
 ```python
+import os
 from zipfile import ZipFile
 
-with ZipFile("attachments/archive.zip") as archive:
+with ZipFile(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "archive.zip")) as archive:
     for member in archive.infolist():
         print(member.filename, member.file_size, member.compress_size)
 
@@ -58,6 +61,7 @@ This is the safest starting point for ZIP-based document bundles. Their internal
 Archive member names are untrusted paths. Validate them before extraction, including backslashes that become separators on Windows.
 
 ```python
+import os
 from pathlib import Path, PurePosixPath
 from zipfile import ZipFile
 
@@ -65,7 +69,7 @@ destination = Path("extracted").resolve()
 destination.mkdir(parents=True, exist_ok=False)
 wanted = {"data/report.csv", "manifest.json"}
 
-with ZipFile("attachments/archive.zip") as archive:
+with ZipFile(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "archive.zip")) as archive:
     for member in archive.infolist():
         name = member.filename.replace("\\", "/")
         path = PurePosixPath(name)
