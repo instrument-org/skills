@@ -95,11 +95,13 @@ assert "SalesTable" in check["Sales"].tables
 Use pandas for data operations, then write the result to a new sheet or file:
 
 ```python
+import os
 from pathlib import Path
 
 import pandas as pd
 
-frame = pd.read_excel("attachments/sales.xlsx", sheet_name="Sales")
+source = os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "sales.xlsx")
+frame = pd.read_excel(source, sheet_name="Sales")
 summary = (
     frame.groupby("Region", as_index=False)
     .agg(revenue=("Revenue", "sum"), target=("Target", "sum"))
@@ -118,14 +120,18 @@ Pandas is ideal for analysis but does not preserve the source workbook's full pr
 `pd.read_parquet` and `DataFrame.to_parquet` cover Parquet through `pyarrow`. Read only the columns you need, and write without the index unless it carries data:
 
 ```python
+import os
+
 import pandas as pd
 import pyarrow.parquet as pq
 
+source = os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "events.parquet")
+
 # Inspect the schema and row count before loading a large file.
-parquet_file = pq.ParquetFile("attachments/events.parquet")
+parquet_file = pq.ParquetFile(source)
 print(parquet_file.schema_arrow, parquet_file.metadata.num_rows)
 
-frame = pd.read_parquet("attachments/events.parquet", columns=["ts", "region", "revenue"])
+frame = pd.read_parquet(source, columns=["ts", "region", "revenue"])
 frame.to_parquet("by-region.parquet", index=False)
 ```
 
@@ -134,11 +140,12 @@ A Parquet file is one typed table. It preserves column types, nulls, and diction
 ## Edit without flattening the workbook
 
 ```python
+import os
 from pathlib import Path
 
 from openpyxl import load_workbook
 
-source = Path("attachments/input.xlsm")
+source = Path(os.environ["INSTRUMENT_ATTACHMENTS"], "input.xlsm")
 keep_vba = source.suffix.lower() == ".xlsm"
 wb = load_workbook(source, data_only=False, keep_vba=keep_vba)
 ws = wb["Inputs"]

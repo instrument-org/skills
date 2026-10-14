@@ -80,7 +80,10 @@ doc.save(output)
 Add an image at a known width and let Word retain its aspect ratio:
 
 ```python
-doc.add_picture("attachments/chart.png", width=Inches(6.2))
+import os
+
+chart = os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "chart.png")
+doc.add_picture(chart, width=Inches(6.2))
 doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
 ```
 
@@ -94,11 +97,12 @@ embed that path.
 Load the original file and make the smallest structural change possible:
 
 ```python
+import os
 from pathlib import Path
 
 from docx import Document
 
-doc = Document("attachments/input.docx")
+doc = Document(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "input.docx"))
 doc.add_heading("Appendix", level=1)
 doc.add_paragraph("Additional findings go here.")
 output = Path("edited.docx")
@@ -113,12 +117,13 @@ Word often splits visible text across formatting runs. Replacing `paragraph.text
 `docxtpl` preserves a user-authored design while substituting structured data:
 
 ```python
+import os
 from pathlib import Path
 
 from docxtpl import DocxTemplate
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 
-template = DocxTemplate("attachments/template.docx")
+template = DocxTemplate(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "template.docx"))
 template.render(
     {
         "client": "Acme Corp",
@@ -157,11 +162,11 @@ Keep each control tag in one Word run as required by `docxtpl`; Word can split v
 Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. Then look at every page:
 
 ```bash
-python <docx-skill-path>/scripts/preview.py work/report.docx
-agent-browser open work/report.preview.html
+python <docx-skill-path>/scripts/preview.py <job>/report.docx
+agent-browser open <job>/report.preview.html
 agent-browser wait --fn "document.body.dataset.ready || document.body.dataset.error"
-agent-browser pdf work/report.preview.pdf
-python <docx-skill-path>/scripts/render-pages.py work/report.preview.pdf --output work/report-pages
+agent-browser pdf <job>/report.preview.pdf
+python <docx-skill-path>/scripts/render-pages.py <job>/report.preview.pdf --output <job>/report-pages
 ```
 
 Read every page image and check for clipping, awkward page breaks, tables running past the margins, missing images, and missing glyphs. Fix the generator, rebuild, and look again. The preview needs a network connection to load its renderer; if `document.body.dataset.error` is set or the page never becomes ready, open each image you generated at its own path instead, and say plainly that the document itself was not rendered.
