@@ -36,7 +36,7 @@ const page = shell
   .replace(
     /<main class="[^"]*">[\s\S]*?<\/main>/,
     () =>
-      `<main class="flex min-h-dvh flex-col px-4 pb-8 sm:px-6">\n${main}\n    </main>`,
+      `<main class="flex min-h-dvh flex-col px-4 pb-8">\n${main}\n    </main>`,
   );
 writeFileSync(out, tagRepo(page, repoName(process.cwd())));
 console.log(

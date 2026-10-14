@@ -1,6 +1,8 @@
       <!-- This page is the drawing. <main> fills the window and carries no prose
-           column: `flex min-h-dvh flex-col px-4 pb-8 sm:px-6`. The top padding
-           is the title bar's own, so the bar can pin flush to the top edge. -->
+           column: `flex min-h-dvh flex-col px-4 pb-8`. The top padding is the
+           title bar's own, so the bar can pin flush to the top edge. One 16px
+           gutter runs round the bar's contents, down the grid's sides and
+           between the bar and the first row, so every edge lines up. -->
 
       <style>
         /* The rings and their tags are the one thing on these frames that is
@@ -71,7 +73,7 @@
         }
       </style>
 
-      <header class="sticky top-0 z-20 -mx-4 mb-4 sm:mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
+      <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 p-4 backdrop-blur">
         <!-- The page name is the part of the product and what this version
              tries ("Checkout: sold out mid-payment"). The line under it says
              what we're proposing. Everything else goes in the frame notes, so
