@@ -5,7 +5,7 @@ description: Guide for creating effective Agent Skills. Use when you want to cre
 
 # Creating Registry Skills
 
-Skills live in `skills/` and are installed into the workspace on demand. A skill should teach the agent how to solve work in its domain. Scripts are convenience tools for closed operations, not the skill's primary abstraction.
+Skills live in `skills/`, ship with the app, and are read in place when loaded. A skill should teach the agent how to solve work in its domain. Scripts are convenience tools for closed operations, not the skill's primary abstraction.
 
 ## Directory Layout
 
@@ -40,7 +40,7 @@ Start with the user's goal, then route between direct library use and bundled sc
 - Include a verification loop that tests the properties users care about. For visual artifacts, require rendering and inspection, not just file parsing.
 - Explain consequential traps and fidelity boundaries, not every library API.
 
-Python packages are available to task-local scripts through the task virtualenv. TypeScript dependencies are isolated to the loaded skill package, so custom TypeScript files that import them must be written inside that skill directory and run by full path from the task root.
+A loaded skill's folder is read-only, so recipes are files the agent writes in its work folder, reading what the person attached from `$INSTRUMENT_ATTACHMENTS`. The agent's Python scripts run in the skill's environment wherever no `.venv` is near. A skill's npm dependencies resolve only for the skill's own scripts, so custom TypeScript adds what it imports with `pnpm add`.
 
 ## SKILL.template.md
 

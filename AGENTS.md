@@ -2,7 +2,7 @@
 
 Skill/template registry for the Instrument desktop app. Not an app.
 
-- `skills/`: workspace-installed agent skills. Scripts run from the consuming project root, not here. Each skill has its own `tests/`.
+- `skills/`: agent skills the app ships. Their scripts run from the agent's work folder, not here. Each skill has its own `tests/`.
 
 ## Notes
 
@@ -16,18 +16,18 @@ Skill/template registry for the Instrument desktop app. Not an app.
 - Keep scripts for closed, repeatable operations. For generative, layout, data, or multi-step work, include executable library recipes and make direct code the primary route.
 - Use `{{GENERATED_SCRIPT_INDEX}}` when a template has scripts. Keep the concise index in `SKILL.md`; the generator writes complete CLI documentation to `reference.md` for progressive disclosure.
 - A command-first skill is appropriate only when the underlying interface is itself the best improvisational surface, such as FFmpeg or browser automation.
-- TypeScript dependencies are isolated to the loaded skill package. A custom TypeScript recipe that imports them must live under that skill directory and be run by its full path from the task root. Python packages are available to task-local scripts through the shared task virtualenv.
+- A loaded skill's folder is read-only, and its TypeScript dependencies resolve only for its own scripts. A custom TypeScript recipe lives in the agent's work folder and adds what it imports there with `pnpm add`. The agent's own Python scripts run in the loaded skill's environment wherever no `.venv` is near.
 
 ## Consumer app context
 
 Primary consumer: Instrument, a cross-platform Electron desktop app for knowledge workers. Users open a local project folder and delegate work to an agent. The agent operates on that folder using file I/O, shell commands, web search, browser automation, and image generation.
 
-Skills from this registry are installed into the user's workspace on demand. Their scripts execute from the user's project root, not from this registry. Optimize for file-centric desktop workflows on Windows, Linux, and macOS. Avoid platform-specific assumptions unless documented. Do not optimize for CI, servers, or CLI-first workflows.
+Skills from this registry ship with the app and are read in place, read-only, when an agent loads one. Their scripts run by full path (`"$INSTRUMENT_SKILL_DIR/scripts/<script>"`) from the agent's work folder (`$INSTRUMENT_WORK`), not from this registry. Recipes read what the person attached from `$INSTRUMENT_ATTACHMENTS`, which is read-only, and write into a job folder in the work folder. Optimize for file-centric desktop workflows on Windows, Linux, and macOS. Avoid platform-specific assumptions unless documented. Do not optimize for CI, servers, or CLI-first workflows.
 
 ## Skill runtime
 
 - The product provides a Node.js runtime and a Python runtime for skill scripts. Implement scripts in TypeScript (npm deps) or Python (pip deps).
-- Python is available via bundled uv with managed CPython. A per-task virtualenv lives at `work/.venv`; agents call `python`, `pip`, and `uv` as shell commands. The app installs locked base dependencies from a loaded skill's `pyproject.toml` and `uv.lock`; write `.py` scripts and use `pip install <pkg>` only for task-specific optional extras.
+- Python is available via bundled uv with managed CPython; agents call `python`, `pip`, and `uv` as shell commands. The app builds a skill's locked base dependencies from its `pyproject.toml` and `uv.lock` into an environment of its own, which `python` picks for any script in the skill's folder. Write `.py` scripts and use `pip install <pkg>` only for task-specific optional extras; with no `.venv` near, it makes `$INSTRUMENT_WORK/.venv`, which holds only what was installed there.
 - Python skills keep their complete dependency contract in `pyproject.toml` and a committed `uv.lock`. Tests run with `uv run --locked --project .` so the manifest stays executable. Keep SKILL.md's dependency guidance aligned with the manifest: identify automatically installed base packages and any optional extras the agent must install for a requested workflow.
 - Native npm dependencies are acceptable only when they provide supported binaries for Windows, Linux, and macOS.
 - A tool available on a contributor's machine is not necessarily available to an installed skill. Treat the product runtime and the skill's declared dependencies as the execution environment.
