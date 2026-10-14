@@ -164,7 +164,7 @@ def transcribe_with_openai_whisper(args):
         import whisper
     except ImportError:
         sys.exit(
-            "faster-whisper is not installed. Run: pip install faster-whisper"
+            "faster-whisper is not installed. Run: pip install faster-whisper 'av<19'"
         )
 
     if not shutil.which("ffmpeg"):

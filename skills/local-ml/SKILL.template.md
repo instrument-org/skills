@@ -24,7 +24,7 @@ The app installs the locked base dependency, Pillow. Install only the feature st
 
 ```bash
 pip install "rembg[cpu]" "numba>=0.60"          # background removal
-pip install faster-whisper                       # speech-to-text
+pip install faster-whisper "av<19"              # speech-to-text
 pip install openai-whisper                       # Windows on ARM fallback
 pip install transformers torch                   # vision, classification, NER
 pip install sentence-transformers                # embeddings and similarity
