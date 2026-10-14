@@ -37,7 +37,7 @@ The inline style gives `--s` a reasonable starting value, so the first paint isn
 | A dropdown or menu | 240x320               |
 | A toast or banner  | 380x72                |
 
-Set `SLOT_H` close to the height most frames in the file scale to. A file of phones needs a taller slot than a file of windows. If a file mixes them, use the taller slot so no frame gets squeezed into a strip.
+The grid sizes its slots from the frames themselves, so there is nothing to set. The middle frame of the set fills its tile's width, and a frame much taller than the rest, such as a phone among windows, scales down to the shared slot height.
 
 ## Three ways a set of frames can vary
 

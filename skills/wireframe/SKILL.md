@@ -39,8 +39,7 @@ Then edit the page's module script:
 
 1. Replace the `states` array between `// ---- the frames` and `// ---- render`.
 2. Fill in the one line under the title and the `#source` line.
-3. Set `SLOT_H` close to the height most of your frames scale to.
-4. Delete every helper you don't call.
+3. Delete every helper you don't call.
 
 ```js
 const states = [
