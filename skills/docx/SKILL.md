@@ -159,10 +159,10 @@ Keep each control tag in one Word run as required by `docxtpl`; Word can split v
 
 ## Quality gate
 
-Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. Then look at every page:
+Build and check the document in its job folder, and copy it to where it goes only once it passes. Always reopen the saved document with `Document(...)` and verify expected paragraphs, styles, tables, images, sections, metadata, and filled values. Then look at every page:
 
 ```bash
-python <docx-skill-path>/scripts/preview.py <job>/report.docx
+python <docx-skill-path>/scripts/preview.py <job>/report.docx --output <job>/report.preview.html
 agent-browser open <job>/report.preview.html
 agent-browser wait --fn "document.body.dataset.ready || document.body.dataset.error"
 agent-browser pdf <job>/report.preview.pdf
