@@ -20,6 +20,12 @@ The app installs the locked `markitdown` dependency when this skill is loaded. R
 | Edit or create the source format            | Use the PDF, DOCX, spreadsheet, or PowerPoint skill         |
 | Preserve visual layout                      | Work in the source format; Markdown is semantic, not visual |
 
+Run `convert.py` with the Markdown file to write as `--output`, not a folder; the script makes the folder:
+
+```bash
+python <document-to-markdown-skill-path>/scripts/convert.py "$INSTRUMENT_ATTACHMENTS/report.pdf" --output report/report.md
+```
+
 ## Custom conversion pipeline
 
 Use the library directly when conversion is one step in a larger Python task:
