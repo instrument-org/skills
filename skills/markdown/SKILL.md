@@ -5,7 +5,7 @@ description: "Convert HTML pages and fragments to Markdown."
 
 # Markdown
 
-Use the bundled scripts for ordinary conversions. When the source needs cleanup, preservation rules, or custom semantics, write a small TypeScript program against the skill's installed Turndown library and adapt the recipes below.
+Use the bundled scripts for ordinary conversions. When the source needs cleanup, preservation rules, or custom semantics, write a small TypeScript program against the Turndown library and adapt the recipes below.
 
 ## Choose an approach
 
@@ -16,17 +16,25 @@ Use the bundled scripts for ordinary conversions. When the source needs cleanup,
 
 ## Recipe: customize HTML conversion
 
-`createConverter()` configures Turndown with optional GitHub-Flavored Markdown support. Dependency-using custom TypeScript must live inside the loaded skill package so npm imports resolve against that package.
+This skill's folder is read-only, and its Turndown packages resolve only for its own scripts. Put custom TypeScript in your work folder and add the packages there with `pnpm add turndown turndown-plugin-gfm`. The recipe sets Turndown up as `html-to-md.ts` does, with GitHub-Flavored Markdown support.
 
-Save `<markdown-skill-path>/scripts/custom-convert.ts`:
+Save `<job>/convert.ts` in your work folder:
 
 ```typescript
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 
-import { createConverter } from "./lib/converter.ts";
+import TurndownService from "turndown";
+import { gfm } from "turndown-plugin-gfm";
 
-const html = await readFile("attachments/article.html", "utf8");
-const converter = createConverter({ gfm: true, headingStyle: "atx" });
+const html = await readFile(
+  `${process.env.INSTRUMENT_ATTACHMENTS}/article.html`,
+  "utf8",
+);
+const converter = new TurndownService({
+  codeBlockStyle: "fenced",
+  headingStyle: "atx",
+});
+converter.use(gfm);
 
 converter.remove(["script", "style", "nav"]);
 converter.addRule("callout", {
@@ -40,7 +48,7 @@ await mkdir("output", { recursive: true });
 await writeFile("article.md", `${markdown.trim()}\n`, "utf8");
 ```
 
-From the task root, run it with `node <markdown-skill-path>/scripts/custom-convert.ts`. Use Turndown rules to encode the source document's actual semantics instead of applying broad text replacements after conversion.
+From the work folder, run it with `node <job>/convert.ts`. Use Turndown rules to encode the source document's actual semantics instead of applying broad text replacements after conversion.
 
 Useful composition points:
 

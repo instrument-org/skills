@@ -16,7 +16,7 @@ Use the supplied scripts for ordinary one-code scans and PNG generation. Write T
 | Print-quality SVG or custom error correction                   | Use the writer API        |
 | Positions, orientation, raw bytes, or damaged-code diagnostics | Use the reader API        |
 
-Node dependencies are isolated per loaded skill. Put custom TypeScript inside the loaded skill package, then run it by full path from the task root. A custom file elsewhere cannot import this skill's `zxing-wasm` dependency.
+This skill's folder is read-only, and its `zxing-wasm` dependency resolves only for its own scripts. Put custom TypeScript in your work folder, add the package there with `pnpm add zxing-wasm`, and run the script by its path from the work folder.
 
 Common formats include `QRCode`, `Code128`, `Code39`, `DataMatrix`, `Aztec`, `PDF417`, `EAN13`, `EAN8`, `UPCA`, `UPCE`, `ITF`, `ITF14`, and `DataBar`. Format-specific capacity, checksum, and character rules still apply.
 
@@ -24,14 +24,21 @@ Common formats include `QRCode`, `Code128`, `Code39`, `DataMatrix`, `Aztec`, `PD
 
 ### Generate vector and raster versions
 
-Save this as `<skill-path>/scripts/custom-generate.ts`, then run `node <skill-path>/scripts/custom-generate.ts` from the task root.
+Save this as `<job>/generate.ts` in your work folder, then run `node <job>/generate.ts`.
 
 ```ts
-import { mkdir, writeFile } from "node:fs/promises";
-import { writeBarcode } from "zxing-wasm/writer";
-import { prepareBarcodeWriter } from "./generate-barcode.ts";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { prepareZXingModule, writeBarcode } from "zxing-wasm/writer";
 
-await prepareBarcodeWriter();
+// zxing-wasm fetches its WASM from a CDN unless handed the installed copy.
+const wasm = createRequire(import.meta.url).resolve(
+  "zxing-wasm/writer/zxing_writer.wasm",
+);
+await prepareZXingModule({
+  fireImmediately: true,
+  overrides: { wasmBinary: (await readFile(wasm)).buffer },
+});
 await mkdir("output", { recursive: true });
 
 const payload = "https://example.com/check-in";
@@ -56,17 +63,24 @@ SVG is preferable for print and document composition. Keep the PNG for visual in
 
 ### Decode every code with positions
 
-Save this as `<skill-path>/scripts/custom-read.ts` so package imports resolve.
+Save this as `<job>/read.ts` in your work folder and run it the same way.
 
 ```ts
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { readBarcodes } from "zxing-wasm/reader";
-import { prepareBarcodeReader } from "./read-barcode.ts";
+import { createRequire } from "node:module";
+import { prepareZXingModule, readBarcodes } from "zxing-wasm/reader";
 
-await prepareBarcodeReader();
+// zxing-wasm fetches its WASM from a CDN unless handed the installed copy.
+const wasm = createRequire(import.meta.url).resolve(
+  "zxing-wasm/reader/zxing_reader.wasm",
+);
+await prepareZXingModule({
+  fireImmediately: true,
+  overrides: { wasmBinary: (await readFile(wasm)).buffer },
+});
 await mkdir("output", { recursive: true });
 
-const bytes = await readFile("attachments/codes.png");
+const bytes = await readFile(`${process.env.INSTRUMENT_ATTACHMENTS}/codes.png`);
 const results = await readBarcodes(bytes, {
   maxNumberOfSymbols: 0,
   returnErrors: true,

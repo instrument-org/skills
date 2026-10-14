@@ -16,13 +16,13 @@ Use the supplied scripts for closed one-step operations. Write a Sharp pipeline 
 | Batch conversion or generated overlays                   | Write custom TypeScript                                    |
 | An uncommon option                                       | Consult the [Sharp API reference](references/REFERENCE.md) |
 
-Node dependencies are isolated per loaded skill. Put custom TypeScript inside the loaded skill package, then run it by full path from the task root. A custom file elsewhere cannot import this skill's `sharp` dependency.
+This skill's folder is read-only, and its `sharp` dependency resolves only for its own scripts. Put custom TypeScript in your work folder, add the package there with `pnpm add sharp`, and run the script by its path from the work folder.
 
 ## Recipes
 
 ### Decode and encode only once
 
-Save this as `<skill-path>/scripts/custom-process.ts`, then run `node <skill-path>/scripts/custom-process.ts` from the task root.
+Save this as `<job>/process.ts` in your work folder, then run `node <job>/process.ts`.
 
 ```ts
 import { mkdir } from "node:fs/promises";
@@ -30,7 +30,8 @@ import sharp from "sharp";
 
 await mkdir("output", { recursive: true });
 
-const result = await sharp("attachments/photo.jpg", { failOn: "warning" })
+const source = `${process.env.INSTRUMENT_ATTACHMENTS}/photo.jpg`;
+const result = await sharp(source, { failOn: "warning" })
   .rotate()
   .resize({
     fit: "inside",
@@ -73,7 +74,7 @@ const padding = Math.round((canvas - content) / 2);
 const background = "#ffffff";
 
 // Trim the transparent (or uniform) border down to the subject's real box.
-const subject = await sharp("attachments/product.png")
+const subject = await sharp(`${process.env.INSTRUMENT_ATTACHMENTS}/product.png`)
   .rotate()
   .trim()
   .toBuffer();
@@ -103,7 +104,7 @@ import { mkdir, readdir } from "node:fs/promises";
 import { extname, join } from "node:path";
 import sharp from "sharp";
 
-const inputDir = "attachments/photos";
+const inputDir = `${process.env.INSTRUMENT_ATTACHMENTS}/photos`;
 const outputDir = "photos";
 await mkdir(outputDir, { recursive: true });
 const names = (await readdir(inputDir)).filter((name) =>
