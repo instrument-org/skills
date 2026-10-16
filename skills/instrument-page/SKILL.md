@@ -103,7 +103,7 @@ node <skill>/page.mjs page.html --inputs <every input file> request.md
 
 It embeds every image the page names by path or URL, adds the stylesheet, fonts and behaviors, and checks what the file itself shows: headline and title length, words before the hero, paragraph length, how much of the top is prose, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, em dashes and the direction comment. It prints an `embedded` line for each image it put in, one `FAIL rule: where: measurement -> fix` line per problem, and a closing line with the page's size. It starts nothing, writes nothing but the page, and reaches the network only to download an image the page names by URL.
 
-It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`.
+It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. An embedded image keeps no path, so to swap one, put its path back in `src` and run again. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`.
 
 Then check the layout in your browser tool. `lib/probe.js` loads the page into hidden frames at 1280x900 in light and dark, at the 1104x590 link preview and on a 390px phone, and returns FAIL lines for overlaps, clipping, sideways scroll, phone text under 11px, contrast in both themes, the headline and hero in the first screen, and text spilling out of its box. It leaves the window as it found it.
 

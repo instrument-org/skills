@@ -20,7 +20,7 @@ Never ship an image larger than the box it renders in. A 960-wide file in a 480-
 
 ## Embedding it
 
-Every image ends up inside the file as a `data:` URI, because the page has to open from a USB stick, with no network, years later, and a hosted copy loads no image from anywhere else. You never write the base64: name the image in `src` (or SVG `href`, `poster`, CSS `url()`) by a path relative to the page or by its URL, and `page.mjs` reads it, checks it is an image no larger than its box, and puts the bytes in. The path or URL does not survive into the page. An image it cannot read, that is not an image, or that is bigger than its box stays as written and fails, so resize it and run again.
+Every image ends up inside the file as a `data:` URI, because the page has to open from a USB stick, with no network, years later, and a hosted copy loads no image from anywhere else. You never write the base64: name the image in `src` (or SVG `href`, `poster`, CSS `url()`) by a path relative to the page or by its URL, and `page.mjs` reads it, checks it is an image no larger than its box, and puts the bytes in. The path or URL does not survive into the page, so to replace a picture, put its path back in `src` in place of the `data:` URI and run again; changing the file beside the page alone changes nothing. An image it cannot read, that is not an image, or that is bigger than its box stays as written and fails, so resize it and run again.
 
 Resize a photo to a file beside the page and name that file:
 
