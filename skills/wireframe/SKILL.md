@@ -5,7 +5,7 @@ description: "Use when asked to wireframe, mock up or sketch a product screen or
 
 # Wireframe
 
-This skill draws a flow through a piece of software as a grid of frames. We draw each frame at the real size of the screen and scale it down to fit, with a title and a short note under it. Click marks and "new" marks sit on a layer over each frame, and the reader can hide them with a button or the `A` key. Tapping a frame enlarges it, and adding `?frame=3` to the URL opens the page with the third frame enlarged. The line under the title is also the page's description, which a link preview shows under the title, and a link with `?frame=3` shows that frame's title and note instead.
+This skill draws a flow through a piece of software as a grid of frames. We draw each frame at the real size of the screen and scale it down to fit, with a title and a short note under it. Click marks and "new" marks sit on a layer over each frame. They start hidden, and the reader shows them with a button or the `A` key. Tapping a frame enlarges it, and adding `?frame=3` to the URL opens the page with the third frame enlarged. The line under the title is also the page's description, which a link preview shows under the title, and a link with `?frame=3` shows that frame's title and note instead.
 
 ## When to use it
 
@@ -72,7 +72,7 @@ agent-browser errors
 agent-browser screenshot checkout.png
 ```
 
-`errors` must come back empty, so fix the script until it does. Then look at the screenshot and make sure every frame is drawn, each one has its caption, and nothing is cut off. The browser can only open the page if it's in the task folder or a folder the user granted. If you have no browser tool, tell the user you couldn't check the page.
+`errors` must come back empty, so fix the script until it does. Then look at the screenshot and make sure every frame is drawn, each one has its caption, and nothing is cut off. Marks start hidden, so press `A` and take a second screenshot to check that each ring sits on the element it names. The browser can only open the page if it's in the task folder or a folder the user granted. If you have no browser tool, tell the user you couldn't check the page.
 
 ## Rules
 
@@ -85,7 +85,7 @@ agent-browser screenshot checkout.png
 ### Frames
 
 - Draw several states, one per frame. Usually that's before, during and after one interaction. You can also show one panel in every condition it can be in (empty, loading, one item, many, denied, offline), or one screen at three widths. Never hand over a single frame with a paragraph of explanation.
-- Show where the reader clicks and what's new, using `clickable`, `fresh`, `noted` and `ann`. Use at most one click per frame. Don't use a green row or a check mark as a mark, because those look like part of the product. If you draw a mark by hand, give it the class `ann`, or it stays on screen when the reader hides marks.
+- Show where the reader clicks and what's new, using `clickable`, `fresh`, `noted` and `ann`. Use at most one click per frame. Don't use a green row or a check mark as a mark, because those look like part of the product. If you draw a mark by hand, give it the class `ann`, or it stays on screen while marks are off.
 - Draw everything at its real size. A window is 1280x800, a phone is 390x844, and a panel is whatever it measures. Use the normal type scale. Don't shrink anything by hand, set a scale, or use classes like `text-[9px]`, because the page already scales frames with `transform`.
 - Use grey bars for incidental text. Write real, final-quality copy for the words that matter: labels, warnings, empty states, and the buttons the proposal is about. Never use lorem ipsum.
 - Draw the states nobody asks for: empty, loading, too many, denied, expired and offline. Leave out any chrome the proposal isn't about.

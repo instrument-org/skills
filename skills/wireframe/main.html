@@ -6,10 +6,12 @@
 
       <style>
         /* The rings and their tags are the one thing on these frames that is
-           not the design, so the reader can take them off. The rule hangs off
-           the body, which is what puts the enlarged copy of a frame under it
+           not the design, so they start hidden and the reader turns them on.
+           Anything short of data-marks="on" hides them, so a page shows the
+           bare design before its script runs too. The rule hangs off the
+           body, which is what puts the enlarged copy of a frame under it
            too: one button, both views, no second piece of state. */
-        body[data-marks="off"] .ann {
+        body:not([data-marks="on"]) .ann {
           display: none;
         }
 
@@ -90,7 +92,7 @@
         </div>
 
         <div class="flex shrink-0 items-center gap-1.5 print:hidden">
-          <button id="marks" title="Hide the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
+          <button id="marks" title="Show the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
             <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
           </button>
           <!-- Below two columns both modes draw the same thing, so this hides
@@ -120,7 +122,7 @@
         <div class="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <p id="viewer-caption" class="mx-auto max-h-[30vh] max-w-3xl overflow-y-auto text-center text-sm leading-5 text-white"></p>
           <div id="viewer-controls" class="mx-auto mt-3 grid max-w-3xl grid-cols-3 items-center">
-            <button data-marks title="Hide the annotations (A)" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
+            <button data-marks title="Show the annotations (A)" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
               <i class="ph ph-circle-dashed"></i>
             </button>
             <div class="flex items-center gap-2 justify-self-center">
@@ -509,20 +511,23 @@
         // ---- annotations on and off ------------------------------------------
         // One attribute on the body, so the grid and the enlarged copy of a frame
         // answer to the same switch and there is no second state to keep in step.
+        // The marks start off, and only data-marks="on" shows them.
         // The frames underneath are the design; this is what was said about them.
         const marksButton = document.querySelector("#marks");
         const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent";
         const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
 
         const paintMarks = () => {
-          const on = document.body.dataset.marks !== "off";
+          const on = document.body.dataset.marks === "on";
+          const title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
           marksButton.className = on ? ON : OFF;
-          marksButton.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
+          marksButton.title = title;
+          document.querySelector("#viewer-controls [data-marks]").title = title;
           document.querySelector("#legend").style.opacity = on ? "1" : "0.3";
         };
 
         const flipMarks = () => {
-          document.body.dataset.marks = document.body.dataset.marks === "off" ? "on" : "off";
+          document.body.dataset.marks = document.body.dataset.marks === "on" ? "off" : "on";
           paintMarks();
         };
 
