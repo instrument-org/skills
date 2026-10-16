@@ -37,7 +37,7 @@ Compute every total, date, weekday and difference with a short script over the i
 2. The `h1`: the point, 10 words or fewer. Not the topic.
 3. At most one short lede sentence; no more than 45 words before the hero starts.
 4. The hero, starting in the first screen.
-5. Two to four short sections, each with a heading that says something, each shown more than told: a chart, a table, a short list, a labeled drawing.
+5. Two to four short sections, each with a heading that says something, each shown more than told: a chart, a table, a short list, a labeled drawing. A technical write-up may run longer; at five sections the page gets a sticky strip of their names, and `data-short="Retries"` on an `h2` shortens its label there.
 6. The evidence last: tables, sources, the arithmetic. `<details>` for one or two optional drill-ins, never to hide the point.
 7. The footer: made from which files and sources, when, and what is illustrative.
 
@@ -83,9 +83,13 @@ No paragraph over 60 words; most under 30. Pick one or two things only a file ca
 </html>
 ```
 
-**Plain elements are already designed**: `hgroup` (a `p` before the h1 is the kicker, after it the lede), headings, lists, `dl`, `table`, `details`, `blockquote`, `aside` (tinted note), `figure`/`figcaption`, `mark`, `code`, `footer`.
+**Plain elements are already designed**: `hgroup` (a `p` before the h1 is the kicker, after it the lede), headings, lists, `dl`, `table`, `details`, `blockquote`, `aside` (tinted note), `figure`/`figcaption`, `mark`, `code`, `pre`, `footer`.
 
-**Layout classes**, the whole list: `.stack` `.row` (`.row.between`) `.grid` (`style="--min:14rem"`) `.split` (main plus side column, stacks on phones) `.rail` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.kicker` `.lede` `.label` `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ul.ticks` `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.scroll` `.bleed` (wider) `.full` `.sticky` `.phone-only` `.wide-only` `.print-only` `.screen-only` `.page-break`.
+**Code** is `<pre data-file="apps/api/client.ts"><code class="language-ts">`, escaped (`&lt;`, `&amp;`): it is highlighted, and every `pre` gets Copy and Wrap. `data-file` labels the block with where it came from; leave it off when nothing does. Lines wrap unless the `pre` says `data-wrap="off"`, for output whose columns line up. `language-diff` shows a change. Terminal output is a bare `<pre>` with no `<code>`, and `<span data-tone="bad">` inside it marks a line. Never color code by hand or build your own copy button.
+
+**Layout classes**, the whole list: `.stack` `.row` (`.row.between`) `.grid` (`style="--min:14rem"`) `.split` (main plus side column, stacks on phones) `.rail` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.kicker` `.lede` `.label` `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ol.flow` (a call path or pipeline of up to six boxes with arrows, stacked on phones: `<li><b>retryOnce</b><span>waits on a 429</span></li>`, `data-tone` on the one that matters) `ul.ticks` `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.scroll` `.bleed` (wider) `.narrow` `.full` `.sticky` `.phone-only` `.wide-only` `.print-only` `.screen-only` `.page-break`.
+
+**Widths**: prose, headings and lists sit in a reading column; dense modules take the wide track beside it by themselves: a table of four or more columns (bare, or as the table of a `.scroll` or `figure`), `.grid`, `.rail`, `.cols` and `ol.flow`. Put `.bleed` on anything else that needs the room, such as a chart, a three-column table of long cells, or a grid of your own, and `.narrow` on a module that should stay in the column. A section of prose never goes wide.
 
 A top-level `section` is a full-width grid whose children sit in the reading column: put a panel look, a custom grid or `.hero` styling on a `div` or `figure` inside it. In `ol.steps`, wrap each item's content in one `span`.
 
@@ -101,11 +105,11 @@ Save the user's request word for word as `request.md`, and each source you resea
 node <skill>/page.mjs page.html --inputs <every input file> request.md
 ```
 
-It embeds every image the page names by path or URL, adds the stylesheet, fonts and behaviors, and checks what the file itself shows: headline and title length, words before the hero, paragraph length, how much of the top is prose, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, em dashes and the direction comment. It prints an `embedded` line for each image it put in, one `FAIL rule: where: measurement -> fix` line per problem, and a closing line with the page's size. It starts nothing, writes nothing but the page, and reaches the network only to download an image the page names by URL.
+It embeds every image the page names by path or URL, adds the stylesheet, fonts and behaviors, and checks what the file itself shows: headline and title length, words before the hero, paragraph length, how much of the top is prose, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, em dashes, code with no language named and the direction comment. It prints an `embedded` line for each image it put in, one `FAIL rule: where: measurement -> fix` line per problem, and a closing line with the page's size. It starts nothing, writes nothing but the page, and reaches the network only to download an image the page names by URL.
 
 It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. An embedded image keeps no path, so to swap one, put its path back in `src` and run again. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`.
 
-Then check the layout in your browser tool. `lib/probe.js` loads the page into hidden frames at 1280x900 in light and dark, at the 1104x590 link preview and on a 390px phone, and returns FAIL lines for overlaps, clipping, sideways scroll, phone text under 11px, contrast in both themes, the headline and hero in the first screen, and text spilling out of its box. It leaves the window as it found it.
+Then check the layout in your browser tool. `lib/probe.js` loads the page into hidden frames at 1280x900 in light and dark, at the 1104x590 link preview and on a 390px phone, and returns FAIL lines for overlaps, clipping, sideways scroll, phone text under 11px, contrast in both themes, the headline and hero in the first screen, text spilling out of its box, and a table or grid squeezed into the column while the wide track is free. It leaves the window as it found it.
 
 ```
 agent-browser open page.html

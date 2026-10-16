@@ -135,6 +135,25 @@ ${extra}
     expect(await probe(page(""))).toEqual(["pass"]);
   });
 
+  it(
+    "reports a table squeezed into the column, not one that went wide",
+    { timeout: 120000 },
+    async () => {
+      const cell =
+        "The parser keeps only the keys it knows, the writer emits only those keys again, and anything another client added is gone at the next save";
+      const row = (n: number) =>
+        `<tr>${Array.from({ length: n }, () => `<td>${cell}</td>`).join("")}</tr>`;
+      const table = (n: number) =>
+        `<section><h2>What each file keeps</h2><table>${row(n)}${row(n)}</table></section>`;
+      expect(await probe(page(table(3) + table(4)))).toMatchInlineSnapshot(`
+        [
+          "FAIL cramped: section > table "The parser keeps only the keys it knows, the wri": 6 of 6 cells wrap at under 5 words a line in a 672px box, with 1216px free for it at 1280",
+          "1 FAIL. Fix each by fixing what it names, rebuild with page.mjs, reopen the page and run this again.",
+        ]
+      `);
+    },
+  );
+
   it("reports a planted overlap", { timeout: 120000 }, async () => {
     expect(
       await probe(

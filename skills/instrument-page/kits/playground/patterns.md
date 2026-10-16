@@ -192,7 +192,7 @@ $("#motion").textContent =
   `<motion.div\n  transition={{ type: "spring", visualDuration: 0.45, bounce: 0.25 }}\n/>`;
 ```
 
-Copy is foundation's `<button data-copy="#css">Copy</button>`, which copies the element's text. When the clipboard is refused inside a frame the text is still on the page and selectable, so say so beside the button or in the source line. Write the opening takeaway into the HTML by rendering the page once and pasting back what the script produced, never by typing it, since a sampled easing is eighty numbers and a reader can check whether the two agree.
+Copy is the button the foundation puts on every `<pre>`, which copies the block's text as it is when clicked. Keep the takeaway a bare `<pre>` rather than `<pre><code class="language-css">`: the script rewrites its text, which would wipe the highlighting. When the clipboard is refused inside a frame the text is still on the page and selectable, so say so in the source line. Write the opening takeaway into the HTML by rendering the page once and pasting back what the script produced, never by typing it, since a sampled easing is eighty numbers and a reader can check whether the two agree.
 
 ## A figure beside the stage
 

@@ -17,7 +17,7 @@ Not when the answer is a number: a calculator wearing a control panel is still a
 
 ## How it sits on the foundation
 
-A playground page is an ordinary page: write it, then build and check it like any other with `node <skill>/page.mjs page.html --inputs request.md`. The stage is the hero. The stage and dials share a `.split` row inside a `.bleed` section and stack on a phone. Use foundation tokens in the page's own `<style>` (`--paper`, `--line`, `--muted`, `--gray-100`, `--radius`). The takeaway is a plain `<pre>`, which the foundation already styles as code, and `<button data-copy="#css">Copy</button>` copies it with no script of your own. `window.__instrumentTheme()` answers the theme the page shows and `instrument:theme` fires on `document` when it changes, so the panel follows the page.
+A playground page is an ordinary page: write it, then build and check it like any other with `node <skill>/page.mjs page.html --inputs request.md`. The stage is the hero. The stage and dials share a `.split` row inside a `.bleed` section and stack on a phone. Use foundation tokens in the page's own `<style>` (`--paper`, `--line`, `--muted`, `--gray-100`, `--radius`). The takeaway is a plain `<pre>`, which the foundation already styles as code and gives a Copy button that copies whatever the script last wrote into it. `window.__instrumentTheme()` answers the theme the page shows and `instrument:theme` fires on `document` when it changes, so the panel follows the page.
 
 The check measures the page as it first paints, which is the opening settings list rather than the panel; that is the offline state, and it has to pass on its own.
 

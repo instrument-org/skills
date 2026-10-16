@@ -123,7 +123,7 @@ describe("page.mjs", () => {
     expect(result.built).toContain("<!-- foundation:start");
     expect(result.built).toContain("__instrumentSnap(document.currentScript)");
     expect(result.stdout).toMatchInlineSnapshot(
-      `"page.html: pass, as far as the file shows. It is 34 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
+      `"page.html: pass, as far as the file shows. It is 47 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
     );
     expect(existsSync(join(SKILLS, "instrument-page", "lib", "probe.js"))).toBe(
       true,
@@ -145,7 +145,54 @@ describe("page.mjs", () => {
       FAIL long-paragraph: section > p "bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bu": 64 words -> split it, cut it to 60 words or fewer, or turn it into something seen: a list, a table, a labeled drawing
       FAIL prose-heavy: the first two screens: prose (blocks of 15+ words) is about 81% of what comes first, counting words, with a drawing as 150 -> bring it under 40%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below or into one <details>
       FAIL quote: section > blockquote "“We ship on Friday”": these words are not in any input, word for word -> copy the exact words from the input (an ellipsis may join two exact pieces), or say it as your own summary without quote marks; if it is not a quote at all, use <aside> or <p>, not <blockquote>
-      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 35 KB."
+      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 48 KB."
+    `);
+  });
+});
+
+describe("page.mjs and code blocks", () => {
+  const PAGE = join(SKILLS, "instrument-page", "page.mjs");
+  const run = promisify(execFile);
+  const build = async (code: string) => {
+    const dir = mkdtempSync(join(tmpdir(), "page-code-"));
+    writeFileSync(
+      join(dir, "page.html"),
+      `<!doctype html>
+<!-- direction: reader="engineers" point="the client retries once" shape=read feel=calm hero="the retry" -->
+<html lang="en" data-shape="read" data-feel="calm">
+<head><title>The client retries once</title><meta name="description" content="The client retries a request once on a 429, then hands the error to the agent."></head>
+<body><header><h1>The client retries once</h1></header><section class="hero">${code}</section></body></html>`,
+    );
+    writeFileSync(join(dir, "request.md"), "Explain the retry.");
+    const result = await run(
+      "node",
+      [PAGE, "page.html", "--inputs", "request.md"],
+      { cwd: dir },
+    ).catch((e: { stdout: string; code: number }) => e);
+    return {
+      stdout: result.stdout.trim().replace(/ It is \d+ KB\..*$/s, ""),
+      highlight: readFileSync(join(dir, "page.html"), "utf-8").includes(
+        "highlight.min.js",
+      ),
+    };
+  };
+
+  it.each([
+    ["<pre>$ pnpm test\n✓ 3 passed</pre>", false],
+    ['<pre><code class="language-ts">await retryOnce(run);</code></pre>', true],
+  ])("passes %s and loads highlighting: %s", async (code, highlight) => {
+    expect(await build(code)).toEqual({
+      stdout: "page.html: pass, as far as the file shows.",
+      highlight,
+    });
+  });
+
+  it("fails code that names no language", async () => {
+    expect(
+      (await build("<pre><code>await retryOnce(run);</code></pre>")).stdout,
+    ).toMatchInlineSnapshot(`
+      "FAIL code-language: <pre><code> "await retryOnce(run);": code with no language named, so it is not highlighted -> name it: <code class="language-ts"> (ts, js, json, bash, diff, yaml, python, html, css, sql, swift, go, rust, plaintext); for terminal output, drop the <code> and leave a bare <pre>
+      page.html: 1 FAIL. Fix each by fixing what it names, then run again."
     `);
   });
 });
@@ -205,7 +252,7 @@ describe("page.mjs embeds images", () => {
     expect(result.stdout.replace(/:\d+\//, ":PORT/")).toMatchInlineSnapshot(`
       "embedded shots/bike.png: PNG 480x320, 1 KB in the page
       embedded http://127.0.0.1:PORT/a.png?x=1&amp;y=2: PNG 300x200, 1 KB in the page
-      page.html: pass, as far as the file shows. It is 34 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
+      page.html: pass, as far as the file shows. It is 48 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
     `);
     expect(result.built).not.toContain("shots/bike.png");
     expect(result.built).not.toContain("127.0.0.1");
@@ -223,7 +270,7 @@ describe("page.mjs embeds images", () => {
       "FAIL image-oversize: <img> "big.png": 2400x1600 pixels for a 480-wide box -> crop and resize it to the box it renders in (720 long edge when nothing says smaller), save it as JPEG quality 78 beside the page, and name that file (references/images.md)
       FAIL image-missing: <img> "gone.png": no file at gone.png -> name a file that exists, relative to the page, or draw a stand-in as inline SVG
       FAIL image-not-image: <img> "note.png": these bytes are not a PNG, JPEG, GIF, WebP, AVIF or SVG -> name the image itself, not a page that shows it
-      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 34 KB."
+      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 47 KB."
     `);
   });
 });

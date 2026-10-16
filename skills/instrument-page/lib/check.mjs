@@ -44,6 +44,9 @@ const FONTS =
   "https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400;0,500;1,400;1,500&display=swap";
 const ICONS =
   "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css";
+// Loaded only by a page with a <code class="language-x">; foundation.js runs it on load.
+const HIGHLIGHT =
+  '<script async data-highlight src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>';
 const MARK =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 520'%3E%3Crect width='520' height='520' rx='136' fill='%230b6056'/%3E%3Cpath d='M436.675 331.78C408.481 401.395 340.226 450.5 260.5 450.5C180.774 450.5 112.519 401.395 84.3252 331.78H436.675ZM446.977 223.906C449.287 235.748 450.5 247.982 450.5 260.5C450.5 274.88 448.899 288.886 445.872 302.352H314.801C293.139 302.351 275.578 284.791 275.578 263.129C275.578 241.467 293.139 223.906 314.801 223.906H446.977ZM210.199 223.906C231.861 223.906 249.422 241.467 249.422 263.129C249.422 284.791 231.861 302.352 210.199 302.352H75.1279C72.1008 288.886 70.5 274.88 70.5 260.5C70.5 247.982 71.7131 235.748 74.0234 223.906H210.199ZM260.5 70.5C342.227 70.5 411.9 122.101 438.721 194.5H82.2793C109.1 122.101 178.773 70.5 260.5 70.5Z' fill='%23fff'/%3E%3C/svg%3E";
 const SHARE = '<script async src="https://tryinstrument.com/page.js"></script>';
@@ -78,6 +81,7 @@ function assemble(own, styles, css, js) {
     /class="[^"]*\bph\b/.test(own)
       ? `<link rel="stylesheet" href="${ICONS}">`
       : "",
+    /<code\b[^>]*\bclass=["'][^"']*\blanguage-/i.test(own) ? HIGHLIGHT : "",
     `<style>\n${css}\n</style>`,
     styles.size
       ? `<style data-dv-styles>\n@layer devices {\n${[...styles.entries()].map(([k, v]) => `/* ${k} */\n${v}`).join("\n")}\n}\n</style>`
@@ -263,6 +267,14 @@ function fileChecks(own, push, inputText, reported = new Set()) {
       `${(own.match(/—/g) || []).length} em dash(es)`,
       "rewrite with a colon, comma, period or parentheses",
     );
+  for (const m of own.matchAll(/<pre\b[^>]*>\s*<code\b([^>]*)>([^<]{0,40})/gi))
+    if (!/\blanguage-[\w+-]+/.test(m[1]))
+      push(
+        "code-language",
+        `<pre><code> "${decode(m[2]).replace(/\s+/g, " ").trim()}"`,
+        "code with no language named, so it is not highlighted",
+        'name it: <code class="language-ts"> (ts, js, json, bash, diff, yaml, python, html, css, sql, swift, go, rust, plaintext); for terminal output, drop the <code> and leave a bare <pre>',
+      );
   for (const [re, what] of [
     [/\[\[[^\]]{1,80}\]\]/g, "an unfilled [[slot]]"],
     [/\blorem ipsum\b/gi, "lorem ipsum"],

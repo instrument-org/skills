@@ -99,8 +99,9 @@
     --gap: 1rem;
     --pad: 1.1rem;
     --col: 42rem;
-    --wide: 64rem;
+    --wide: 76rem;
     --gutter: 1.25rem;
+    --page-top: clamp(1.5rem, 5vw, 3.5rem);
 
     --tone: var(--accent);
     --tone-wash: var(--wash);
@@ -217,7 +218,7 @@
   }
   [data-shape="read"] {
     --col: 42rem;
-    --wide: 64rem;
+    --wide: 76rem;
   }
   [data-shape="sheet"] {
     --col: 78rem;
@@ -283,7 +284,7 @@
 
   /* ---------- the page frame: a breakout grid ----------
    body and every top-level header/main/section/footer share three widths:
-   col (reading), wide (.bleed) and full (.full). */
+   col (reading), wide (.bleed, and dense modules on their own) and full (.full). */
 
   *,
   *::before,
@@ -307,7 +308,7 @@
     display: grid;
     align-content: start;
     row-gap: calc(var(--flow) * 2);
-    padding-block: clamp(1.5rem, 5vw, 3.5rem) 5rem;
+    padding-block: var(--page-top) 5rem;
     grid-template-columns:
       [full-start] minmax(var(--gutter), 1fr)
       [wide-start] minmax(0, calc((var(--wide) - var(--col)) / 2))
@@ -348,7 +349,8 @@
     grid-column: col;
     min-width: 0;
   }
-  /* A top-level section that is itself a layout (.split, .grid...) is one block in the column. */
+  /* A top-level section that is itself a layout (.split, .grid...) is one block:
+     in the wide track when it sets cards side by side, in the column otherwise. */
   body
     > :is(header, main, section, footer, article):is(
       .split,
@@ -359,6 +361,9 @@
       .cols
     ) {
     grid-column: col;
+  }
+  body > :is(main, section, article):is(.grid, .rail, .cols):not(.narrow) {
+    grid-column: wide;
   }
   body
     > :is(header, main, section, footer, article):is(
@@ -374,6 +379,24 @@
   }
   .bleed {
     grid-column: wide !important;
+  }
+  /* Dense modules take the wide track on their own: a table of four or more
+     columns (bare, or the table of a .scroll or figure), the layouts that set
+     cards side by side, and a flow. Prose, headings and lists stay in the
+     column, and .narrow keeps any one block there. */
+  :is(
+      body > :is(header, main, section, article),
+      body > main > :is(section, article, header)
+    )
+    > :is(
+      table:has(tr > :nth-child(4)),
+      :is(.scroll, figure):has(> table tr > :nth-child(4)),
+      .grid,
+      .rail,
+      .cols,
+      ol.flow
+    ):not(.narrow) {
+    grid-column: wide;
   }
   body > :is(header, main, section, footer, article).bleed > *,
   body > main > :is(section, article).bleed > * {
@@ -548,14 +571,163 @@
     border-radius: 4px;
     background: var(--paper);
   }
+  /* Code and terminal output sit on one dark ground in both themes, so their
+     colors are fixed here rather than tokens. Lines wrap unless the block says
+     data-wrap="off"; foundation.js wraps each pre in .code with Copy and Wrap,
+     and highlight.js colors a <code class="language-x"> inside one. */
   pre {
-    background: light-dark(#1c1917, #0c0b0a);
+    --code-ground: light-dark(#1c1917, #0c0b0a);
+    background: var(--code-ground);
     color: #e4ded9;
     padding: 1rem 1.1rem;
     border-radius: var(--radius);
-    overflow-x: auto;
     font: 0.84rem/1.6 var(--mono);
     font-variant-ligatures: none;
+    tab-size: 2;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow-x: auto;
+    /* Never vertically: a horizontal scrollbar would leave the block
+       scrollable down by its own height, and the wheel would stop here. */
+    overflow-y: hidden;
+    scrollbar-color: #57534e transparent;
+  }
+  pre[data-wrap="off"],
+  .code[data-wrap="off"] > pre {
+    white-space: pre;
+    overflow-wrap: normal;
+  }
+  .code {
+    position: relative;
+  }
+  * + .code {
+    margin-top: calc(var(--flow) * 0.7);
+  }
+  .code > pre {
+    margin: 0;
+  }
+  .code-file {
+    background: #2a2522;
+    color: #b5aca5;
+    font: 0.76rem/1.3 var(--mono);
+    padding: 0.5rem 7.5rem 0.5rem 1.1rem;
+    border-radius: var(--radius) var(--radius) 0 0;
+    overflow-wrap: anywhere;
+  }
+  .code-file + pre {
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .code-tools {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+  .code:is(:hover, :focus-within) > .code-tools,
+  .code:has(> .code-file) > .code-tools {
+    opacity: 1;
+  }
+  .code-tools button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.25rem 0.45rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: 6px;
+    background: rgb(40 36 33 / 0.85);
+    color: #d0c8c1;
+    font: 500 0.72rem/1.3 var(--body-font);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+  }
+  .code-tools button:hover,
+  .code-tools button[aria-pressed="true"] {
+    background: #44403c;
+    color: #faf8f6;
+  }
+  .code-tools svg {
+    width: 0.95em;
+    height: 0.95em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* Touch screens have no hover, so the tools stay up and the first line moves clear of them. */
+  @media (hover: none) {
+    .code-tools {
+      opacity: 1;
+    }
+    .code:not(:has(> .code-file)) > pre {
+      padding-top: 2.4rem;
+    }
+  }
+  /* highlight.js tokens, read on the dark ground in both themes. */
+  .hljs-comment,
+  .hljs-quote {
+    color: #9a918a;
+    font-style: italic;
+  }
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-selector-pseudo,
+  .hljs-doctag {
+    color: #a5a6f8;
+  }
+  .hljs-built_in,
+  .hljs-type,
+  .hljs-literal {
+    color: #c99bfc;
+  }
+  .hljs-string,
+  .hljs-regexp,
+  .hljs-addition,
+  .hljs-template-tag {
+    color: #a8d45e;
+  }
+  .hljs-number,
+  .hljs-attr,
+  .hljs-attribute,
+  .hljs-symbol,
+  .hljs-meta,
+  .hljs-variable.language_ {
+    color: #e6b95a;
+  }
+  .hljs-title,
+  .hljs-name,
+  .hljs-section,
+  .hljs-selector-id,
+  .hljs-selector-class {
+    color: #6cbdea;
+  }
+  .hljs-deletion {
+    color: #ef8ba3;
+  }
+  /* Terminal output marked by hand: <span data-tone="bad">, on the same dark ground. */
+  pre [data-tone="good"] {
+    color: #a8d45e;
+  }
+  pre [data-tone="warn"] {
+    color: #e6b95a;
+  }
+  pre [data-tone="bad"] {
+    color: #ef8ba3;
+  }
+  pre [data-tone="accent"] {
+    color: #6cbdea;
+  }
+  pre [data-tone="muted"] {
+    color: #9a918a;
+  }
+  .hljs-emphasis {
+    font-style: italic;
+  }
+  .hljs-strong {
+    font-weight: 600;
   }
   blockquote {
     margin-inline: 0;
@@ -982,6 +1154,97 @@
     border-radius: 4px;
   }
 
+  /* A call path or pipeline: boxes left to right with arrows, stacked on phones.
+     Each li is <b>name</b> then a short <span> note; data-tone marks the box that matters. */
+  ol.flow {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    column-gap: 1.6rem;
+    align-items: stretch;
+  }
+  ol.flow > li {
+    position: relative;
+    margin: 0;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line-2);
+    border-radius: calc(var(--radius) * 0.6);
+    background: var(--paper);
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+  ol.flow > li > b {
+    display: block;
+    font: 600 0.82rem/1.35 var(--mono);
+    overflow-wrap: anywhere;
+  }
+  ol.flow > li > span {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--muted);
+  }
+  ol.flow > li + li::before {
+    content: "\2192";
+    position: absolute;
+    left: -1.25rem;
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--muted);
+  }
+  ol.flow > li:is([data-tone], [data-c]) {
+    border-color: var(--tone);
+    background: var(--tone-wash);
+  }
+
+  /* The section strip foundation.js builds on a page of five or more sections. */
+  nav.strip {
+    grid-column: full;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-self: start;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    margin-top: calc(-1 * var(--page-top));
+    margin-bottom: calc(var(--flow) * -0.8);
+    background: color-mix(in oklab, var(--ground) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.strip > div {
+    grid-column: wide;
+    display: flex;
+    gap: 1.3rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    font: 500 0.8rem/1 var(--body-font);
+  }
+  nav.strip a {
+    flex: none;
+    max-width: 18rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0.8rem 0 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    scroll-snap-align: start;
+  }
+  nav.strip a:hover {
+    color: var(--ink);
+  }
+  nav.strip a[aria-current="true"] {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  :root:has(nav.strip) :is(section, article)[id] {
+    scroll-margin-top: 3.5rem;
+  }
+
   /* SVG drawn by hand: data-c / data-tone fill a shape; .outline strokes it. */
   /* Colors set on the svg, not on its shapes, so a fill= or font-size= written
    on a shape still wins: CSS rules outrank SVG presentation attributes. */
@@ -1083,6 +1346,16 @@
     .split.flip {
       grid-template-columns: 1fr;
     }
+    ol.flow {
+      grid-auto-flow: row;
+      row-gap: 1.3rem;
+    }
+    ol.flow > li + li::before {
+      content: "\2193";
+      left: 1rem;
+      top: -1.2rem;
+      translate: 0;
+    }
     .rail {
       display: flex;
       overflow-x: auto;
@@ -1133,8 +1406,8 @@
     dd + dt {
       margin-top: 0.5rem;
     }
-    body {
-      padding-block: 1.25rem 5rem;
+    :root {
+      --page-top: 1.25rem;
     }
   }
 
@@ -1171,8 +1444,52 @@
     }
     .screen-only,
     button:not(.keep),
-    .sticky:empty {
+    .sticky:empty,
+    nav.strip,
+    .code-tools {
       display: none !important;
+    }
+    pre {
+      --code-ground: #f5f5f4;
+      color: #1c1917;
+      white-space: pre-wrap !important;
+    }
+    .code-file {
+      background: #e7e5e4;
+      color: #44403c;
+    }
+    .hljs-comment,
+    .hljs-quote {
+      color: #6d655f;
+    }
+    :is(
+      .hljs-keyword,
+      .hljs-selector-tag,
+      .hljs-selector-pseudo,
+      .hljs-doctag
+    ) {
+      color: #4f46e5;
+    }
+    :is(.hljs-built_in, .hljs-type, .hljs-literal) {
+      color: #7e22ce;
+    }
+    :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-template-tag) {
+      color: #4d7c0f;
+    }
+    :is(.hljs-number, .hljs-attr, .hljs-attribute, .hljs-symbol, .hljs-meta) {
+      color: #a16207;
+    }
+    :is(
+      .hljs-title,
+      .hljs-name,
+      .hljs-section,
+      .hljs-selector-id,
+      .hljs-selector-class
+    ) {
+      color: #0369a1;
+    }
+    .hljs-deletion {
+      color: #b4324f;
     }
     .sticky {
       position: static;

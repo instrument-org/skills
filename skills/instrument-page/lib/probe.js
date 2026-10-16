@@ -33,6 +33,8 @@
       'color text with --ink, --ink-2 or --muted on --paper or --ground, and with --paper (SVG class="paper") on a colored fill; a fixed color or a faded opacity fails in one of the two themes',
     hscroll:
       "make that element fluid (max-width:100%, minmax(0,1fr), flex-wrap, no px min-width); overflow-x:hidden on body only cuts it off",
+    cramped:
+      'add class="bleed" to it so it takes the wide track (a table of four or more columns and a .grid already do), or give it fewer columns; a phone stacks it either way',
     "scroller-drawing":
       "a drawing must fit the phone: drop the min-width so it scales, and give phones a stacked or listed version of whatever is then too small",
   };
@@ -108,10 +110,10 @@
       }
       return false;
     };
-    // The share widget and any page-level chrome injected by a host stay out of the measurements.
+    // The share widget, the section strip and any page-level chrome injected by a host stay out of the measurements.
     const foreign = (el) =>
       !!el.closest(
-        "[data-instrument-widget], instrument-share, #instrument-share",
+        "[data-instrument-widget], instrument-share, #instrument-share, nav.strip",
       );
 
     // ---- color -------------------------------------------------------------
@@ -781,6 +783,62 @@
       }
     }
 
+    // ---- cramped: a dense module held in the column while the wide track is free --
+    if (opts.desk) {
+      const words = (t) => (t.match(/[\p{L}\p{N}][^\s]*/gu) || []).length;
+      const lines = (el) => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const tops = [];
+        for (const r of range.getClientRects())
+          if (r.width > 1 && !tops.some((t) => Math.abs(t - r.top) < 4))
+            tops.push(r.top);
+        return tops.length;
+      };
+      for (const sec of document.querySelectorAll(
+        "body > :is(header, main, section, article), body > main > :is(section, article, header)",
+      )) {
+        if (sec.matches(".split, .grid, .rail, .row, .stack, .cols, main"))
+          continue;
+        const ruler = document.createElement("div");
+        ruler.className = "bleed";
+        ruler.style.cssText = "height:0;margin:0;padding:0";
+        sec.append(ruler);
+        const room = ruler.getBoundingClientRect().width;
+        ruler.remove();
+        for (const el of sec.children) {
+          if (!shown(el) || foreign(el)) continue;
+          const w = el.getBoundingClientRect().width;
+          if (room - w < 160) continue;
+          const table = el.matches("table")
+            ? el
+            : el.querySelector(":scope > table, :scope > * > table");
+          let blocks = [];
+          if (table) blocks = [...table.querySelectorAll("td, th")];
+          else {
+            const kids = [...el.children].filter(shown);
+            const tops = kids.map((k) =>
+              Math.round(k.getBoundingClientRect().top),
+            );
+            if (kids.length < 2 || new Set(tops).size === kids.length) continue;
+            blocks = [...el.querySelectorAll("p, li, dd")];
+          }
+          const measured = blocks
+            .map((b) => ({ n: words(b.innerText || ""), l: 0, b }))
+            .filter((m) => m.n >= 12);
+          for (const m of measured) m.l = lines(m.b);
+          const tight = measured.filter((m) => m.l >= 3 && m.n / m.l < 5);
+          if (tight.length >= 2 && tight.length >= measured.length * 0.3)
+            add(
+              "cramped",
+              el,
+              tight[0].b.innerText,
+              `${tight.length} of ${measured.length} cells wrap at under 5 words a line in a ${r1(w)}px box, with ${r1(room)}px free for it`,
+            );
+        }
+      }
+    }
+
     return out;
   }
 
@@ -1012,7 +1070,7 @@
 
   const desk = await open(1280, 900, "light");
   if (desk) {
-    runs.push(["1280", probe(desk.win, { contrast: true })]);
+    runs.push(["1280", probe(desk.win, { contrast: true, desk: true })]);
     const deskSpec = spec(desk.win, { H: 900 });
     desk.win.document.documentElement.dataset.theme = "dark";
     await sleep(600);
@@ -1040,6 +1098,7 @@
       String(W),
       probe(window, {
         contrast: true,
+        desk: W >= 1100,
         phone: narrow,
         tiny: narrow ? LIMITS.tiny : 0,
       }),
