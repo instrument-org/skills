@@ -21,6 +21,8 @@ import { fileURLToPath } from "node:url";
 // The size past which an image was saved without care (references/images.md):
 // a 1600-wide screenshot as JPEG or WebP, or a 720-wide photo, comes in well under.
 const MAX_BYTES = 500 * 1024;
+// The long edge past which a picture carries more than even the viewer shows.
+const ENOUGH_EDGE = 1600;
 const FETCH_MS = 15_000;
 
 const RECIPE =
@@ -193,8 +195,9 @@ export async function embedImages(html, pageDir, allowed, push) {
     const uri = `data:${type};base64,${bytes.toString("base64")}`;
     uris.set(ref, uri);
     const size = type === "image/svg+xml" ? null : dimensions(bytes, type);
+    const over = size && Math.max(...size) > ENOUGH_EDGE;
     embedded.push(
-      `${ref.slice(0, 80)}: ${FORMAT[type]}${size ? ` ${size[0]}x${size[1]}` : ""}, ${kb(uri.length)} in the page`,
+      `${ref.slice(0, 80)}: ${FORMAT[type]}${size ? ` ${size[0]}x${size[1]}` : ""}, ${kb(uri.length)} in the page${over ? `; more than the ${ENOUGH_EDGE} pixels on the long edge anyone sees, so resize it to save the reader the bytes (references/images.md)` : ""}`,
     );
   }
   const out = html

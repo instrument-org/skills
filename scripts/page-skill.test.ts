@@ -283,6 +283,17 @@ describe("page.mjs embeds images", () => {
       page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 59 KB."
     `);
   });
+
+  it("embeds a picture past 1600 pixels and says to resize it", async () => {
+    const result = await build(
+      `<img src="wide.png" width="800" height="533" alt="A wide screenshot">`,
+      { "wide.png": png(2400, 1600) },
+    );
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain(
+      "embedded wide.png: PNG 2400x1600, 1 KB in the page; more than the 1600 pixels on the long edge anyone sees, so resize it to save the reader the bytes (references/images.md)",
+    );
+  });
 });
 
 describe("wireframe's repo meta", () => {

@@ -42,8 +42,6 @@ const ALLOWED = [
 ];
 const FONTS =
   "https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400;0,500;1,400;1,500&display=swap";
-const ICONS =
-  "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css";
 // Loaded only by a page with a <code class="language-x">; foundation.js runs it on load.
 const HIGHLIGHT =
   '<script async data-highlight src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>';
@@ -78,9 +76,6 @@ function assemble(own, styles, css, js) {
     own.includes("tryinstrument.com/page.js") ? "" : SHARE,
     '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
     `<link rel="stylesheet" href="${FONTS}">`,
-    /class="[^"]*\bph\b/.test(own)
-      ? `<link rel="stylesheet" href="${ICONS}">`
-      : "",
     /<code\b[^>]*\bclass=["'][^"']*\blanguage-/i.test(own) ? HIGHLIGHT : "",
     `<style>\n${css}\n</style>`,
     styles.size

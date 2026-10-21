@@ -252,7 +252,7 @@ Minutes for a commute come from the transport authority's own planner where one 
 
 ## The anchor pin
 
-A page with an anchor, the office the commute runs to, the hotel the restaurants are near, gives it a pin that is not a number: a star in the page's ink, so the numbered pins read as the choices and the anchor as the given. It is a DOM marker like the others, `<div class="pin pin-anchor"><span><i class="ph ph-star"></i></span></div>`, with `.pin-anchor span { background: var(--ink); color: var(--paper); }` (and the current pin then takes a ring instead of ink), and it is in the frame with the shapes.
+A page with an anchor, the office the commute runs to, the hotel the restaurants are near, gives it a pin that is not a number: a star in the page's ink, so the numbered pins read as the choices and the anchor as the given. It is a DOM marker like the others, `<div class="pin pin-anchor"><span><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="m8 1.5 1.9 4.1 4.5.5-3.4 3 1 4.4L8 11.2l-3.9 2.3 1-4.4-3.4-3 4.5-.5z"/></svg></span></div>`, with `.pin-anchor span { background: var(--ink); color: var(--paper); }` (and the current pin then takes a ring instead of ink), and it is in the frame with the shapes.
 
 ## Framing
 
