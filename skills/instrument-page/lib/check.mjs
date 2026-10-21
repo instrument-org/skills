@@ -313,6 +313,16 @@ function fileChecks(own, push, inputText, reported = new Set()) {
   for (const m of own.matchAll(/url\((['"]?)(https?:[^)'"]+)\1\)/g))
     if (!ALLOWED.some((r) => r.test(m[2])) && !reported.has(m[2]))
       push("host", "CSS url()", `loads ${m[2]}`, "inline it as a data: URI");
+  // local() finds a font only where it is installed: the author's machine shows
+  // it, and every reader gets the fallback.
+  for (const m of own.matchAll(/@font-face\s*\{([^}]*)\}/gi))
+    if (/\blocal\(/i.test(m[1]) && !/\burl\(/i.test(m[1]))
+      push(
+        "font-local",
+        `@font-face "${m[1].match(/font-family\s*:\s*["']?([^"';]+)/i)?.[1] ?? "?"}"`,
+        "names only local() fonts, which readers who lack them never see",
+        "add url() naming the font file beside local() and page.mjs embeds it (references/loading.md, A font of its own), or use a Google Font",
+      );
   weekdays(text, inputText, push);
   return { shape, feel, title };
 }

@@ -1,5 +1,6 @@
-// Embeds every image a page names by path or URL as a data: URI. Called by
-// check.mjs before the page is written; not read by the agent.
+// Embeds every image a page names by path or URL as a data: URI, and every font
+// file a stylesheet names in url(). Called by check.mjs before the page is
+// written; not read by the agent.
 //
 // A page travels as one file and a hosted copy may load images only as data:
 // or blob:, so a picture left as a path or a link is a hole wherever the page
@@ -23,7 +24,13 @@ import { fileURLToPath } from "node:url";
 const MAX_BYTES = 500 * 1024;
 // The long edge past which a picture carries more than even the viewer shows.
 const ENOUGH_EDGE = 1600;
+// One weight of a Latin font as WOFF2 is 20 to 60 KB; a desktop OTF with every
+// script and feature in it can pass this, and subsetting brings it back under.
+const MAX_FONT_BYTES = 400 * 1024;
 const FETCH_MS = 15_000;
+
+const FONT_RECIPE =
+  "subset it to the characters the page uses and save it as WOFF2 beside the page, then name that file (references/loading.md, A font of its own)";
 
 const RECIPE =
   "save it again beside the page as JPEG quality 78 (a screenshot may stay PNG if that is smaller), at most 1600 pixels on the long edge for a screenshot and 720 for a photo, and name that file (references/images.md)";
@@ -62,6 +69,17 @@ function sniff(b) {
     return "image/svg+xml";
   return null;
 }
+
+// The font type from the bytes, for a font file a stylesheet names in url().
+function sniffFont(b) {
+  const tag = b.subarray(0, 4).toString("latin1");
+  if (tag === "wOF2") return "font/woff2";
+  if (tag === "wOFF") return "font/woff";
+  if (tag === "OTTO") return "font/otf";
+  if (tag === "true" || tag === "\0\x01\0\0") return "font/ttf";
+  return null;
+}
+const FONT_FILE = /\.(woff2?|otf|ttf)$/i;
 
 // Pixel size read from the header, for the types a photo arrives as.
 function dimensions(b, type) {
@@ -145,6 +163,10 @@ const FORMAT = {
   "image/webp": "WebP",
   "image/avif": "AVIF",
   "image/svg+xml": "SVG",
+  "font/woff2": "WOFF2 font",
+  "font/woff": "WOFF font",
+  "font/otf": "OTF font",
+  "font/ttf": "TTF font",
 };
 
 export async function embedImages(html, pageDir, allowed, push) {
@@ -155,6 +177,8 @@ export async function embedImages(html, pageDir, allowed, push) {
     if (uris.has(ref) || failed.has(ref)) continue;
     const t = target(ref, pageDir, allowed);
     if (!t) continue;
+    const fontName =
+      where === "CSS url()" && FONT_FILE.test(ref.split(/[?#]/)[0]);
     const fail = (rule, measure, fix) => {
       failed.add(ref);
       push(rule, `${where} "${ref.slice(0, 80)}"`, measure, fix);
@@ -164,17 +188,44 @@ export async function embedImages(html, pageDir, allowed, push) {
       bytes = await load(t);
     } catch (e) {
       fail(
-        "image-missing",
+        fontName ? "font-missing" : "image-missing",
         t.url
           ? `could not be downloaded (${reason(e)})`
           : `no file at ${relative(process.cwd(), t.path) || t.path}`,
-        t.url
-          ? "if this environment blocks downloads from scripts, save the image another way (your browser tool, curl, a file the user gave you) to a file beside the page and name that file; if the address is wrong, find the image's real address; otherwise draw a stand-in as inline SVG"
-          : "name a file that exists, relative to the page, or draw a stand-in as inline SVG",
+        fontName
+          ? "name the font file itself (an installed font is in the system's font folders, references/loading.md), or use a Google Font"
+          : t.url
+            ? "if this environment blocks downloads from scripts, save the image another way (your browser tool, curl, a file the user gave you) to a file beside the page and name that file; if the address is wrong, find the image's real address; otherwise draw a stand-in as inline SVG"
+            : "name a file that exists, relative to the page, or draw a stand-in as inline SVG",
+      );
+      continue;
+    }
+    const font = where === "CSS url()" ? sniffFont(bytes) : null;
+    if (font) {
+      if (bytes.byteLength > MAX_FONT_BYTES) {
+        fail(
+          "font-oversize",
+          `${kb(bytes.byteLength)} (${FORMAT[font]}), over ${kb(MAX_FONT_BYTES)}`,
+          FONT_RECIPE,
+        );
+        continue;
+      }
+      const uri = `data:${font};base64,${bytes.toString("base64")}`;
+      uris.set(ref, uri);
+      embedded.push(
+        `${ref.slice(0, 80)}: ${FORMAT[font]}, ${kb(uri.length)} in the page`,
       );
       continue;
     }
     const type = sniff(bytes);
+    if (!type && fontName) {
+      fail(
+        "font-not-font",
+        "these bytes are not a WOFF2, WOFF, OTF or TTF font",
+        "name the font file itself, not a page that offers it",
+      );
+      continue;
+    }
     if (!type) {
       fail(
         "image-not-image",

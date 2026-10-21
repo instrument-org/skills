@@ -294,6 +294,23 @@ describe("page.mjs embeds images", () => {
       "embedded wide.png: PNG 2400x1600, 1 KB in the page; more than the 1600 pixels on the long edge anyone sees, so resize it to save the reader the bytes (references/images.md)",
     );
   });
+
+  it("puts a font file named in url() into the page and fails a local()-only face", async () => {
+    const woff2 = Buffer.concat([Buffer.from("wOF2"), Buffer.alloc(2000)]);
+    const result = await build(
+      `<style>@font-face{font-family:"Brand";src:local("Brand"),url("fonts/brand.woff2") format("woff2")}@font-face{font-family:"Trial Face";src:local("Trial Face Regular")}@font-face{font-family:"Gone";src:url("fonts/gone.otf")}</style><p style="font-family:Brand">The red bike fits.</p>`,
+      { "fonts/brand.woff2": woff2 },
+    );
+    expect(result.code).toBe(1);
+    expect(result.built).toContain('url("data:font/woff2;base64,');
+    expect(result.built).not.toContain("fonts/brand.woff2");
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "embedded fonts/brand.woff2: WOFF2 font, 3 KB in the page
+      FAIL font-missing: CSS url() "fonts/gone.otf": no file at fonts/gone.otf -> name the font file itself (an installed font is in the system's font folders, references/loading.md), or use a Google Font
+      FAIL font-local: @font-face "Trial Face": names only local() fonts, which readers who lack them never see -> add url() naming the font file beside local() and page.mjs embeds it (references/loading.md, A font of its own), or use a Google Font
+      page.html: 2 FAIL. Fix each by fixing what it names, then run again. It is 61 KB."
+    `);
+  });
 });
 
 describe("wireframe's repo meta", () => {

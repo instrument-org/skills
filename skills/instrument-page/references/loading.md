@@ -89,6 +89,25 @@ A page that does this will not run inside the strict frames above, and says what
 
 Chart.js (`/auto/+esm`, `.default`), Observable Plot (a module namespace), Tabulator and sql.js (classic scripts by path) load the same ways.
 
+## A font of its own
+
+A Google Font loads like a library: a `<link>` to `fonts.googleapis.com`. A font the page needs that is not there, a brand face or one the user has installed, goes in the file the way an image does: write a `@font-face` whose `src` names the font file by its path in `url()`, and `page.mjs` reads it, checks it is a WOFF2, WOFF, OTF or TTF under 400 KB, and puts the bytes in. A `@font-face` with only `local()` fails the check, because `local()` finds a font only on a computer that has it installed: it looks right where the page was made and falls back for every reader.
+
+```css
+@font-face {
+  font-family: "Duplicate Round";
+  font-weight: 500;
+  src: url("fonts/DuplicateRound-Medium.woff2") format("woff2");
+}
+```
+
+An installed font is a file in the system's font folders: `~/Library/Fonts` and `/Library/Fonts` on macOS, `%LOCALAPPDATA%\Microsoft\Windows\Fonts` and `C:\Windows\Fonts` on Windows, `~/.local/share/fonts` and `/usr/share/fonts` on Linux. Find it by name there; one file holds one weight and style, so a page that sets three weights names three files. Subset each to the characters the page uses and save it as WOFF2 beside the page, which takes a desktop OTF from hundreds of KB to a few dozen:
+
+```
+pip install fonttools brotli
+pyftsubset "<font file>" --unicodes="U+0020-007E,U+00A0-00FF,U+2010-2027,U+20AC" --layout-features="*" --flavor=woff2 --output-file=fonts/<name>.woff2
+```
+
 ## Say what it costs
 
 The foundation's fonts are about 100 KB. A charting library is about the same again; Excalidraw is 1.2 MB, which a board earns because the board is the whole page. Say on the page what it shows while a library loads and if it never does.
