@@ -73,6 +73,64 @@
         #rack .frame:hover {
           outline-color: var(--color-brand-300);
         }
+
+        /* The frames-per-row slider, drawn by hand so it sits in the bar like
+           the buttons beside it. Each count it can stop at is a dot on the
+           rail, 20px apart, and the slider is as long as its stops need
+           (--stops, set with its max), so it reads as a choice of counts
+           rather than a dial. */
+        #per-row {
+          --rail: color-mix(in srgb, var(--color-foreground) 22%, transparent);
+          appearance: none;
+          width: calc(14px + (var(--stops, 4) - 1) * 20px);
+          height: 16px;
+          margin: 0 2px;
+          background: transparent;
+          cursor: pointer;
+        }
+        #per-row::-webkit-slider-runnable-track {
+          height: 16px;
+          background:
+            radial-gradient(circle, var(--rail) 0 2px, transparent 2.5px) -3px 50% / 20px 100% repeat-x,
+            linear-gradient(var(--rail), var(--rail)) 7px 50% / calc(100% - 14px) 1px no-repeat;
+        }
+        #per-row::-moz-range-track {
+          height: 16px;
+          background:
+            radial-gradient(circle, var(--rail) 0 2px, transparent 2.5px) -3px 50% / 20px 100% repeat-x,
+            linear-gradient(var(--rail), var(--rail)) 7px 50% / calc(100% - 14px) 1px no-repeat;
+        }
+        #per-row::-webkit-slider-thumb {
+          appearance: none;
+          box-sizing: border-box;
+          width: 14px;
+          height: 14px;
+          margin-top: 1px;
+          border-radius: 50%;
+          border: 1px solid color-mix(in srgb, var(--color-foreground) 30%, transparent);
+          background: var(--color-card);
+          box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
+        }
+        #per-row::-moz-range-thumb {
+          box-sizing: border-box;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          border: 1px solid color-mix(in srgb, var(--color-foreground) 30%, transparent);
+          background: var(--color-card);
+          box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
+        }
+        #per-row:hover::-webkit-slider-thumb {
+          border-color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+        }
+        #per-row:hover::-moz-range-thumb {
+          border-color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+        }
+        #per-row:focus-visible {
+          outline: 2px solid var(--color-ring);
+          outline-offset: 2px;
+          border-radius: 4px;
+        }
       </style>
 
       <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 p-4 backdrop-blur">
@@ -95,9 +153,15 @@
           <button id="marks" title="Show the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
             <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
           </button>
-          <!-- Below two columns both modes draw the same thing, so this hides
-               itself rather than sitting there as a dead target. -->
-          <div id="views" class="flex items-center gap-0.5 rounded-lg bg-accent p-0.5"></div>
+          <!-- How many frames a row holds, from one at the full width to four
+               across, with a jump to either end on the icons. On a page too
+               narrow for two it hides rather than sitting there as a dead
+               target. -->
+          <div id="views" class="flex h-8 items-center gap-1 rounded-lg border border-border px-1 text-muted-foreground">
+            <button data-to="min" title="One per row" class="grid size-6 place-items-center rounded-md hover:text-foreground"><i class="ph ph-rows"></i></button>
+            <input id="per-row" type="range" min="1" max="4" step="1" value="1" aria-label="Frames per row" />
+            <button data-to="max" title="Four per row" class="grid size-6 place-items-center rounded-md hover:text-foreground"><i class="ph ph-squares-four"></i></button>
+          </div>
         </div>
       </header>
 
@@ -447,17 +511,41 @@
 
         // ---- density ---------------------------------------------------------
         // Fit as many tiles per row as the width allows, then derive each frame's
-        // scale from the tile. Nothing ever renders above its true size.
+        // scale from the tile. Nothing ever renders above its true size. The
+        // slider in the title bar sets the count instead, from one frame at the
+        // full width to four across, or more where the width already fits more.
         const GAP = 8;
         const PAD = 25; // tile padding plus its border
-        let single = false;
+        // The most tiles the slider offers in a row, and the narrowest it may
+        // make one on the way there.
+        const MOST = 4;
+        const TILE_LEAST = 200;
+        const views = document.querySelector("#views");
+        const perRow = document.querySelector("#per-row");
+        const [oneButton, mostButton] = views.querySelectorAll("button");
+        // What the reader set the slider to. Until then the width decides, and
+        // goes on deciding as the window changes.
+        let chosen = 0;
 
         const layout = () => {
           const avail = rack.clientWidth;
           if (avail <= 0) return;
-          const natural = Math.max(1, Math.floor((avail + GAP) / (TILE_MIN + GAP)));
-          document.querySelector("#views").hidden = natural < 2;
-          const columns = single ? 1 : natural;
+          const across = (least) => Math.max(1, Math.floor((avail + GAP) / (least + GAP)));
+          const natural = across(TILE_MIN);
+          const most = Math.min(Math.max(MOST, natural), across(TILE_LEAST));
+          const columns = Math.min(chosen || natural, most);
+          const single = columns === 1;
+          views.hidden = most < 2;
+          perRow.max = most;
+          perRow.value = columns;
+          perRow.style.setProperty("--stops", most);
+          perRow.title = single ? "One per row" : `${columns} per row`;
+          perRow.setAttribute("aria-valuetext", perRow.title);
+          mostButton.title = `${most} per row`;
+          // The icon at whichever end the slider rests on lights, as the
+          // picked half of a toggle would.
+          oneButton.classList.toggle("text-foreground", single);
+          mostButton.classList.toggle("text-foreground", columns === most);
           const inner = (avail - GAP * (columns - 1)) / columns - PAD;
           rack.style.setProperty("--cols", columns);
           const frames = [...rack.querySelectorAll(".frame")];
@@ -483,28 +571,15 @@
         new ResizeObserver(layout).observe(rack);
         layout();
 
-        // ---- view mode -------------------------------------------------------
-        const VIEWS = [
-          ["grid", "ph-squares-four", "Grid"],
-          ["single", "ph-rows", "One per row"],
-        ];
-        const viewBox = document.querySelector("#views");
+        perRow.addEventListener("input", () => {
+          chosen = Number(perRow.value);
+          layout();
+        });
 
-        const paintViews = () => {
-          viewBox.innerHTML = VIEWS.map(
-            ([key, icon, title]) => `
-            <button data-view="${key}" title="${title}" class="grid size-7 place-items-center rounded-md ${
-              (key === "single") === single ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
-            }"><i class="ph ${icon}"></i></button>`,
-          ).join("");
-        };
-        paintViews();
-
-        viewBox.addEventListener("click", (event) => {
-          const button = event.target.closest("[data-view]");
+        views.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-to]");
           if (!button) return;
-          single = button.dataset.view === "single";
-          paintViews();
+          chosen = Number(perRow[button.dataset.to]);
           layout();
         });
 
