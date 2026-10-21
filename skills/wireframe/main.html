@@ -78,9 +78,10 @@
            the buttons beside it. Each count it can stop at is a dot on the
            rail, 20px apart, and the slider is as long as its stops need
            (--stops, set with its max), so it reads as a choice of counts
-           rather than a dial. */
+           rather than a dial. The rail's grey is mixed into the page's ground
+           rather than see-through, or the line darkens each dot it crosses. */
         #per-row {
-          --rail: color-mix(in srgb, var(--color-foreground) 22%, transparent);
+          --rail: color-mix(in srgb, var(--color-foreground) 22%, var(--color-background));
           appearance: none;
           width: calc(14px + (var(--stops, 4) - 1) * 20px);
           height: 16px;
