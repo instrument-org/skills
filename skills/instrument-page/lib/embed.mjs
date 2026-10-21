@@ -5,25 +5,26 @@
 // or blob:, so a picture left as a path or a link is a hole wherever the page
 // goes. The agent writes the path to a file it saved, or the address of one it
 // found, and this puts the bytes in. An image that cannot be read, is not an
-// image, or carries pixels its box never shows stays as written and fails, so
+// image, or weighs more than an image should stays as written and fails, so
 // nothing oversized or broken is embedded where the next run cannot see it.
 // Every image it did embed is reported too, with its size, so the agent knows
 // what the page now carries without opening it.
+//
+// An image is judged by its bytes alone, never by its pixels against the box it
+// renders in: a screenshot shown small opens full size in the page's viewer, so
+// pixels past the box are what the reader zooms into.
 
 import { readFile } from "node:fs/promises";
 import { isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// The long edge a photo is resized to when nothing smaller is said, and the
-// size past which one was not resized (references/images.md). Slack covers a
-// resize that lands a few pixels or kilobytes over.
-const LONG_EDGE = 720;
-const MAX_BYTES = 200 * 1024;
-const SLACK = 1.25;
+// The size past which an image was saved without care (references/images.md):
+// a 1600-wide screenshot as JPEG or WebP, or a 720-wide photo, comes in well under.
+const MAX_BYTES = 500 * 1024;
 const FETCH_MS = 15_000;
 
 const RECIPE =
-  "crop and resize it to the box it renders in (720 long edge when nothing says smaller), save it as JPEG quality 78 beside the page, and name that file (references/images.md)";
+  "save it again beside the page as JPEG quality 78 (a screenshot may stay PNG if that is smaller), at most 1600 pixels on the long edge for a screenshot and 720 for a photo, and name that file (references/images.md)";
 
 const ENTITY = { "&amp;": "&", "&quot;": '"', "&#39;": "'", "&apos;": "'" };
 const decode = (s) => s.replace(/&(amp|quot|#39|apos);/g, (e) => ENTITY[e]);
@@ -98,12 +99,14 @@ async function load(t) {
     signal: AbortSignal.timeout(FETCH_MS),
   });
   if (!response.ok)
-    throw new Error(`the server answered ${response.status} ${response.statusText}`.trim());
+    throw new Error(
+      `the server answered ${response.status} ${response.statusText}`.trim(),
+    );
   return Buffer.from(await response.arrayBuffer());
 }
 
 // Every image reference in the page's own markup: <img src>, SVG <image href>,
-// <video poster>, and CSS url(). `box` is the width the page gives it, if any.
+// <video poster>, and CSS url().
 const TAG = /<(img|image|video)\b[^>]*>/gi;
 const URL_FN = /url\(\s*(["']?)([^"')]+)\1\s*\)/g;
 const attrOf = (name) => {
@@ -118,16 +121,10 @@ function references(html) {
   for (const m of html.matchAll(TAG)) {
     const tag = m[0];
     const a = attrOf(m[1]).exec(tag);
-    if (!a) continue;
-    const width = /\swidth\s*=\s*["']?(\d+)/i.exec(tag);
-    found.push({
-      where: `<${m[1]}>`,
-      ref: a[3],
-      box: width ? Number(width[1]) : null,
-    });
+    if (a) found.push({ where: `<${m[1]}>`, ref: a[3] });
   }
   for (const m of html.matchAll(URL_FN))
-    found.push({ where: "CSS url()", ref: m[2].trim(), box: null });
+    found.push({ where: "CSS url()", ref: m[2].trim() });
   return found;
 }
 
@@ -152,7 +149,7 @@ export async function embedImages(html, pageDir, allowed, push) {
   const failed = new Set();
   const uris = new Map();
   const embedded = [];
-  for (const { where, ref, box } of references(html)) {
+  for (const { where, ref } of references(html)) {
     if (uris.has(ref) || failed.has(ref)) continue;
     const t = target(ref, pageDir, allowed);
     if (!t) continue;
@@ -184,26 +181,14 @@ export async function embedImages(html, pageDir, allowed, push) {
       );
       continue;
     }
-    if (type !== "image/svg+xml") {
+    if (type !== "image/svg+xml" && bytes.byteLength > MAX_BYTES) {
       const size = dimensions(bytes, type);
-      const limit = box ?? LONG_EDGE;
-      const edge = size && (box ? size[0] : Math.max(...size));
-      if (edge && edge > limit * SLACK) {
-        fail(
-          "image-oversize",
-          `${size[0]}x${size[1]} pixels for a ${box ? `${box}-wide box` : `${LONG_EDGE} long edge`}`,
-          RECIPE,
-        );
-        continue;
-      }
-      if (bytes.byteLength > MAX_BYTES * SLACK) {
-        fail(
-          "image-oversize",
-          `${Math.round(bytes.byteLength / 1024)} KB`,
-          RECIPE,
-        );
-        continue;
-      }
+      fail(
+        "image-oversize",
+        `${kb(bytes.byteLength)}${size ? ` (${FORMAT[type]} ${size[0]}x${size[1]})` : ""}, over ${kb(MAX_BYTES)}`,
+        RECIPE,
+      );
+      continue;
     }
     const uri = `data:${type};base64,${bytes.toString("base64")}`;
     uris.set(ref, uri);

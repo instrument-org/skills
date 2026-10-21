@@ -4,6 +4,8 @@
 //   data-date="2026-10-13" gets class "today" on that date, in the reader's clock
 //   <pre>                  Copy and Wrap; data-file="path" labels it; data-wrap="off" starts unwrapped
 //   <code class="language-ts"> inside a pre is highlighted, once page.mjs's highlight.js loads
+//   <img> in a figure or on its own line, shown smaller than it is: opens full size,
+//                          the arrow keys step through the rest; data-gallery="off" opts one out
 // And, on a page of five or more top-level sections with an h2, a sticky strip of them.
 // Plus the house contracts: the theme switch the share widget calls, and the
 // page as written, kept for the share widget before any script changes it.
@@ -256,6 +258,150 @@
       mark();
     }
 
+    {
+      // The viewer: a picture shown smaller than it is opens full size, and the
+      // arrow keys step through every other such picture on the page. A picture
+      // inside a link, a control or a line of text, or marked alt="", is not one,
+      // and a page that brings its own picture dialog keeps it.
+      const NOT_SHOT =
+        "a, button, label, summary, nav, svg, [data-zoom], [data-gallery='off'], .site-icon";
+      const blockImage = (img) =>
+        img.closest("figure") ||
+        ![...img.parentNode.childNodes].some(
+          (n) => n.nodeType === 3 && n.data.trim(),
+        );
+      const shots = [...document.querySelectorAll("img")].filter(
+        (img) =>
+          root.dataset.gallery !== "off" &&
+          !document.querySelector("dialog img") &&
+          img.getAttribute("alt") !== "" &&
+          !img.closest(NOT_SHOT) &&
+          blockImage(img),
+      );
+      // Worth opening: at least 160px wide on the page, with a quarter more
+      // pixels in the file than the page shows.
+      const worth = (img) => {
+        const r = img.getBoundingClientRect();
+        return r.width >= 160 && img.naturalWidth >= r.width * 1.25;
+      };
+      const mark = (img) => {
+        const on = img.complete && img.naturalWidth > 0 && worth(img);
+        img.classList.toggle("zoomable", on);
+        if (on) {
+          img.tabIndex = 0;
+          img.setAttribute("role", "button");
+        } else {
+          img.removeAttribute("tabindex");
+          img.removeAttribute("role");
+        }
+      };
+      // Sizes change with the window, a details opening, or a late load.
+      const resized = new ResizeObserver((entries) =>
+        entries.forEach((e) => mark(e.target)),
+      );
+      for (const img of shots) {
+        resized.observe(img);
+        img.addEventListener("load", () => mark(img));
+      }
+      let viewer, at, list, opener;
+      const caption = (img) =>
+        img
+          .closest("figure")
+          ?.querySelector("figcaption")
+          ?.textContent.trim() || img.alt;
+      // Built on first use, so the page as written never carries it.
+      const build = () => {
+        viewer = document.createElement("dialog");
+        viewer.className = "viewer";
+        viewer.setAttribute("aria-label", "Picture viewer");
+        const arrow = (d) =>
+          `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${d}"/></svg>`;
+        viewer.innerHTML =
+          '<figure tabindex="-1" autofocus><img alt=""><figcaption><span class="viewer-count"></span><span class="viewer-caption"></span></figcaption></figure>' +
+          `<button type="button" class="viewer-prev" aria-label="Previous picture">${arrow("m10 3-5 5 5 5")}</button>` +
+          `<button type="button" class="viewer-next" aria-label="Next picture">${arrow("m6 3 5 5-5 5")}</button>` +
+          `<button type="button" class="viewer-close" aria-label="Close">${arrow("m4 4 8 8M12 4l-8 8")}</button>`;
+        document.body.append(viewer);
+        viewer.querySelector("img").draggable = false;
+        viewer.querySelector(".viewer-prev").onclick = () => step(-1);
+        viewer.querySelector(".viewer-next").onclick = () => step(1);
+        viewer.querySelector(".viewer-close").onclick = () => viewer.close();
+        let swiped = false;
+        viewer.addEventListener("click", (e) => {
+          if (swiped) swiped = false;
+          else if (!e.target.closest("button")) viewer.close();
+        });
+        viewer.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowRight") step(1);
+          else if (e.key === "ArrowLeft") step(-1);
+          else return;
+          e.preventDefault();
+        });
+        let x0, y0;
+        viewer.addEventListener("pointerdown", (e) => {
+          x0 = e.clientX;
+          y0 = e.clientY;
+        });
+        viewer.addEventListener("pointerup", (e) => {
+          const dx = e.clientX - x0,
+            dy = e.clientY - y0;
+          if (Math.abs(dx) >= 48 && Math.abs(dx) > 1.5 * Math.abs(dy)) {
+            step(dx < 0 ? 1 : -1);
+            swiped = true;
+          }
+        });
+        viewer.addEventListener("close", () => opener?.focus());
+      };
+      const show = () => {
+        const img = list[at];
+        const big = viewer.querySelector("img");
+        big.src = img.currentSrc || img.src;
+        big.alt = img.alt;
+        big.classList.toggle("tall", img.naturalHeight > 2 * img.naturalWidth);
+        viewer.querySelector(".viewer-caption").textContent = caption(img);
+        viewer.querySelector(".viewer-count").textContent =
+          list.length > 1 ? `${at + 1} / ${list.length}` : "";
+        viewer.classList.toggle("single", list.length < 2);
+        viewer.scrollTop = 0;
+        const next = list[(at + 1) % list.length];
+        if (next !== img) new Image().src = next.currentSrc || next.src;
+      };
+      const step = (by) => {
+        at = (at + by + list.length) % list.length;
+        show();
+      };
+      const open = (img) => {
+        if (!viewer) build();
+        const seen = new Set();
+        list = shots.filter(
+          (s) =>
+            s.classList.contains("zoomable") &&
+            !seen.has(s.src) &&
+            seen.add(s.src),
+        );
+        at = Math.max(
+          0,
+          list.findIndex((s) => s.src === img.src),
+        );
+        opener = img;
+        show();
+        viewer.showModal();
+      };
+      document.addEventListener("click", (e) => {
+        const img = e.target.closest?.("img.zoomable");
+        if (img && !e.defaultPrevented) open(img);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (
+          (e.key === "Enter" || e.key === " ") &&
+          e.target.matches?.("img.zoomable")
+        ) {
+          e.preventDefault();
+          open(e.target);
+        }
+      });
+    }
+
     // Today.
     const d = new Date();
     const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -270,14 +416,35 @@
       const i = new Image();
       i.alt = "";
       i.className = "site-icon";
-      i.onerror = () => i.remove();
-      i.onload = () => {
-        if (i.naturalWidth <= 16) i.remove();
-      };
       i.src =
         "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
         encodeURIComponent(new URL(a.href).origin);
-      a.prepend(i);
+      // A line may break between an image and the text beside it, so the icon
+      // and the first word it leads go in a span that cannot break.
+      const walker = document.createTreeWalker(a, NodeFilter.SHOW_TEXT);
+      let text = walker.nextNode();
+      while (text && !text.data.trim()) text = walker.nextNode();
+      let host = a;
+      if (text) {
+        const at = text.data.search(/\S/);
+        const word = at > 0 ? text.splitText(at) : text;
+        const space = word.data.search(/\s/);
+        if (space > 0) word.splitText(space);
+        host = document.createElement("span");
+        host.className = "site-icon-word";
+        word.replaceWith(host);
+        host.append(word);
+      }
+      const drop = () => {
+        i.remove();
+        if (host !== a) host.replaceWith(...host.childNodes);
+      };
+      i.onerror = drop;
+      // The service answers an unknown host with its own 16px globe.
+      i.onload = () => {
+        if (i.naturalWidth <= 16) drop();
+      };
+      host.prepend(i);
     }
   });
 })();

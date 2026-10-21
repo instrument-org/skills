@@ -10,17 +10,15 @@ If the answer is no, the page is better without it. Whitespace, a heading, and a
 
 ## Pay for it properly
 
-There is no ceiling on what a page may weigh. A page that carries a dozen product photos, or a dataset of thousands of rows, is carrying what the reader asked for. What there is no excuse for is a picture carrying bytes the reader's screen will never show, because those are paid by everyone the page is sent to and buy nothing.
+There is no ceiling on what a page may weigh, short of the 8 MB a shared link takes. A page that carries a dozen product photos, or a dataset of thousands of rows, is carrying what the reader asked for. What there is no excuse for is an image saved without care: a photo straight off a camera, or a screenshot as an uncompressed PNG, costs everyone the page is sent to and buys nothing. `page.mjs` fails any image over 500 KB.
 
-The recipe: **crop to the aspect the layout uses, resize to 720 pixels on the long edge, and encode JPEG at quality 78.** A product photo done that way is usually 40 to 80 KB. One that comes out over about 200 KB was not resized.
+The recipe for a **photo**: crop to the aspect the layout uses, resize to 720 pixels on the long edge, and encode JPEG at quality 78. That is usually 40 to 80 KB. Go smaller when the box is smaller and say why: photos in the cells of a comparison table rendered at `width="480"` want 480 wide at quality 72.
 
-Go stricter when the box is smaller, and say why: photos in the cells of a comparison table rendered at `width="480"` want 480 wide at quality 72, and a map's cards the same. Going stricter without a reason is just a worse picture.
-
-Never ship an image larger than the box it renders in. A 960-wide file in a 480-wide cell costs the reader four times the bytes for pixels their screen will never show.
+A **screenshot** keeps its detail, because the reader opens it full size: every `figure` image larger than its box opens in the page's viewer, and the arrow keys step through the rest. Keep it up to 1600 pixels on the long edge and save it as JPEG quality 80 or WebP; a flat interface often comes out smaller as PNG, so keep whichever is smaller. Give it its own pixel size in `width` and `height` and let the layout scale it down. Never crop one to even out a grid: `.frames` letterboxes mixed shapes into equal cells.
 
 ## Embedding it
 
-Every image ends up inside the file as a `data:` URI, because the page has to open from a USB stick, with no network, years later, and a hosted copy loads no image from anywhere else. You never write the base64: name the image in `src` (or SVG `href`, `poster`, CSS `url()`) by a path relative to the page or by its URL, and `page.mjs` reads it, checks it is an image no larger than its box, and puts the bytes in. The path or URL does not survive into the page, so to replace a picture, put its path back in `src` in place of the `data:` URI and run again; changing the file beside the page alone changes nothing. An image it cannot read, that is not an image, or that is bigger than its box stays as written and fails, so resize it and run again.
+Every image ends up inside the file as a `data:` URI, because the page has to open from a USB stick, with no network, years later, and a hosted copy loads no image from anywhere else. You never write the base64: name the image in `src` (or SVG `href`, `poster`, CSS `url()`) by a path relative to the page or by its URL, and `page.mjs` reads it, checks it is an image under 500 KB, and puts the bytes in. The path or URL does not survive into the page, so to replace a picture, put its path back in `src` in place of the `data:` URI and run again; changing the file beside the page alone changes nothing. An image it cannot read, that is not an image, or that is over 500 KB stays as written and fails, so save it smaller and run again.
 
 Resize a photo to a file beside the page and name that file:
 

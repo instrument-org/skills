@@ -643,14 +643,19 @@ function readPage(own) {
       // An icon, not a drawing.
       !(Number(e.attrs.width) < 40 || Number(e.attrs.height) < 24),
   );
-  // Words before the hero starts: every text node ahead of it in the file.
+  // Words before the hero starts: every text node ahead of it in the file but
+  // the kicker's, which is a byline rather than reading.
+  const kicker = (e) =>
+    hasClass(e, "kicker") ||
+    (e.tag === "p" && e.parent?.tag === "hgroup" && !!h1 && e.i < h1.i);
   let above = 0,
     aboveText = [];
   if (hero && !(h1 && closest(h1, (e) => e === hero)))
     for (const t of nodes) {
       if (t.i >= hero.i) break;
       if (t.text === undefined || t.raw || !t.text.trim()) continue;
-      if (closest(t.parent, (e) => SKIP(e) || OFFSCREEN(e))) continue;
+      if (closest(t.parent, (e) => SKIP(e) || OFFSCREEN(e) || kicker(e)))
+        continue;
       above += wordsOf(t.text);
       aboveText.push(clip(t.text, 40));
     }
@@ -776,10 +781,11 @@ function pageRules(page, push) {
       "header-words",
       "above the hero",
       `${page.above} words before the hero starts ("${page.aboveText}")`,
-      `keep what comes before the hero to ${LIMITS.above} words: a kicker, the headline, one short lede; the rest goes below the hero`,
+      `keep what comes before the hero to ${LIMITS.above} words besides the kicker: the headline and one short lede; the rest goes below the hero`,
     );
+  // The footer is provenance, read only by whoever checks it.
   for (const b of page.blocks
-    .filter((b) => !b.heading && b.words > LIMITS.para)
+    .filter((b) => !b.heading && !b.footer && b.words > LIMITS.para)
     .sort((a, b) => b.words - a.words))
     push(
       "long-paragraph",

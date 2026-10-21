@@ -304,7 +304,7 @@ When the reader asked "which one", the hero is the answer with its reasons, then
 
 ## Steps and a checklist
 
-`ol.steps` for doing things in order, `ul.ticks` for things to have or check, in any order. Each item starts with a verb, carries its own warning where it applies (not in a section at the end), and says how the reader knows it is done.
+`ol.steps` for doing things in order, `ul.todo` for things still to have or check, in any order, each drawn as an empty box. Each item starts with a verb, carries its own warning where it applies (not in a section at the end), and says how the reader knows it is done.
 
 ```html
 <ol class="steps hero">
@@ -321,15 +321,63 @@ When the reader asked "which one", the hero is the answer with its reasons, then
     >
   </li>
 </ol>
-<ul class="ticks">
+<ul class="todo">
   <li>Adjustable wrench</li>
   <li>Two towels</li>
 </ul>
 ```
 
 - Group by phase when there are more than about eight steps (`h2` per phase), each phase with its time if the inputs give one.
-- A checklist the reader will tick on screen gets real checkboxes (`<label><input type="checkbox"> Item</label>`); remembering ticks in `localStorage` is a convenience, so wrap it in try/catch. One that will be printed stays `ul.ticks`, which prints as empty boxes.
+- A checklist the reader will tick on screen gets real checkboxes (`<label><input type="checkbox"> Item</label>`); remembering ticks in `localStorage` is a convenience, so wrap it in try/catch. One that will be printed stays `ul.todo`, which prints as empty boxes.
+- What is already done, proven or settled is `ul.ticks`, a check mark per item; `data-tone="bad"` on an item draws a cross, for a drawback beside the strengths or a check that failed. Never draw a finished item as an empty box.
 - What to have before starting goes first; what to do if it goes wrong goes in one `details` at the step it applies to.
+
+## Screenshots and a walkthrough
+
+When the evidence is what a screen looked like (a change shipped, a bug reproduced, the same flow on three systems), the screenshots are the hero and the words are captions. Lead with a contact sheet of the moments that prove the point, then a section per claim with the screenshot that shows it.
+
+```html
+<section class="hero">
+  <div class="frames">
+    <figure>
+      <img
+        src="shots/1-saved.png"
+        width="1600"
+        height="1084"
+        alt="A chat that saved a memory, with the line under the reply that says so"
+      />
+      <figcaption>A memory, named by its file.</figcaption>
+    </figure>
+    <figure>
+      <img
+        src="shots/2-windows.png"
+        width="1600"
+        height="1086"
+        alt="The same install on Windows, with the same two lines"
+      />
+      <figcaption>The same install on Windows.</figcaption>
+    </figure>
+  </div>
+</section>
+<section>
+  <h2>Each line opens what it names</h2>
+  <div class="pair">
+    <figure>
+      <img src="shots/before.png" width="1600" height="1000" alt="..." />
+      <figcaption>Before: the file showed as Missing.</figcaption>
+    </figure>
+    <figure>
+      <img src="shots/after.png" width="1600" height="1000" alt="..." />
+      <figcaption>After: it opens beside the chat.</figcaption>
+    </figure>
+  </div>
+</section>
+```
+
+- Capture the whole window and keep it up to 1600 pixels wide ([`references/images.md`](references/images.md)): every one opens full size in the page's viewer, and the arrow keys walk the reader through all of them in page order, so the page needs no zoom script and no hint to click.
+- Never crop a screenshot to even out a grid. `.frames` numbers its cells and letterboxes mixed shapes into one shape; set `--ratio` to the shape most of them share.
+- A caption says what to see in the picture, in a short sentence; the `alt` says what the picture shows, for a reader who cannot see it.
+- The same screenshot appears once. Refer back to it by its number.
 
 ## Figures with a chart
 
@@ -412,7 +460,7 @@ For a link dropped in chat (`data-shape="card"`): kicker, a short h1, the hero, 
 
 ## A print sheet
 
-`sheet` and `wall` print landscape. Print-only furniture is HTML: `<p class="print-only">Printed Oct 3. The link has the current version.</p>`. Blanks to fill by hand are `ul.ticks` or empty table cells with height. `.page-break` starts a new page. One sheet per person or per day if that is how it will be used.
+`sheet` and `wall` print landscape. Print-only furniture is HTML: `<p class="print-only">Printed Oct 3. The link has the current version.</p>`. Blanks to fill by hand are `ul.todo` or empty table cells with height. `.page-break` starts a new page. One sheet per person or per day if that is how it will be used.
 
 ## Evidence and drill-in
 

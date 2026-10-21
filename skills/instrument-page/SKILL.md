@@ -35,13 +35,13 @@ Compute every total, date, weekday and difference with a short script over the i
 
 1. A kicker line: from whom or for whom, when, from what.
 2. The `h1`: the point, 10 words or fewer. Not the topic.
-3. At most one short lede sentence; no more than 45 words before the hero starts.
+3. At most one short lede sentence; no more than 45 words besides the kicker before the hero starts.
 4. The hero, starting in the first screen.
 5. Two to four short sections, each with a heading that says something, each shown more than told: a chart, a table, a short list, a labeled drawing. A technical write-up may run longer; at five sections the page gets a sticky strip of their names, and `data-short="Retries"` on an `h2` shortens its label there.
 6. The evidence last: tables, sources, the arithmetic. `<details>` for one or two optional drill-ins, never to hide the point.
 7. The footer: made from which files and sources, when, and what is illustrative.
 
-No paragraph over 60 words; most under 30. Pick one or two things only a file can do (data embedded as JSON and drawn from it, one reading interaction, a real print layout, a copy button), never a collection; the page still says its point with no clicks.
+No paragraph over 60 words outside the footer; most under 30. Pick one or two things only a file can do (data embedded as JSON and drawn from it, one reading interaction, a real print layout, a copy button), never a collection; the page still says its point with no clicks.
 
 ## 4. Write it
 
@@ -87,7 +87,7 @@ No paragraph over 60 words; most under 30. Pick one or two things only a file ca
 
 **Code** is `<pre data-file="apps/api/client.ts"><code class="language-ts">`, escaped (`&lt;`, `&amp;`): it is highlighted, and every `pre` gets Copy and Wrap. `data-file` labels the block with where it came from; leave it off when nothing does. Lines wrap unless the `pre` says `data-wrap="off"`, for output whose columns line up. `language-diff` shows a change. Terminal output is a bare `<pre>` with no `<code>`, and `<span data-tone="bad">` inside it marks a line. Never color code by hand or build your own copy button.
 
-**Layout classes**, the whole list: `.stack` `.row` (`.row.between`) `.grid` (`style="--min:14rem"`) `.split` (main plus side column, stacks on phones) `.rail` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.kicker` `.lede` `.label` `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ol.flow` (a call path or pipeline of up to six boxes with arrows, stacked on phones: `<li><b>retryOnce</b><span>waits on a 429</span></li>`, `data-tone` on the one that matters) `ul.ticks` `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.scroll` `.bleed` (wider) `.narrow` `.full` `.sticky` `.phone-only` `.wide-only` `.print-only` `.screen-only` `.page-break`.
+**Layout classes**, the whole list: `.stack` `.row` (`.row.between`) `.grid` (`style="--min:14rem"`) `.split` (main plus side column, stacks on phones) `.rail` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.kicker` `.lede` `.label` `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ol.flow` (a call path or pipeline of up to six boxes with arrows, stacked on phones: `<li><b>retryOnce</b><span>waits on a 429</span></li>`, `data-tone` on the one that matters) `ul.ticks` (done or true: a check mark each, `data-tone="bad"` a cross) `ul.todo` (still to do: an empty box each) `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.frames` (a numbered contact sheet of `figure`s, each picture letterboxed in an equal cell, `style="--ratio:16/10"`) `.pair` (two or three `figure`s side by side, such as before and after) `.scroll` `.bleed` (wider) `.narrow` `.full` `.sticky` `.phone-only` `.wide-only` `.print-only` `.screen-only` `.page-break`.
 
 **Widths**: prose, headings and lists sit in a reading column; dense modules take the wide track beside it by themselves: a table of four or more columns (bare, or as the table of a `.scroll` or `figure`), `.grid`, `.rail`, `.cols` and `ol.flow`. Put `.bleed` on anything else that needs the room, such as a chart, a three-column table of long cells, or a grid of your own, and `.narrow` on a module that should stay in the column. A section of prose never goes wide.
 
@@ -95,7 +95,7 @@ A top-level `section` is a full-width grid whose children sit in the reading col
 
 **Color by meaning**: `data-tone="good|warn|bad|accent|muted"` or `data-c="1"` to `"8"` (one per person, team, option) on any element or SVG shape. In SVG, `class="outline|ink|muted|paper|wash|line|faint"`. In your own CSS use only tokens: `--ink --ink-2 --muted --line --line-2 --paper --ground --accent --good --warn --bad` (each with `-wash`), `--c1`..`--c8`, `--tone`, `--radius`, `--mono`, `--serif`. Never hex: the page follows the reader's light or dark theme.
 
-**Behaviors by attribute**: `data-who="maya"` on things plus `<button data-show-who="maya">Maya</button>` (dims the rest; the link becomes `#who=maya`); `<button data-copy="#draft">Copy</button>`; `data-date="2026-10-13"` outlines that day when it is today. Links to other sites get their site's icon.
+**Behaviors by attribute**: `data-who="maya"` on things plus `<button data-show-who="maya">Maya</button>` (dims the rest; the link becomes `#who=maya`); `<button data-copy="#draft">Copy</button>`; `data-date="2026-10-13"` outlines that day when it is today. Links to other sites get their site's icon. A picture in a `figure` or on its own line that the page shows smaller than it is opens full size on click, with arrows, swipe and a count to step through the others; never build your own viewer, and `data-gallery="off"` keeps one out.
 
 ## 5. Build and check
 
@@ -134,7 +134,7 @@ When the user asks for options or the right page is unclear, make two or three t
 
 ## 8. Recipes
 
-[`cookbook.md`](cookbook.md) has techniques, not components. Read only the one your hero needs, by its heading: drawing at true size from data; a chart that carries the headline; a plan drawn to scale; a month or week grid; a timeline; a comparison matrix; a ranked pick with one chosen; steps and a checklist; figures with a chart; scores, sources and the pick; show my part; a slider that recomputes; a one-screen card; a print sheet; evidence and drill-in; dense markup from a one-off script.
+[`cookbook.md`](cookbook.md) has techniques, not components. Read only the one your hero needs, by its heading: drawing at true size from data; a chart that carries the headline; a plan drawn to scale; a month or week grid; a timeline; a comparison matrix; a ranked pick with one chosen; steps and a checklist; screenshots and a walkthrough; figures with a chart; scores, sources and the pick; show my part; a slider that recomputes; a one-screen card; a print sheet; evidence and drill-in; dense markup from a one-off script.
 
 ## 9. Kits
 
