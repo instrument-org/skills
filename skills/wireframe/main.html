@@ -517,10 +517,19 @@
         // full width to four across, or more where the width already fits more.
         const GAP = 8;
         const PAD = 25; // tile padding plus its border
-        // The most tiles the slider offers in a row, and the narrowest it may
-        // make one on the way there.
-        const MOST = 4;
-        const TILE_LEAST = 200;
+        // The most tiles the slider offers in a row, by the width of the
+        // screen: four from a laptop up, three on a tablet held upright, two
+        // on a phone on its side, and one on a phone held upright, where the
+        // slider hides. Most phones on their side are wider than a tablet held
+        // upright, so they are told apart by their short height under a touch
+        // pointer instead.
+        const MOST = [
+          [1024, 4],
+          [744, 3],
+          [480, 2],
+          [0, 1],
+        ];
+        const sideways = matchMedia("(pointer: coarse) and (orientation: landscape) and (max-height: 500px)");
         const views = document.querySelector("#views");
         const perRow = document.querySelector("#per-row");
         const [oneButton, mostButton] = views.querySelectorAll("button");
@@ -531,9 +540,11 @@
         const layout = () => {
           const avail = rack.clientWidth;
           if (avail <= 0) return;
-          const across = (least) => Math.max(1, Math.floor((avail + GAP) / (least + GAP)));
-          const natural = across(TILE_MIN);
-          const most = Math.min(Math.max(MOST, natural), across(TILE_LEAST));
+          const natural = Math.max(1, Math.floor((avail + GAP) / (TILE_MIN + GAP)));
+          let most = MOST.find(([from]) => innerWidth >= from)[1];
+          if (sideways.matches) most = Math.min(most, 2);
+          // A screen that already fits more than four keeps them.
+          if (most === MOST[0][1]) most = Math.max(most, natural);
           const columns = Math.min(chosen || natural, most);
           const single = columns === 1;
           views.hidden = most < 2;
