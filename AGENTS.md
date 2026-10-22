@@ -50,7 +50,7 @@ A commit that makes a choice ends with decision trailers, so the reasoning outli
 
 ## Repository knowledge base
 
-Durable, versioned docs are the system of record; prefer them over chat/history. Keep them evergreen and safe to share: leave out secrets and anything tied to one machine, person, or moment. See [`docs/README.md`](docs/README.md) for the taxonomy (`decisions/`, `findings/`, `plans/`).
+Durable, versioned docs are the system of record; prefer them over chat/history. Keep them evergreen and safe to share: leave out secrets and anything tied to one machine, person, or moment. See [`docs/README.md`](docs/README.md) for the taxonomy (`decisions/`, `findings/`, `plans/`, `reviews/`). Before a code review, read `REVIEW.md` and [`docs/reviews/`](docs/reviews/README.md), which records each review and what came of its findings; a fix for a finding carries a `Review:` trailer.
 
 ## Monorepo checks (Turbo)
 

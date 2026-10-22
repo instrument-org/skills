@@ -33,6 +33,7 @@ The final paragraph, one `Key: value` per line. Never wrap a value onto a second
 | `Not-tested:`                         | What was not checked: never run by a real agent, not rendered in the consumer app, a known gap left open. Required when the change never ran where its behavior shows (a real agent run, the consumer app). |
 | `Related: <sha>`                      | A commit this one reverses or extends.                                                                                                                                                                      |
 | `Tested:`                             | Only a check beyond the unit suites: a real agent run, a rendered example, the skill installed in the consumer app. Never test counts.                                                                      |
+| `Review: <file> <letter>` | A `docs/reviews/` finding this commit fixes, as `2026-10-21-last-day A`. The same commit sets that finding's `Status:` to fixed. |
 
 Every reason stands without the session. `Rejected: a second PDF engine | user dropped it` is chat history; `Rejected: a second PDF engine | pdfium already renders every page type the skill accepts` is a reason.
 

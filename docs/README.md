@@ -6,6 +6,7 @@ The same taxonomy is used in the sibling Instrument repos, so a doc lands in the
 
 - **`decisions/`** — why we chose one approach over the alternatives, named for the date decided: `YYYY-MM-DD-short-slug.md`. Record the context, the options weighed, the choice, and why. Don't rewrite a decision; supersede it with a new dated file that references the old one.
 - **`findings/`** — non-obvious issues, what we tried, and what might resolve them later. One file per finding. (Nothing here yet.)
+- **`reviews/`**: code reviews, named for the date reviewed: what range each read and what came of each finding, its `Status:` updated as it is fixed or declined. The [folder README](reviews/README.md) is the format and how a review uses it.
 - **`plans/`** — execution plans for non-trivial work, so someone can pick the work up later with full context. `active/` vs `completed/`; each starts with a `Status:` line. Move a finished or abandoned plan to `completed/` with its `Status:` updated rather than deleting it. (Nothing here yet.)
 
 Guidance on how to _write_ a skill is not a doc — it belongs in [`AGENTS.md`](../AGENTS.md) (repo-wide rules) or in the repo-local skills under `.agents/skills/`, which is where an agent will actually look.
