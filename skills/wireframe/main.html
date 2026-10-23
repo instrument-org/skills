@@ -2,7 +2,9 @@
            column: `flex min-h-dvh flex-col px-4 pb-8`. The top padding is the
            title bar's own, so the bar can pin flush to the top edge. One 16px
            gutter runs round the bar's contents, down the grid's sides and
-           between the bar and the first row, so every edge lines up. -->
+           between the bar and the first row, so every edge lines up. The two
+           title lines are 16px each, as tall as the 32px buttons, so the
+           buttons sit 16px from the top as well as from the right. -->
 
       <style>
         /* The rings and their tags are the one thing on these frames that is
@@ -132,6 +134,15 @@
           outline-offset: 2px;
           border-radius: 4px;
         }
+
+        /* Cmd+. sets data-chrome="off" and this hides everything around the
+           frames. The grid gets a top gutter to replace the title bar's. */
+        body[data-chrome="off"] :is(header, #source, #viewer-top, #viewer-bottom, instrument-page) {
+          display: none;
+        }
+        body[data-chrome="off"] #rack {
+          margin-top: 1rem;
+        }
       </style>
 
       <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 p-4 backdrop-blur">
@@ -140,8 +151,8 @@
              what we're proposing. Everything else goes in the frame notes, so
              this page has no intro paragraph. -->
         <div class="min-w-0 flex-1">
-          <h1 class="truncate text-[13px] font-semibold tracking-[-0.01em]">TITLE</h1>
-          <p id="line" class="truncate text-[12px] text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
+          <h1 class="truncate text-[13px] leading-4 font-semibold tracking-[-0.01em]">TITLE</h1>
+          <p id="line" class="truncate text-[12px] leading-4 text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
         </div>
 
         <!-- The legend, which is two words because the marks are two colors. -->
@@ -176,32 +187,35 @@
         button and warning is the copy being proposed.
       </p>
 
-      <!-- The enlarged view. Caption and controls take their space first and the
-           frame is scaled into what is left, so a long caption shrinks the
-           drawing rather than sliding off the bottom of the screen. -->
+      <!-- The enlarged view. The top row is as tall as the title bar, so marks
+           and close sit where the bar's own buttons do. Caption and controls
+           take their space first and the frame is scaled into what is left,
+           so a long caption shrinks the drawing instead of sliding off the
+           bottom of the screen. The caption is centered on the page in a
+           middle column, with the arrows in the right one. The controls are drawn like the bar's buttons, and
+           the top and bottom rows use the dark theme whatever the page's,
+           because the viewer is always dark. The frame keeps the page's. -->
       <dialog
         id="viewer"
         class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)] open:flex open:flex-col"
       >
-        <div id="stage" autofocus tabindex="-1" class="flex min-h-0 flex-1 p-4 focus:outline-none *:m-auto *:flex-none"></div>
-        <div class="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-          <p id="viewer-caption" class="mx-auto max-h-[30vh] max-w-3xl overflow-y-auto text-center text-sm leading-5 text-white"></p>
-          <div id="viewer-controls" class="mx-auto mt-3 grid max-w-3xl grid-cols-3 items-center">
-            <button data-marks title="Show the annotations (A)" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
-              <i class="ph ph-circle-dashed"></i>
+        <div id="viewer-top" class="flex h-16 shrink-0 items-center justify-end px-4 pt-[env(safe-area-inset-top)]">
+          <div class="controls flex items-center gap-1.5 [color-scheme:dark]">
+            <button data-marks title="Show the annotations (A)" aria-pressed="false" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium text-muted-foreground">
+              <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
             </button>
-            <div class="flex items-center gap-2 justify-self-center">
-              <button data-step="-1" title="Previous frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
-                <i class="ph ph-caret-left"></i>
-              </button>
-              <span id="viewer-counter" class="min-w-12 text-center font-mono text-xs text-white/70"></span>
-              <button data-step="1" title="Next frame" class="grid size-11 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20 disabled:opacity-25">
-                <i class="ph ph-caret-right"></i>
-              </button>
-            </div>
-            <button id="viewer-close" title="Close" class="grid size-11 place-items-center justify-self-end rounded-full bg-white/10 text-lg text-white hover:bg-white/20">
-              <i class="ph ph-x"></i>
+            <button id="viewer-close" title="Close (Esc)" class="grid size-8 place-items-center rounded-lg border border-border text-muted-foreground hover:text-foreground">
+              <i class="ph ph-x text-sm"></i>
             </button>
+          </div>
+        </div>
+        <div id="stage" autofocus tabindex="-1" class="flex min-h-0 flex-1 px-4 focus:outline-none *:m-auto *:flex-none"></div>
+        <div id="viewer-bottom" class="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] [color-scheme:dark]">
+          <p id="viewer-caption" class="col-start-2 max-h-[30vh] max-w-3xl min-w-0 overflow-y-auto text-center text-[13px] leading-5 text-muted-foreground"></p>
+          <div class="controls col-start-3 flex h-8 items-center justify-self-end gap-1 rounded-lg border border-border px-1 text-muted-foreground">
+            <button data-step="-1" title="Previous frame" class="grid size-6 place-items-center rounded-md hover:text-foreground disabled:opacity-25"><i class="ph ph-caret-left"></i></button>
+            <span id="viewer-counter" class="min-w-10 text-center font-mono text-[11px] tabular-nums"></span>
+            <button data-step="1" title="Next frame" class="grid size-6 place-items-center rounded-md hover:text-foreground disabled:opacity-25"><i class="ph ph-caret-right"></i></button>
           </div>
         </div>
       </dialog>
@@ -431,9 +445,8 @@
                 <div class="relative w-[var(--w)] origin-top-left scale-[var(--s)] h-[var(--h)]">${state.body}</div>
               </div>
             </div>
-            <figcaption class="mt-3 flex items-baseline gap-1.5 px-1 text-xs leading-5 text-muted-foreground">
-              <span class="shrink-0"><span class="rounded-sm border-[0.5px] border-border bg-accent px-1.5 py-0.5 font-mono text-[10px] text-foreground">${i + 1}</span></span>
-              <div class="min-w-0"><span class="font-medium text-foreground">${state.title}.</span> ${state.note}</div>
+            <figcaption class="mt-3 text-xs leading-5 text-muted-foreground/80">
+              <span class="font-medium text-foreground/70">${i + 1}. ${state.title}.</span> ${state.note}
             </figcaption>
           </figure>`,
           )
@@ -534,8 +547,20 @@
         const perRow = document.querySelector("#per-row");
         const [oneButton, mostButton] = views.querySelectorAll("button");
         // What the reader set the slider to. Until then the width decides, and
-        // goes on deciding as the window changes.
+        // goes on deciding as the window changes. Like the open frame, the
+        // setting stays through a reload in the same tab.
+        const perRowKey = `wireframe-per-row:${location.pathname}:${document.title}`;
         let chosen = 0;
+        try {
+          chosen = Number(sessionStorage.getItem(perRowKey)) || 0;
+        } catch {}
+        const choose = (columns) => {
+          chosen = columns;
+          try {
+            sessionStorage.setItem(perRowKey, String(columns));
+          } catch {}
+          layout();
+        };
 
         const layout = () => {
           const avail = rack.clientWidth;
@@ -583,16 +608,12 @@
         new ResizeObserver(layout).observe(rack);
         layout();
 
-        perRow.addEventListener("input", () => {
-          chosen = Number(perRow.value);
-          layout();
-        });
+        perRow.addEventListener("input", () => choose(Number(perRow.value)));
 
         views.addEventListener("click", (event) => {
           const button = event.target.closest("[data-to]");
           if (!button) return;
-          chosen = Number(perRow[button.dataset.to]);
-          layout();
+          choose(Number(perRow[button.dataset.to]));
         });
 
         // ---- annotations on and off ------------------------------------------
@@ -601,7 +622,7 @@
         // The marks start off, and only data-marks="on" shows them.
         // The frames underneath are the design; this is what was said about them.
         const marksButton = document.querySelector("#marks");
-        const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent";
+        const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent text-foreground";
         const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
 
         const paintMarks = () => {
@@ -609,7 +630,10 @@
           const title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
           marksButton.className = on ? ON : OFF;
           marksButton.title = title;
-          document.querySelector("#viewer-controls [data-marks]").title = title;
+          const viewerMarks = document.querySelector("#viewer [data-marks]");
+          viewerMarks.className = marksButton.className;
+          viewerMarks.title = title;
+          viewerMarks.setAttribute("aria-pressed", String(on));
           document.querySelector("#legend").style.opacity = on ? "1" : "0.3";
         };
 
@@ -620,6 +644,24 @@
 
         marksButton.addEventListener("click", flipMarks);
         paintMarks();
+
+        // ---- chrome ----------------------------------------------------------
+        // Cmd+. (Ctrl+. off a Mac) hides everything around the frames: the
+        // title bar, the source line, the share widget, and the viewer's
+        // buttons and caption. Press it again to bring them back. Like the
+        // open frame, it stays that way through a reload in the same tab.
+        const chromeKey = `wireframe-chrome:${location.pathname}:${document.title}`;
+        const flipChrome = () => {
+          const off = document.body.dataset.chrome !== "off";
+          document.body.dataset.chrome = off ? "off" : "on";
+          try {
+            if (off) sessionStorage.setItem(chromeKey, "off");
+            else sessionStorage.removeItem(chromeKey);
+          } catch {}
+        };
+        try {
+          if (sessionStorage.getItem(chromeKey) === "off") document.body.dataset.chrome = "off";
+        } catch {}
 
         // ---- enlarge ---------------------------------------------------------
         // Everything is reachable by tap as well as by key: prev and next
@@ -650,14 +692,14 @@
           openIndex = index;
           stage.replaceChildren(tile.cloneNode(true));
           viewerCaption.innerHTML =
-            `<span class="mr-1.5 rounded bg-white/15 px-1.5 py-0.5 font-mono text-[10px] text-white/80">${index + 1}</span>` +
-            `<span class="font-medium">${state.title}.</span> <span class="text-white/80">${state.note}</span>`;
+            `<span class="font-medium text-foreground/80">${index + 1}. ${state.title}.</span> ${state.note}`;
           viewerCounter.textContent = `${index + 1} / ${states.length}`;
           if (!viewer.open) viewer.showModal();
           fitFrame(); // The dialog is laid out by now, so the stage measures true.
           // Replaced rather than pushed, so walking the set leaves one history
           // entry and the address bar always holds a link to the frame on screen.
           setFrameParam(index + 1);
+          keepFrame(index);
           describe(index);
         };
 
@@ -669,9 +711,15 @@
           showFrame([...rack.querySelectorAll(".frame")].indexOf(frame));
         });
 
-        document.querySelector("#viewer-controls").addEventListener("click", (event) => {
-          const button = event.target.closest("button");
-          if (!button) return;
+        // Clicking anywhere on the dark background closes the viewer, except on
+        // the frame, the caption and the controls. Only the controls' buttons
+        // act, because the enlarged frame has buttons of its own.
+        viewer.addEventListener("click", (event) => {
+          const button = event.target.closest(".controls button");
+          if (!button) {
+            if (!swiped && !event.target.closest(".frame, .controls, #viewer-caption")) viewer.close();
+            return;
+          }
           if (button.dataset.marks !== undefined) return flipMarks();
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
@@ -683,7 +731,7 @@
         let swipeY = 0;
         let swiped = false;
 
-        stage.addEventListener("pointerdown", (event) => {
+        viewer.addEventListener("pointerdown", (event) => {
           swipeX = event.clientX;
           swipeY = event.clientY;
           swiped = false;
@@ -697,12 +745,11 @@
           step(dx < 0 ? 1 : -1);
         });
 
-        stage.addEventListener("click", (event) => {
-          if (swiped || event.target.closest(".frame")) return;
-          viewer.close();
-        });
-
         document.addEventListener("keydown", (event) => {
+          if ((event.metaKey || event.ctrlKey) && event.key === ".") {
+            event.preventDefault();
+            return flipChrome();
+          }
           if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
           if (event.key === "a" || event.key === "A") {
             event.preventDefault();
@@ -760,13 +807,38 @@
           } catch {}
         };
 
+        // Some viewers reload the page without the ?frame= query, so we also
+        // save the open frame in session storage and reopen it on load. We find
+        // it by title, so adding a frame above it still reopens the same one.
+        // If its title changed, we use its number.
+        const keptKey = `wireframe-frame:${location.pathname}:${document.title}`;
+        const keepFrame = (index) => {
+          try {
+            if (index === null) sessionStorage.removeItem(keptKey);
+            else sessionStorage.setItem(keptKey, JSON.stringify({ title: states[index].title, index }));
+          } catch {}
+        };
+        const keptFrame = () => {
+          try {
+            const kept = JSON.parse(sessionStorage.getItem(keptKey) ?? "null");
+            if (!kept) return -1;
+            const byTitle = states.findIndex((state) => state.title === kept.title);
+            return byTitle >= 0 ? byTitle : kept.index < states.length ? kept.index : -1;
+          } catch {
+            return -1;
+          }
+        };
+
         const openFromQuery = () => {
           const index = Number(new URLSearchParams(location.search).get("frame")) - 1;
-          if (Number.isInteger(index) && index >= 0 && index < states.length) showFrame(index);
+          if (Number.isInteger(index) && index >= 0 && index < states.length) return showFrame(index);
+          const kept = keptFrame();
+          if (kept >= 0) showFrame(kept);
         };
 
         viewer.addEventListener("close", () => {
           setFrameParam(null);
+          keepFrame(null);
           describe(null);
         });
         openFromQuery();
