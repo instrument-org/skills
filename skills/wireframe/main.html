@@ -136,12 +136,31 @@
         }
 
         /* Cmd+. sets data-chrome="off" and this hides everything around the
-           frames. The grid gets a top gutter to replace the title bar's. */
-        body[data-chrome="off"] :is(header, #source, #viewer-top, #viewer-bottom, instrument-page) {
+           frames. In the grid the title bar goes, and the frames move up to
+           the top gutter. In the viewer the controls keep their space, so the
+           open frame doesn't move or rescale. */
+        body[data-chrome="off"] :is(header, #source, instrument-page) {
           display: none;
         }
         body[data-chrome="off"] #rack {
           margin-top: 1rem;
+        }
+        body[data-chrome="off"] :is(#viewer-top, #viewer-bottom) {
+          visibility: hidden;
+        }
+        /* While they're hidden, a faint hint for bringing them back shows
+           when the pointer is in the top-right corner (data-corner, set by
+           the script). Its backing sits flush in the corner. It takes no
+           clicks, so frames under it stay usable. */
+        body[data-chrome="off"] .chrome-hint {
+          display: flex;
+        }
+        .chrome-hint span {
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        body[data-corner] .chrome-hint span {
+          opacity: 1;
         }
       </style>
 
@@ -155,16 +174,19 @@
           <p id="line" class="truncate text-[12px] leading-4 text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
         </div>
 
-        <!-- The legend, which is two words because the marks are two colors. -->
-        <div id="legend" class="flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground">
-          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#ea580c"></span>click</span>
-          <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#8b5cf6"></span>changed</span>
-        </div>
-
         <div class="flex shrink-0 items-center gap-1.5 print:hidden">
-          <button id="marks" title="Show the annotations (A)" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium">
-            <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
+          <!-- The ⋯ menu. The script places it under its button when it opens. -->
+          <button id="more" popovertarget="more-menu" title="More" aria-label="More" class="grid size-8 place-items-center rounded-lg border border-border text-muted-foreground hover:text-foreground">
+            <i class="ph ph-dots-three text-base"></i>
           </button>
+          <div id="more-menu" popover class="m-0 min-w-48 rounded-lg border border-border bg-popover p-1 text-[12px] text-foreground shadow-lg [inset:auto]">
+            <button id="marks" class="flex h-8 w-full items-center justify-between gap-6 rounded-md px-2 hover:bg-accent">
+              <span></span><kbd class="font-sans text-muted-foreground">A</kbd>
+            </button>
+            <button data-hide-controls class="flex h-8 w-full items-center justify-between gap-6 rounded-md px-2 hover:bg-accent">
+              Hide controls <kbd class="font-sans text-muted-foreground"></kbd>
+            </button>
+          </div>
           <!-- How many frames a row holds, from one at the full width to four
                across, with a jump to either end on the icons. On a page too
                narrow for two it hides rather than sitting there as a dead
@@ -176,6 +198,7 @@
           </div>
         </div>
       </header>
+      <div class="chrome-hint pointer-events-none fixed top-0 right-0 z-30 hidden text-[12px] leading-none text-muted-foreground/70"><span class="rounded-bl-md bg-background/80 p-2"></span></div>
 
       <div id="rack" class="grid flex-1 content-start gap-2 [grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))]"></div>
 
@@ -192,7 +215,8 @@
            take their space first and the frame is scaled into what is left,
            so a long caption shrinks the drawing instead of sliding off the
            bottom of the screen. The caption is centered on the page in a
-           middle column, with the arrows in the right one. The controls are drawn like the bar's buttons, and
+           middle column, with the arrows in the right one, kept at the bottom
+           when a long caption wraps. The controls are drawn like the bar's buttons, and
            the top and bottom rows use the dark theme whatever the page's,
            because the viewer is always dark. The frame keeps the page's. -->
       <dialog
@@ -209,10 +233,11 @@
             </button>
           </div>
         </div>
+        <div class="chrome-hint pointer-events-none absolute top-0 right-0 hidden text-[12px] leading-none text-muted-foreground/70 [color-scheme:dark]"><span class="rounded-bl-md bg-background/80 p-2"></span></div>
         <div id="stage" autofocus tabindex="-1" class="flex min-h-0 flex-1 px-4 focus:outline-none *:m-auto *:flex-none"></div>
-        <div id="viewer-bottom" class="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] [color-scheme:dark]">
-          <p id="viewer-caption" class="col-start-2 max-h-[30vh] max-w-3xl min-w-0 overflow-y-auto text-center text-[13px] leading-5 text-muted-foreground"></p>
-          <div class="controls col-start-3 flex h-8 items-center justify-self-end gap-1 rounded-lg border border-border px-1 text-muted-foreground">
+        <div id="viewer-bottom" class="grid shrink-0 grid-cols-[1fr_auto_1fr] gap-4 px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] [color-scheme:dark]">
+          <p id="viewer-caption" class="col-start-2 self-center max-h-[30vh] max-w-3xl min-w-0 overflow-y-auto text-center text-[13px] leading-5 text-muted-foreground"></p>
+          <div class="controls col-start-3 flex h-8 items-center self-end justify-self-end gap-1 rounded-lg border border-border px-1 text-muted-foreground">
             <button data-step="-1" title="Previous frame" class="grid size-6 place-items-center rounded-md hover:text-foreground disabled:opacity-25"><i class="ph ph-caret-left"></i></button>
             <span id="viewer-counter" class="min-w-10 text-center font-mono text-[11px] tabular-nums"></span>
             <button data-step="1" title="Next frame" class="grid size-6 place-items-center rounded-md hover:text-foreground disabled:opacity-25"><i class="ph ph-caret-right"></i></button>
@@ -621,20 +646,19 @@
         // answer to the same switch and there is no second state to keep in step.
         // The marks start off, and only data-marks="on" shows them.
         // The frames underneath are the design; this is what was said about them.
-        const marksButton = document.querySelector("#marks");
+        // In the grid the switch is an item in the ⋯ menu; in the viewer it's
+        // a button that fills while the marks are on.
+        const marksItem = document.querySelector("#marks");
+        const viewerMarks = document.querySelector("#viewer [data-marks]");
         const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent text-foreground";
         const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
 
         const paintMarks = () => {
           const on = document.body.dataset.marks === "on";
-          const title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
-          marksButton.className = on ? ON : OFF;
-          marksButton.title = title;
-          const viewerMarks = document.querySelector("#viewer [data-marks]");
-          viewerMarks.className = marksButton.className;
-          viewerMarks.title = title;
+          marksItem.querySelector("span").textContent = on ? "Hide marks" : "Show marks";
+          viewerMarks.className = on ? ON : OFF;
+          viewerMarks.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
           viewerMarks.setAttribute("aria-pressed", String(on));
-          document.querySelector("#legend").style.opacity = on ? "1" : "0.3";
         };
 
         const flipMarks = () => {
@@ -642,7 +666,10 @@
           paintMarks();
         };
 
-        marksButton.addEventListener("click", flipMarks);
+        marksItem.addEventListener("click", () => {
+          document.querySelector("#more-menu").hidePopover();
+          flipMarks();
+        });
         paintMarks();
 
         // ---- chrome ----------------------------------------------------------
@@ -662,6 +689,37 @@
         try {
           if (sessionStorage.getItem(chromeKey) === "off") document.body.dataset.chrome = "off";
         } catch {}
+        const onMac = /mac|iphone|ipad/i.test(navigator.userAgentData?.platform ?? navigator.platform);
+        const shortcut = onMac ? "⌘." : "Ctrl+.";
+        for (const hint of document.querySelectorAll(".chrome-hint span")) {
+          hint.textContent = `Press ${shortcut} to show controls`;
+        }
+
+        // The ⋯ menu opens under the bar's buttons, lined up with their right
+        // edge so it stays inside the window.
+        const more = document.querySelector("#more");
+        const moreMenu = document.querySelector("#more-menu");
+        moreMenu.querySelector("[data-hide-controls] kbd").textContent = shortcut;
+        moreMenu.addEventListener("beforetoggle", (event) => {
+          if (event.newState !== "open") return;
+          const button = more.getBoundingClientRect();
+          moreMenu.style.top = `${button.bottom + 4}px`;
+          moreMenu.style.right = `${document.documentElement.clientWidth - more.parentElement.getBoundingClientRect().right}px`;
+        });
+        moreMenu.querySelector("[data-hide-controls]").addEventListener("click", () => {
+          moreMenu.hidePopover();
+          flipChrome();
+        });
+        // The hint shows when the pointer is over the hint's own box. Both
+        // copies sit in the same corner, and while the controls are shown
+        // the box measures nothing, so this never fires then.
+        const hintBox = document.querySelector(".chrome-hint");
+        addEventListener("pointermove", (event) => {
+          const box = hintBox.getBoundingClientRect();
+          const near = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
+          if (near !== document.body.hasAttribute("data-corner")) document.body.toggleAttribute("data-corner", near);
+        });
+        document.documentElement.addEventListener("pointerleave", () => document.body.removeAttribute("data-corner"));
 
         // ---- enlarge ---------------------------------------------------------
         // Everything is reachable by tap as well as by key: prev and next
@@ -751,6 +809,9 @@
             return flipChrome();
           }
           if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+          // With Cmd, Ctrl or Alt held the key belongs to the browser: select
+          // all, back and forward.
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
           if (event.key === "a" || event.key === "A") {
             event.preventDefault();
             return flipMarks();
