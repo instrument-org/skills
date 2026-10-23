@@ -2,9 +2,9 @@
            column: `flex min-h-dvh flex-col px-4 pb-8`. The top padding is the
            title bar's own, so the bar can pin flush to the top edge. One 16px
            gutter runs round the bar's contents, down the grid's sides and
-           between the bar and the first row, so every edge lines up. The two
-           title lines are 16px each, as tall as the 32px buttons, so the
-           buttons sit 16px from the top as well as from the right. -->
+           between the bar and the first row, so every edge lines up. The
+           buttons line up with the top of the title block, so they sit 16px
+           from the top as well as from the right. -->
 
       <style>
         /* The rings and their tags are the one thing on these frames that is
@@ -170,11 +170,11 @@
              what we're proposing. Everything else goes in the frame notes, so
              this page has no intro paragraph. -->
         <div class="min-w-0 flex-1">
-          <h1 class="truncate text-[13px] leading-4 font-semibold tracking-[-0.01em]">TITLE</h1>
-          <p id="line" class="truncate text-[12px] leading-4 text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
+          <h1 class="truncate text-[13px] leading-4 font-medium tracking-[-0.01em]">TITLE</h1>
+          <p id="line" class="mt-1 truncate text-[12px] leading-4 text-muted-foreground">ONE LINE: what we're proposing, and what these frames should help decide.</p>
         </div>
 
-        <div class="flex shrink-0 items-center gap-1.5 print:hidden">
+        <div class="flex shrink-0 items-center gap-1.5 self-start print:hidden">
           <!-- The ⋯ menu. The script places it under its button when it opens. -->
           <button id="more" popovertarget="more-menu" title="More" aria-label="More" class="grid size-8 place-items-center rounded-lg border border-border text-muted-foreground hover:text-foreground">
             <i class="ph ph-dots-three text-base"></i>
@@ -210,8 +210,8 @@
         button and warning is the copy being proposed.
       </p>
 
-      <!-- The enlarged view. The top row is as tall as the title bar, so marks
-           and close sit where the bar's own buttons do. Caption and controls
+      <!-- The enlarged view. The top row puts marks and close 16px from the
+           top and right, where the bar's own buttons sit. Caption and controls
            take their space first and the frame is scaled into what is left,
            so a long caption shrinks the drawing instead of sliding off the
            bottom of the screen. The caption is centered on the page in a
