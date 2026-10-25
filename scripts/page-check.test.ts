@@ -110,8 +110,8 @@ const browser = findChrome();
 describe.skipIf(!browser.bin)("lib/probe.js in Chromium", () => {
   const CHECK = join(import.meta.dirname, "../tools/page-check/check.mjs");
   const page = (extra: string) => `<!doctype html>
-<!-- direction: reader="parents" point="the late bus costs less" shape=read feel=calm hero="two bars" -->
-<html lang="en" data-shape="read" data-feel="calm">
+<!-- direction: reader="parents" point="the late bus costs less" layout=column feel=minimal hero="two bars" -->
+<html lang="en" data-layout="column" data-feel="minimal">
 <head><title>The late bus costs less</title><meta name="description" content="The 4:10 bus is $12 cheaper per child than the 3:30 bus."></head>
 <body><header><hgroup><p>For class parents</p><h1>The late bus costs less</h1></hgroup></header>
 <section class="hero"><svg viewBox="0 0 400 120" width="400" height="120" role="img" aria-label="Two bars"><rect x="0" y="10" width="300" height="40" data-c="1"></rect><rect x="0" y="70" width="220" height="40" data-c="2"></rect></svg></section>
@@ -136,7 +136,7 @@ ${extra}
   });
 
   it(
-    "reports a table squeezed into the column, not one that went wide",
+    "reports a table squeezed into the column",
     { timeout: 120000 },
     async () => {
       const cell =

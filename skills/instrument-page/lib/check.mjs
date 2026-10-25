@@ -29,8 +29,12 @@ export const LIMITS = {
 };
 // What the share host takes; the 413 message in share.mjs and share.py names it too.
 const SHARE_MAX_BYTES = 8 * 1024 * 1024;
-const FEELS = ["calm", "urgent", "warm", "crew", "ledger", "festive"];
-const SHAPES = ["card", "read", "sheet", "wall"];
+const FEELS = ["minimal", "editorial", "bold", "dense"];
+// Earlier names, still drawn by the stylesheet, so older pages keep passing.
+const OLD_FEELS = ["calm", "warm", "urgent", "festive", "ledger", "crew"];
+const LAYOUTS = ["column", "wide"];
+// data-shape came before data-layout; the stylesheet still draws these.
+const OLD_SHAPES = ["card", "read", "sheet", "wall"];
 const ALLOWED = [
   /^https:\/\/fonts\.googleapis\.com\//,
   /^https:\/\/fonts\.gstatic\.com\//,
@@ -41,7 +45,7 @@ const ALLOWED = [
   /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/[\w.-]+\/\d+\.\d+\.\d+([-\w.]+)?\//,
 ];
 const FONTS =
-  "https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400;0,500;1,400;1,500&display=swap";
+  "https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap";
 // Loaded only by a page with a <code class="language-x">; foundation.js runs it on load.
 const HIGHLIGHT =
   '<script async data-highlight src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>';
@@ -168,6 +172,7 @@ const stream = (s) =>
 
 function fileChecks(own, push, inputText, reported = new Set()) {
   const htmlTag = own.match(/<html\b[^>]*>/i)?.[0] ?? "";
+  const layout = htmlTag.match(/data-layout\s*=\s*"([^"]*)"/)?.[1];
   const shape = htmlTag.match(/data-shape\s*=\s*"([^"]*)"/)?.[1];
   const feel = htmlTag.match(/data-feel\s*=\s*"([^"]*)"/)?.[1];
   if (!htmlTag)
@@ -175,16 +180,24 @@ function fileChecks(own, push, inputText, reported = new Set()) {
       "no-html",
       "the file",
       "no <html> tag",
-      'start from the skeleton in SKILL.md: <html lang="en" data-shape="read" data-feel="calm">',
+      'start from the skeleton in SKILL.md: <html lang="en" data-layout="column" data-feel="minimal">',
     );
-  else if (!SHAPES.includes(shape ?? ""))
+  else if (
+    layout === undefined
+      ? !OLD_SHAPES.includes(shape ?? "")
+      : !LAYOUTS.includes(layout)
+  )
     push(
-      "shape",
+      "layout",
       "<html>",
-      shape ? `data-shape="${shape}" is not a shape` : "no data-shape",
-      `use one of ${SHAPES.join(", ")}`,
+      layout !== undefined
+        ? `data-layout="${layout}" is not a layout`
+        : shape
+          ? `data-shape="${shape}" is not a layout`
+          : "no data-layout",
+      `use data-layout="${LAYOUTS.join('" or "')}"`,
     );
-  if (feel && !FEELS.includes(feel))
+  if (feel && !FEELS.includes(feel) && !OLD_FEELS.includes(feel))
     push(
       "feel",
       "<html>",
@@ -197,7 +210,7 @@ function fileChecks(own, push, inputText, reported = new Set()) {
       "direction",
       "under <!doctype html>",
       "no <!-- direction: ... --> comment",
-      "write it first: reader, point (the buried point in one line), conflicts, shape, feel, hero",
+      "write it first: reader, point (the buried point in one line), conflicts, layout, feel, hero",
     );
   else if (!/\bpoint\s*=/.test(direction))
     push(
@@ -324,7 +337,7 @@ function fileChecks(own, push, inputText, reported = new Set()) {
         "add url() naming the font file beside local() and page.mjs embeds it (references/loading.md, A font of its own), or use a Google Font",
       );
   weekdays(text, inputText, push);
-  return { shape, feel, title };
+  return { layout: layout ?? shape, feel, title };
 }
 
 const MON = [

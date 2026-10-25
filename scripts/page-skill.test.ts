@@ -89,17 +89,21 @@ describe("wireframe's copies", () => {
 describe("page.mjs", () => {
   const PAGE = join(SKILLS, "instrument-page", "page.mjs");
   const run = promisify(execFile);
-  const page = (body: string) => `<!doctype html>
-<!-- direction: reader="parents" point="the late bus costs less" shape=read feel=calm hero="two bars" -->
-<html lang="en" data-shape="read" data-feel="calm">
+  const page = (
+    body: string,
+    attrs = 'data-layout="column" data-feel="minimal"',
+  ) => `<!doctype html>
+<!-- direction: reader="parents" point="the late bus costs less" layout=column feel=minimal hero="two bars" -->
+<html lang="en" ${attrs}>
 <head><title>The late bus costs less</title><meta name="description" content="The 4:10 bus is $12 cheaper per child than the 3:30 bus."></head>
 <body>${body}</body></html>`;
   const check = async (
     body: string,
     inputs = "The quote says $48 and $36.",
+    attrs?: string,
   ) => {
     const dir = mkdtempSync(join(tmpdir(), "page-mjs-"));
-    writeFileSync(join(dir, "page.html"), page(body));
+    writeFileSync(join(dir, "page.html"), page(body, attrs));
     writeFileSync(join(dir, "request.md"), inputs);
     const result = await run(
       "node",
@@ -148,6 +152,31 @@ describe("page.mjs", () => {
       page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 60 KB."
     `);
   });
+  it.each([
+    ['data-layout="wide" data-feel="dense"', []],
+    ['data-shape="sheet" data-feel="warm"', []],
+    ['data-shape="card" data-feel="festive"', []],
+    ['data-layout="column" data-feel="urgent"', []],
+    ['data-feel="minimal"', ["FAIL layout: <html>: no data-layout"]],
+    [
+      'data-layout="card" data-feel="minimal"',
+      ['FAIL layout: <html>: data-layout="card" is not a layout'],
+    ],
+    [
+      'data-layout="column" data-feel="colorful"',
+      ['FAIL feel: <html>: data-feel="colorful" is not a feel'],
+    ],
+  ])("checks the layout and feel on <html>: %s", async (attrs, fails) => {
+    const result = await check(
+      `<header><h1>The late bus costs less</h1></header><section class="hero"><svg viewBox="0 0 10 10" width="400" height="200"></svg></section>`,
+      undefined,
+      attrs,
+    );
+    const lines = result.stdout
+      .split("\n")
+      .filter((l) => /^FAIL (layout|feel)/.test(l));
+    expect(lines.map((l) => l.replace(/ -> .*/, ""))).toEqual(fails);
+  });
   it("counts neither the kicker before the hero nor a footer paragraph", async () => {
     const byline = Array.from({ length: 50 }, () => "bus").join(" ");
     const result = await check(
@@ -165,8 +194,8 @@ describe("page.mjs and code blocks", () => {
     writeFileSync(
       join(dir, "page.html"),
       `<!doctype html>
-<!-- direction: reader="engineers" point="the client retries once" shape=read feel=calm hero="the retry" -->
-<html lang="en" data-shape="read" data-feel="calm">
+<!-- direction: reader="engineers" point="the client retries once" layout=column feel=minimal hero="the retry" -->
+<html lang="en" data-layout="column" data-feel="minimal">
 <head><title>The client retries once</title><meta name="description" content="The client retries a request once on a 429, then hands the error to the agent."></head>
 <body><header><h1>The client retries once</h1></header><section class="hero">${code}</section></body></html>`,
     );
@@ -225,8 +254,8 @@ describe("page.mjs embeds images", () => {
     writeFileSync(
       join(dir, "page.html"),
       `<!doctype html>
-<!-- direction: reader="parents" point="the red bike fits" shape=read feel=calm hero="the bike" -->
-<html lang="en" data-shape="read" data-feel="calm">
+<!-- direction: reader="parents" point="the red bike fits" layout=column feel=minimal hero="the bike" -->
+<html lang="en" data-layout="column" data-feel="minimal">
 <head><title>The red bike fits</title><meta name="description" content="The red bike fits a 7 year old."></head>
 <body><header><h1>The red bike fits</h1></header><section class="hero">${body}</section></body></html>`,
     );

@@ -103,7 +103,7 @@ function checkSkeletons(errors: string[]) {
     const wants: [RegExp, string][] = [
       [/^<!doctype html>/i, "a doctype on the first line"],
       [/<!--\s*direction:[^>]*\bpoint\s*=/, "a direction comment with a point"],
-      [/<html\b[^>]*\bdata-shape="(card|read|sheet|wall)"/, "a data-shape"],
+      [/<html\b[^>]*\bdata-layout="(column|wide)"/, "a data-layout"],
       [/<title>[^<]+<\/title>/, "a title"],
       [/<meta\s+name="description"/, "a meta description"],
       [/class="[^"]*\bhero\b/, 'an element with class="hero"'],

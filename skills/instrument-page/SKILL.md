@@ -5,7 +5,7 @@ description: "Use when an answer is longer than a few paragraphs, better seen th
 
 # Instrument page
 
-You write one HTML file by hand: plain elements, inline SVG, a little script where it helps the reader. A stylesheet you never read makes plain HTML look like the house; two attributes on `<html>` set its shape and feel. Your job is what no stylesheet can do: find the point, then show it. There are no page types to pick from: every page is designed for its reader, from the method below, the recipes, and a kit when the page needs one.
+You write one HTML file by hand: plain elements, inline SVG, a little script where it helps the reader. A stylesheet you never read makes plain HTML look like the house; two attributes on `<html>` set its layout and feel. Your job is what no stylesheet can do: find the point, then show it. There are no page types to pick from: every page is designed for its reader, from the method below, the recipes, and a kit when the page needs one.
 
 `<skill>` below is the full path to this skill's folder. Run commands from the task folder. Never open `lib/`: it is internals, and the commands print all you need.
 
@@ -20,14 +20,14 @@ Read the inputs one at a time, appending each one's facts to `analysis.md` (peop
 Compute every total, date, weekday and difference with a short script over the input files, never in your head. Put the analysis in the direction comment, the first line under the doctype:
 
 ```html
-<!-- direction: reader="class parents on phones, deciding by Friday" point="the cheaper bus quote leaves out the ride home" conflicts="flyer says 8:00 pickup, later email says 7:30: the email holds" shape=card feel=warm hero="both quotes as bars, the missing leg drawn in" -->
+<!-- direction: reader="class parents on phones, deciding by Friday" point="the cheaper bus quote leaves out the ride home" conflicts="flyer says 8:00 pickup, later email says 7:30: the email holds" layout=column feel=editorial hero="both quotes as bars, the missing leg drawn in" -->
 ```
 
-## 2. Direct it: shape, feel, hero
+## 2. Direct it: layout, feel, hero
 
-`data-shape` is how it is used: `card` (a link dropped in chat; the first screen is the point), `read` (top to bottom: a summary, a decision), `sheet` (worked from or printed: a schedule, a roster; prints landscape), `wall` (posted or projected).
+`data-layout` is the width of the page's one column: `column` (the default, for almost every page) or `wide` (a roster, a schedule or a big table that people work from or print; it prints landscape, and its prose keeps a reading width). A page that will be dropped in chat as a link is still `column`; its reader sees the preview and maybe one screen, so write that screen to carry the whole point (the recipe "A one-screen card").
 
-`data-feel` is how it lands: `calm` (default), `urgent` (incidents, deadlines), `warm` (family, home), `crew` (work floors, gloves-on phones), `ledger` (money, audits), `festive` (launches, thanks).
+`data-feel` is how it looks: `minimal` (the default, for most explainers), `editorial` (long reads, analysis, and notes for family, home or school, set in a serif), `bold` (announcements, launches, thanks, one headline fact, in heavy type), `dense` (audits, rosters, big tables, packed tight). A feel is a look, not a situation: an incident, a deadline or a bill picks the look that suits its reader and marks what is urgent with `data-tone="bad"` or `"warn"`. Code, logs and technical detail sit well in any feel.
 
 **The hero** is the one thing a chat message could not be, and the best expression of the point. When the point is about amounts, time, places or a schedule, that is a chart or a drawing, and it wins the first screen. When it is a decision or a single figure, it may be a big number with its sentence, a ranked list with one picked, or a then-versus-now. Draw only from real data or real geometry: a sketch with guessed positions is worse than no drawing.
 
@@ -47,8 +47,8 @@ No paragraph over 60 words outside the footer; most under 30. Pick one or two th
 
 ```html
 <!doctype html>
-<!-- direction: reader="..." point="..." conflicts="..." shape=read feel=calm hero="..." -->
-<html lang="en" data-shape="read" data-feel="calm">
+<!-- direction: reader="..." point="..." conflicts="..." layout=column feel=minimal hero="..." -->
+<html lang="en" data-layout="column" data-feel="minimal">
   <head>
     <title>The point, 10 words or fewer</title>
     <meta
@@ -87,13 +87,13 @@ No paragraph over 60 words outside the footer; most under 30. Pick one or two th
 
 **Code** is `<pre data-file="apps/api/client.ts"><code class="language-ts">`, escaped (`&lt;`, `&amp;`): it is highlighted, and every `pre` gets Copy and Wrap. `data-file` labels the block with where it came from; leave it off when nothing does. Lines wrap unless the `pre` says `data-wrap="off"`, for output whose columns line up. `language-diff` shows a change. Terminal output is a bare `<pre>` with no `<code>`, and `<span data-tone="bad">` inside it marks a line. Never color code by hand or build your own copy button.
 
-**Layout classes**, the whole list: `.stack` `.row` (`.row.between`) `.grid` (`style="--min:14rem"`) `.split` (main plus side column, stacks on phones) `.rail` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.kicker` `.lede` `.label` `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ol.flow` (a call path or pipeline of up to six boxes with arrows, stacked on phones: `<li><b>retryOnce</b><span>waits on a 429</span></li>`, `data-tone` on the one that matters) `ul.ticks` (done or true: a check mark each, `data-tone="bad"` a cross) `ul.todo` (still to do: an empty box each) `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.frames` (a numbered contact sheet of `figure`s, each picture letterboxed in an equal cell, `style="--ratio:16/10"`) `.pair` (two or three `figure`s side by side, such as before and after) `.scroll` `.bleed` (wider) `.narrow` `.full` `.sticky` `.phone-only` `.wide-only` `.print-only` `.screen-only` `.page-break`.
+**Layout classes**, the whole list: `.stack` `.row` (`.row.between`) `.grid` (`style="--min:14rem"`) `.split` (main plus side column, stacks on phones) `.rail` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.kicker` `.lede` `.label` `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ol.flow` (a call path or pipeline of up to five boxes with arrows, stacked on phones: `<li><b>retryOnce</b><span>waits on a 429</span></li>`, `data-tone` on the one that matters) `ul.ticks` (done or true: a check mark each, `data-tone="bad"` a cross) `ul.todo` (still to do: an empty box each) `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.frames` (a numbered contact sheet of `figure`s, each picture letterboxed in an equal cell, `style="--ratio:16/10"`) `.pair` (two or three `figure`s side by side, such as before and after) `.scroll` `.bleed` (wider) `.full` `.sticky` `.phone-only` `.wide-only` `.print-only` `.screen-only` `.page-break`.
 
-**Widths**: prose, headings and lists sit in a reading column; dense modules take the wide track beside it by themselves: a table of four or more columns (bare, or as the table of a `.scroll` or `figure`), `.grid`, `.rail`, `.cols` and `ol.flow`. Put `.bleed` on anything else that needs the room, such as a chart, a three-column table of long cells, or a grid of your own, and `.narrow` on a module that should stay in the column. A section of prose never goes wide.
+**Widths**: everything sits in one reading column, so the page keeps one left edge: prose, tables, grids, charts and cards alike. Put `.bleed` on the rare module that truly needs more room, such as a table whose cells would wrap to a word or two, or a chart that needs the width to be read; never on prose, and never on several modules in a row.
 
 A top-level `section` is a full-width grid whose children sit in the reading column: put a panel look, a custom grid or `.hero` styling on a `div` or `figure` inside it. In `ol.steps`, wrap each item's content in one `span`.
 
-**Color by meaning**: `data-tone="good|warn|bad|accent|muted"` or `data-c="1"` to `"8"` (one per person, team, option) on any element or SVG shape. In SVG, `class="outline|ink|muted|paper|wash|line|faint"`. In your own CSS use only tokens: `--ink --ink-2 --muted --line --line-2 --paper --ground --accent --good --warn --bad` (each with `-wash`), `--c1`..`--c8`, `--tone`, `--radius`, `--mono`, `--serif`. Never hex: the page follows the reader's light or dark theme.
+**Color by meaning**: `data-tone="good|warn|bad|accent|muted"` or `data-c="1"` to `"8"` (one per person, team, option) on any element or SVG shape. Everything is neutral until you mark it, so mark only what carries the point, and the color will mean something. In SVG, `class="outline|ink|muted|paper|wash|line|faint"`. In your own CSS use only tokens: `--ink --ink-2 --muted --line --line-2 --paper --ground --accent --good --warn --bad` (each with `-wash`), `--c1`..`--c8`, `--tone`, `--radius`, `--pill` (the rounding of buttons, tags and bars; 0 in bold), `--mono`, `--serif`. Never hex: the page follows the reader's light or dark theme.
 
 **Behaviors by attribute**: `data-who="maya"` on things plus `<button data-show-who="maya">Maya</button>` (dims the rest; the link becomes `#who=maya`); `<button data-copy="#draft">Copy</button>`; `data-date="2026-10-13"` outlines that day when it is today. Links to other sites get their site's icon. A picture in a `figure` or on its own line that the page shows smaller than it is opens full size on click, with arrows, swipe and a count to step through the others; never build your own viewer, and `data-gallery="off"` keeps one out.
 
@@ -130,7 +130,7 @@ Read the lines it returns and fix every FAIL, then run `page.mjs` again, reopen 
 
 ## 7. Options and sculpting
 
-When the user asks for options or the right page is unclear, make two or three takes that lead with different heroes or shapes, each its own checked file; offer them a line each and recommend one. Translate the reply before editing: "less scary" is a feel, "I just want to send it in Slack" is a shape, "lead with who drives" is a new hero.
+When the user asks for options or the right page is unclear, make two or three takes that lead with different heroes or feels, each its own checked file; offer them a line each and recommend one. Translate the reply before editing: "less scary" is a feel, "I just want to send it in Slack" is the one-screen card, "lead with who drives" is a new hero.
 
 ## 8. Recipes
 

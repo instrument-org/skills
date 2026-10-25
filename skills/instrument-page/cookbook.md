@@ -209,7 +209,7 @@ A vertical list is the phone answer and often the desktop one too.
     top: 0.4rem;
     width: 0.7rem;
     height: 0.7rem;
-    border-radius: 50%;
+    border-radius: var(--pill);
     background: var(--tone);
   }
 </style>
@@ -456,11 +456,11 @@ When the answer depends on one number the reader knows better than you (hours of
 
 ## A one-screen card
 
-For a link dropped in chat (`data-shape="card"`): kicker, a short h1, the hero, and at most three short lines under it. Nothing else above the fold, and the page may end there. Do not center it vertically. The hero can be one chart, one big figure with its sentence, or a short ranked list with the pick marked.
+For a link dropped in chat, in the `column` layout: kicker, a short h1, the hero, and at most three short lines under it. Nothing else above the fold, and the page may end there. Do not center it vertically. The hero can be one chart, one big figure with its sentence, or a short ranked list with the pick marked.
 
 ## A print sheet
 
-`sheet` and `wall` print landscape. Print-only furniture is HTML: `<p class="print-only">Printed Oct 3. The link has the current version.</p>`. Blanks to fill by hand are `ul.todo` or empty table cells with height. `.page-break` starts a new page. One sheet per person or per day if that is how it will be used.
+The `wide` layout prints landscape; for one table or drawing that needs it in a `column` page, put `.print-landscape` on `body`. Print-only furniture is HTML: `<p class="print-only">Printed Oct 3. The link has the current version.</p>`. Blanks to fill by hand are `ul.todo` or empty table cells with height. `.page-break` starts a new page. One sheet per person or per day if that is how it will be used.
 
 ## Evidence and drill-in
 

@@ -15,7 +15,7 @@ Not for a dataset of thousands of rows (that is a table with a filter, perhaps w
 
 ## How it sits on the foundation
 
-A map page is an ordinary page: it has the direction comment, `<html data-shape="card" data-feel="...">`, a `<title>` and description, one `h1` (in the card), and the map element marked `class="hero"`. It is built and checked like any other:
+A map page is an ordinary page: it has the direction comment, `<html data-layout="column" data-feel="...">`, a `<title>` and description, one `h1` (in the card), and the map element marked `class="hero"`. It is built and checked like any other:
 
 ```
 node <skill>/page.mjs page.html --inputs request.md <input files>
