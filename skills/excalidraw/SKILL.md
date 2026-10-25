@@ -20,7 +20,7 @@ A `.excalidraw` file is JSON that Instrument opens as an editable canvas. The pe
 }
 ```
 
-Each element needs `id` (unique string), `type`, `x`, `y`, `width`, `height`, `version: 1`, `versionNonce` and `seed` (any integers), `isDeleted: false`, `angle: 0`, `strokeColor`, `backgroundColor`, `fillStyle: "solid"`, `strokeWidth: 2`, `roughness: 1`, `opacity: 100`, `groupIds: []`, `boundElements: null`, `updated` (ms timestamp), `locked: false`.
+Each element needs `id` (unique string), `type`, `x`, `y`, `width`, `height`, `version: 1`, `versionNonce` and `seed` (any integers), `isDeleted: false`, `angle: 0`, `strokeColor`, `backgroundColor`, `fillStyle: "solid"`, `strokeWidth: 2`, `roughness: 1`, `opacity: 100`, `groupIds: []`, `boundElements` (`null`, or the list below when text or an arrow binds to it), `updated` (ms timestamp), `locked: false`.
 
 - Shapes: `rectangle`, `ellipse`, `diamond`. Sticky notes are rectangles with a pale `backgroundColor` (`#fff3bf`, `#d3f9d8`, `#d0ebff`).
 - Text: `type: "text"`, `text` and `originalText` the same, `fontSize: 20`, `fontFamily: 5` (the hand-drawn font), `textAlign`, `verticalAlign`, `lineHeight: 1.25`. Size it at about `0.6 * fontSize` per character of the longest line wide and `1.25 * fontSize` per line tall; the canvas measures it again when it opens.
@@ -32,6 +32,10 @@ Lay boards out on a grid with room between things, 40 or more apart, so the pers
 ## Changing a file
 
 Read it first, and change only the elements you mean to. Keep every id. On an element you change, add 1 to `version`, pick a new `versionNonce`, and set `updated` to now; that is how the canvas tells your change from theirs. Delete by setting `isDeleted: true`, never by dropping the element. Write the whole file back in one write.
+
+## Checking it
+
+After writing, parse the file back with a short script and check: every id is unique, every `containerId` and arrow binding names a live element that lists it in its `boundElements`, and, for an edit, every id that was there before is still there.
 
 ## Handing it over
 
