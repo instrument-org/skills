@@ -94,6 +94,8 @@
     --radius: 0.6rem;
     /* Buttons, tags, bars, dots and step numbers: round, unless a feel squares them. */
     --pill: 999px;
+    /* The thickness of a bar; charts drawn in HTML size their bars from it. */
+    --bar: 0.5rem;
     --rule: 1px;
     --shadow: 0 0 0 1px var(--line);
     --size: 16px;
@@ -164,12 +166,15 @@
   [data-feel="dense"],
   [data-feel="ledger"] {
     --label-font: var(--mono);
-    --head-track: -0.02em;
+    --head-weight: 650;
+    --head-track: -0.015em;
     --radius: 0.2rem;
-    --size: 15px;
-    --flow: 0.75rem;
-    --gap: 0.6rem;
-    --pad: 0.75rem;
+    --bar: 0.3rem;
+    --size: 14px;
+    --flow: 0.6rem;
+    --gap: 0.5rem;
+    --pad: 0.6rem;
+    --page-top: clamp(1rem, 3vw, 2rem);
   }
 
   /* ---------- layouts ----------
@@ -1027,7 +1032,7 @@
   .bar {
     --v: 50%;
     display: block;
-    height: 0.5rem;
+    height: var(--bar);
     border-radius: var(--pill);
     background: var(--fill);
     overflow: hidden;
@@ -1478,10 +1483,36 @@
     padding-block: 0.3rem;
   }
   :is([data-feel="dense"], [data-feel="ledger"]) h1 {
-    font-size: clamp(1.7rem, 1.2rem + 1.6vw, 2.3rem);
+    font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+    line-height: 1.15;
   }
   :is([data-feel="dense"], [data-feel="ledger"]) h2 {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) h3 {
+    font-size: 0.95rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) .lede {
+    font-size: 1rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) hgroup > :is(h1, h2) + p {
+    font-size: 1rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) .stat > :is(b, strong, data) {
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) .stat > :is(span, small) {
+    font-size: 0.85rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.flow > li {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.82rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.steps > li::before {
+    width: 1.35rem;
+    height: 1.35rem;
+    font-size: 0.72rem;
   }
 
   /* ---------- phone: re-flow, not squeeze ---------- */

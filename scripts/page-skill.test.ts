@@ -127,7 +127,7 @@ describe("page.mjs", () => {
     expect(result.built).toContain("<!-- foundation:start");
     expect(result.built).toContain("__instrumentSnap(document.currentScript)");
     expect(result.stdout).toMatchInlineSnapshot(
-      `"page.html: pass, as far as the file shows. It is 59 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
+      `"page.html: pass, as far as the file shows. It is 60 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
     );
     expect(existsSync(join(SKILLS, "instrument-page", "lib", "probe.js"))).toBe(
       true,
@@ -149,7 +149,7 @@ describe("page.mjs", () => {
       FAIL long-paragraph: section > p "bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bu": 64 words -> split it, cut it to 60 words or fewer, or turn it into something seen: a list, a table, a labeled drawing
       FAIL prose-heavy: the first two screens: prose (blocks of 15+ words) is about 81% of what comes first, counting words, with a drawing as 150 -> bring it under 40%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below or into one <details>
       FAIL quote: section > blockquote "“We ship on Friday”": these words are not in any input, word for word -> copy the exact words from the input (an ellipsis may join two exact pieces), or say it as your own summary without quote marks; if it is not a quote at all, use <aside> or <p>, not <blockquote>
-      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 60 KB."
+      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 61 KB."
     `);
   });
   it.each([
@@ -288,7 +288,7 @@ describe("page.mjs embeds images", () => {
     expect(result.stdout.replace(/:\d+\//, ":PORT/")).toMatchInlineSnapshot(`
       "embedded shots/bike.png: PNG 480x320, 1 KB in the page
       embedded http://127.0.0.1:PORT/a.png?x=1&amp;y=2: PNG 300x200, 1 KB in the page
-      page.html: pass, as far as the file shows. It is 59 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
+      page.html: pass, as far as the file shows. It is 60 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
     `);
     expect(result.built).not.toContain("shots/bike.png");
     expect(result.built).not.toContain("127.0.0.1");
@@ -309,7 +309,7 @@ describe("page.mjs embeds images", () => {
       "FAIL image-oversize: <img> "big.png": 600 KB (PNG 2400x1600), over 500 KB -> save it again beside the page as JPEG quality 78 (a screenshot may stay PNG if that is smaller), at most 1600 pixels on the long edge for a screenshot and 720 for a photo, and name that file (references/images.md)
       FAIL image-missing: <img> "gone.png": no file at gone.png -> name a file that exists, relative to the page, or draw a stand-in as inline SVG
       FAIL image-not-image: <img> "note.png": these bytes are not a PNG, JPEG, GIF, WebP, AVIF or SVG -> name the image itself, not a page that shows it
-      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 59 KB."
+      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 60 KB."
     `);
   });
 
