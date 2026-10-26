@@ -20,14 +20,14 @@ Read the inputs one at a time, appending each one's facts to `analysis.md` (peop
 Compute every total, date, weekday and difference with a short script over the input files, never in your head. Put the analysis in the direction comment, the first line under the doctype:
 
 ```html
-<!-- direction: reader="class parents on phones, deciding by Friday" point="the cheaper bus quote leaves out the ride home" conflicts="flyer says 8:00 pickup, later email says 7:30: the email holds" layout=column feel=editorial hero="both quotes as bars, the missing leg drawn in" -->
+<!-- direction: reader="class parents on phones, deciding by Friday" point="the cheaper bus quote leaves out the ride home" conflicts="flyer says 8:00 pickup, later email says 7:30: the email holds" layout=column feel=minimal hero="both quotes as bars, the missing leg drawn in" -->
 ```
 
 ## 2. Direct it: layout, feel, hero
 
 `data-layout` is the width of the page's one column: `column` (the default, for almost every page) or `wide` (a roster, a schedule or a big table that people work from or print; it prints landscape, and its prose keeps a reading width). A page that will be dropped in chat as a link is still `column`; its reader sees the preview and maybe one screen, so write that screen to carry the whole point (the recipe "A one-screen card").
 
-`data-feel` is how it looks: `minimal` (the default, for most explainers), `editorial` (long reads, analysis, and notes for family, home or school, set in a serif), `bold` (announcements, launches, thanks, one headline fact, in heavy type), `dense` (audits, rosters, big tables, packed tight). A feel is a look, not a situation: an incident, a deadline or a bill picks the look that suits its reader and marks what is urgent with `data-tone="bad"` or `"warn"`. Code, logs and technical detail sit well in any feel.
+`data-feel` is how the page looks. Pick it by what carries the page: `editorial` when prose carries it (a long read, an analysis, a letter; set in a serif), `bold` when one fact carries it (a launch, a milestone, a thank-you; heavy type and one hot color), `dense` when tables carry it (a roster, an audit, a long timeline; small type and tight rows), and `minimal` for everything else, which is most pages. A feel is a look, not a topic: an incident or a deadline takes the feel its content calls for and marks what is urgent with `data-tone="bad"` or `"warn"`. Code, logs and technical detail sit well in any feel.
 
 **The hero** is the one thing a chat message could not be, and the best expression of the point. When the point is about amounts, time, places or a schedule, that is a chart or a drawing, and it wins the first screen. When it is a decision or a single figure, it may be a big number with its sentence, a ranked list with one picked, or a then-versus-now. Draw only from real data or real geometry: a sketch with guessed positions is worse than no drawing.
 

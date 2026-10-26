@@ -337,7 +337,7 @@ describe("page.mjs embeds images", () => {
       "embedded fonts/brand.woff2: WOFF2 font, 3 KB in the page
       FAIL font-missing: CSS url() "fonts/gone.otf": no file at fonts/gone.otf -> name the font file itself (an installed font is in the system's font folders, references/loading.md), or use a Google Font
       FAIL font-local: @font-face "Trial Face": names only local() fonts, which readers who lack them never see -> add url() naming the font file beside local() and page.mjs embeds it (references/loading.md, A font of its own), or use a Google Font
-      page.html: 2 FAIL. Fix each by fixing what it names, then run again. It is 62 KB."
+      page.html: 2 FAIL. Fix each by fixing what it names, then run again. It is 63 KB."
     `);
   });
 });
