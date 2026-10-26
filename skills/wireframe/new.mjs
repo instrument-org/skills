@@ -38,7 +38,10 @@ const page = shell
     () =>
       `<main class="flex min-h-dvh flex-col px-4 pb-8">\n${main}\n    </main>`,
   );
-writeFileSync(out, tagRepo(page, repoName(process.cwd())));
+const repo = repoName(process.cwd());
+writeFileSync(out, tagRepo(page, repo));
 console.log(
   `${out}: written. Draw the frames in its \`states\` array, then open it in your browser tool and check its errors and a screenshot.`,
 );
+if (!repo)
+  console.warn("No repository found here, so this page has no repo tag.");
