@@ -222,7 +222,7 @@ A vertical list is the phone answer and often the desktop one too.
 
 For a horizontal strip (days across, rows per person, vehicle or system), draw it with `fit` from the first recipe and switch to this list when `w < 560`. Lanes (one row per thing whose state changes, on one clock) are the natural hero for an incident: color the span where each lane is wrong, and put the readings under them on the same x axis.
 
-- Order is the argument: say in the heading what the order explains ("Every delay traces to the March vendor switch"), and tone the one or two events that carry it (`data-tone="bad"` on the `li`); the rest stay plain.
+- Tone the one or two events that explain the rest (`data-tone="bad"` on the `li`) and leave the others plain. When the order itself is the point, say it in the `h1` or the lede; the section heading stays a label, such as Timeline.
 - Mark what is estimated or reconstructed (`<small>approx.</small>`) and what is still ahead (a dashed segment: `li.ahead { border-left: 2px dashed var(--line-2); margin-left: -2px; }`), and write the date of "now" on the page so a reader in a month knows where the line stood.
 - Long gaps get a break rather than false proportion: `<li class="gap"><time>...</time> 14 months, nothing relevant</li>` styled muted.
 

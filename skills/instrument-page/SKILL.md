@@ -37,11 +37,27 @@ Compute every total, date, weekday and difference with a short script over the i
 2. The `h1`: the point, 10 words or fewer. Not the topic.
 3. At most one short lede sentence; no more than 45 words besides the kicker before the hero starts.
 4. The hero, starting in the first screen.
-5. Two to four short sections, each with a heading that says something, each shown more than told: a chart, a table, a short list, a labeled drawing. A technical write-up may run longer; at five sections the page gets a sticky strip of their names, and `data-short="Retries"` on an `h2` shortens its label there.
+5. Two to four short sections, each shown more than told: a chart, a table, a short list, a labeled drawing. A technical write-up may run longer; at five sections the page gets a sticky strip of their names, and `data-short="Retries"` on an `h2` shortens its label there.
 6. The evidence last: tables, sources, the arithmetic. `<details>` for one or two optional drill-ins, never to hide the point.
 7. The footer: made from which files and sources, when, and what is illustrative.
 
 No paragraph over 60 words outside the footer; most under 30. Pick one or two things only a file can do (data embedded as JSON and drawn from it, one reading interaction, a real print layout, a copy button), never a collection; the page still says its point with no clicks.
+
+### The words
+
+Write every line the way the people who usually make this kind of document would write it to this reader. The `h1` is the one place for a claim. Section headings are labels, in the words the field already uses: an incident review has Impact, Timeline, Root cause and Follow-ups; a recipe has Ingredients and Method; meeting notes have Decisions and Action items. A section heading is a sentence only when it is a plain fact a person would say out loud.
+
+Call things by their real names: the field's own sections and terms, the product, the setting, the person. Spell out how something works instead of summing it up in a slogan. Use the active voice, "we" and "you" where they fit, and the order a person speaks in, with the subject and verb first and the detail after.
+
+Read every heading and sentence aloud before you build, and rewrite anything a person would not say. The usual problems:
+
+- a topic followed by a comma and a trailing phrase ("Results, week by week")
+- a heading that starts with "What" to make a label sound like a sentence ("What the plan includes")
+- a thing that talks or decides ("the invoice tells us", "the email holds")
+- a claim squeezed into a riddle ("The answer is a shorter queue")
+- a condition tacked onto the end ("once fees are counted")
+- a contrast against a point nobody made ("X, not Y")
+- a label and a colon in front of the point ("Allowed: the row says so")
 
 ## 4. Write it
 
@@ -69,7 +85,7 @@ No paragraph over 60 words outside the footer; most under 30. Pick one or two th
     </header>
     <section class="hero">the hero</section>
     <section>
-      <h2>A heading that says something</h2>
+      <h2>A label in the field's own words</h2>
       ...
     </section>
     <footer><p>Made from ... on ...; what is illustrative.</p></footer>
