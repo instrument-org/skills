@@ -7,6 +7,13 @@
            from the top as well as from the right. -->
 
       <style>
+        /* The page's side gutter is 16px at every width. The title bar's
+           -mx-4 and the grid both depend on it, so it's set here, where it
+           also covers a project kit that writes its own <main> tag. */
+        body > main {
+          padding-inline: 1rem;
+        }
+
         /* The rings and their tags are the one thing on these frames that is
            not the design, so they start hidden and the reader turns them on.
            Anything short of data-marks="on" hides them, so a page shows the
