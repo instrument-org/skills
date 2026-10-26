@@ -56,15 +56,15 @@
 </header>
 
 <section id="feels">
-  <h2 data-short="Feels">Four feels are four sets of the same knobs</h2>
-  <p>A page sets <code>data-feel</code> on <code>&lt;html&gt;</code>, and that swaps the token values below. Nothing else changes: every element reads these tokens, so a feel is entirely this table. Click a card to switch the page to it.</p>
+  <h2 data-short="Feels">Feels</h2>
+  <p>A page sets <code>data-feel</code> on <code>&lt;html&gt;</code>, and that swaps the token values below. Every element reads these tokens, so this table is the whole of a feel. Click a card to switch the page to it.</p>
   <div class="feels" id="feelcards"></div>
   <div class="scroll bleed"><table class="knobs" id="knobs"><thead></thead><tbody></tbody></table></div>
   <aside data-tone="muted"><p><b>Where to edit:</b> minimal is the <code>:root</code> block at the top of foundation.css; each other feel is a <code>[data-feel="…"]</code> block right under it that overrides only what differs from minimal. A few feels also have a rule or two near the end of the file, under "feel details".</p></aside>
 </section>
 
 <section id="layouts">
-  <h2 data-short="Layouts">Two layouts set the width of the column</h2>
+  <h2 data-short="Layouts">Layouts</h2>
   <p><code>data-layout="column"</code> is one reading column, for almost every page. <code>wide</code> is one wider column for a roster or a big table; its prose keeps a reading width on the same left edge, and it prints landscape. Everything sits in the column; <code>.bleed</code> and <code>.full</code> go wider only when a page asks.</p>
   <dl id="layoutknobs"></dl>
   <div class="demo"><p class="spec">the three tracks of the page grid, in this layout</p></div>
@@ -74,7 +74,7 @@
 </section>
 
 <section id="color">
-  <h2 data-short="Color">Color is tokens that follow light and dark</h2>
+  <h2 data-short="Color">Color</h2>
   <p class="spec">semantic tokens a page may use: <b>--name</b> and its resolved value in this feel and theme</p>
   <div class="swatches" data-swatches="ground paper ink ink-2 muted line line-2 accent accent-text accent-ink wash good good-wash warn warn-wash bad bad-wash"></div>
   <p class="spec">categorical, for people, teams, options: <b>data-c="1"…"8"</b></p>
@@ -89,13 +89,13 @@
 </section>
 
 <section id="type">
-  <h2 data-short="Type">Type is three families and one scale</h2>
-  <p>Inter for text, Roboto Serif where a feel asks for it (editorial text and headings, and every <code>blockquote</code>), JetBrains Mono for code and, in urgent and ledger, labels.</p>
+  <h2 data-short="Type">Type</h2>
+  <p>Inter for text, Roboto Serif where a feel asks for it (editorial text and headings, and every <code>blockquote</code>), JetBrains Mono for code and for labels in dense.</p>
   <div>
     <div class="typerow"><p class="kicker" data-measure>Kicker · for whom, when, from what</p><p class="spec">hgroup &gt; p:first-child, .kicker</p></div>
     <div class="typerow"><h1 data-measure>The point, in ten words</h1><p class="spec">h1</p></div>
     <div class="typerow"><p class="lede" data-measure>One short lede sentence that says why it matters.</p><p class="spec">hgroup &gt; h1 + p, .lede</p></div>
-    <div class="typerow"><h2 data-measure>A section heading that says something</h2><p class="spec">h2</p></div>
+    <div class="typerow"><h2 data-measure>A section heading</h2><p class="spec">h2</p></div>
     <div class="typerow"><h3 data-measure>A smaller heading</h3><p class="spec">h3</p></div>
     <div class="typerow"><h4 data-measure>Label or h4</h4><p class="spec">h4, .label</p></div>
     <div class="typerow"><p data-measure>Body text runs at the base size with a line height of 1.55, which is where most of the reading happens.</p><p class="spec">p</p></div>
@@ -114,7 +114,7 @@
 </section>
 
 <section id="elements">
-  <h2 data-short="Elements">Plain elements are already designed</h2>
+  <h2 data-short="Elements">Elements</h2>
   <div class="demo">
     <p class="spec">aside (tinted note; takes data-tone)</p>
     <div class="stack">
@@ -154,7 +154,7 @@
 </section>
 
 <section id="layout">
-  <h2 data-short="Layout">Layout is a dozen classes</h2>
+  <h2 data-short="Layout">Layout classes</h2>
   <div class="demo"><p class="spec">.panel (paper, radius, shadow) and .panel[data-tone] / [data-c] (a muted background in that color)</p></div>
   <div class="grid">
     <div class="panel"><h3>.panel</h3><p>Paper on the ground, with the feel's radius and shadow.</p></div>
@@ -199,7 +199,7 @@
 </section>
 
 <section id="lists">
-  <h2 data-short="Lists">Sequences and checklists</h2>
+  <h2 data-short="Lists">Steps, flows and checklists</h2>
   <div class="demo"><p class="spec">ol.steps (each item's content in one span)</p>
     <ol class="steps"><li><span><b>Open the quote.</b> Find the line for the return trip.</span></li><li><span><b>Ask for the missing leg.</b> Send the vendor one sentence.</span></li><li><span><b>Compare totals.</b> Both quotes now cover both legs.</span></li></ol>
   </div>
@@ -311,7 +311,7 @@
 </section>
 
 <section id="behaviors">
-  <h2 data-short="Behaviors">Behaviors by attribute</h2>
+  <h2 data-short="Behaviors">Behaviors</h2>
   <div class="demo"><p class="spec">button[data-show-who] dims everything not marked data-who</p>
     <div class="row"><button data-show-who="maya">Maya</button><button data-show-who="jon">Jon</button></div>
     <ul class="plain" style="margin-top: 0.6rem"><li data-who="maya"><span class="dot" data-c="1">Maya drives Friday</span></li><li data-who="jon"><span class="dot" data-c="2">Jon brings snacks</span></li><li data-who="maya jon"><span class="dot" data-c="3">Both set up chairs</span></li></ul>

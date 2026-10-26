@@ -3,7 +3,7 @@
 <html lang="en" data-layout="column" data-feel="minimal">
 <head>
 <title>Checkout failed for 41 minutes because our retries piled up</title>
-<meta name="description" content="On Oct 20 checkout failed from 14:02 to 14:43. Five retries per request turned a rate limit into an outage; the fix is one retry.">
+<meta name="description" content="On Oct 20, checkout failed from 14:02 to 14:43 because every failed payment call retried five times at once.">
 <!-- lab -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,41 +20,50 @@
   <hgroup>
     <p>Incident review · Tuesday, Oct 20, 14:02 to 14:43</p>
     <h1>Our own retries took checkout down for 41 minutes</h1>
-    <p>A short rate limit from the payment provider became an outage because every request retried five times.</p>
+    <p>The payment provider rate-limited a few of our calls. Every failed call then retried five times at once, and the limit spread to our whole account.</p>
   </hgroup>
 </header>
 
 <section class="hero">
   <div class="grid" style="--min: 10rem">
-    <p class="stat" data-tone="bad"><b>41 min</b><span>checkout failing</span></p>
-    <p class="stat" data-tone="bad"><b>5×</b><span>calls per payment while limited</span></p>
+    <p class="stat" data-tone="bad"><b>41 min</b><span>of failed checkouts</span></p>
+    <p class="stat" data-tone="bad"><b>5×</b><span>retries for each failed call</span></p>
   </div>
   <ol class="flow">
     <li><b>Pay button</b><span>customer taps Pay</span></li>
     <li><b><code>checkout.ts</code></b><span>builds the order</span></li>
-    <li data-tone="bad"><b><code>retryPayment</code></b><span>5 tries, no wait</span></li>
-    <li><b>provider API</b><span>answers 429</span></li>
-    <li><b>error screen</b><span>asks to try again</span></li>
+    <li data-tone="bad"><b><code>retryPayment</code></b><span>retries 5 times with no wait</span></li>
+    <li><b>Payment provider</b><span>answers 429</span></li>
+    <li><b>Error screen</b><span>asks the customer to try again</span></li>
   </ol>
 </section>
 
 <section>
-  <h2>What happened, minute by minute</h2>
+  <h2>Impact</h2>
+  <ul class="ticks">
+    <li>No customer was charged twice.</li>
+    <li>We saved every order placed during the outage.</li>
+    <li data-tone="bad">Support received 212 tickets.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Timeline</h2>
   <table>
-    <thead><tr><th>Time</th><th>What we saw</th></tr></thead>
+    <thead><tr><th>Time</th><th>Event</th></tr></thead>
     <tbody>
-      <tr><td class="mono">14:02</td><td>Provider returns 429 for 3% of calls, a normal burst limit.</td></tr>
-      <tr data-tone="bad"><td class="mono">14:03</td><td>Each failed call retries five times at once; traffic to the provider triples.</td></tr>
-      <tr><td class="mono">14:09</td><td>Provider limits our whole account. Every checkout fails.</td></tr>
-      <tr><td class="mono">14:31</td><td>Retries switched off by flag. Errors start falling.</td></tr>
-      <tr data-tone="good"><td class="mono">14:43</td><td>Limit lifts. Checkout succeeds again.</td></tr>
+      <tr><td class="mono">14:02</td><td>The provider starts answering 3% of our calls with 429. That is normal during a burst.</td></tr>
+      <tr data-tone="bad"><td class="mono">14:03</td><td>Every failed call retries five times at once, and our traffic to the provider triples.</td></tr>
+      <tr><td class="mono">14:09</td><td>The provider rate-limits our whole account, and every checkout fails.</td></tr>
+      <tr><td class="mono">14:31</td><td>We turn retries off with the feature flag, and errors start to fall.</td></tr>
+      <tr data-tone="good"><td class="mono">14:43</td><td>The provider lifts the limit, and checkouts go through again.</td></tr>
     </tbody>
   </table>
 </section>
 
 <section>
-  <h2>The fix is one retry that waits</h2>
-  <p>A 429 tells us when to try again. We now wait that long, once, instead of hammering the provider.</p>
+  <h2>Fix</h2>
+  <p>When the provider rate-limits a call, it answers 429 with a <code>Retry-After</code> header. We now wait that long and retry once.</p>
 <pre data-file="apps/api/payments/retry.ts"><code class="language-diff">- const RETRIES = 5;
 - const WAIT_MS = 0;
 + const RETRIES = 1;
@@ -62,19 +71,12 @@
 </section>
 
 <section>
-  <h2>Before Friday</h2>
-  <div class="split">
-    <ul class="todo">
-      <li>Ship the one-retry change behind the existing flag</li>
-      <li>Alert when 429s pass 1% for two minutes</li>
-      <li>Update the status page note: the provider was not degraded</li>
-    </ul>
-    <ul class="ticks">
-      <li>No customer was charged twice</li>
-      <li>Orders placed during the outage were saved</li>
-      <li data-tone="bad">Support saw 212 tickets</li>
-    </ul>
-  </div>
+  <h2>Follow-ups</h2>
+  <ul class="todo">
+    <li>Ship the single retry behind the existing flag by Friday.</li>
+    <li>Alert us when 429s pass 1% of calls for two minutes.</li>
+    <li>Correct the status page, which blamed the provider.</li>
+  </ul>
 </section>
 
 <footer><p>Sample page for the design lab. The company, code and figures are made up.</p></footer>
