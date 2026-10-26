@@ -769,8 +769,11 @@
     color: var(--muted);
     font-size: 0.86rem;
   }
-  body > footer {
-    margin-top: calc(var(--flow) * 2);
+  /* :root raises this above the rule that zeroes margins on the page's top-level blocks. */
+  :root body > footer {
+    margin-top: var(--flow);
+    padding-top: calc(var(--flow) * 1.5);
+    border-top: 1px solid var(--line);
   }
   table {
     width: 100%;
@@ -1017,8 +1020,16 @@
     font: 600 max(11px, 0.74rem)/1 var(--body-font);
     padding: 0.3em 0.6em;
     border-radius: var(--pill);
-    background: var(--tone-wash);
-    color: var(--ink);
+    /* A tag is a label in its tone's own color, on a tint strong enough to show
+       against the ground in both themes; a dark ground needs about twice the
+       tint. Mixing the text toward ink darkens it on light grounds and
+       lightens it on dark ones. */
+    background: color-mix(
+      in oklab,
+      var(--tone) 16%,
+      light-dark(var(--paper), color-mix(in oklab, var(--tone) 22%, var(--paper)))
+    );
+    color: color-mix(in oklab, var(--tone) 70%, var(--ink));
     white-space: nowrap;
   }
   .dot::before {

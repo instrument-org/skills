@@ -288,7 +288,7 @@ describe("page.mjs embeds images", () => {
     expect(result.stdout.replace(/:\d+\//, ":PORT/")).toMatchInlineSnapshot(`
       "embedded shots/bike.png: PNG 480x320, 1 KB in the page
       embedded http://127.0.0.1:PORT/a.png?x=1&amp;y=2: PNG 300x200, 1 KB in the page
-      page.html: pass, as far as the file shows. It is 64 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
+      page.html: pass, as far as the file shows. It is 65 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
     `);
     expect(result.built).not.toContain("shots/bike.png");
     expect(result.built).not.toContain("127.0.0.1");
