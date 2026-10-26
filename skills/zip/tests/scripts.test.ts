@@ -188,6 +188,29 @@ describe("zip scripts", () => {
     );
   });
 
+  it("refuses an archive that names one member twice, extracting nothing", () => {
+    const sourceDir = makeTempDir();
+    tempDirs.push(sourceDir);
+    const zipPath = path.join(sourceDir, "duplicate.zip");
+    const extractDir = path.join(sourceDir, "extracted");
+    const archive = new AdmZip();
+    archive.addFile("first.txt", Buffer.from("one"));
+    archive.addFile("other.txt", Buffer.from("two"));
+    // Renamed in the bytes, since adm-zip will not write a second entry of one name.
+    const buffer = archive.toBuffer();
+    let offset = 0;
+    while ((offset = buffer.indexOf("other.txt", offset)) !== -1) {
+      buffer.write("first.txt", offset);
+      offset += "other.txt".length;
+    }
+    fs.writeFileSync(zipPath, buffer);
+
+    expect(() =>
+      extractZip({ inputPath: zipPath, outputDir: extractDir }),
+    ).toThrow(/Duplicate entry name/);
+    expect(fs.existsSync(extractDir)).toBe(false);
+  });
+
   it.each([
     "../escape.txt",
     "/absolute.txt",

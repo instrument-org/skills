@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "adm-zip": "^0.6.0",
+    "adm-zip": "^0.6.1",
     "cac": "^6.7.14"
   },
   "devDependencies": {
