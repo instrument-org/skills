@@ -1137,48 +1137,77 @@
     border-radius: 4px;
   }
 
-  /* A call path or pipeline: boxes left to right with arrows, stacked on phones.
-     Each li is <b>name</b> then a short <span> note; data-tone marks the box that matters. */
+  /* A call path or pipeline: small boxes that wrap onto as many rows as they
+     need. foundation.js draws the connectors (a node on one box's edge, a fine
+     line, an arrowhead touching the next box, a loop down to the next row).
+     Each li is <b>name</b> then a short <span> note; a <code> in the name marks
+     an identifier; data-tone marks the box that matters. */
   ol.flow {
+    --flow-gap: 2.25rem;
+    position: relative;
     list-style: none;
     padding: 0;
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
-    column-gap: 1.3rem;
-    align-items: stretch;
+    grid-template-columns: repeat(auto-fill, minmax(min(9rem, 100%), 1fr));
+    gap: 1.75rem var(--flow-gap);
   }
   ol.flow > li {
     position: relative;
     margin: 0;
-    padding: 0.55rem 0.65rem;
+    padding: 0.6rem 0.75rem 0.65rem;
     border: 1px solid var(--line);
-    border-radius: calc(var(--radius) * 0.6);
+    border-radius: calc(var(--radius) * 0.7);
     background: var(--paper);
-    font-size: 0.88rem;
-    line-height: 1.4;
+    font: 400 0.8rem/1.4 var(--sans);
   }
   ol.flow > li > b {
     display: block;
-    font: 600 0.78rem/1.35 var(--mono);
+    font: 600 0.82rem/1.3 var(--sans);
+    letter-spacing: -0.01em;
+    color: var(--ink);
     overflow-wrap: break-word;
+  }
+  ol.flow > li > b code {
+    background: none;
+    padding: 0;
+    font-size: 0.92em;
+    font-weight: 500;
   }
   ol.flow > li > span {
     display: block;
-    margin-top: 0.2rem;
-    color: var(--muted);
-  }
-  ol.flow > li + li::before {
-    content: "\2192";
-    position: absolute;
-    left: -1.05rem;
-    top: 50%;
-    translate: 0 -50%;
+    margin-top: 0.15rem;
     color: var(--muted);
   }
   ol.flow > li:is([data-tone], [data-c]) {
     border-color: transparent;
     background: var(--tone-wash);
+  }
+  ol.flow > svg.flow-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    fill: none;
+    stroke: color-mix(in oklab, var(--muted) 75%, transparent);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  ol.flow > svg.flow-lines circle {
+    fill: color-mix(in oklab, var(--muted) 75%, transparent);
+    stroke: none;
+  }
+  /* With no script, and on paper, a plain arrow sits in the gap. */
+  ol.flow:not(.drawn) > li + li::before {
+    content: "\2192";
+    position: absolute;
+    left: calc(var(--flow-gap) * -0.5);
+    top: 50%;
+    translate: -50% -50%;
+    color: var(--muted);
   }
 
   /* The section strip foundation.js builds on a page of five or more sections. */
@@ -1507,9 +1536,16 @@
   :is([data-feel="dense"], [data-feel="ledger"]) .stat > :is(span, small) {
     font-size: 0.85rem;
   }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.flow {
+    --flow-gap: 1.6rem;
+    row-gap: 1.25rem;
+  }
   :is([data-feel="dense"], [data-feel="ledger"]) ol.flow > li {
-    padding: 0.35rem 0.5rem;
-    font-size: 0.82rem;
+    padding: 0.35rem 0.5rem 0.4rem;
+    font-size: 0.76rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.flow > li > b {
+    font-size: 0.78rem;
   }
   :is([data-feel="dense"], [data-feel="ledger"]) ol.steps > li::before {
     width: 1.35rem;
@@ -1540,16 +1576,6 @@
     .split,
     .split.flip {
       grid-template-columns: 1fr;
-    }
-    ol.flow {
-      grid-auto-flow: row;
-      row-gap: 1.3rem;
-    }
-    ol.flow > li + li::before {
-      content: "\2193";
-      left: 1rem;
-      top: -1.2rem;
-      translate: 0;
     }
     .rail {
       display: flex;
@@ -1640,8 +1666,17 @@
     button:not(.keep),
     .sticky:empty,
     nav.strip,
-    .code-tools {
+    .code-tools,
+    ol.flow > svg.flow-lines {
       display: none !important;
+    }
+    ol.flow > li + li::before {
+      content: "\2192";
+      position: absolute;
+      left: calc(var(--flow-gap) * -0.5);
+      top: 50%;
+      translate: -50% -50%;
+      color: var(--muted);
     }
     pre {
       --code-ground: #f5f5f4;
