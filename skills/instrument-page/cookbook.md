@@ -242,10 +242,10 @@ Put the options across the top and the attributes down the side, or the other wa
       </tr>
     </thead>
     <tbody>
-      <tr data-tone="accent">
+      <tr data-tone="good">
         <th scope="row">
           <a href="https://www.upliftdesk.com/">Uplift V2</a>
-          <span class="tag" data-tone="accent">Pick</span>
+          <span class="tag" data-tone="good">Pick</span>
         </th>
         <td data-label="Height range">25.3 to 50.8 in</td>
         <td data-label="Wobble">
@@ -269,7 +269,7 @@ Put the options across the top and the attributes down the side, or the other wa
 - `table.cards` turns each row into a card on a phone, with each `td`'s `data-label` as its label and the row header (`th scope="row"`) as the card's name.
 - Give a judged cell a word on a coarse scale (`Low / Some / High`, a letter, or two or three dots), toned by what it means, with the evidence a click away in a footnote or a `details` row. Never use a decimal.
 - When nobody could fill a cell, write "not published" in it. A dash reads as zero.
-- Highlight the row or column that decides the comparison, and the pick if there is one, with a single tone. Leave everything else plain, so the eye goes to the difference.
+- Highlight the row or column that decides the comparison, and the pick if there is one, with a single tone. Mark a pick or a recommendation with `data-tone="good"`. Leave everything else plain, so the eye goes to the difference.
 - With more than about seven options or ten attributes, you have a data table rather than a matrix. Sort it by the attribute that matters, put the shortlist in the hero, and put the full table in the evidence.
 
 ## A ranked pick with one chosen
@@ -278,7 +278,7 @@ When the reader asked which one to choose, the hero is the answer with its reaso
 
 ```html
 <ol class="plain stack hero">
-  <li class="panel" data-tone="accent">
+  <li class="panel" data-tone="good">
     <p class="label">Our pick</p>
     <h3><a href="https://www.upliftdesk.com/">Uplift V2</a></h3>
     <p>
