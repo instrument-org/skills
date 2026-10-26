@@ -1,10 +1,10 @@
 # Playground patterns
 
-The pieces only a page with dials needs. Everything else on the page (the header, the source line) is ordinary foundation HTML, and `skeleton.html` beside this file has all of it wired together.
+These are the pieces only a page with dials needs. Everything else on the page, such as the header and the source line, is ordinary foundation HTML, and `skeleton.html` beside this file has all of it wired together.
 
-## The config is the document
+## The config
 
-One object, in dialkit's notation. It is the panel, the page's opening values, and the list a reader with no network sees.
+The config is one object in dialkit's notation. It defines the panel, the page's opening values, and the list a reader with no network sees.
 
 ```js
 const CONFIG = {
@@ -35,7 +35,7 @@ A key becomes its label by splitting on capitals: `cornerRadius` reads "Corner R
 
 The spring editor has three modes the reader can switch between, and the value you read back changes shape with them: `{ type: "spring", visualDuration, bounce }` in Time, `{ type: "spring", stiffness, damping, mass }` in Physics, and `{ type: "easing", duration, ease: [x1, y1, x2, y2] }` in Easing. A page with a spring on it handles all three or hides the switch by never reading it.
 
-## The defaults, read back out
+## Reading the defaults
 
 The config is the only place the opening values are written, so the page reads them out of it before the panel arrives:
 
@@ -107,7 +107,7 @@ The stylesheet goes in as a `<link>` by path, `https://cdn.jsdelivr.net/npm/dial
 
 A floating panel is `mode: "popover"` with a `position`, and no `target`. It is what dialkit does on its own and what a designer expects from it; reach for it when the stage wants the whole window, and know that on a phone it sits over the thing.
 
-## What the reader sets is theirs
+## Saving the reader's settings
 
 `persist: true` keeps the reader's last position under `dialkit:<id>` in their browser's storage and turns on the Versions row, where they can save more than one and copy the values out. The `id` matters: every file opened from a folder shares one storage, so a panel called "Sheet" on two pages would share one memory. Make it the page's own.
 
@@ -118,11 +118,11 @@ $("#reset").hidden = false;
 $("#reset").addEventListener("click", () => kit.resetValues());
 ```
 
-Say in the last line that this is where it goes. A reader who has arrived at something wants to know whether it is safe to close the tab.
+Say in the last line where the reader's settings are kept. A reader who has found a setting they like wants to know whether it's safe to close the tab.
 
-## Render everything, on every change, once the hand pauses
+## Rendering
 
-One function reads every value and writes every output: the stage, the takeaway and the figures. A slider fires many times a second mid-drag, so anything expensive to restart, a replayed motion above all, waits for the hand to pause:
+One function reads every value and writes every output, meaning the stage, the takeaway and the figures. A slider fires many times a second while it's being dragged, so anything expensive to restart, especially a replayed motion, waits until the reader pauses:
 
 ```js
 let pending;
@@ -133,11 +133,11 @@ const render = () => {
 };
 ```
 
-Styles that follow a dial directly, a radius, a color, a shadow, are set in `render()` itself, since the point of a dial is that the thing moves under it.
+Set styles that follow a dial directly, such as a radius, a color or a shadow, in `render()` itself, since the reader should see the thing change as they move the dial.
 
-## Anything that moves replays, and loops until told not to
+## Replaying motion
 
-The browser's own animation API, so the preview is the CSS the reader copies and not an approximation of it:
+Use the browser's own animation API, so the preview is the same CSS the reader copies rather than an approximation of it:
 
 ```js
 const play = () => {
@@ -156,9 +156,9 @@ $("#stage").addEventListener("click", play);
 
 `linear()` easings are how a spring reaches CSS, and `animate()` throws on a browser that lacks them; catch it and fall back to `ease-out`, so the shape still shows without the bounce. Start with `loop` off when the reader has asked for reduced motion: `loop: !matchMedia("(prefers-reduced-motion: reduce)").matches` in the config, so the panel agrees with the page.
 
-## A spring, as Motion resolves it
+## Springs in Motion
 
-The one piece of arithmetic worth carrying between pages. Motion turns a visual duration and a bounce into physics, and the unit spring from rest has a closed form; settled is Motion's own rule, and the easing is the curve sampled every 10 ms, which is what Motion writes for the browser too:
+This is the one piece of arithmetic worth reusing from page to page. Motion turns a visual duration and a bounce into physics, and a unit spring starting from rest has a closed form. When it counts as settled follows Motion's own rule, and the easing is the curve sampled every 10 ms, which is also what Motion writes for the browser:
 
 ```js
 const physics = (m) => {
@@ -181,9 +181,9 @@ const physics = (m) => {
 
 Position `x(t)` and speed `v(t)` then follow from the damping ratio, under, critical or over, and the page walks `t` in 50 ms steps until `|1 - x| ≤ 0.005` and `|v| ≤ 0.01` per second. The whole of it is about forty lines; state the rule in the page's last line, which is what lets a reader check the figure.
 
-## The takeaway, in the reader's own format
+## The takeaway
 
-Real CSS with real units, a config in the library's shape, an SVG that opens. Where two formats describe one thing, write both and say so:
+Write the takeaway in the reader's own format: real CSS with real units, a config in the library's shape, or an SVG that opens. When two formats describe the same thing, write both and say so:
 
 ```js
 $("#css").textContent =
@@ -196,7 +196,7 @@ Copy is the button the foundation puts on every `<pre>`, which copies the block'
 
 ## A figure beside the stage
 
-Arithmetic over the dials, in the reader's units, with a word that says what it means:
+A figure is arithmetic over the dials, in the reader's units, with a word that says what it means:
 
 ```html
 <dt>Damping ratio</dt>
@@ -205,9 +205,9 @@ Arithmetic over the dials, in the reader's units, with a word that says what it 
 </dd>
 ```
 
-The word is the part that earns the figure its place. A contrast ratio is a number; "passes AA for body text" is what the reader wanted. A settle time is a number; "longer than a tap feels" is the judgment the page can make from the number alone.
+The word is what makes the figure useful. A contrast ratio on its own is just a number, while "passes AA for body text" is what the reader wanted to know. A settle time is just a number, while "longer than a tap feels" is the judgment the page can make from it.
 
-## Another panel, when dialkit lacks the control
+## Tweakpane, for controls dialkit lacks
 
 [Tweakpane](https://tweakpane.github.io/docs/) 4.0.5 is the same idea with a different notation and a few controls dialkit does not have: a point in three or four dimensions and a graph that monitors a changing value in the core, and an interval with two thumbs or a grid of radio buttons through its essentials plugin. It ships a single script that installs a global:
 
