@@ -161,3 +161,6 @@ agent-reference.local.json
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Pages the page lab builds from its samples
+tools/page-lab/built/

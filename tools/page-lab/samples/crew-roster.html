@@ -1,0 +1,78 @@
+<!doctype html>
+<!-- direction: reader="the night lead and the floor crew, on the break room screen and on phones, filling gaps before the week starts" point="Thursday night is two people short and only Gus can take a shift without breaking the rest rule" conflicts="none" layout=wide feel=dense hero="the week as a grid, the short shift marked, a button per person to see their own shifts" -->
+<html lang="en" data-layout="wide" data-feel="dense">
+<head>
+<title>Thursday night is two people short</title>
+<meta name="description" content="Week of Oct 19: every shift is covered except Thursday night, which has 2 of the 4 it needs.">
+<!-- lab -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="../../../skills/instrument-page/lib/foundation.css">
+<script src="../../../skills/instrument-page/lib/foundation.js"></script>
+<script src="../lab.js"></script>
+<!-- /lab -->
+<style>
+  .roster td { vertical-align: top; }
+  .roster .who { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .roster .gap { font-size: 0.8rem; color: var(--bad); align-self: center; }
+  .roster th[scope="row"] small { display: block; font-weight: 400; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <hgroup>
+    <p>Crew roster · week of Monday, Oct 19 · posted Friday, Oct 16</p>
+    <h1>Thursday night is two people short</h1>
+    <p>Every other shift is covered. Gus can take one; the float pool needs to cover the other.</p>
+  </hgroup>
+</header>
+
+<section class="hero">
+  <div class="row">
+    <span class="label">Show my shifts</span>
+    <button data-show-who="ana">Ana</button><button data-show-who="ben">Ben</button><button data-show-who="cruz">Cruz</button><button data-show-who="dee">Dee</button><button data-show-who="eli">Eli</button><button data-show-who="fay">Fay</button><button data-show-who="gus">Gus</button>
+  </div>
+  <table class="roster cards">
+    <thead><tr><th>Shift</th><th>Mon 19</th><th>Tue 20</th><th>Wed 21</th><th>Thu 22</th><th>Fri 23</th><th>Sat 24</th><th>Sun 25</th></tr></thead>
+    <tbody>
+    <tr>
+      <th scope="row">Day <small>needs 3</small></th>
+      <td data-label="Mon"><div class="who"><span class="tag" data-c="1" data-who="ana">Ana</span><span class="tag" data-c="2" data-who="ben">Ben</span><span class="tag" data-c="3" data-who="cruz">Cruz</span></div></td>
+      <td data-label="Tue"><div class="who"><span class="tag" data-c="1" data-who="ana">Ana</span><span class="tag" data-c="2" data-who="ben">Ben</span><span class="tag" data-c="4" data-who="dee">Dee</span></div></td>
+      <td data-label="Wed"><div class="who"><span class="tag" data-c="1" data-who="ana">Ana</span><span class="tag" data-c="3" data-who="cruz">Cruz</span><span class="tag" data-c="6" data-who="fay">Fay</span></div></td>
+      <td data-label="Thu"><div class="who"><span class="tag" data-c="2" data-who="ben">Ben</span><span class="tag" data-c="3" data-who="cruz">Cruz</span><span class="tag" data-c="4" data-who="dee">Dee</span></div></td>
+      <td data-label="Fri"><div class="who"><span class="tag" data-c="1" data-who="ana">Ana</span><span class="tag" data-c="2" data-who="ben">Ben</span><span class="tag" data-c="3" data-who="cruz">Cruz</span></div></td>
+      <td data-label="Sat"><div class="who"><span class="tag" data-c="2" data-who="ben">Ben</span><span class="tag" data-c="4" data-who="dee">Dee</span><span class="tag" data-c="7" data-who="gus">Gus</span></div></td>
+      <td data-label="Sun"><div class="who"><span class="tag" data-c="3" data-who="cruz">Cruz</span><span class="tag" data-c="5" data-who="eli">Eli</span><span class="tag" data-c="7" data-who="gus">Gus</span></div></td>
+    </tr>
+    <tr>
+      <th scope="row">Night <small>needs 4</small></th>
+      <td data-label="Mon"><div class="who"><span class="tag" data-c="4" data-who="dee">Dee</span><span class="tag" data-c="5" data-who="eli">Eli</span><span class="tag" data-c="6" data-who="fay">Fay</span><span class="tag" data-c="7" data-who="gus">Gus</span></div></td>
+      <td data-label="Tue"><div class="who"><span class="tag" data-c="3" data-who="cruz">Cruz</span><span class="tag" data-c="5" data-who="eli">Eli</span><span class="tag" data-c="6" data-who="fay">Fay</span><span class="tag" data-c="7" data-who="gus">Gus</span></div></td>
+      <td data-label="Wed"><div class="who"><span class="tag" data-c="2" data-who="ben">Ben</span><span class="tag" data-c="4" data-who="dee">Dee</span><span class="tag" data-c="5" data-who="eli">Eli</span><span class="tag" data-c="7" data-who="gus">Gus</span></div></td>
+      <td data-tone="bad" data-label="Thu"><div class="who"><span class="tag" data-c="5" data-who="eli">Eli</span><span class="tag" data-c="6" data-who="fay">Fay</span><b class="gap">2 open</b></div></td>
+      <td data-label="Fri"><div class="who"><span class="tag" data-c="4" data-who="dee">Dee</span><span class="tag" data-c="5" data-who="eli">Eli</span><span class="tag" data-c="6" data-who="fay">Fay</span><span class="tag" data-c="7" data-who="gus">Gus</span></div></td>
+      <td data-label="Sat"><div class="who"><span class="tag" data-c="1" data-who="ana">Ana</span><span class="tag" data-c="3" data-who="cruz">Cruz</span><span class="tag" data-c="5" data-who="eli">Eli</span><span class="tag" data-c="6" data-who="fay">Fay</span></div></td>
+      <td data-label="Sun"><div class="who"><span class="tag" data-c="1" data-who="ana">Ana</span><span class="tag" data-c="2" data-who="ben">Ben</span><span class="tag" data-c="4" data-who="dee">Dee</span><span class="tag" data-c="6" data-who="fay">Fay</span></div></td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Filling Thursday night</h2>
+  <div class="split">
+    <ul class="todo">
+      <li>Ask Gus: off Thursday day and Friday day, so the rest rule holds</li>
+      <li>Call the float pool for one more by Saturday noon</li>
+      <li>Post the updated sheet Sunday</li>
+    </ul>
+    <aside data-tone="warn"><p><b>Rest rule:</b> no night shift right after a day shift, and none right before one. That rules out the other four.</p></aside>
+  </div>
+</section>
+
+<footer><p>Sample page for the design lab. The crew, shifts and rule are made up.</p></footer>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<!-- direction: reader="the founder and the bookkeeper, at a desk, choosing an accounting tool before the year closes" point="the plan with the lower monthly price costs more within eight months because it charges per invoice" conflicts="Ledgerly's sales page says $29 a month; its pricing table adds $0.75 per invoice: the table holds" layout=column feel=minimal hero="cumulative cost of both plans over 36 months, the crossing point marked" -->
+<html lang="en" data-layout="column" data-feel="minimal">
+<head>
+<title>The cheaper monthly plan costs $1,140 more over three years</title>
+<meta name="description" content="Ledgerly at $29 a month plus $0.75 per invoice passes Tallybook's $49 flat plan in month eight and ends $1,140 higher after three years.">
+<!-- lab -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="../../../skills/instrument-page/lib/foundation.css">
+<script src="../../../skills/instrument-page/lib/foundation.js"></script>
+<script src="../lab.js"></script>
+<!-- /lab -->
+<style>
+  .cost text { font-size: 12px; }
+  .cost .end { font-size: 13px; font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <hgroup>
+    <p>For Dana and Luis · two pricing pages, read Oct 22 · at 80 invoices a month</p>
+    <h1>The cheaper monthly plan costs $1,140 more over three years</h1>
+    <p>Ledgerly's per-invoice fee overtakes Tallybook's setup fee in month eight.</p>
+  </hgroup>
+</header>
+
+<section class="hero">
+  <figure class="wide-only">
+    <svg class="cost" viewBox="0 0 760 260" role="img" aria-label="Cumulative cost over 36 months: Tallybook ends at $2,064, Ledgerly at $3,204, crossing in month 8">
+      <line x1="50" y1="161.2" x2="610" y2="161.2" class="faint"/>
+      <line x1="50" y1="102.4" x2="610" y2="102.4" class="faint"/>
+      <line x1="50" y1="43.6" x2="610" y2="43.6" class="faint"/>
+      <line x1="50" y1="220" x2="610" y2="220" class="line"/>
+      <text x="42" y="224" text-anchor="end" class="muted">$0</text>
+      <text x="42" y="165" text-anchor="end" class="muted">$1,000</text>
+      <text x="42" y="106" text-anchor="end" class="muted">$2,000</text>
+      <text x="42" y="47" text-anchor="end" class="muted">$3,000</text>
+      <text x="50" y="240" text-anchor="middle" class="muted">0</text>
+      <text x="236.7" y="240" text-anchor="middle" class="muted">12</text>
+      <text x="423.3" y="240" text-anchor="middle" class="muted">24</text>
+      <text x="610" y="240" text-anchor="middle" class="muted">36 months</text>
+      <line x1="50" y1="202.4" x2="610" y2="98.6" class="outline" data-c="1" stroke-width="2.5"/>
+      <line x1="50" y1="220" x2="610" y2="31.5" class="outline" data-c="4" stroke-width="2.5"/>
+      <circle cx="166.7" cy="180.7" r="5" data-tone="accent"/>
+      <text x="176" y="198" class="ink">month 8: Ledgerly passes Tallybook</text>
+      <text x="618" y="102" class="end" data-c="1">Tallybook $2,064</text>
+      <text x="618" y="35" class="end" data-c="4">Ledgerly $3,204</text>
+    </svg>
+    <figcaption>Cumulative cost, including Tallybook's $300 setup fee, at 80 invoices a month.</figcaption>
+  </figure>
+  <div class="phone-only stack">
+    <p class="label">Three years at 80 invoices a month</p>
+    <div class="stack" style="--gap: 0.3rem"><span>Tallybook <b>$2,064</b></span><span class="bar" data-c="1" style="--v: 64.4%"></span></div>
+    <div class="stack" style="--gap: 0.3rem"><span>Ledgerly <b>$3,204</b></span><span class="bar" data-c="4" style="--v: 100%"></span></div>
+    <p class="muted">Ledgerly passes Tallybook in month 8.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The monthly price hides the invoice fee</h2>
+  <table>
+    <thead><tr><th>Line</th><th class="n">Tallybook</th><th class="n">Ledgerly</th></tr></thead>
+    <tbody>
+      <tr><td>Setup, once</td><td class="n">$300</td><td class="n">$0</td></tr>
+      <tr><td>Plan, per month</td><td class="n">$49</td><td class="n">$29</td></tr>
+      <tr><td>Invoices, per month (80 × $0.75)</td><td class="n">$0</td><td class="n">$60</td></tr>
+      <tr><td>Effective per month</td><td class="n">$49</td><td class="n">$89</td></tr>
+      <tr data-tone="accent"><th scope="row">Three years</th><td class="n"><b>$2,064</b></td><td class="n"><b>$3,204</b></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>What would flip it</h2>
+  <p>Over three years Ledgerly comes out cheaper only at 37 invoices a month or fewer. We send 80.</p>
+  <ul class="ticks">
+    <li>Both export to the bank feed Luis already uses</li>
+    <li>Both include payroll for up to five people</li>
+    <li data-tone="bad">Tallybook has no mobile receipt capture</li>
+  </ul>
+</section>
+
+<section>
+  <details>
+    <summary>The arithmetic</summary>
+    <p>Tallybook: $300 + 36 × $49 = $2,064. Ledgerly: 36 × ($29 + 80 × $0.75) = 36 × $89 = $3,204. Difference: $1,140. Crossing: $300 + $49m = $89m, so m = 7.5.</p>
+  </details>
+</section>
+
+<footer><p>Sample page for the design lab. Both products and their prices are made up.</p></footer>
+</body>
+</html>
