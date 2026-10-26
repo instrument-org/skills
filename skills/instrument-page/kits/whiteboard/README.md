@@ -55,9 +55,16 @@ arrow(under, same, { label: "yes" });
 arrow(under, fin, { label: "no" });
 const held = ring([fin]);
 arrow(
-  note(600, 440, 300, 100, "12 of the 14 days are spent here.\nNobody owns this queue.", {
-    stroke: RED,
-  }),
+  note(
+    600,
+    440,
+    300,
+    100,
+    "12 of the 14 days are spent here.\nNobody owns this queue.",
+    {
+      stroke: RED,
+    },
+  ),
   held,
   { stroke: RED },
 );

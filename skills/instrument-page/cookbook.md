@@ -310,9 +310,9 @@ Use `ol.steps` for things to do in order, and `ul.todo` for things to have or ch
 <ol class="steps hero">
   <li>
     <span
-      ><b>Shut the water off at the stop valve.</b> It's under the kitchen
-      sink; turn it clockwise. <small>You're done when the cold tap runs
-      dry.</small></span
+      ><b>Shut the water off at the stop valve.</b> It's under the kitchen sink;
+      turn it clockwise.
+      <small>You're done when the cold tap runs dry.</small></span
     >
   </li>
   <li data-tone="warn">
