@@ -1027,7 +1027,10 @@
     background: color-mix(
       in oklab,
       var(--tone) 16%,
-      light-dark(var(--paper), color-mix(in oklab, var(--tone) 22%, var(--paper)))
+      light-dark(
+        var(--paper),
+        color-mix(in oklab, var(--tone) 22%, var(--paper))
+      )
     );
     color: color-mix(in oklab, var(--tone) 70%, var(--ink));
     white-space: nowrap;
