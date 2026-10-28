@@ -1,0 +1,113 @@
+      <!-- A prototype is one screen to use rather than frames to compare: drawn
+           once at its true size, shown at the largest scale that fits the
+           window (never above true size), and live, so everything on it can
+           be clicked. <main> fills the window: `flex h-dvh flex-col`. The
+           title bar is the grid page's, with a size switch in place of the
+           density slider. Controls the page adds go in #controls, under the
+           screen at true size, so a scrubber or a set of buttons never
+           shrinks with the drawing. -->
+
+      <style>
+        body > main {
+          padding: 0;
+        }
+        /* The screen is laid out once at its true size and scaled with
+           `transform`, which composites the box rather than re-running layout,
+           so text never re-wraps at a smaller size. */
+        #screen {
+          transform-origin: 0 0;
+          flex: none;
+        }
+        /* At true size a screen larger than the window scrolls. */
+        body[data-size="true"] #stage {
+          overflow: auto;
+        }
+      </style>
+
+      <header class="z-20 flex shrink-0 items-center gap-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur">
+        <!-- The name and the line follow the grid page's rules: the part of
+             the product and what this version tries, then one line saying
+             what we're proposing. -->
+        <div class="min-w-0 flex-1">
+          <h1 class="truncate text-[13px] leading-4 font-medium tracking-[-0.01em]">TITLE</h1>
+          <p id="line" class="mt-1 truncate text-[12px] leading-4 text-muted-foreground">ONE LINE: what we're proposing, and what this prototype should help decide.</p>
+        </div>
+        <div class="flex h-8 shrink-0 items-center gap-0.5 rounded-lg border border-border p-0.5 text-[12px] text-muted-foreground print:hidden">
+          <button data-size="fit" title="Fit the window" class="h-6 rounded-md px-2 aria-pressed:bg-accent aria-pressed:text-foreground">Fit</button>
+          <button data-size="true" title="True size" class="h-6 rounded-md px-2 aria-pressed:bg-accent aria-pressed:text-foreground">100%</button>
+        </div>
+      </header>
+
+      <div id="stage" class="relative flex min-h-0 flex-1 overflow-hidden bg-muted/40 p-4">
+        <div id="sizer" class="m-auto shrink-0"><div id="screen" class="overflow-hidden rounded-lg shadow-sm ring-1 ring-border"></div></div>
+      </div>
+      <div id="controls" class="shrink-0 empty:hidden"></div>
+
+      <!-- One line, small: what the screen is drawn from, and what was made up. -->
+      <p id="source" class="shrink-0 border-t border-border py-2 pr-64 pl-4 text-[11px] leading-5 text-muted-foreground">
+        Drawn against WHAT, on WHEN. Grey bars are placeholder text; every label,
+        button and warning is the copy being proposed.
+      </p>
+
+      <!-- Keep type="module", as on the grid page. -->
+      <script type="module">
+        // ---- the kit -------------------------------------------------------
+        // A project kit replaces this section with its own pieces. With none,
+        // draw the screen with Tailwind classes directly.
+
+        // ---- annotations -----------------------------------------------------
+        // A prototype shows no marks, but a project kit's pieces may leave one,
+        // so the helpers exist and draw nothing visible.
+        const ann = () => "";
+        const cursor = "";
+        const noted = (inner, _label, _tone, { cls = "" } = {}) => (cls ? `<div class="${cls}">${inner}</div>` : inner);
+        const clickable = (inner, cls = "") => noted(inner, "", "", { cls });
+        const fresh = (inner, cls = "") => noted(inner, "", "", { cls });
+
+        // ---- the screen ------------------------------------------------------
+        // `SCREEN` is the one screen: its true size and `draw()`, which returns
+        // its HTML. `controls()`, when there is one, returns what goes under it.
+        // Keep any state the screen depends on in variables here, change it in
+        // your own listeners, and call `redraw()` to draw the screen again.
+        const SCREEN = {
+          w: 1280,
+          h: 800,
+          draw: () => `<div class="grid h-full place-items-center bg-background text-sm text-muted-foreground">The screen</div>`,
+        };
+
+        // ---- render ----------------------------------------------------------
+        const stageEl = document.getElementById("stage");
+        const screenEl = document.getElementById("screen");
+        const controlsEl = document.getElementById("controls");
+        screenEl.style.width = `${SCREEN.w}px`;
+        screenEl.style.height = `${SCREEN.h}px`;
+
+        /** Draws the screen and its controls again from the page's state. */
+        function redraw() {
+          screenEl.innerHTML = SCREEN.draw();
+          if (SCREEN.controls) controlsEl.innerHTML = SCREEN.controls();
+        }
+
+        // Fit: the largest scale that fits the stage, never above true size.
+        // The screen keeps its true size in layout and the sizer around it
+        // takes the scaled size, which is what centers it.
+        const sizerEl = document.getElementById("sizer");
+        let size = new URLSearchParams(location.search).get("size") === "true" ? "true" : "fit";
+        function place() {
+          document.body.dataset.size = size;
+          for (const b of document.querySelectorAll("button[data-size]")) b.setAttribute("aria-pressed", String(b.dataset.size === size));
+          const pad = 32;
+          const scale = size === "true" ? 1 : Math.min(1, (stageEl.clientWidth - pad) / SCREEN.w, (stageEl.clientHeight - pad) / SCREEN.h);
+          screenEl.style.transform = scale === 1 ? "" : `scale(${scale})`;
+          sizerEl.style.width = `${SCREEN.w * scale}px`;
+          sizerEl.style.height = `${SCREEN.h * scale}px`;
+        }
+        for (const b of document.querySelectorAll("button[data-size]"))
+          b.addEventListener("click", () => {
+            size = b.dataset.size;
+            place();
+          });
+        new ResizeObserver(place).observe(stageEl);
+        redraw();
+        place();
+      </script>

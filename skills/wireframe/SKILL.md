@@ -1,6 +1,6 @@
 ---
 name: wireframe
-description: "Use when asked to wireframe, mock up or sketch a product screen or UI flow, or when an interface is being argued about in prose. Draws software as true-size frames across states, with click marks and captions, in one self-contained HTML page. Also use it to read a wireframe someone sent as a link."
+description: "Use when asked to wireframe, mock up or sketch a product screen or UI flow, or when an interface is being argued about in prose. Draws software as true-size frames across states, with click marks and captions, in one self-contained HTML page, or as one live prototype screen to click through or replay. Also use it to read a wireframe someone sent as a link."
 ---
 
 # Wireframe
@@ -26,6 +26,7 @@ Don't use it for:
 - `repo.mjs` provides that name and meta tag, for a project's own kit to call when it builds pages itself.
 - `shell.html` is the page shell. It holds Studio's theme as Tailwind tokens, the compiled stylesheet, the pinned Tailwind browser build, the icon set, and the share widget with its Share button. We draw frames with Tailwind classes, and projects' own wireframe kits do too. Don't edit anything between `shell:start` and `shell:end`.
 - `share.mjs` and `share.py` publish a finished page to a link (see "Hand it over" below).
+- `prototype.html` holds the other kind of page: one live screen instead of a grid (see "A prototype instead of frames" below).
 - `main.html` holds the title bar, the frame grid, the marks, the enlarged view, the `states` array you fill in, and a neutral kit of software pieces: `win`, `web`, `phone`, `panel`, `shell`, `navItem`, `group`, `btn`, `field`, `toggle`, `chip`, `grid`, `empty` and `bars`.
 - `patterns.md` explains how a frame is built from two elements, lists common screen sizes, and covers the three ways a set of frames can vary, how marks work, grey bars, and printing.
 
@@ -107,9 +108,21 @@ Write these the way a designer talks to a teammate in a design review.
 
 Here's one rewrite. Before: "Said plainly as memory, with memory's fingerprint on a badge at the icon's corner." After: "We call it memory and reuse the icon from Settings › Memory, so it looks familiar when they find it there later."
 
+## A prototype instead of frames
+
+Frames are for comparing states side by side. When the reader needs to use one screen instead, clicking into it, opening and closing things, or scrubbing through it over time, make a prototype: one screen drawn at its true size, scaled down only as far as the window needs, with everything on it live. There's no grid, no marks and no enlarged view, and the title bar has Fit and 100% in place of the density slider. A replay of something that happened over time is the usual case, with a scrubber under the screen.
+
+```
+node <skill>/new.mjs 2026-10-28-chat-replay-field-research.html "Chat replay: field research" --prototype
+```
+
+Then edit `SCREEN` under `// ---- the screen` in the page's module script. It needs `w`, `h` and `draw()`, which returns the screen's HTML from whatever state you keep beside it. `controls()`, if there is one, returns what goes under the screen at true size, such as a scrubber or a row of buttons, so they never shrink with the drawing. Change your state in your own listeners on `document`, and call `redraw()` to draw the screen again. For anything that changes every frame, like a scrubber being dragged, write to `#screen` directly instead of redrawing the controls, so the slider under the pointer isn't replaced mid-drag.
+
+The same rules for the name, the line under it and the source line apply. Check it the same way, and click the things the reader will click.
+
 ## A project's own kit
 
-If the folder you're working in, or a folder above it, has `.agents/wireframe-kit/KIT.md`, read it before you draw. Use its functions in place of the neutral ones with the same names. The shell, the marks and the enlarged view still come from this skill's `shell.html` and `main.html`.
+If the folder you're working in, or a folder above it, has `.agents/wireframe-kit/KIT.md`, read it before you draw. Use its functions in place of the neutral ones with the same names. The shell, the marks and the enlarged view still come from this skill's `shell.html` and `main.html`, and a prototype's page from `prototype.html`.
 
 ## Hand it over
 
