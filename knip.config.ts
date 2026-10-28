@@ -19,6 +19,8 @@ const config: KnipConfig = {
     "skills/instrument-page/lib/foundation.*",
     "skills/instrument-page/lib/probe.js",
     "skills/wireframe/*.mjs",
+    // The page lab's panel, which its HTML pages load by a script tag.
+    "tools/page-lab/lab.js",
   ],
   ignoreBinaries: [
     "actionlint", // Used by scripts/check-actions.ts

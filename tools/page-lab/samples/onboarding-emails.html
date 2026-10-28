@@ -1,0 +1,90 @@
+<!doctype html>
+<!-- direction: reader="the growth team, on laptops, deciding what to change in the onboarding sequence this sprint" point="half the readers are gone by the second email, and it lands an hour after the first" conflicts="the dashboard counts opens per send, the export counts unique readers: the export holds" layout=column feel=minimal hero="the four emails as bars, the drop after the first one called out" -->
+<html lang="en" data-layout="column" data-feel="minimal">
+<head>
+<title>Half our new users stop reading after email one</title>
+<meta name="description" content="Opens fall from 60% to 28% between the first and second onboarding email, which arrives an hour after the first.">
+<!-- lab -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="../../../skills/instrument-page/lib/foundation.css">
+<script src="../../../skills/instrument-page/lib/foundation.js"></script>
+<script src="../lab.js"></script>
+<!-- /lab -->
+<style>
+  .funnel { display: grid; gap: var(--flow); }
+  .funnel .frow { display: grid; grid-template-columns: minmax(0, 1fr) 3.2rem; column-gap: 0.75rem; row-gap: 0.3rem; align-items: center; }
+  .funnel .frow > span:first-child { grid-column: 1 / -1; font-size: 0.92rem; }
+  .funnel .bar { height: calc(var(--bar) * 2.6); border-radius: calc(var(--radius) * 0.5); }
+  .funnel .frow b { font-variant-numeric: tabular-nums; text-align: right; }
+  .funnel .note { grid-column: 1 / -1; font-size: 0.85rem; color: var(--bad); }
+</style>
+</head>
+<body>
+<header>
+  <hgroup>
+    <p>For the growth team · onboarding export, Sep 1 to Sep 30</p>
+    <h1>Half our new users stop reading after email one</h1>
+    <p>We send the second email an hour after the first, before most people have opened the app.</p>
+  </hgroup>
+</header>
+
+<section class="hero">
+  <figure>
+    <div class="funnel" role="img" aria-label="Share of 12,400 signups who opened each onboarding email: 60%, 28%, 25%, 23%">
+      <div class="frow"><span>1 · Welcome</span><span class="bar" style="--v: 60%"></span><b>60%</b></div>
+      <div class="frow"><span>2 · Set up your space</span><span class="bar" data-tone="bad" style="--v: 28%"></span><b>28%</b><span class="note">Down 32 points</span></div>
+      <div class="frow"><span>3 · Invite a teammate</span><span class="bar" style="--v: 25%"></span><b>25%</b></div>
+      <div class="frow"><span>4 · Your first week</span><span class="bar" style="--v: 23%"></span><b>23%</b></div>
+    </div>
+    <figcaption>Share of 12,400 September signups who opened each email at least once.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Send schedule</h2>
+  <p>Email two goes out 60 minutes after signup. Most people who open email one do it the next morning, so they find both at once and open only the top one.</p>
+  <dl>
+    <dt>Email 1</dt><dd>At signup</dd>
+    <dt>Email 2</dt><dd>Signup plus 1 hour</dd>
+    <dt>Email 3</dt><dd>Day 3</dd>
+    <dt>Email 4</dt><dd>Day 7</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Opens by email</h2>
+  <p>After email two the numbers barely move. Of the people who open email two, 82% also open email four.</p>
+  <table>
+    <thead><tr><th>Email</th><th class="n">Opened</th><th class="n">Of signups</th><th class="n">Of previous</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Welcome</td><td class="n">7,440</td><td class="n">60%</td><td class="n">&nbsp;</td></tr>
+      <tr data-tone="bad"><td>2 · Set up your space</td><td class="n">3,470</td><td class="n">28%</td><td class="n">47%</td></tr>
+      <tr><td>3 · Invite a teammate</td><td class="n">3,100</td><td class="n">25%</td><td class="n">89%</td></tr>
+      <tr><td>4 · Your first week</td><td class="n">2,850</td><td class="n">23%</td><td class="n">92%</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Changes to try</h2>
+  <ol class="steps">
+    <li><span><b>Send email two after the first session on day one.</b> It's one trigger change in the sequence settings.</span></li>
+    <li><span><b>Fold the setup steps into email one.</b> Try this only if the first change doesn't lift opens.</span></li>
+    <li><span><b>Test a shorter subject line on email two.</b> You can run this alongside either change.</span></li>
+  </ol>
+  <aside data-tone="warn"><p>The dashboard shows 34% for email two because it counts every open. This page uses the export, which counts each reader once.</p></aside>
+</section>
+
+<section>
+  <details>
+    <summary>How we calculated the percentages</summary>
+    <p>We divided each email's unique openers by the 12,400 signups, and by the previous email's openers for the last column, then rounded to whole points.</p>
+  </details>
+</section>
+
+<footer><p>Sample page for the design lab. The product, emails and figures are made up.</p></footer>
+</body>
+</html>

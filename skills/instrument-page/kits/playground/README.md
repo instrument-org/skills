@@ -2,28 +2,28 @@
 
 ## What it draws
 
-One thing on a stage, dialkit's dials beside it, and a copyable takeaway under it. The reader turns the dials until the thing looks or feels right and leaves with something they can paste: CSS, a config object, an SVG, a palette. A motion, a shadow, a type scale, a grid, a pattern, a color ramp. The page is a thing to arrive at, not a thing to read.
+It draws one thing on a stage, with dialkit's dials beside it and a takeaway under it that the reader can copy. The reader turns the dials until the thing looks or feels right, then leaves with something they can paste, such as CSS, a config object, an SVG or a palette. The thing can be a motion, a shadow, a type scale, a grid, a pattern or a color ramp. The reader works toward a result on this page rather than reading it.
 
-## When to reach for it
+## When to use it
 
-When the answer is judged by eye rather than checked by arithmetic, and the thing being judged has parameters. "Make it feel snappier", "I am not sure about the radius", "let me play with it", "which shadow", "can I tweak this" are the phrases. Reach for it unprompted when you are about to make three variants of something and ask the reader to pick, or when a page you are writing describes a look in adjectives. Three shapes recur: **a motion** (something enters, opens or settles), **a look** (a shadow, a corner, a ramp, a type scale, a spacing rhythm), and **a generator** (a pattern drawn from a seed and a few numbers, where the takeaway is the drawing).
+Use it when the answer is judged by eye rather than checked with arithmetic, and the thing being judged has settings. You'll hear it in phrases like "make it feel snappier", "I'm not sure about the radius", "let me play with it", "which shadow" or "can I tweak this". Use it without being asked when you're about to make three versions of something and ask the reader to pick, or when a page you're writing describes a look in adjectives. It usually takes one of three forms: **a motion** (something enters, opens or settles), **a look** (a shadow, a corner, a ramp, a type scale, a spacing rhythm), or **a generator** (a pattern drawn from a seed and a few numbers, where the takeaway is the drawing).
 
-Not when the answer is a number: a calculator wearing a control panel is still a calculator, so write a slider that recomputes (see the cookbook). Not when there is one right setting and you know it: write it down. Not when the choices are few and discrete: show them side by side. **If the reader would never turn a dial, there is no playground here.**
+Don't use it when the answer is a number. A calculator with a control panel is still a calculator, so write a slider that recomputes instead (see the cookbook). Don't use it when there's one right setting and you know what it is; just write it down. Don't use it when there are only a few distinct choices; show them side by side. **If the reader would never turn a dial, the page doesn't need a playground.**
 
 ## Files
 
-- `skeleton.html`: a complete working page on the foundation: the header with Reset, the stage marked `class="hero"`, the dials column with the opening settings written out as a list, the takeaway with a copy button, the source line, and the module script (`CONFIG`, `resolve`, `render`, dialkit mounted inline). Copy it into the task folder as `page.html` and replace everything in capitals.
-- `patterns.md`: dialkit's notation, reading defaults out of the config, mounting the panel in the page's theme, persistence and Reset, render-on-pause, replaying motion, a spring as Motion resolves it, figures beside the stage, and Tweakpane for controls dialkit lacks.
+- `skeleton.html` is a complete working page on the foundation. It has the header with a Reset button, the stage marked `class="hero"`, the dials column with the opening settings written out as a list, the takeaway with a copy button, the source line, and the module script (`CONFIG`, `resolve`, `render`, and dialkit mounted inline). Copy it into the task folder as `page.html` and replace everything in capitals.
+- `patterns.md` covers dialkit's notation, reading defaults out of the config, mounting the panel in the page's theme, persistence and Reset, rendering on pause, replaying motion, a spring as Motion resolves it, figures beside the stage, and Tweakpane for controls dialkit doesn't have.
 
 ## How it sits on the foundation
 
-A playground page is an ordinary page: write it, then build and check it like any other with `node <skill>/page.mjs page.html --inputs request.md`. The stage is the hero. The stage and dials share a `.split` row inside a `.bleed` section and stack on a phone. Use foundation tokens in the page's own `<style>` (`--paper`, `--line`, `--muted`, `--gray-100`, `--radius`). The takeaway is a plain `<pre>`, which the foundation already styles as code and gives a Copy button that copies whatever the script last wrote into it. `window.__instrumentTheme()` answers the theme the page shows and `instrument:theme` fires on `document` when it changes, so the panel follows the page.
+A playground page is an ordinary page. Write it, then build and check it like any other with `node <skill>/page.mjs page.html --inputs request.md`. The stage is the hero. The stage and the dials share a `.split` row inside a `.bleed` section, since they need the room side by side, and they stack on a phone. Use foundation tokens in the page's own `<style>` (`--paper`, `--line`, `--muted`, `--gray-100`, `--radius`). The takeaway is a plain `<pre>`, which the foundation already styles as code and gives a Copy button that copies whatever the script last wrote into it. `window.__instrumentTheme()` returns the theme the page is showing, and `instrument:theme` fires on `document` when it changes, so the panel follows the page.
 
-The check measures the page as it first paints, which is the opening settings list rather than the panel; that is the offline state, and it has to pass on its own.
+The check measures the page as it first paints, which shows the list of opening settings rather than the panel. That's also the offline state, so it has to pass on its own.
 
 ## Worked example
 
-"Help me pick a shadow for the cards in our settings screen; I want CSS to paste." The config is the whole page:
+The request is "Help me pick a shadow for the cards in our settings screen. I want CSS to paste." The config is the whole page:
 
 ```js
 const CONFIG = {
@@ -42,20 +42,20 @@ const render = () => {
 };
 ```
 
-The stage is a real settings card with that shadow already in its CSS, the settings list reads Lift 8 px, Blur 24 px, Darkness 0.12, Corner radius 12 px, the `<pre>` holds the opening CSS as `render()` writes it, and the source line says the opening values are a starting point, not a guideline.
+The stage is a real settings card with that shadow already in its CSS. The settings list reads Lift 8 px, Blur 24 px, Darkness 0.12 and Corner radius 12 px. The `<pre>` holds the opening CSS as `render()` writes it, and the source line says the opening values are a starting point rather than a guideline.
 
 ## Rules
 
-- **One config is the whole page.** The dials are one object in dialkit's notation, and it is the panel, the opening values, and the offline list. Nothing about the controls is written twice.
-- **It opens on a real setting, already rendered.** The stage, the figures and the takeaway are in the HTML for the opening values before any script runs. Choose a good opening setting, not a neutral one, and say where it came from.
-- **Every dial does something visible** at the size the stage is drawn. About a dozen dials at most; fewer, each consequential, is better.
-- **Dials are in the reader's words.** Keys are labels: `travel`, `cornerRadius`, `dim`, never `dy`. Folders group the way the reader thinks.
-- **The takeaway is pasteable**: real CSS with real units, a config in the library's own shape, an SVG that opens. Where two formats describe one thing, show both.
-- **Figures are arithmetic over the dials**, with a word saying what they mean. Never a score, never an opinion in a number.
-- **What the reader sets is theirs.** `persist: true` with a page-unique `id`; the page carries Reset; the sent file never changes.
-- **Offline**: the stage at its opening values (still moving if it moves), the settings in words where the panel would be, a line saying the dials need the network, the takeaway and the figures.
-- **Loads**: dialkit's vanilla build pinned from jsDelivr (`dialkit@2.0.2/vanilla/+esm` and its `dist/vanilla/styles.css`), about 200 KB. The stage loads nothing: HTML, CSS, the Web Animations API, inline SVG.
+- **One config is the whole page.** The dials are one object in dialkit's notation, and that object is the panel, the opening values and the offline list. Nothing about the controls is written twice.
+- **The page opens on a real setting, already rendered.** The stage, the figures and the takeaway are in the HTML at the opening values before any script runs. Choose a good opening setting rather than a neutral one, and say where it came from.
+- **Every dial does something visible** at the size the stage is drawn. Use about a dozen dials at most. Fewer is better, as long as each one matters.
+- **Name the dials in the reader's words.** Keys are labels, such as `travel`, `cornerRadius` or `dim`, never `dy`. Group them into folders the way the reader thinks about them.
+- **The takeaway is ready to paste.** That means real CSS with real units, a config in the library's own shape, or an SVG that opens. When two formats describe the same thing, show both.
+- **Figures are arithmetic over the dials**, with a word saying what they mean. Never show a score or an opinion as a number.
+- **What the reader sets belongs to them.** Use `persist: true` with an `id` unique to the page, and give the page a Reset button. The file you sent never changes.
+- **Offline**, the page shows the stage at its opening values (still moving, if it moves), the settings in words where the panel would be, a line saying the dials need the network, the takeaway and the figures.
+- **What it loads:** dialkit's vanilla build, pinned, from jsDelivr (`dialkit@2.0.2/vanilla/+esm` and its `dist/vanilla/styles.css`), about 200 KB. The stage loads nothing beyond HTML, CSS, the Web Animations API and inline SVG.
 
-Refuse: a stage that opens blank; a dial that changes nothing visible; a takeaway only in the panel's own copy button; a default that is secretly a recommendation; prose sections around the stage; a submit or generate button (the stage follows the dials); a library loaded to draw what CSS draws.
+Don't build a stage that opens blank, a dial that changes nothing visible, a takeaway that lives only in the panel's own copy button, a default that is secretly a recommendation, prose sections around the stage, a submit or generate button (the stage follows the dials as they move), or a library loaded to draw something CSS can draw.
 
-Honesty: the opening values read as a recommendation, so the source line says what they are: a published guideline, a value measured off something real, or a starting point. Where a takeaway claims to match a library, name the library and version and what was checked.
+Readers take the opening values as a recommendation, so the source line says what they are: a published guideline, a value measured from something real, or a starting point. When a takeaway claims to match a library, name the library, its version and what you checked.

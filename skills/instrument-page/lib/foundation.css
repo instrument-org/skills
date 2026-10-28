@@ -1,6 +1,6 @@
 /* foundation.css: the whole look of a page. Plain elements are styled, a few
    layout classes exist, and two attributes on <html> switch everything:
-   data-feel (the token set) and data-shape (widths, density, print).
+   data-feel (the token set) and data-layout (the width of the column).
    Everything sits in one cascade layer, so any rule a page writes in its own
    <style> wins without a fight over specificity. */
 
@@ -53,58 +53,63 @@
 
     /* Categorical: eight hues that hold in both themes, for people, teams,
      households, trades, grades. data-c="1".."8" picks one. */
-    --c1: light-dark(#0e7869, #3fb3a0);
+    --c1: light-dark(#2f5fae, #7fa3e6);
     --c2: light-dark(#c2410c, #f08a4b);
-    --c3: light-dark(#4f46e5, #8b8cf6);
+    --c3: light-dark(#5a4fbf, #a097ee);
     --c4: light-dark(#b4324f, #ec7c95);
     --c5: light-dark(#a16207, #e0b04a);
-    --c6: light-dark(#0369a1, #4fb0e6);
-    --c7: light-dark(#7e22ce, #c084fc);
+    --c6: light-dark(#0f766e, #4fbfae);
+    --c7: light-dark(#8a3fac, #cf8bea);
     --c8: light-dark(#4d7c0f, #9ccc4a);
 
-    /* calm, the default feel: the house look. */
-    --ground: var(--gray-50);
+    /* minimal, the default feel. Text, rules and labels are neutral; the accent
+       shows only where a page marks something with data-tone or data-c. */
+    --ground: light-dark(#ffffff, #141210);
     --paper: light-dark(#ffffff, #1c1917);
     --ink: var(--gray-950);
     --ink-2: var(--gray-700);
     --muted: var(--gray-500);
-    --line: var(--gray-200);
+    --line: light-dark(#ebe9e7, #2b2724);
     --line-2: var(--gray-300);
-    --accent: var(--brand-600);
-    --accent-ink: #fff;
-    --accent-text: var(--brand-700);
-    --wash: var(--brand-50);
+    --fill: light-dark(#f3f2f0, #26221f);
+    --accent: light-dark(#2b59c3, #86a5f0);
+    --accent-ink: light-dark(#ffffff, #10162a);
+    --accent-text: light-dark(#2549a8, #a6bdf5);
+    --wash: light-dark(#eef2fc, #1b2238);
     --good: var(--success-700);
     --good-wash: var(--success-50);
     --warn: var(--warning-700);
-    --warn-wash: var(--warning-50);
+    --warn-wash: light-dark(#fef3d2, #2a1c06);
     --bad: light-dark(#b4324f, #ef8ba3);
     --bad-wash: var(--error-50);
     --body-font: var(--sans);
     --head-font: var(--sans);
     --label-font: var(--sans);
-    --head-weight: 650;
-    --head-track: -0.022em;
+    --head-weight: 600;
+    --head-track: -0.025em;
     --head-case: none;
     --head-style: normal;
-    --label-case: uppercase;
-    --label-track: 0.07em;
+    --label-case: none;
+    --label-track: 0;
     --radius: 0.6rem;
+    /* Buttons, tags, bars, dots and step numbers: round, unless a feel squares them. */
+    --pill: 999px;
+    /* The thickness of a bar; charts drawn in HTML size their bars from it. */
+    --bar: 0.5rem;
     --rule: 1px;
-    --shadow:
-      0 1px 2px light-dark(rgb(10 13 18 / 0.05), rgb(0 0 0 / 0.4)),
-      0 0 0 1px light-dark(rgb(10 13 18 / 0.06), rgb(255 255 255 / 0.07));
+    --shadow: 0 0 0 1px var(--line);
     --size: 16px;
     --flow: 1rem;
-    --gap: 1rem;
+    /* The gutter between cards in a grid or rail; tight, so a set reads as one. */
+    --gap: 0.5rem;
     --pad: 1.1rem;
     --col: 42rem;
     --wide: 76rem;
     --gutter: 1.25rem;
     --page-top: clamp(1.5rem, 5vw, 3.5rem);
 
-    --tone: var(--accent);
-    --tone-wash: var(--wash);
+    --tone: var(--ink-2);
+    --tone-wash: var(--fill);
     --accent-wash: var(--wash);
   }
   /* The share widget's theme switch writes data-theme on <html>. */
@@ -115,121 +120,87 @@
     color-scheme: dark;
   }
 
-  /* ---------- feels ---------- */
+  /* ---------- feels ----------
+     minimal is the :root block above. Each feel below overrides only what
+     differs from it. The old names still work: calm draws as minimal, warm as
+     editorial, urgent, festive and crew as bold, ledger as dense. */
 
-  [data-feel="urgent"] {
-    --ground: light-dark(#fff, #120f0e);
-    --paper: light-dark(#fff, #1a1615);
-    --accent: var(--error-500);
-    --accent-text: var(--error-700);
-    --wash: var(--error-50);
-    --head-weight: 760;
-    --head-track: -0.03em;
-    --radius: 0.3rem;
-    --rule: 2px;
-    --line-2: var(--gray-900);
-    --label-font: var(--mono);
-    --label-track: 0.02em;
-    --shadow: 0 0 0 1px var(--line);
-  }
+  [data-feel="editorial"],
   [data-feel="warm"] {
-    --ground: var(--brown-100);
-    --paper: light-dark(#fffdf9, #211d19);
-    --line: var(--brown-300);
-    --accent: light-dark(#a25a3c, #e0a978);
-    --accent-ink: light-dark(#fff, #1d1a16);
-    --accent-text: var(--yellow-700);
-    --wash: var(--yellow-50);
+    --ground: light-dark(#fcfbf9, #131110);
+    --paper: light-dark(#f6f4f0, #1d1a17);
+    --line: light-dark(#e7e3dd, #2c2824);
+    --fill: light-dark(#efece6, #27231f);
+    --accent: light-dark(#a3302a, #ec8f84);
+    --accent-ink: light-dark(#fff, #2a100d);
+    --accent-text: light-dark(#8c2822, #f0a499);
+    --wash: light-dark(#f9ecea, #2d1715);
+    --body-font: var(--serif);
     --head-font: var(--serif);
-    --head-weight: 500;
-    --head-track: -0.01em;
-    --label-case: none;
-    --label-track: 0;
-    --radius: 1rem;
+    --head-weight: 400;
+    --head-track: -0.015em;
+    --size: 17px;
     --flow: 1.15rem;
-    --pad: 1.3rem;
-    --shadow:
-      0 1px 0 var(--brown-300),
-      0 8px 24px -12px light-dark(rgb(90 60 30 / 0.18), rgb(0 0 0 / 0.5));
+    --radius: 0.25rem;
+    --shadow: none;
   }
+  [data-feel="bold"],
+  [data-feel="urgent"],
+  [data-feel="festive"],
   [data-feel="crew"] {
-    --ground: light-dark(#fff, #0f0e0d);
-    --paper: light-dark(#f5f5f4, #1c1917);
     --ink: light-dark(#0a0908, #fff);
     --ink-2: light-dark(#292524, #e4ded9);
     --muted: var(--gray-600);
-    --line: var(--gray-300);
-    --line-2: light-dark(#0a0908, #fff);
-    --accent: #f79009;
-    --accent-ink: #171412;
-    --accent-text: var(--warning-700);
-    --wash: var(--warning-100);
+    --line-2: var(--ink);
+    --accent: light-dark(#ff5a1f, #ff7a45);
+    --accent-ink: #120a06;
+    --accent-text: light-dark(#c2410c, #ff9a6b);
+    --wash: light-dark(#ffeadf, #3a1d10);
     --head-weight: 800;
-    --head-track: -0.01em;
-    --head-case: uppercase;
-    --label-track: 0.04em;
-    --radius: 0.2rem;
-    --rule: 3px;
-    --size: 17px;
-    --shadow: 0 0 0 2px var(--line);
-  }
-  [data-feel="ledger"] {
-    --ground: light-dark(#fff, #121110);
-    --paper: light-dark(#fff, #181615);
-    --accent: var(--brand-700);
-    --accent-ink: light-dark(#fff, #0d1615);
-    --accent-text: var(--brand-700);
-    --wash: var(--gray-100);
-    --head-weight: 600;
-    --head-track: -0.015em;
-    --label-font: var(--mono);
-    --label-case: none;
-    --label-track: 0;
+    --head-track: -0.045em;
     --radius: 0;
-    --size: 15px;
-    --flow: 0.8rem;
-    --gap: 0.75rem;
-    --pad: 0.85rem;
-    --shadow: 0 0 0 1px var(--line);
+    --pill: 0;
+    --rule: 2px;
+    --size: 17px;
+    --shadow: 0 0 0 1.5px var(--ink);
   }
-  [data-feel="festive"] {
-    --ground: var(--brand-25);
-    --paper: light-dark(#fff, #14201e);
-    --accent: var(--brand-500);
-    --accent-text: var(--brand-700);
-    --wash: var(--brand-50);
-    --head-font: var(--serif);
-    --head-weight: 500;
-    --head-style: italic;
-    --head-track: -0.02em;
-    --radius: 1.25rem;
-    --flow: 1.2rem;
-    --pad: 1.4rem;
-    --shadow:
-      0 10px 30px -14px light-dark(rgb(11 96 86 / 0.35), rgb(0 0 0 / 0.6)),
-      0 0 0 1px var(--wash);
+  [data-feel="dense"],
+  [data-feel="ledger"] {
+    --label-font: var(--mono);
+    --head-weight: 650;
+    --head-track: -0.015em;
+    --radius: 0.2rem;
+    --bar: 0.3rem;
+    --size: 14px;
+    --flow: 0.6rem;
+    --gap: 0.4rem;
+    --pad: 0.6rem;
+    --page-top: clamp(1rem, 3vw, 2rem);
   }
 
-  /* ---------- shapes ---------- */
+  /* ---------- layouts ----------
+     column, the default, is the :root widths above: one reading column.
+     wide is one wider column for rosters, schedules and big tables. Prose in
+     it keeps a reading width on the same left edge, and it prints landscape.
+     The earlier data-shape names still draw: card and read as column, sheet
+     and wall as wide. */
 
-  [data-shape="card"] {
-    --col: 40rem;
-    --wide: 48rem;
-  }
-  [data-shape="read"] {
-    --col: 42rem;
+  :is([data-layout="wide"], [data-shape="sheet"], [data-shape="wall"]) {
+    --col: 76rem;
     --wide: 76rem;
   }
-  [data-shape="sheet"] {
-    --col: 78rem;
-    --wide: 78rem;
-    --size: 15px;
-    --flow: 0.85rem;
-  }
-  [data-shape="wall"] {
-    --col: 110rem;
-    --wide: 110rem;
-    --size: 17px;
+  :is([data-layout="wide"], [data-shape="sheet"], [data-shape="wall"])
+    :is(
+      body > :is(header, main, section, article, footer),
+      body > main > :is(section, article)
+    )
+    > :is(p, hgroup, h1, h2, h3, blockquote, dl, aside, ul, ol):not(
+      .flow,
+      .grid,
+      .rail,
+      .cols
+    ) {
+    max-width: 44rem;
   }
 
   /* ---------- tones: data-c and data-tone feed --tone to whatever uses it ---------- */
@@ -279,7 +250,7 @@
   }
   [data-tone="muted"] {
     --tone: var(--muted);
-    --tone-wash: var(--gray-100);
+    --tone-wash: var(--fill);
   }
 
   /* ---------- the page frame: a breakout grid ----------
@@ -349,8 +320,8 @@
     grid-column: col;
     min-width: 0;
   }
-  /* A top-level section that is itself a layout (.split, .grid...) is one block:
-     in the wide track when it sets cards side by side, in the column otherwise. */
+  /* A top-level section that is itself a layout (.split, .grid...) is one
+     block in the column. */
   body
     > :is(header, main, section, footer, article):is(
       .split,
@@ -361,9 +332,6 @@
       .cols
     ) {
     grid-column: col;
-  }
-  body > :is(main, section, article):is(.grid, .rail, .cols):not(.narrow) {
-    grid-column: wide;
   }
   body
     > :is(header, main, section, footer, article):is(
@@ -377,28 +345,10 @@
     > * {
     grid-column: auto;
   }
+  /* Everything sits in the column, so a page has one left edge. .bleed is
+     the deliberate way out, for a table or drawing that needs the room. */
   .bleed {
     grid-column: wide !important;
-  }
-  /* Dense modules take the wide track on their own: a table of four or more
-     columns (bare, or the table of a .scroll or figure), the layouts that set
-     cards or pictures side by side, and a flow. Prose, headings and lists stay in the
-     column, and .narrow keeps any one block there. */
-  :is(
-      body > :is(header, main, section, article),
-      body > main > :is(section, article, header)
-    )
-    > :is(
-      table:has(tr > :nth-child(4)),
-      :is(.scroll, figure):has(> table tr > :nth-child(4)),
-      .grid,
-      .rail,
-      .cols,
-      ol.flow,
-      .frames,
-      .pair
-    ):not(.narrow) {
-    grid-column: wide;
   }
   body > :is(header, main, section, footer, article).bleed > *,
   body > main > :is(section, article).bleed > * {
@@ -442,7 +392,7 @@
   }
   h1 {
     font-size: clamp(2rem, 1.2rem + 3.2vw, 3.3rem);
-    line-height: 1.04;
+    line-height: 1.08;
   }
   h2 {
     font-size: clamp(1.3rem, 1.05rem + 0.9vw, 1.65rem);
@@ -455,18 +405,11 @@
   }
   h4,
   .label {
-    font: 600 max(11px, 0.74rem)/1.3 var(--label-font);
+    font: 500 max(11px, 0.8rem)/1.3 var(--label-font);
     text-transform: var(--label-case);
     letter-spacing: var(--label-track);
     color: var(--muted);
     font-style: normal;
-  }
-  [data-shape="card"] h1 {
-    font-size: clamp(1.85rem, 1.3rem + 2vw, 2.45rem);
-  }
-  [data-shape="sheet"] h1,
-  [data-shape="wall"] h1 {
-    font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem);
   }
   p,
   li,
@@ -494,12 +437,11 @@
     display: grid;
     gap: 0.55rem;
   }
+  /* The kicker is a quiet line of context in sentence case, in every feel. */
   hgroup > p:first-child,
   .kicker {
-    font: 600 max(11px, 0.76rem)/1.3 var(--label-font);
-    text-transform: var(--label-case);
-    letter-spacing: var(--label-track);
-    color: var(--accent-text);
+    font: 500 max(11px, 0.88rem)/1.4 var(--sans);
+    color: var(--muted);
     margin: 0;
   }
   hgroup > :is(h1, h2) + p,
@@ -511,10 +453,11 @@
     margin: 0;
   }
   a {
-    color: var(--accent-text);
+    color: inherit;
     text-decoration-line: underline;
-    text-underline-offset: 2px;
-    text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--line-2);
   }
   a:hover {
     text-decoration-color: currentColor;
@@ -531,11 +474,13 @@
     font-size: 0.86em;
   }
   mark {
-    background: var(--tone-wash);
+    background: light-dark(#fbefc0, #3a2f10);
     color: inherit;
-    padding: 0 0.2em;
+    padding: 0 0.15em;
     border-radius: 3px;
-    box-shadow: inset 0 -2px 0 var(--tone);
+  }
+  mark:is([data-tone], [data-c]) {
+    background: var(--tone-wash);
   }
   ul,
   ol {
@@ -562,7 +507,7 @@
     font-variant-ligatures: none;
   }
   :not(pre) > code {
-    background: var(--gray-100);
+    background: var(--fill);
     padding: 0.1em 0.35em;
     border-radius: 4px;
   }
@@ -734,10 +679,13 @@
   blockquote {
     margin-inline: 0;
     padding-left: 1rem;
-    border-left: 3px solid var(--tone);
+    border-left: 2px solid var(--line-2);
     font-family: var(--serif);
     font-size: 1.08rem;
     color: var(--ink-2);
+  }
+  blockquote:is([data-tone], [data-c]) {
+    border-left-color: var(--tone);
   }
   figure {
     margin-inline: 0;
@@ -785,23 +733,34 @@
   }
   details {
     border-top: 1px solid var(--line);
-    padding-top: 0.6rem;
-  }
-  details:last-child {
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 0.6rem;
+    padding-top: 0.75rem;
   }
   details + details {
-    margin-top: 0;
+    margin-top: 0.75rem;
   }
   summary {
-    display: list-item;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     cursor: pointer;
     font-weight: 600;
-    list-style-position: outside;
+    list-style: none;
   }
-  summary::marker {
-    color: var(--muted);
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::before {
+    content: "";
+    flex: none;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    rotate: -45deg;
+    transition: rotate 120ms ease;
+  }
+  details[open] > summary::before {
+    rotate: 45deg;
   }
   details[open] > summary {
     margin-bottom: 0.6rem;
@@ -810,10 +769,11 @@
     color: var(--muted);
     font-size: 0.86rem;
   }
-  body > footer {
-    border-top: 1px solid var(--line);
-    padding-top: 1.1rem;
+  /* :root raises this above the rule that zeroes margins on the page's top-level blocks. */
+  :root body > footer {
     margin-top: var(--flow);
+    padding-top: calc(var(--flow) * 1.5);
+    border-top: 1px solid var(--line);
   }
   table {
     width: 100%;
@@ -828,7 +788,7 @@
   }
   /* Only column headers are labels; a row header (tbody th) reads as the row's name. */
   :is(thead th, th[scope="col"]) {
-    font: 600 max(11px, 0.72rem)/1.3 var(--label-font);
+    font: 500 max(11px, 0.8rem)/1.3 var(--label-font);
     text-transform: var(--label-case);
     letter-spacing: var(--label-track);
     color: var(--muted);
@@ -856,10 +816,9 @@
   tr:is([data-tone], [data-c]) > :is(td, th) {
     background: var(--tone-wash);
   }
-  :is(td, th):is([data-tone], [data-c]):first-child,
-  tr:is([data-tone], [data-c]) > :first-child {
-    padding-left: 0.65rem;
-    box-shadow: inset 3px 0 0 var(--tone);
+  table:has(:is(tr, td, th):is([data-tone], [data-c]))
+    :is(th, td):is(:first-child, :last-child) {
+    padding-inline: 0.65rem;
   }
   caption {
     caption-side: bottom;
@@ -875,7 +834,7 @@
     background: var(--paper);
     cursor: pointer;
     border: 1px solid var(--line-2);
-    border-radius: 999px;
+    border-radius: var(--pill);
     padding: 0.55rem 0.9rem;
     text-decoration: none;
     display: inline-flex;
@@ -952,7 +911,7 @@
   }
   .split {
     display: grid;
-    gap: calc(var(--gap) * 2);
+    gap: calc(var(--gap) * 4);
     grid-template-columns: minmax(0, 1fr) var(--side, 19rem);
     align-items: start;
   }
@@ -977,7 +936,7 @@
   }
   .cols {
     columns: var(--min, 16rem);
-    column-gap: calc(var(--gap) * 2);
+    column-gap: calc(var(--gap) * 4);
   }
   .cols > * {
     break-inside: avoid;
@@ -1000,18 +959,18 @@
   td > * + * {
     margin-top: 0.5rem;
   }
-  :is(.panel, .inset)[data-c],
-  :is(.panel, .inset)[data-tone] {
-    border-left: 4px solid var(--tone);
+  /* A panel with data-c or data-tone shows that color as a muted background. */
+  .panel:is([data-c], [data-tone]) {
+    background: var(--tone-wash);
+    box-shadow: none;
   }
   .hero {
     margin-block: calc(var(--flow) * 0.5);
   }
   aside {
     background: var(--tone-wash);
-    border-left: 3px solid var(--tone);
     padding: 0.8rem 1rem;
-    border-radius: 0 calc(var(--radius) * 0.6) calc(var(--radius) * 0.6) 0;
+    border-radius: calc(var(--radius) * 0.6);
     font-size: 0.95rem;
   }
   .scroll {
@@ -1037,16 +996,17 @@
     gap: 0.2rem;
     margin: 0;
   }
+  /* A figure with its sentence: large, but always a step below the h1. */
   .stat > :is(b, strong, data) {
-    font: var(--head-weight) clamp(2.4rem, 1.6rem + 3vw, 4rem)/1
+    font: var(--head-weight) clamp(1.9rem, 1.4rem + 1.6vw, 2.6rem)/1.05
       var(--head-font);
-    letter-spacing: -0.035em;
+    letter-spacing: -0.03em;
     color: var(--tone);
     font-variant-numeric: tabular-nums;
     font-style: var(--head-style);
   }
   .stat:not([data-tone], [data-c]) > :is(b, strong, data) {
-    color: var(--accent-text);
+    color: var(--ink);
   }
   .stat > span,
   .stat > small {
@@ -1058,12 +1018,21 @@
     align-items: center;
     gap: 0.3em;
     font: 600 max(11px, 0.74rem)/1 var(--body-font);
-    padding: 0.3em 0.55em;
-    border-radius: 999px;
-    background: var(--tone-wash);
-    color: var(--ink);
-    box-shadow: inset 0 0 0 1px
-      color-mix(in oklab, var(--tone) 35%, transparent);
+    padding: 0.3em 0.6em;
+    border-radius: var(--pill);
+    /* A tag is a label in its tone's own color, on a tint strong enough to show
+       against the ground in both themes; a dark ground needs about twice the
+       tint. Mixing the text toward ink darkens it on light grounds and
+       lightens it on dark ones. */
+    background: color-mix(
+      in oklab,
+      var(--tone) 16%,
+      light-dark(
+        var(--paper),
+        color-mix(in oklab, var(--tone) 22%, var(--paper))
+      )
+    );
+    color: color-mix(in oklab, var(--tone) 70%, var(--ink));
     white-space: nowrap;
   }
   .dot::before {
@@ -1071,7 +1040,7 @@
     display: inline-block;
     width: 0.62em;
     height: 0.62em;
-    border-radius: 50%;
+    border-radius: var(--pill);
     background: var(--tone);
     margin-right: 0.4em;
     vertical-align: 0.02em;
@@ -1079,9 +1048,9 @@
   .bar {
     --v: 50%;
     display: block;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--gray-100);
+    height: var(--bar);
+    border-radius: var(--pill);
+    background: var(--fill);
     overflow: hidden;
   }
   /* An untoned bar is neutral, so data-tone="accent" (or any tone) on one bar stands out. */
@@ -1123,14 +1092,19 @@
   ol.steps > li::before {
     content: counter(s);
     grid-row: span 9;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: -0.1rem;
+    border-radius: var(--pill);
     display: grid;
     place-items: center;
-    background: var(--tone);
-    color: var(--accent-ink);
-    font: 700 0.9rem/1 var(--body-font);
+    background: var(--tone-wash);
+    color: var(--ink);
+    font: 600 0.82rem/1 var(--body-font);
+    font-variant-numeric: tabular-nums;
+  }
+  ol.steps > li:is([data-tone], [data-c])::before {
+    color: var(--tone);
   }
   ul.plain,
   ol.plain {
@@ -1173,52 +1147,81 @@
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='m4 4 8 8M12 4l-8 8'/%3E%3C/svg%3E");
   }
   ul.todo > li::before {
-    border: 2px solid var(--line-2);
+    border: 1.5px solid var(--line-2);
     border-radius: 4px;
   }
 
-  /* A call path or pipeline: boxes left to right with arrows, stacked on phones.
-     Each li is <b>name</b> then a short <span> note; data-tone marks the box that matters. */
+  /* A call path or pipeline: small boxes that wrap onto as many rows as they
+     need. foundation.js draws the connectors (a node on one box's edge, a fine
+     line, an arrowhead touching the next box, a loop down to the next row).
+     Each li is <b>name</b> then a short <span> note; a <code> in the name marks
+     an identifier; data-tone marks the box that matters. */
   ol.flow {
+    --flow-gap: 2.25rem;
+    position: relative;
     list-style: none;
     padding: 0;
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
-    column-gap: 1.6rem;
-    align-items: stretch;
+    grid-template-columns: repeat(auto-fill, minmax(min(9rem, 100%), 1fr));
+    gap: 1.75rem var(--flow-gap);
   }
   ol.flow > li {
     position: relative;
     margin: 0;
-    padding: 0.55rem 0.75rem;
-    border: 1px solid var(--line-2);
-    border-radius: calc(var(--radius) * 0.6);
+    padding: 0.6rem 0.75rem 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: calc(var(--radius) * 0.7);
     background: var(--paper);
-    font-size: 0.88rem;
-    line-height: 1.4;
+    font: 400 0.8rem/1.4 var(--sans);
   }
   ol.flow > li > b {
     display: block;
-    font: 600 0.82rem/1.35 var(--mono);
-    overflow-wrap: anywhere;
+    font: 600 0.82rem/1.3 var(--sans);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    overflow-wrap: break-word;
+  }
+  ol.flow > li > b code {
+    background: none;
+    padding: 0;
+    font-size: 0.92em;
+    font-weight: 500;
   }
   ol.flow > li > span {
     display: block;
-    margin-top: 0.2rem;
-    color: var(--muted);
-  }
-  ol.flow > li + li::before {
-    content: "\2192";
-    position: absolute;
-    left: -1.25rem;
-    top: 50%;
-    translate: 0 -50%;
+    margin-top: 0.15rem;
     color: var(--muted);
   }
   ol.flow > li:is([data-tone], [data-c]) {
-    border-color: var(--tone);
+    border-color: transparent;
     background: var(--tone-wash);
+  }
+  ol.flow > svg.flow-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    fill: none;
+    stroke: color-mix(in oklab, var(--muted) 75%, transparent);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  ol.flow > svg.flow-lines circle {
+    fill: color-mix(in oklab, var(--muted) 75%, transparent);
+    stroke: none;
+  }
+  /* With no script, and on paper, a plain arrow sits in the gap. */
+  ol.flow:not(.drawn) > li + li::before {
+    content: "\2192";
+    position: absolute;
+    left: calc(var(--flow-gap) * -0.5);
+    top: 50%;
+    translate: -50% -50%;
+    color: var(--muted);
   }
 
   /* The section strip foundation.js builds on a page of five or more sections. */
@@ -1262,7 +1265,7 @@
   }
   nav.strip a[aria-current="true"] {
     color: var(--ink);
-    border-bottom-color: var(--accent);
+    border-bottom-color: var(--ink);
   }
   :root:has(nav.strip) :is(section, article)[id] {
     scroll-margin-top: 3.5rem;
@@ -1387,10 +1390,10 @@
     min-width: 1.35rem;
     height: 1.35rem;
     margin-right: 0.45rem;
-    border-radius: 999px;
-    background: var(--tone);
-    color: var(--accent-ink);
-    font: 700 0.75rem/1 var(--body-font);
+    border-radius: var(--pill);
+    background: var(--fill);
+    color: var(--ink);
+    font: 600 0.75rem/1 var(--body-font);
     vertical-align: 0.1em;
   }
 
@@ -1503,6 +1506,67 @@
     }
   }
 
+  /* ---------- feel details: the few things a token cannot set ---------- */
+
+  :is([data-feel="editorial"], [data-feel="warm"]) body {
+    line-height: 1.65;
+  }
+  :is(
+      [data-feel="bold"],
+      [data-feel="urgent"],
+      [data-feel="festive"],
+      [data-feel="crew"]
+    )
+    h1 {
+    font-size: clamp(2.1rem, 1rem + 4.6vw, 4.4rem);
+    line-height: 1;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) body {
+    line-height: 1.45;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) :is(th, td) {
+    padding-block: 0.3rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) h1 {
+    font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+    line-height: 1.15;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) h2 {
+    font-size: 1.3rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) h3 {
+    font-size: 1.05rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) .lede {
+    font-size: 1rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) hgroup > :is(h1, h2) + p {
+    font-size: 1rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) .stat > :is(b, strong, data) {
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) .stat > :is(span, small) {
+    font-size: 0.85rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.flow {
+    --flow-gap: 1.6rem;
+    row-gap: 1.25rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.flow > li {
+    padding: 0.35rem 0.5rem 0.4rem;
+    font-size: 0.76rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.flow > li > b {
+    font-size: 0.78rem;
+  }
+  :is([data-feel="dense"], [data-feel="ledger"]) ol.steps > li::before {
+    width: 1.35rem;
+    height: 1.35rem;
+    font-size: 0.72rem;
+  }
+
   /* ---------- phone: re-flow, not squeeze ---------- */
 
   @media not (max-width: 40rem) {
@@ -1515,7 +1579,7 @@
       --gutter: 1rem;
       --pad: 0.95rem;
     }
-    /* Dense feels and shapes (15px) are for wide screens and paper; a phone keeps
+    /* A dense feel (15px) is for wide screens and paper; a phone keeps
      16px, so the rem sizes inside devices never fall under 11px. */
     html {
       font-size: max(var(--size), 16px);
@@ -1526,16 +1590,6 @@
     .split,
     .split.flip {
       grid-template-columns: 1fr;
-    }
-    ol.flow {
-      grid-auto-flow: row;
-      row-gap: 1.3rem;
-    }
-    ol.flow > li + li::before {
-      content: "\2193";
-      left: 1rem;
-      top: -1.2rem;
-      translate: 0;
     }
     .rail {
       display: flex;
@@ -1618,8 +1672,7 @@
       padding: 0;
       row-gap: 0.9rem;
     }
-    [data-shape="sheet"] body,
-    [data-shape="wall"] body,
+    :is([data-layout="wide"], [data-shape="sheet"], [data-shape="wall"]) body,
     .print-landscape {
       page: landscape;
     }
@@ -1627,8 +1680,17 @@
     button:not(.keep),
     .sticky:empty,
     nav.strip,
-    .code-tools {
+    .code-tools,
+    ol.flow > svg.flow-lines {
       display: none !important;
+    }
+    ol.flow > li + li::before {
+      content: "\2192";
+      position: absolute;
+      left: calc(var(--flow-gap) * -0.5);
+      top: 50%;
+      translate: -50% -50%;
+      color: var(--muted);
     }
     pre {
       --code-ground: #f5f5f4;
