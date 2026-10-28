@@ -169,6 +169,13 @@
         body[data-corner] .chrome-hint span {
           opacity: 1;
         }
+        /* The words on the page's own controls are drawn from an attribute,
+           so the Markdown a shared link answers with, and any reader of the
+           page's text, holds the frames and not "Show marks" or "Hide
+           controls". Each control carries its name in aria-label too. */
+        [data-chrome-text]::before {
+          content: attr(data-chrome-text);
+        }
       </style>
 
       <header class="sticky top-0 z-20 -mx-4 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-background/95 p-4 backdrop-blur">
@@ -188,10 +195,10 @@
           </button>
           <div id="more-menu" popover class="m-0 min-w-48 rounded-lg border border-border bg-popover p-1 text-[12px] text-foreground shadow-lg [inset:auto]">
             <button id="marks" class="flex h-8 w-full items-center justify-between gap-6 rounded-md px-2 hover:bg-accent">
-              <span></span><kbd class="font-sans text-muted-foreground">A</kbd>
+              <span data-chrome-text></span><kbd class="font-sans text-muted-foreground" data-chrome-text="A"></kbd>
             </button>
-            <button data-hide-controls class="flex h-8 w-full items-center justify-between gap-6 rounded-md px-2 hover:bg-accent">
-              Hide controls <kbd class="font-sans text-muted-foreground"></kbd>
+            <button data-hide-controls aria-label="Hide controls" class="flex h-8 w-full items-center justify-between gap-6 rounded-md px-2 hover:bg-accent">
+              <span data-chrome-text="Hide controls"></span><kbd class="font-sans text-muted-foreground" data-chrome-text></kbd>
             </button>
           </div>
           <!-- How many frames a row holds, from one at the full width to four
@@ -232,8 +239,8 @@
       >
         <div id="viewer-top" class="flex h-16 shrink-0 items-center justify-end px-4 pt-[env(safe-area-inset-top)]">
           <div class="controls flex items-center gap-1.5 [color-scheme:dark]">
-            <button data-marks title="Show the annotations (A)" aria-pressed="false" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium text-muted-foreground">
-              <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline">Marks</span>
+            <button data-marks title="Show the annotations (A)" aria-label="Marks" aria-pressed="false" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium text-muted-foreground">
+              <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline" data-chrome-text="Marks"></span>
             </button>
             <button id="viewer-close" title="Close (Esc)" class="grid size-8 place-items-center rounded-lg border border-border text-muted-foreground hover:text-foreground">
               <i class="ph ph-x text-sm"></i>
@@ -662,7 +669,8 @@
 
         const paintMarks = () => {
           const on = document.body.dataset.marks === "on";
-          marksItem.querySelector("span").textContent = on ? "Hide marks" : "Show marks";
+          marksItem.querySelector("span").dataset.chromeText = on ? "Hide marks" : "Show marks";
+          marksItem.setAttribute("aria-label", on ? "Hide marks" : "Show marks");
           viewerMarks.className = on ? ON : OFF;
           viewerMarks.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
           viewerMarks.setAttribute("aria-pressed", String(on));
@@ -699,14 +707,14 @@
         const onMac = /mac|iphone|ipad/i.test(navigator.userAgentData?.platform ?? navigator.platform);
         const shortcut = onMac ? "⌘." : "Ctrl+.";
         for (const hint of document.querySelectorAll(".chrome-hint span")) {
-          hint.textContent = `Press ${shortcut} to show controls`;
+          hint.dataset.chromeText = `Press ${shortcut} to show controls`;
         }
 
         // The ⋯ menu opens under the bar's buttons, lined up with their right
         // edge so it stays inside the window.
         const more = document.querySelector("#more");
         const moreMenu = document.querySelector("#more-menu");
-        moreMenu.querySelector("[data-hide-controls] kbd").textContent = shortcut;
+        moreMenu.querySelector("[data-hide-controls] kbd").dataset.chromeText = shortcut;
         moreMenu.addEventListener("beforetoggle", (event) => {
           if (event.newState !== "open") return;
           const button = more.getBoundingClientRect();
