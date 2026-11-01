@@ -861,14 +861,21 @@
           document.querySelector('meta[name="description"]') ??
           document.head.appendChild(Object.assign(document.createElement("meta"), { name: "description" }));
         const pageLine = document.querySelector("#line")?.textContent.trim() ?? "";
+        // The document's title names what is on screen, the open frame first,
+        // so a tab, a history entry or a recording of the page can say which
+        // frame was showing without knowing how this page is built.
+        const pageTitle = document.title;
         const describe = (index) => {
           if (index === null) {
             description.content = pageLine;
+            document.title = pageTitle;
             return;
           }
           const note = document.createElement("div");
           note.innerHTML = states[index].note;
           description.content = `${index + 1}. ${states[index].title}. ${note.textContent.trim()}`;
+          const shown = `${index + 1}. ${states[index].title}`;
+          document.title = pageTitle ? `${shown} · ${pageTitle}` : shown;
         };
         describe(null);
 
