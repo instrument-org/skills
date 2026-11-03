@@ -62,6 +62,10 @@
         .mark-tag i {
           font-size: 11px;
         }
+        /* A mark's note is for whoever reads the page as text, never drawn. */
+        .mark-note {
+          display: none;
+        }
 
         /* A tile's ground steps a little toward the ink under the pointer. Only
            the frame opens larger on click, so only the frame takes the brand
@@ -152,7 +156,7 @@
         body[data-chrome="off"] #rack {
           margin-top: 1rem;
         }
-        body[data-chrome="off"] :is(#viewer-top, #viewer-bottom) {
+        body[data-chrome="off"] :is(#viewer-top, #viewer-bottom, #viewer-map) {
           visibility: hidden;
         }
         /* While they're hidden, a faint hint for bringing them back shows
@@ -224,39 +228,275 @@
         button and warning is the copy being proposed.
       </p>
 
-      <!-- The enlarged view. The top row puts marks and close 16px from the
-           top and right, where the bar's own buttons sit. Caption and controls
-           take their space first and the frame is scaled into what is left,
-           so a long caption shrinks the drawing instead of sliding off the
-           bottom of the screen. The caption is centered on the page in a
-           middle column, with the arrows in the right one, kept at the bottom
-           when a long caption wraps. The controls are drawn like the bar's buttons, and
-           the top and bottom rows use the dark theme whatever the page's,
-           because the viewer is always dark. The frame keeps the page's. -->
+      <!-- The enlarged view. One frame on a dark ground, with everything else
+           laid over it rather than beside it, on solid dark pills that read
+           over a white frame as well as over the ground. Along the bottom,
+           where a thumb reaches, one row and nothing more: the caption with
+           prev at its left end and next at its right, as wide as the
+           caption, so on a desktop the arrows sit under the frame rather than
+           in the window's corners. The caption keeps to two lines of small
+           type, so the band is the same height for every frame and every
+           zoom; a tap on it opens the whole note over the frame, and a tap
+           folds it again. Along the top: the count at the left, and beside
+           it the scale while the frame is zoomed, which a tap on brings back
+           to fit; marks and close at the right. The frame opens at the size
+           that fits between the top strip and the bottom band and never sits
+           under them until the reader zooms, when it may run under either.
+           Zoom has no control of its own: a pinch, a wheel with Cmd or Ctrl
+           held, a double tap or the keys take the frame in, and then the
+           lower right shows a thumbnail with the visible part marked, which a
+           tap or a drag on moves the view. -->
+      <style>
+        /* The page itself never zooms while the viewer is open, so the
+           controls stay where they are: every touch on the dialog is the
+           viewer's own, and only an opened caption keeps a native scroll. */
+        #viewer {
+          touch-action: none;
+          -webkit-user-select: none;
+          user-select: none;
+          --bottom-h: 0px;
+          --control-h: 2rem;
+          --vw-pill: #161616;
+          --vw-line: rgb(255 255 255 / 0.14);
+          --vw-ink: rgb(255 255 255 / 0.9);
+          --vw-dim: rgb(255 255 255 / 0.64);
+        }
+        html:has(#viewer[open]) {
+          background: #000;
+        }
+        #stage {
+          position: absolute;
+          inset: 0;
+          outline: none;
+          overflow: hidden;
+          touch-action: none;
+        }
+        #stage .frame {
+          cursor: default;
+          transform-origin: 0 0;
+          will-change: transform;
+        }
+        #viewer-top,
+        #viewer-bottom {
+          position: absolute;
+          left: 0;
+          right: 0;
+          z-index: 2;
+          color-scheme: dark;
+          color: var(--vw-dim);
+        }
+        /* The top strip takes no taps itself, so the ground under it still
+           answers one; each control on it is a pill of its own. */
+        #viewer-top {
+          top: 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.375rem;
+          --band-pad: 0.75rem;
+          padding: calc(var(--band-pad) + env(safe-area-inset-top, 0px)) max(var(--band-pad), env(safe-area-inset-right, 0px)) var(--band-pad) max(var(--band-pad), env(safe-area-inset-left, 0px));
+          pointer-events: none;
+        }
+        #viewer-top .controls {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+        }
+        #viewer-top :is(#viewer-counter, .controls > button) {
+          height: var(--control-h);
+          pointer-events: auto;
+          border: 1px solid var(--vw-line);
+          background: var(--vw-pill);
+          color: var(--vw-dim);
+          box-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+        }
+        #viewer-top .controls > button:hover,
+        #viewer-top .controls > button[aria-pressed="true"] {
+          color: var(--vw-ink);
+        }
+        #viewer-top .controls > button[aria-pressed="true"] {
+          border-color: rgb(255 255 255 / 0.4);
+        }
+        #viewer-counter,
+        #viewer-zoom {
+          display: inline-flex;
+          align-items: center;
+          padding: 0 0.625rem;
+          white-space: nowrap;
+        }
+        #viewer-zoom {
+          gap: 0.375rem;
+          padding-right: 0.5rem;
+        }
+        #viewer-zoom[hidden] {
+          display: none;
+        }
+        /* The bottom band: the caption between the arrows, two lines at
+           most, so the band is the same height whatever the note. Opened,
+           the note grows over the frame and the arrows keep to the band's
+           bottom edge. */
+        #viewer-bottom {
+          bottom: 0;
+          padding: 0.5rem max(1rem, env(safe-area-inset-right, 0px)) max(0.5rem, env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px));
+          background: var(--vw-pill);
+          border-top: 1px solid var(--vw-line);
+        }
+        #viewer-bottom .row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin: 0 auto;
+          max-width: 48rem;
+        }
+        #viewer-bottom[data-open] .row {
+          align-items: flex-end;
+        }
+        #viewer-bottom [data-step] {
+          flex: none;
+          width: 2.25rem;
+          height: var(--control-h);
+          border: 1px solid var(--vw-line);
+          color: var(--vw-dim);
+        }
+        #viewer-bottom [data-step]:hover {
+          color: var(--vw-ink);
+        }
+        #viewer-caption {
+          position: relative;
+          flex: 1;
+          min-width: 0;
+          -webkit-user-select: text;
+          user-select: text;
+          text-align: center;
+          font-size: 12px;
+          line-height: 16px;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          touch-action: pan-y;
+        }
+        #viewer-caption > span {
+          color: var(--vw-ink);
+        }
+        #viewer-bottom[data-open] #viewer-caption {
+          display: block;
+          max-height: 40dvh;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+        }
+        /* The fold mark: a small caret at the caption's right end, pointing
+           the way the caption will go, only where the note runs past two
+           lines. */
+        #viewer-bottom[data-more] #viewer-caption {
+          padding-right: 1.25rem;
+          cursor: pointer;
+        }
+        #viewer-bottom[data-more] #viewer-caption::after {
+          content: "";
+          position: absolute;
+          right: 0.25rem;
+          bottom: 7px;
+          width: 6px;
+          height: 6px;
+          border-left: 1.5px solid currentColor;
+          border-top: 1.5px solid currentColor;
+          transform: rotate(45deg);
+          opacity: 0.7;
+        }
+        #viewer-bottom[data-more][data-open] #viewer-caption::after {
+          transform: rotate(225deg);
+          bottom: 9px;
+        }
+        /* A phone on its side has little height to give the frame, so the
+           top controls keep close to the corners. */
+        @media (max-height: 500px) {
+          #viewer-top {
+            --band-pad: 0.5rem;
+          }
+        }
+        @media (pointer: coarse) {
+          #viewer {
+            --control-h: 2.25rem;
+          }
+          /* Bigger targets under a finger: prev and next get tapped ten
+             times a page, and they sit where the thumbs rest. */
+          #viewer-bottom [data-step] {
+            width: 2.75rem;
+          }
+        }
+        /* The thumbnail: the whole frame small, with the part on screen
+           boxed, at the lower right above the caption, only while the frame
+           is zoomed. */
+        #viewer-map {
+          position: absolute;
+          right: max(0.75rem, env(safe-area-inset-right, 0px));
+          bottom: calc(var(--bottom-h) + 0.75rem);
+          z-index: 2;
+          overflow: hidden;
+          border-radius: 4px;
+          box-shadow:
+            0 0 0 1px rgb(255 255 255 / 0.3),
+            0 2px 8px rgb(0 0 0 / 0.5);
+          background: #000;
+          touch-action: none;
+          cursor: crosshair;
+        }
+        #viewer-map .map-frame {
+          position: absolute;
+          inset: 0;
+        }
+        #viewer-map .map-frame .frame {
+          position: absolute;
+          left: 0;
+          top: 0;
+          border-radius: 0;
+          --tw-ring-shadow: 0 0 #0000;
+          box-shadow: none;
+        }
+        #viewer-map .map-view {
+          position: absolute;
+          box-sizing: border-box;
+          border: 1.5px solid #fff;
+          border-radius: 2px;
+          background: rgb(255 255 255 / 0.14);
+          box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5);
+          pointer-events: none;
+        }
+        /* A tap on the ground hides the bands and the thumbnail, and brings
+           them back. The frame stays put. */
+        #viewer[data-controls="hidden"] :is(#viewer-top, #viewer-bottom, #viewer-map) {
+          visibility: hidden;
+        }
+      </style>
       <dialog
         id="viewer"
-        class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)] open:flex open:flex-col"
+        class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)]"
       >
-        <div id="viewer-top" class="flex h-16 shrink-0 items-center justify-end px-4 pt-[env(safe-area-inset-top)]">
-          <div class="controls flex items-center gap-1.5 [color-scheme:dark]">
-            <button data-marks title="Show the annotations (A)" aria-label="Marks" aria-pressed="false" class="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-medium text-muted-foreground">
+        <div id="stage" autofocus tabindex="-1"></div>
+        <div id="viewer-map" hidden><div class="map-frame"></div><div class="map-view"></div></div>
+        <div id="viewer-top">
+          <div class="controls">
+            <span id="viewer-counter" class="rounded-lg font-mono text-[11px] tabular-nums"></span>
+            <button id="viewer-zoom" hidden title="Back to fit (0)" aria-label="Back to fit" class="rounded-lg font-mono text-[11px] tabular-nums"><span data-chrome-text></span><i class="ph ph-x text-sm"></i></button>
+          </div>
+          <div class="controls">
+            <button data-marks title="Show the annotations (A)" aria-label="Marks" aria-pressed="false" class="flex items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium">
               <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline" data-chrome-text="Marks"></span>
             </button>
-            <button id="viewer-close" title="Close (Esc)" class="grid size-8 place-items-center rounded-lg border border-border text-muted-foreground hover:text-foreground">
+            <button id="viewer-close" title="Close (Esc)" aria-label="Close" class="grid w-8 place-items-center rounded-lg">
               <i class="ph ph-x text-sm"></i>
             </button>
           </div>
         </div>
-        <div class="chrome-hint pointer-events-none absolute top-0 right-0 hidden text-[12px] leading-none text-muted-foreground/70 [color-scheme:dark]"><span class="rounded-bl-md bg-background/80 p-2"></span></div>
-        <div id="stage" autofocus tabindex="-1" class="flex min-h-0 flex-1 px-4 focus:outline-none *:m-auto *:flex-none"></div>
-        <div id="viewer-bottom" class="grid shrink-0 grid-cols-[1fr_auto_1fr] gap-4 px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] [color-scheme:dark]">
-          <p id="viewer-caption" class="col-start-2 self-center max-h-[30vh] max-w-3xl min-w-0 overflow-y-auto text-center text-[13px] leading-5 text-muted-foreground"></p>
-          <div class="controls col-start-3 flex h-8 items-center self-end justify-self-end gap-1 rounded-lg border border-border px-1 text-muted-foreground">
-            <button data-step="-1" title="Previous frame" class="grid size-6 place-items-center rounded-md hover:text-foreground disabled:opacity-25"><i class="ph ph-caret-left"></i></button>
-            <span id="viewer-counter" class="min-w-10 text-center font-mono text-[11px] tabular-nums"></span>
-            <button data-step="1" title="Next frame" class="grid size-6 place-items-center rounded-md hover:text-foreground disabled:opacity-25"><i class="ph ph-caret-right"></i></button>
+        <div id="viewer-bottom">
+          <div class="row controls">
+            <button data-step="-1" title="Previous frame (←)" aria-label="Previous frame" class="grid place-items-center rounded-lg disabled:opacity-25"><i class="ph ph-caret-left"></i></button>
+            <p id="viewer-caption"></p>
+            <button data-step="1" title="Next frame (→)" aria-label="Next frame" class="grid place-items-center rounded-lg disabled:opacity-25"><i class="ph ph-caret-right"></i></button>
           </div>
         </div>
+        <div class="chrome-hint pointer-events-none absolute top-0 right-0 hidden text-[12px] leading-none text-muted-foreground/70 [color-scheme:dark]"><span class="rounded-bl-md bg-background/80 p-2"></span></div>
       </dialog>
 
       <!-- Keep type="module". The share copy of this page is taken as the parser reaches the last script in the body, and a module script runs after that, so the copy carries this markup as written rather than as the script changed it. -->
@@ -546,8 +786,20 @@
               layer.insertAdjacentHTML(
                 "beforeend",
                 `<span class="mark-ring" style="left:${left}px;top:${top}px;width:${width}px;height:${height}px;--line:${tone.line}"></span>` +
-                  `<span class="mark-tag" style="left:${tagLeft}px;top:${tagTop}px;--tag:${tone.tag}">${g.pointer ? `<i class="ph ph-cursor"></i>` : ""}${g.label}</span>`,
+                  `<span class="mark-tag" style="left:${tagLeft}px;top:${tagTop}px;--tag:${tone.tag}">${g.pointer ? `<i class="ph ph-cursor"></i>` : ""}<span data-chrome-text="${g.label.replaceAll('"', "&quot;")}"></span></span>`,
               );
+              // The Markdown a shared link answers with holds every element's
+              // text, hidden or not, so the tag's word is drawn from an
+              // attribute like the page's own controls, and the mark reads as
+              // this line instead: its word and what it sits on, the element's
+              // words or, for an icon alone, the icon's name.
+              const words = g.el.textContent.replace(/\s+/g, " ").trim();
+              const icons = [...g.el.querySelectorAll("i.ph")].map((i) => /\bph-([\w-]+)/.exec(i.className)?.[1].replaceAll("-", " ")).join(", ");
+              const on = words.length > 60 ? `${words.slice(0, 60)}…` : words || icons;
+              const note = document.createElement("p");
+              note.className = "mark-note";
+              note.textContent = `(${g.label} mark${on ? `: ${on}` : ""})`;
+              layer.append(note);
             }
             root.appendChild(layer);
           }
@@ -742,33 +994,148 @@
         // hover and no Escape to fall back on.
         const viewer = document.querySelector("#viewer");
         const stage = document.querySelector("#stage");
+        const viewerTop = document.querySelector("#viewer-top");
+        const viewerBottom = document.querySelector("#viewer-bottom");
         const viewerCaption = document.querySelector("#viewer-caption");
         const viewerCounter = document.querySelector("#viewer-counter");
+        const viewerMap = document.querySelector("#viewer-map");
+        const viewerZoom = document.querySelector("#viewer-zoom");
+        const coarse = matchMedia("(pointer: coarse)");
+        // A phone on its side has little height to give the frame.
+        const short = matchMedia("(max-height: 500px)");
         let openIndex = -1;
 
-        /** Fits the enlarged frame to the stage, which measured itself after the
-         *  caption took its space. */
-        const fitFrame = () => {
-          const frame = stage.firstElementChild;
-          if (!frame) return;
-          const fit = Math.min(
-            (stage.clientWidth - 32) / Number(frame.dataset.w),
-            (stage.clientHeight - 32) / Number(frame.dataset.h),
-          );
-          frame.style.setProperty("--s", Math.max(0.05, fit));
+        const frameOf = () => stage.querySelector(".frame");
+        const sizeOf = (frame = frameOf()) => ({ w: Number(frame.dataset.w), h: Number(frame.dataset.h) });
+        // The bands over the stage. The frame fits between them, so their
+        // heights are part of every measurement; they keep their height while
+        // hidden, so hiding them moves nothing. The bottom band is measured
+        // with the caption folded, so a note opened to read never moves the
+        // frame. A phone on its side gives the frame the top strip too: the
+        // controls there keep to the corners, clear of a frame centered at
+        // fit.
+        const topReserve = () => (short.matches ? 0 : viewerTop.offsetHeight);
+        let bottomH = 0;
+        const measureBand = () => {
+          const open = viewerBottom.hasAttribute("data-open");
+          viewerBottom.toggleAttribute("data-open", false);
+          bottomH = viewerBottom.offsetHeight;
+          viewerBottom.toggleAttribute("data-more", viewerCaption.scrollHeight > viewerCaption.clientHeight + 1);
+          viewerBottom.toggleAttribute("data-open", open);
+          viewer.style.setProperty("--bottom-h", `${bottomH}px`);
+        };
+        const bands = () => ({ top: topReserve(), bottom: bottomH });
+        // Room round the frame at fit: none on a phone, where every pixel of
+        // width is the drawing's.
+        const pad = () => (innerWidth < 640 || short.matches ? 0 : 16);
+        const fitScale = (frame = frameOf()) => {
+          const { w, h } = sizeOf(frame);
+          const top = topReserve();
+          const bottom = bottomH;
+          const p = pad();
+          return Math.max(0.05, Math.min((stage.clientWidth - p * 2) / w, (stage.clientHeight - top - bottom - p * 2) / h));
         };
 
+        // ---- the caption and the thumbnail -----------------------------------
+        // The caption keeps to two lines, and a tap on it opens the whole
+        // note over the frame, as tall as two fifths of the screen if it
+        // must be, until the next tap or the next frame. The thumbnail
+        // appears while the frame is zoomed.
+        viewerCaption.addEventListener("click", () => {
+          // A drag that selected some of the note is not a tap on it.
+          if (getSelection()?.toString()) return;
+          viewerBottom.toggleAttribute("data-open", !viewerBottom.hasAttribute("data-open"));
+        });
+
+        // The thumbnail is a third copy of the frame, drawn at the width the
+        // map has, with the part on screen boxed. `window` is the visible
+        // part in the frame's own pixels.
+        const paintMap = (zoomed, window) => {
+          const frame = frameOf();
+          if (!frame || !zoomed) {
+            viewerMap.hidden = true;
+            return;
+          }
+          const { w, h } = sizeOf(frame);
+          const mw = coarse.matches ? 88 : 120;
+          const ms = mw / w;
+          viewerMap.hidden = false;
+          if (viewerMap.dataset.for !== String(openIndex)) {
+            viewerMap.dataset.for = String(openIndex);
+            const copy = frame.cloneNode(true);
+            copy.style.setProperty("--s", ms);
+            copy.style.transform = "";
+            viewerMap.querySelector(".map-frame").replaceChildren(copy);
+            viewerMap.style.width = `${mw}px`;
+            viewerMap.style.height = `${h * ms}px`;
+          }
+          const box = viewerMap.querySelector(".map-view");
+          const x0 = Math.max(0, window.x0);
+          const y0 = Math.max(0, window.y0);
+          box.style.left = `${x0 * ms}px`;
+          box.style.top = `${y0 * ms}px`;
+          box.style.width = `${(Math.min(w, window.x1) - x0) * ms}px`;
+          box.style.height = `${(Math.min(h, window.y1) - y0) * ms}px`;
+        };
+        // A tap or a drag on the map puts that spot in the middle of the screen.
+        const mapPoint = (event) => {
+          const r = viewerMap.getBoundingClientRect();
+          const { w } = sizeOf();
+          const ms = r.width / w;
+          return { fx: (event.clientX - r.left) / ms, fy: (event.clientY - r.top) / ms };
+        };
+        viewerMap.addEventListener("pointerdown", (event) => {
+          event.stopPropagation();
+          viewerMap.setPointerCapture(event.pointerId);
+          lookAt(mapPoint(event));
+        });
+        viewerMap.addEventListener("pointermove", (event) => {
+          if (event.buttons) lookAt(mapPoint(event));
+        });
+
+        // The scale shows only while the frame is zoomed, and a tap on it
+        // is the way back to fit.
+        const paintReadout = (zoomed) => {
+          viewerZoom.hidden = !zoomed;
+          if (zoomed) viewerZoom.firstElementChild.dataset.chromeText = `${Math.round(view.s * 100)}%`;
+        };
+        viewerZoom.addEventListener("click", () => toFit(true));
+
+        // The point to open at true size: the frame's first mark if it has
+        // one, since that is what the frame is about, else its middle.
+        const focusPoint = () => {
+          const frame = frameOf();
+          const { w, h } = sizeOf(frame);
+          const ring = frame.querySelector(".mark-ring");
+          if (!ring) return { fx: w / 2, fy: h / 2 };
+          return {
+            fx: parseFloat(ring.style.left) + parseFloat(ring.style.width) / 2,
+            fy: parseFloat(ring.style.top) + parseFloat(ring.style.height) / 2,
+          };
+        };
+
+        // ---- opening a frame -------------------------------------------------
         const showFrame = (index) => {
           const state = states[index];
           const tile = rack.querySelectorAll(".frame")[index];
           if (!tile) return;
+          const before = frameOf() ? sizeOf() : null;
           openIndex = index;
-          stage.replaceChildren(tile.cloneNode(true));
-          viewerCaption.innerHTML =
-            `<span class="font-medium text-foreground/80">${index + 1}. ${state.title}.</span> ${state.note}`;
+          const copy = tile.cloneNode(true);
+          stage.querySelector(".frame")?.remove();
+          mount(copy);
+          viewerCaption.innerHTML = `<span class="font-medium">${index + 1}. ${state.title}.</span> ${state.note}`;
           viewerCounter.textContent = `${index + 1} / ${states.length}`;
           if (!viewer.open) viewer.showModal();
-          fitFrame(); // The dialog is laid out by now, so the stage measures true.
+          viewerBottom.removeAttribute("data-open");
+          measureBand();
+          viewerMap.dataset.for = "";
+          // A frame the size of the last keeps the view, so a set that walks
+          // one screen through its states is read at one spot across them.
+          // Any other size opens at fit.
+          const same = before && before.w === Number(copy.dataset.w) && before.h === Number(copy.dataset.h);
+          if (same) relayout();
+          else toFit(false);
           // Replaced rather than pushed, so walking the set leaves one history
           // entry and the address bar always holds a link to the frame on screen.
           setFrameParam(index + 1);
@@ -784,46 +1151,85 @@
           showFrame([...rack.querySelectorAll(".frame")].indexOf(frame));
         });
 
-        // Clicking anywhere on the dark background closes the viewer, except on
-        // the frame, the caption and the controls. Only the controls' buttons
-        // act, because the enlarged frame has buttons of its own.
         viewer.addEventListener("click", (event) => {
           const button = event.target.closest(".controls button");
-          if (!button) {
-            if (!swiped && !event.target.closest(".frame, .controls, #viewer-caption")) viewer.close();
-            return;
-          }
+          if (!button) return;
           if (button.dataset.marks !== undefined) return flipMarks();
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
 
-        // A tap in the space around the frame dismisses; a horizontal drag moves
-        // on. The flag stops the click ending a swipe from also closing.
-        let swipeX = 0;
-        let swipeY = 0;
-        let swiped = false;
-
-        viewer.addEventListener("pointerdown", (event) => {
-          swipeX = event.clientX;
-          swipeY = event.clientY;
-          swiped = false;
+        viewer.addEventListener("close", () => {
+          openIndex = -1;
+          stage.querySelector(".frame")?.remove();
+          viewer.removeAttribute("data-controls");
         });
 
-        stage.addEventListener("pointerup", (event) => {
-          if (states.length < 2) return;
-          const dx = event.clientX - swipeX;
-          if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(event.clientY - swipeY) * 1.5) return;
-          swiped = true;
-          step(dx < 0 ? 1 : -1);
+        // A tap on the ground hides the bands and brings them back; a double
+        // tap zooms in at that spot, or back to fit. A mouse keeps the
+        // desktop's ways: a click on the ground closes, a double click on
+        // the frame zooms.
+        let tapTimer = 0;
+        let lastTap = null;
+        const tapped = (type, p, onFrame) => {
+          if (type === "mouse") {
+            if (!onFrame) viewer.close();
+            return;
+          }
+          const now = performance.now();
+          if (lastTap && now - lastTap.t < 320 && Math.hypot(p.x - lastTap.x, p.y - lastTap.y) < 40) {
+            clearTimeout(tapTimer);
+            lastTap = null;
+            return doubleTap(p);
+          }
+          lastTap = { t: now, ...p };
+          tapTimer = setTimeout(() => {
+            lastTap = null;
+            viewer.dataset.controls = viewer.dataset.controls === "hidden" ? "shown" : "hidden";
+          }, 320);
+        };
+        // A double tap on a touch screen is handled above; some browsers also
+        // send it as a double click, which must not undo it.
+        let lastType = "mouse";
+        stage.addEventListener("pointerdown", (event) => (lastType = event.pointerType), true);
+        stage.addEventListener("dblclick", (event) => {
+          if (lastType !== "mouse") return;
+          doubleTap(local(event));
         });
+        const local = (event) => {
+          const r = stage.getBoundingClientRect();
+          return { x: event.clientX - r.left, y: event.clientY - r.top };
+        };
 
+        // Safari announces a pinch of the page with its own events as well;
+        // declining them is what keeps the page from zooming under the viewer.
+        for (const name of ["gesturestart", "gesturechange"]) {
+          viewer.addEventListener(name, (event) => event.preventDefault(), { passive: false });
+        }
+
+        // The zoom keys of a canvas: + and − step the scale, 0 fits, 1 is
+        // true size. Cmd or Ctrl may be held for all but 1, since those are
+        // the browser's keys for zooming the page, which must not happen
+        // under the viewer. Cmd+1 stays the browser's.
+        const zoomKeys = new Map([
+          ["0", () => toFit(true)],
+          ["1", () => toTrue(focusPoint())],
+          ["=", () => zoomBy(1.25)],
+          ["+", () => zoomBy(1.25)],
+          ["-", () => zoomBy(1 / 1.25)],
+          ["_", () => zoomBy(1 / 1.25)],
+        ]);
         document.addEventListener("keydown", (event) => {
           if ((event.metaKey || event.ctrlKey) && event.key === ".") {
             event.preventDefault();
             return flipChrome();
           }
           if (event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+          const zoom = viewer.open && !event.altKey ? zoomKeys.get(event.key) : undefined;
+          if (zoom && !(event.key === "1" && (event.metaKey || event.ctrlKey))) {
+            event.preventDefault();
+            return zoom();
+          }
           // With Cmd, Ctrl or Alt held the key belongs to the browser: select
           // all, back and forward.
           if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -847,8 +1253,351 @@
         // The stage, not the window: this also catches the page being laid out
         // for the first time after being hidden, which fires no resize event.
         new ResizeObserver(() => {
-          if (viewer.open) fitFrame();
+          if (viewer.open && frameOf()) relayout();
         }).observe(stage);
+
+        // ---- the view: pinch, wheel, drag, double tap and keys ---------------
+        // The frame's scale and where its top-left corner sits on the stage.
+        // The view never goes below fit, and above it the frame can reach
+        // four times its true size. A pinch scales the frame about the
+        // fingers and a wheel with Cmd or Ctrl held about the pointer, a
+        // drag moves it and keeps going for a moment when let go, a double
+        // tap zooms in at that spot and back, and the zoom keys step the
+        // scale about the middle of the screen.
+        const view = { s: 1, x: 0, y: 0 };
+        // The scale the frame's content was last drawn at. While the scale
+        // moves, the compositor scales that drawing, which is cheap enough
+        // for every frame of a pinch; at rest the content is drawn again at
+        // the view's scale, so it is sharp.
+        let raster = 1;
+        // Whether the view is above fit. Set by the gestures and by the moves
+        // to fit, never read off the view while it moves, so a glide through
+        // fit cannot show and hide the thumbnail on the way.
+        let isZoomed = false;
+        const maxScale = () => Math.max(4, fitScale());
+        const setZoomed = (z) => {
+          isZoomed = z;
+        };
+
+        const mount = (copy) => {
+          raster = view.s;
+          copy.style.setProperty("--s", raster);
+          copy.style.transform = `translate(${view.x}px, ${view.y}px)`;
+          stage.appendChild(copy);
+        };
+
+        // Where the frame may sit at a scale: centered between the bands while
+        // it fits there, else anywhere that leaves no edge short of them, so
+        // every part of the frame can be brought into the clear.
+        const clamp = (v) => {
+          const { w, h } = sizeOf();
+          const { top, bottom } = bands();
+          const fw = w * v.s;
+          const fh = h * v.s;
+          const W = stage.clientWidth;
+          const safeH = stage.clientHeight - top - bottom;
+          v.x = fw <= W ? (W - fw) / 2 : Math.min(0, Math.max(W - fw, v.x));
+          v.y = fh <= safeH ? top + (safeH - fh) / 2 : Math.min(top, Math.max(top + safeH - fh, v.y));
+          return v;
+        };
+
+        // Applies the view as it stands.
+        const place = () => {
+          const frame = frameOf();
+          if (!frame) return;
+          clamp(view);
+          frame.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.s / raster})`;
+          paintReadout(isZoomed);
+          const { top, bottom } = bands();
+          paintMap(isZoomed, {
+            x0: -view.x / view.s,
+            y0: (top - view.y) / view.s,
+            x1: (stage.clientWidth - view.x) / view.s,
+            y1: (stage.clientHeight - bottom - view.y) / view.s,
+          });
+        };
+
+        // Draws the content again at the view's scale once the scale has
+        // come to rest. `rerasterSoon` waits out a wheel still turning.
+        let rasterTimer = 0;
+        const reraster = () => {
+          clearTimeout(rasterTimer);
+          rasterTimer = 0;
+          const frame = frameOf();
+          if (!frame || raster === view.s) return;
+          raster = view.s;
+          frame.style.setProperty("--s", raster);
+          place();
+        };
+        const rerasterSoon = () => {
+          clearTimeout(rasterTimer);
+          rasterTimer = setTimeout(reraster, 150);
+        };
+
+        // After a gesture moved the scale: above fit the view is zoomed; at
+        // fit it is fit exactly, with the caption open.
+        const settle = () => {
+          const fit = fitScale();
+          setZoomed(view.s > fit * 1.001);
+          if (!isZoomed) view.s = fit;
+          place();
+        };
+
+        // After the stage, the bands or the caption changed size: a view at
+        // fit fits again, a zoomed one keeps its scale and stays in bounds.
+        const relayout = () => {
+          measureBand();
+          if (!isZoomed) view.s = fitScale();
+          place();
+          reraster();
+        };
+
+        // A short glide between two views, so a jump reads as a move. `then`
+        // runs once it lands.
+        let glideId = 0;
+        const stopGlide = () => {
+          cancelAnimationFrame(glideId);
+          glideId = 0;
+        };
+        const glide = (target, animate, then) => {
+          stopGlide();
+          stopFling();
+          stopWheel();
+          const land = () => {
+            Object.assign(view, target);
+            then?.();
+            place();
+            reraster();
+          };
+          if (!animate || matchMedia("(prefers-reduced-motion: reduce)").matches) return land();
+          const from = { ...view };
+          const t0 = performance.now();
+          const tick = (t) => {
+            const k = Math.min(1, (t - t0) / 220);
+            if (k >= 1) {
+              glideId = 0;
+              return land();
+            }
+            const e = 1 - (1 - k) ** 3;
+            view.s = from.s + (target.s - from.s) * e;
+            view.x = from.x + (target.x - from.x) * e;
+            view.y = from.y + (target.y - from.y) * e;
+            place();
+            glideId = requestAnimationFrame(tick);
+          };
+          glideId = requestAnimationFrame(tick);
+        };
+
+        // Back to fit. The thumbnail goes once the frame has landed.
+        const toFit = (animate) => glide(clamp({ s: fitScale(), x: 0, y: 0 }), animate, () => setZoomed(false));
+        // The middle of the clear part of the screen, between the bands.
+        const clearCenter = () => {
+          const { top, bottom } = bands();
+          return { x: stage.clientWidth / 2, y: top + (stage.clientHeight - top - bottom) / 2 };
+        };
+        // True size with the frame point (fx, fy) in the middle of the clear
+        // part of the screen.
+        const toTrue = ({ fx, fy }) => {
+          const s = Math.max(1, fitScale());
+          // A screen that shows the frame at true size or above is at it already.
+          if (s <= fitScale() * 1.001) return toFit(true);
+          setZoomed(true);
+          const c = clearCenter();
+          glide(clamp({ s, x: c.x - fx * s, y: c.y - fy * s }), true);
+        };
+        const lookAt = ({ fx, fy }) => {
+          const c = clearCenter();
+          view.x = c.x - fx * view.s;
+          view.y = c.y - fy * view.s;
+          place();
+        };
+        // The frame point under a stage point.
+        const pointAt = (p) => ({ fx: (p.x - view.x) / view.s, fy: (p.y - view.y) / view.s });
+        // Scales about a stage point, keeping the frame point under it there.
+        // A scale at or under fit is fit.
+        const zoomTo = (s, p, animate) => {
+          s = Math.min(maxScale(), Math.max(fitScale(), s));
+          if (s <= fitScale() * 1.001) return toFit(animate);
+          setZoomed(true);
+          const k = s / view.s;
+          glide(clamp({ s, x: p.x - (p.x - view.x) * k, y: p.y - (p.y - view.y) * k }), animate);
+        };
+        // One step of the zoom keys, about the middle of the clear part.
+        const zoomBy = (k) => zoomTo(view.s * k, clearCenter(), true);
+        // A double tap or click: back to fit from above it; else in, to true
+        // size, or to twice fit where true size is no larger, about the spot.
+        const doubleTap = (p) => (isZoomed ? toFit(true) : zoomTo(Math.max(1, fitScale() * 2), p, true));
+
+        // ---- fingers ---------------------------------------------------------
+        const pointers = new Map();
+        let gesture = null;
+        let flingId = 0;
+        const stopFling = () => {
+          cancelAnimationFrame(flingId);
+          flingId = 0;
+        };
+        const pinchOf = () => {
+          const [a, b] = [...pointers.values()];
+          return { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        };
+        const startPan = (p, type, moved, onFrame = false) => ({ kind: "pan", type, onFrame, x0: p.x, y0: p.y, x: p.x, y: p.y, t: performance.now(), vx: 0, vy: 0, moved, slide: 0 });
+
+        stage.addEventListener("pointerdown", (event) => {
+          if (event.button !== 0) return;
+          stage.setPointerCapture(event.pointerId);
+          const p = local(event);
+          pointers.set(event.pointerId, p);
+          stopFling();
+          stopGlide();
+          stopWheel();
+          if (pointers.size === 1) gesture = startPan(p, event.pointerType, false, Boolean(event.target.closest(".frame")));
+          else if (pointers.size === 2) {
+            const m = pinchOf();
+            gesture = { kind: "pinch", d0: m.d, s0: view.s, fx: (m.x - view.x) / view.s, fy: (m.y - view.y) / view.s };
+          }
+        });
+
+        stage.addEventListener("pointermove", (event) => {
+          if (!pointers.has(event.pointerId) || !gesture) return;
+          const p = local(event);
+          pointers.set(event.pointerId, p);
+          if (gesture.kind === "pinch") {
+            if (pointers.size !== 2) return;
+            const m = pinchOf();
+            // The frame point that was between the fingers stays between them.
+            view.s = Math.min(maxScale(), Math.max(fitScale(), (gesture.s0 * m.d) / gesture.d0));
+            view.x = m.x - gesture.fx * view.s;
+            view.y = m.y - gesture.fy * view.s;
+            return settle();
+          }
+          const dx = p.x - gesture.x;
+          const dy = p.y - gesture.y;
+          const now = performance.now();
+          const dt = Math.max(1, now - gesture.t);
+          gesture.vx = 0.7 * (dx / dt) + 0.3 * gesture.vx;
+          gesture.vy = 0.7 * (dy / dt) + 0.3 * gesture.vy;
+          gesture.x = p.x;
+          gesture.y = p.y;
+          gesture.t = now;
+          if (!gesture.moved && Math.hypot(p.x - gesture.x0, p.y - gesture.y0) < 6) return;
+          gesture.moved = true;
+          if (!isZoomed) {
+            // At fit there is nowhere to go, so a sideways drag slides the frame
+            // with the finger, as the start of a swipe to the next one.
+            gesture.slide += dx;
+            frameOf().style.transform = `translate(${view.x + gesture.slide / 2}px, ${view.y}px)`;
+            return;
+          }
+          view.x += dx;
+          view.y += dy;
+          place();
+        });
+
+        const release = (event) => {
+          if (!pointers.has(event.pointerId)) return;
+          pointers.delete(event.pointerId);
+          const g = gesture;
+          if (!g) return;
+          if (g.kind === "pinch") {
+            // The finger still down carries on as a drag.
+            if (pointers.size === 1) {
+              const [p] = pointers.values();
+              gesture = startPan(p, event.pointerType, true);
+            } else gesture = null;
+            reraster();
+            return;
+          }
+          gesture = null;
+          if (event.type === "pointercancel") return place();
+          if (!g.moved) return tapped(g.type, { x: g.x0, y: g.y0 }, g.onFrame);
+          if (!isZoomed) {
+            if (states.length > 1 && Math.abs(g.slide) >= 48 && Math.abs(g.slide) > Math.abs(g.y - g.y0) * 1.5) return step(g.slide < 0 ? 1 : -1);
+            return place();
+          }
+          // A finger lifted while moving keeps the frame going for a moment.
+          if (performance.now() - g.t < 80 && Math.hypot(g.vx, g.vy) > 0.08) fling(g.vx, g.vy);
+        };
+        stage.addEventListener("pointerup", release);
+        stage.addEventListener("pointercancel", release);
+
+        const fling = (vx, vy) => {
+          let last = performance.now();
+          const tick = (now) => {
+            const dt = Math.min(32, now - last);
+            last = now;
+            const x = view.x;
+            const y = view.y;
+            view.x += vx * dt;
+            view.y += vy * dt;
+            clamp(view);
+            if (view.x === x) vx = 0;
+            if (view.y === y) vy = 0;
+            const decay = 0.994 ** dt;
+            vx *= decay;
+            vy *= decay;
+            place();
+            flingId = Math.hypot(vx, vy) > 0.02 ? requestAnimationFrame(tick) : 0;
+          };
+          flingId = requestAnimationFrame(tick);
+        };
+
+        // ---- wheel -----------------------------------------------------------
+        // A wheel with Cmd or Ctrl held zooms about the pointer, which is also
+        // how a trackpad pinch arrives; a plain wheel moves a zoomed frame.
+        // Neither reaches the page. A pinch tracks the fingers as they are. A
+        // mouse wheel's notches can be large, so with Cmd held, or past the
+        // size a pinch sends, the view eases toward where the wheel has sent
+        // it rather than jumping there.
+        let wheelTarget = null;
+        let wheelId = 0;
+        const stopWheel = () => {
+          cancelAnimationFrame(wheelId);
+          wheelId = 0;
+          wheelTarget = null;
+        };
+        const wheelStep = (rate) => {
+          wheelId = 0;
+          if (!wheelTarget) return;
+          const { s, p } = wheelTarget;
+          const next = rate === 1 || Math.abs(s - view.s) < 0.002 ? s : view.s + (s - view.s) * rate;
+          const k = next / view.s;
+          view.x = p.x - (p.x - view.x) * k;
+          view.y = p.y - (p.y - view.y) * k;
+          view.s = next;
+          if (next !== s) {
+            setZoomed(view.s > fitScale() * 1.001);
+            place();
+            wheelId = requestAnimationFrame(() => wheelStep(rate));
+            return;
+          }
+          wheelTarget = null;
+          settle();
+          rerasterSoon();
+        };
+        const wheelZoom = (factor, p, eased) => {
+          const s = Math.min(maxScale(), Math.max(fitScale(), (wheelTarget?.s ?? view.s) * factor));
+          wheelTarget = { s, p };
+          if (!eased) return wheelStep(1);
+          if (!wheelId) wheelId = requestAnimationFrame(() => wheelStep(0.35));
+        };
+        stage.addEventListener(
+          "wheel",
+          (event) => {
+            event.preventDefault();
+            if (event.ctrlKey || event.metaKey) {
+              const d = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+              const factor = Math.exp(-Math.max(-30, Math.min(30, d)) * 0.01);
+              return wheelZoom(factor, local(event), event.metaKey || Math.abs(d) >= 30);
+            }
+            if (!isZoomed) return;
+            stopWheel();
+            view.x -= event.deltaX;
+            view.y -= event.deltaY;
+            place();
+            rerasterSoon();
+          },
+          { passive: false },
+        );
 
         // ---- links to a frame ------------------------------------------------
         // `?frame=3` opens the page on the third frame enlarged, numbered as the
