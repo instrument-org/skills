@@ -1,14 +1,14 @@
 # Map patterns
 
-Vocabulary only a map uses. The panel, the card, the pins, the list-to-pin link, the phone sheet and the offline drawing are in `skeleton.html` and do not change from map to map; what changes is the places, and the places are research done before the page is written. The recipes below are what to run at writing time, and what to add to the script for a drive or for areas.
+These are the techniques only a map needs. The panel, the card, the pins, the link from list to pin, the phone sheet and the offline drawing are all in `skeleton.html`, and they stay the same from map to map. What changes is the places, which you research before you write the page. The recipes below are what to run while you write, and what to add to the script for a drive or for areas.
 
 ## The list is the data
 
-Every entry in `#places` carries `data-lat` and `data-lon`; the script numbers the entries in document order, draws a pin for each, and builds the popup from the entry's own heading, first paragraph and picture. So the whole of a map's content is written once, in the HTML, and the map cannot show a place the list does not name. An entry's number is its position in the list, which is why the visible number in the entry has to be written in the same order.
+Every entry in `#places` carries `data-lat` and `data-lon`. The script numbers the entries in document order, draws a pin for each, and builds each popup from the entry's own heading, first paragraph and picture. So you write all of a map's content once, in the HTML, and the map can't show a place the list doesn't name. An entry's number is its position in the list, which is why the visible number in the entry has to be written in the same order.
 
-## Placing a pin: geocode it
+## Geocoding a pin
 
-A position comes from a geocoder, never from memory. Nominatim over OpenStreetMap answers a name and a street with coordinates and the address it matched, which is the check that it found the right door. It asks for a real user agent and one request a second.
+Take every position from a geocoder, never from memory. Nominatim, which runs over OpenStreetMap, answers a name and a street with coordinates and the address it matched, and that address is how you check it found the right door. It asks for a real user agent and at most one request a second.
 
 ```python
 import json, time, urllib.parse, urllib.request
@@ -33,7 +33,7 @@ Read `matched` for every place. A chain returns whichever branch ranks first, so
 
 ## Links out
 
-Two small links under an entry, never on its name, since the entry's own click goes to the pin. The place's own site, with its domain as the text. And Google Maps, through its documented URL scheme, which needs no key: a search for the name and street lands on the place's card there, where coordinates alone would drop a bare pin.
+Put two small links under an entry, never on its name, since clicking the entry itself goes to the pin. One is the place's own site, with its domain as the link text. The other is Google Maps, through its documented URL scheme, which needs no key. A search for the name and street lands on the place's card there, while coordinates alone would drop a bare pin.
 
 ```python
 import urllib.parse
@@ -104,11 +104,11 @@ const tone = (name) => {
 };
 ```
 
-Anything drawn on the map itself is added inside `map.on("style.load", …)`, because a change of theme is a change of style and a new style starts with none of the page's layers; the pins are DOM and stay. Read `tone` inside that handler so the color is the current theme's. Put drawn layers under the style's labels by passing the first symbol layer's id as `beforeId`, so a road or a shape never covers a street name.
+Add anything you draw on the map itself inside `map.on("style.load", …)`. A change of theme is a change of style, and a new style starts without any of the page's layers. The pins are DOM elements, so they stay. Read `tone` inside that handler so the color is the current theme's. Put drawn layers under the style's labels by passing the first symbol layer's id as `beforeId`, so a road or a shape never covers a street name.
 
-## A drive: the route is the router's
+## A drive along real roads
 
-A road is a line a routing service drew. OSRM's public demo server routes over OpenStreetMap with no key; give it the stops in order as `lon,lat` pairs and ask for the full geometry as an encoded polyline, which is a tenth the size of coordinates:
+Draw a road as the line a routing service gives you. OSRM's public demo server routes over OpenStreetMap with no key. Give it the stops in order as `lon,lat` pairs, and ask for the full geometry as an encoded polyline, which is a tenth the size of plain coordinates:
 
 ```python
 stops = [("Golden Gate Bridge Welcome Center", 37.8078, -122.4749), ("Pigeon Point Lighthouse", 37.1821, -122.3941), ...]
@@ -181,11 +181,11 @@ map.on("style.load", () => {
 frame(line);
 ```
 
-GeoJSON is `[lon, lat]` where the list and the polyline are `[lat, lon]`; the swap happens once, here. The stops are the list's entries as usual, each with its leg to the next one written in: the distance in the reader's units, the time as hours and minutes, and the day it falls on, with a directions link on each day's heading. The offline drawing gets the same line, projected with the pins' `x` and `y`, as a `<polyline class="outline" data-tone="accent">`, and its extent is the line's rather than the stops'.
+GeoJSON uses `[lon, lat]`, while the list and the polyline use `[lat, lon]`, so swap them once, here. The stops are the list's entries as usual, each with its leg to the next one written in: the distance in the reader's units, the time as hours and minutes, and the day it falls on, with a directions link on each day's heading. The offline drawing gets the same line, projected with the pins' `x` and `y`, as a `<polyline class="outline" data-tone="accent">`, and its extent is the line's rather than the stops'.
 
-## Areas: shading with a judgment
+## Shaded areas
 
-An area is an entry with a ring instead of a point. Write the ring on the entry as `data-ring="lat,lon lat,lon …"` and a `data-verdict` the legend explains, then draw the rings as one GeoJSON source with the color chosen per feature, and frame the map on all of them:
+An area is an entry with a ring of points instead of a single point. Write the ring on the entry as `data-ring="lat,lon lat,lon …"` and a `data-verdict` the legend explains, then draw the rings as one GeoJSON source with the color chosen per feature, and frame the map on all of them:
 
 ```js
 const verdictColor = () => [
@@ -246,13 +246,13 @@ map.on("mouseleave", "areas", () => {
 
 Each entry carries a small square of its verdict's color before its line, so the list and the shading agree without a trip to the legend; the same move ties any entry to a color the map gives it. A polygon's ring closes on itself, so the first corner is repeated at the end. A ring drawn by hand is five to eight corners placed on streets and landmarks the geocoder returned, and the sources say it was drawn by hand. Geocode the corners rather than guessing them: a neighborhood remembered a kilometer east is an opinion about the wrong streets. The offline drawing gets the same rings as `<polygon>`s with the verdict's `data-tone` (`accent`, `warn`, `muted`) and `class="wash"` plus an `outline` copy, so both themes hold.
 
-A circle is arithmetic, and is honest when its rule is on the page. MapLibre has no circle-in-meters, so draw one as a polygon of 64 points round the center, 1,200 m out for a fifteen-minute walk at eighty meters a minute, and let the legend say so in those words.
+A circle is arithmetic, so it's honest as long as its rule is on the page. MapLibre can't draw a circle in meters, so draw one as a polygon of 64 points around the center, 1,200 m out for a fifteen-minute walk at eighty meters a minute, and say exactly that in the legend.
 
 Minutes for a commute come from the transport authority's own planner where one answers, asked for a real departure, and the sources name it and the time asked. Transport for London's journey planner answers without a key: `https://api.tfl.gov.uk/Journey/JourneyResults/<from>/to/<to>?time=0830&timeIs=Departing&date=<yyyymmdd>&mode=tube,overground,national-rail,walking`, where a station is its `icsCode` from `https://api.tfl.gov.uk/StopPoint/Search/<name>`. Take the shortest journey's `duration` and its legs' line names.
 
 ## The anchor pin
 
-A page with an anchor, the office the commute runs to, the hotel the restaurants are near, gives it a pin that is not a number: a star in the page's ink, so the numbered pins read as the choices and the anchor as the given. It is a DOM marker like the others, `<div class="pin pin-anchor"><span><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="m8 1.5 1.9 4.1 4.5.5-3.4 3 1 4.4L8 11.2l-3.9 2.3 1-4.4-3.4-3 4.5-.5z"/></svg></span></div>`, with `.pin-anchor span { background: var(--ink); color: var(--paper); }` (and the current pin then takes a ring instead of ink), and it is in the frame with the shapes.
+When a page has an anchor, such as the office a commute runs to or the hotel the restaurants are near, give the anchor a star in the page's ink instead of a number. The numbered pins then read as the choices, and the star as the fixed point. It is a DOM marker like the others, `<div class="pin pin-anchor"><span><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="m8 1.5 1.9 4.1 4.5.5-3.4 3 1 4.4L8 11.2l-3.9 2.3 1-4.4-3.4-3 4.5-.5z"/></svg></span></div>`, with `.pin-anchor span { background: var(--ink); color: var(--paper); }` (and the current pin then takes a ring instead of ink), and it is in the frame with the shapes.
 
 ## Framing
 
@@ -260,7 +260,7 @@ A page with an anchor, the office the commute runs to, the hotel the restaurants
 
 ## A map inside a longer page
 
-A site-visit plan, a day sheet, a house manual or a neighborhood guide is a document with a map in it rather than a map with a card on it. The script in `skeleton.html` carries over nearly whole: the places are still read from the list, the pins are still DOM, and the plain drawing to scale still stands in when the library or the streets never arrive. Four things change.
+A site-visit plan, a day sheet, a house manual or a neighborhood guide is a document with a map in it, rather than a map with a card on it. Nearly all of the script in `skeleton.html` carries over. The places are still read from the list, the pins are still DOM elements, and the plain drawing to scale still stands in when the library or the streets never arrive. Four things change.
 
 - **The page scrolls, so the map must not eat the scroll.** Pass `cooperativeGestures: true` to the `Map`, on a touch screen at least: one finger, or a wheel where it is on, scrolls the page, and a modifier key or two fingers moves the map, with MapLibre's own hint saying so. Without it a reader on a phone who lands on the map cannot get past it.
 - **The container is a box, not the window.** Give it a height in the page's own style (`height: 60vh` on a phone; `position: sticky; top: 1rem; height: calc(100vh - 2rem)` beside the list in a `.split` on a laptop), drop the `fixed` main, and let the list be ordinary page content, and frame with an even padding, since there is no card to keep clear of.

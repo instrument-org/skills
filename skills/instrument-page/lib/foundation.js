@@ -191,6 +191,79 @@
           ?.addEventListener("load", highlight);
     }
 
+    // Flow connectors: a node on one box's edge, a fine line, an arrowhead that
+    // touches the next box. Where the next box starts a new row, the line drops
+    // from the bottom of one box, runs along the gap and turns down into the next.
+    const NS = "http://www.w3.org/2000/svg";
+    const drawFlow = (ol) => {
+      ol.querySelector(":scope > svg.flow-lines")?.remove();
+      const boxes = [...ol.children].filter((el) => el.tagName === "LI");
+      if (boxes.length < 2 || !ol.offsetParent) return;
+      const o = ol.getBoundingClientRect();
+      const r = boxes.map((li) => {
+        const b = li.getBoundingClientRect();
+        return {
+          l: b.left - o.left,
+          r: b.right - o.left,
+          t: b.top - o.top,
+          b: b.bottom - o.top,
+          cx: (b.left + b.right) / 2 - o.left,
+          cy: (b.top + b.bottom) / 2 - o.top,
+        };
+      });
+      let d = "";
+      const dots = [];
+      for (let i = 1; i < r.length; i++) {
+        const a = r[i - 1];
+        const b = r[i];
+        if (b.t < a.b - 2 && b.l >= a.r - 2) {
+          const y = a.cy;
+          d += `M${a.r} ${y}H${b.l}M${b.l - 5} ${y - 3.5}L${b.l} ${y}L${b.l - 5} ${y + 3.5}`;
+          dots.push([a.r, y]);
+        } else {
+          const mid = (a.b + b.t) / 2;
+          const turn = Math.min(
+            10,
+            (b.t - a.b) / 2 - 1,
+            Math.abs(b.cx - a.cx) / 2,
+          );
+          const s = Math.sign(b.cx - a.cx);
+          d += `M${a.cx} ${a.b}`;
+          d += s
+            ? `V${mid - turn}Q${a.cx} ${mid} ${a.cx + s * turn} ${mid}H${b.cx - s * turn}Q${b.cx} ${mid} ${b.cx} ${mid + turn}V${b.t}`
+            : `V${b.t}`;
+          d += `M${b.cx - 3.5} ${b.t - 5}L${b.cx} ${b.t}L${b.cx + 3.5} ${b.t - 5}`;
+          dots.push([a.cx, a.b]);
+        }
+      }
+      const svg = document.createElementNS(NS, "svg");
+      svg.setAttribute("class", "flow-lines");
+      svg.setAttribute("aria-hidden", "true");
+      svg.setAttribute("fill", "none");
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("d", d);
+      svg.append(path);
+      for (const [x, y] of dots) {
+        const c = document.createElementNS(NS, "circle");
+        c.setAttribute("cx", x);
+        c.setAttribute("cy", y);
+        c.setAttribute("r", 2.25);
+        svg.append(c);
+      }
+      ol.append(svg);
+      ol.classList.add("drawn");
+    };
+    const flows = [...document.querySelectorAll("ol.flow")];
+    if (flows.length) {
+      const redraw = () => flows.forEach(drawFlow);
+      redraw();
+      document.fonts?.ready.then(redraw);
+      if (window.ResizeObserver) {
+        const watch = new ResizeObserver(() => requestAnimationFrame(redraw));
+        for (const ol of flows) watch.observe(ol);
+      }
+    }
+
     // The section strip: one link per top-level section, the one in view marked.
     const sections = [
       ...document.querySelectorAll(

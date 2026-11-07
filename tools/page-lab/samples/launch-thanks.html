@@ -1,0 +1,74 @@
+<!doctype html>
+<!-- direction: reader="the whole company, on the big screen at Friday all-hands, then the link in chat" point="offline mode reached 3,200 teams in its first week, more than the quarter's goal" conflicts="the launch post says 3,000 teams; the Friday export says 3,214: the export holds, rounded down" layout=wide feel=bold hero="three big numbers, then the people who made it, one card each" -->
+<html lang="en" data-layout="wide" data-feel="bold">
+<head>
+<title>Offline mode reached 3,200 teams in one week</title>
+<meta name="description" content="Offline mode shipped Oct 26 and 3,200 teams turned it on in the first week, past the quarter's goal of 2,500.">
+<!-- lab -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="../../../skills/instrument-page/lib/foundation.css">
+<script src="../../../skills/instrument-page/lib/foundation.js"></script>
+<script src="../lab.js"></script>
+<!-- /lab -->
+<style>
+  .days { position: relative; height: calc(var(--bar) * 32); display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.4rem; }
+  .days > div { display: grid; grid-template-rows: 1fr auto; gap: 0.5rem; min-width: 0; }
+  .days .b { position: relative; z-index: 1; align-self: end; height: var(--v); background: var(--fill); border-radius: calc(var(--radius) * 0.4) calc(var(--radius) * 0.4) 0 0; }
+  .days .b.past { background: var(--accent); color: var(--accent-ink); }
+  .days .b b { position: absolute; top: 0.5rem; left: 0; right: 0; text-align: center; font-size: 0.82rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .days small { height: 1.25rem; line-height: 1.25rem; text-align: center; color: var(--muted); font-size: 0.8rem; }
+  .days .goal { position: absolute; left: 0; right: 0; bottom: calc(1.75rem + (100% - 1.75rem) * 0.735); border-top: 1px dashed var(--muted); }
+  .days .goal span { position: absolute; left: 0; bottom: 0.3rem; font-size: 0.78rem; font-style: normal; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <hgroup>
+    <p>All-hands · Friday, Nov 6 · from the launch export</p>
+    <h1>Offline mode reached 3,200 teams in one week</h1>
+    <p>We passed the quarter's goal of 2,500 on day five. Thank you to the six people who built it.</p>
+  </hgroup>
+</header>
+
+<section class="hero">
+  <div class="split" style="--side: 18rem">
+    <figure>
+      <div class="days" role="img" aria-label="Teams with offline mode on, by day: 900, 1,520, 2,010, 2,430, 2,760, 2,980, 3,214; goal 2,500 passed on day 5">
+        <i class="goal" style="--v: 73.5%"><span>goal 2,500</span></i>
+        <div><span class="b" style="--v: 26.5%"><b>900</b></span><small>Mon</small></div>
+        <div><span class="b" style="--v: 44.7%"><b>1,520</b></span><small>Tue</small></div>
+        <div><span class="b" style="--v: 59.1%"><b>2,010</b></span><small>Wed</small></div>
+        <div><span class="b" style="--v: 71.5%"><b>2,430</b></span><small>Thu</small></div>
+        <div><span class="b past" style="--v: 81.2%"><b>2,760</b></span><small>Fri</small></div>
+        <div><span class="b past" style="--v: 87.6%"><b>2,980</b></span><small>Sat</small></div>
+        <div><span class="b past" style="--v: 94.5%"><b>3,214</b></span><small>Sun</small></div>
+      </div>
+      <figcaption>Teams with offline mode on, by the end of each day.</figcaption>
+    </figure>
+    <p class="stat" data-tone="accent"><b>Day 5</b><span>when we passed the quarter's goal of 2,500</span></p>
+  </div>
+</section>
+
+<section>
+  <h2>The team</h2>
+  <div class="grid" style="--min: 20rem">
+    <div class="panel" data-c="1"><h3>Rosa</h3><p>Wrote the sync engine and its conflict rules.</p></div>
+    <div class="panel" data-c="2"><h3>Kenji</h3><p>Made every screen work with no connection.</p></div>
+    <div class="panel" data-c="3"><h3>Amara</h3><p>Tested on the worst train Wi-Fi in the city.</p></div>
+    <div class="panel" data-c="4"><h3>Owen</h3><p>Ran the beta with 40 teams.</p></div>
+    <div class="panel" data-c="5"><h3>Lin</h3><p>Designed the offline badge and sync states.</p></div>
+    <div class="panel" data-c="6"><h3>Sam</h3><p>Wrote the launch post and the help pages.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Beta feedback</h2>
+  <blockquote><p>We ran a whole site survey in a basement and it all synced when we walked out.</p><footer>Field lead at a beta team, Oct 9</footer></blockquote>
+</section>
+
+<footer><p>Sample page for the design lab. The product, people and figures are made up.</p></footer>
+</body>
+</html>

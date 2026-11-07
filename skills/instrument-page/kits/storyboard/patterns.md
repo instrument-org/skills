@@ -1,15 +1,15 @@
 # Storyboard patterns
 
-Vocabulary only a storyboard uses. The page is plain HTML on the stylesheet: a header, a `.grid` of `<figure>`s marked `hero`, and a footer saying what the beats rest on. What takes work is the panels, and the panels are composed from the kit below.
+These are the techniques only a storyboard needs. The page is plain HTML on the stylesheet, with a header, a `.grid` of `<figure>`s marked `hero`, and a footer saying what the beats are based on. The work is in the panels, which you compose from the kit below.
 
 ## The kit
 
-It ships, in both languages, as a library you import rather than code to copy:
+The kit ships in both languages, as a library you import rather than code you copy:
 
 - `<skill>/kits/storyboard/scripts/panels.mjs`: `node`, no dependencies
 - `<skill>/kits/storyboard/scripts/panels.py`: `python`, no dependencies
 
-The same functions, the same arguments, the same SVG out; take whichever language the rest of the task is in. Run either directly (`node panels.mjs`, `python panels.py`) to print a sample panel and check it runs in your environment.
+Both versions have the same functions and arguments and produce the same SVG, so use whichever language the rest of the task is in. Run either directly (`node panels.mjs`, `python panels.py`) to print a sample panel and check it runs in your environment.
 
 Write a script of your own, import the kit **by its full path from where you are**, build each panel as a list of pieces, and paste the SVG it prints into the page. Every piece is positioned against the panel's floor, which `FLOOR(h)` gives for a panel of height `h`, so a panel of any aspect keeps everyone on the ground.
 
@@ -63,7 +63,7 @@ const svg = panel(
 
 ## Draw order
 
-Back to front, always: the floor, the set behind the person, the person, the set in front of the person, then bubbles and labels. Furniture with a `part` option is the set that has a front: `sofa` and `chair`. `counter` is drawn after the person behind it, so they show from the chest up; `desk` has a filled top for the same reason.
+Always draw from back to front: the floor, the set behind the person, the person, the set in front of the person, and then bubbles and labels. Furniture with a `part` option is the set that has a front: `sofa` and `chair`. `counter` is drawn after the person behind it, so they show from the chest up; `desk` has a filled top for the same reason.
 
 ```js
 panel([
@@ -74,7 +74,7 @@ panel([
 ]);
 ```
 
-## The three shapes
+## The three forms
 
 **Moments in a day.** 400 by 300 panels in a grid of three, a number top left, a time top right, the caption under, a line of speech under that in italic when there is one.
 
