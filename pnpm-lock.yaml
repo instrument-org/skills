@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@instrument-org/agent-hooks':
         specifier: github:instrument-org/agent-hooks
-        version: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/145a5c567c09b3a7f200296f22ac3c433f883b39
+        version: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/f1c21302af9ed821dcfacf35fb652c87bdcad4db
       '@types/node':
         specifier: 24.13.1
         version: 24.13.1
@@ -392,8 +392,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/145a5c567c09b3a7f200296f22ac3c433f883b39':
-    resolution: {gitHosted: true, integrity: sha512-y+/VUrrKuzw09d1JAkII/HAto9befhYikhMtBhIXndE7DuzZndteqwVEIw7BY2a5CikeTnLPw0yT/w4abGldHQ==, tarball: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/145a5c567c09b3a7f200296f22ac3c433f883b39}
+  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/f1c21302af9ed821dcfacf35fb652c87bdcad4db':
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/instrument-org/agent-hooks/tar.gz/f1c21302af9ed821dcfacf35fb652c87bdcad4db}
     version: 1.6.0
     engines: {node: '>=22'}
 
@@ -2023,7 +2023,7 @@ snapshots:
   '@esbuild/win32-x64@0.27.7':
     optional: true
 
-  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/145a5c567c09b3a7f200296f22ac3c433f883b39': {}
+  '@instrument-org/agent-hooks@https://codeload.github.com/instrument-org/agent-hooks/tar.gz/f1c21302af9ed821dcfacf35fb652c87bdcad4db': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
