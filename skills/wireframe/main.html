@@ -377,9 +377,12 @@
         #pair[hidden] {
           display: none;
         }
+        /* Opacity, not visibility: an element inside a frame that sets its
+           own visibility would show through a hidden stage. */
         #viewer[data-two] #stage,
         #viewer[data-two] #viewer-map {
-          visibility: hidden;
+          opacity: 0;
+          pointer-events: none;
         }
         #pair .pane {
           min-width: 0;
