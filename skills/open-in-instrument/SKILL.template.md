@@ -5,11 +5,29 @@ description: "Use when your reply points the person to something you made or cha
 
 # Open in Instrument
 
-Instrument is a desktop app that views HTML pages, folders, images, video, PDFs, Markdown and more. When you made something for the person to look at, give each output a link that opens it there in one click. The link goes to a page on tryinstrument.com: if Instrument is installed it hands the path to the app, and if not it offers Copy path and Get Instrument. So the link is right either way, and you never need to know whether the person has the app. Don't tell them they have it, or that anything opened: you can't know either.
+Instrument is a desktop app that views the kinds of file listed under What Instrument opens, and folders. When you made something of those kinds for the person to look at, give each output a link that opens it there in one click. The link goes to a page on tryinstrument.com: if Instrument is installed it hands the path to the app, and if not it offers Copy path and Get Instrument. So the link is right either way, and you never need to know whether the person has the app. Don't tell them they have it, or that anything opened: you can't know either.
 
 Inside Instrument, where `$INSTRUMENT_WORK` is set, the person is already in the app and its chat opens a file you name: give the path and skip the link.
 
 `<skill>` below is the full path to this skill's folder: `$INSTRUMENT_SKILL_DIR` inside Instrument, and the folder this file sits in anywhere else. Run the command from your work folder.
+
+## What Instrument opens
+
+Link only these. For any other file, give the path with no link: the app would show a card saying it has no preview, which is worse than no link.
+
+- Pages: `.html`, `.htm`
+- Markdown: `.md`, `.markdown`, `.mdx`, `.mdown`, `.mkd`
+- Images: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.avif`, `.svg`, `.heic`, `.heif`, `.bmp`, `.tif`, `.tiff`, `.ico`
+- Video: `.mp4`, `.m4v`, `.mov`, `.webm`, `.ogv`
+- Audio: `.mp3`, `.m4a`, `.aac`, `.wav`, `.flac`, `.ogg`, `.oga`, `.opus`
+- PDF: `.pdf`, and Illustrator `.ai` saved PDF-compatible
+- Office: `.docx`, `.docm`, `.xlsx`, `.xlsm`, `.xls`, `.pptx`, `.pptm`, `.ppt`
+- Data: `.csv`, `.tsv`, `.jsonl`, `.ndjson`, `.parquet`, `.sqlite`, `.sqlite3`, `.db`, `.ipynb`
+- Drawings: `.excalidraw`
+- Folders: a folder of outputs opens as a browsable listing with thumbnails
+- Code and plain text, `.json`, `.txt`, `.log` and source files, open as highlighted text. Link one only when reading it is the point, such as a report written as text.
+
+Shown as a preview image only, not the document: Apple `.pages`, `.numbers`, `.key`, and Photoshop `.psd`. A `.zip` opens as a listing of its members. Other archives, `.doc`, `.rtf` and `.epub` do not open.
 
 ## Build the line with the command
 
