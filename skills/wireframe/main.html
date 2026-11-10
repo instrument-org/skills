@@ -96,6 +96,9 @@
         .tone-indigo {
           --tone: light-dark(#4f46e5, #a5b4fc);
         }
+        .tone-plain {
+          --tone: light-dark(#57534e, #f5f5f4);
+        }
         .tone-tag {
           background: var(--tone);
           color: light-dark(#fff, #1c1917);
@@ -342,7 +345,9 @@
         #viewer-top .controls > button[aria-pressed="true"] {
           color: var(--vw-ink);
         }
-        #viewer-top .controls > button[aria-pressed="true"] {
+        /* A switch that is on, Marks or Two up, takes a quiet fill. */
+        #viewer #viewer-top .controls > button[aria-pressed="true"] {
+          background: rgb(255 255 255 / 0.14);
           border-color: rgb(255 255 255 / 0.4);
         }
         #viewer-counter,
@@ -355,6 +360,84 @@
         #viewer-zoom {
           gap: 0.375rem;
           padding-right: 0.5rem;
+        }
+        /* Two up: the open frame and a second one side by side, each fitted
+           to half the stage, with its label, title and note above it. A
+           phone has no room for two, so it keeps one. */
+        #pair {
+          position: absolute;
+          left: 0;
+          right: 0;
+          z-index: 1;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 1.5rem;
+          padding: 0.75rem 1.5rem 1rem;
+        }
+        #pair[hidden] {
+          display: none;
+        }
+        #viewer[data-two] #stage,
+        #viewer[data-two] #viewer-map {
+          visibility: hidden;
+        }
+        #pair .pane {
+          min-width: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+          gap: 0.5rem;
+        }
+        #pair .pane-head {
+          font-size: 12px;
+          line-height: 16px;
+          height: 32px;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          color: var(--vw-dim);
+        }
+        #pair .pane-head .font-medium {
+          color: var(--vw-ink);
+        }
+        #pair .tag-slot {
+          display: inline-flex;
+          align-items: center;
+          height: 16px;
+          margin-right: 0.25rem;
+          vertical-align: top;
+        }
+        #pair .tone-tag {
+          height: 15px;
+          min-width: 15px;
+          font-size: 10px;
+        }
+        #pair .pane-slot {
+          flex: 1;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+        }
+        #pair .pane-slot .frame {
+          outline: none;
+        }
+        #viewer-strip button.partner {
+          opacity: 1;
+          outline: 1.5px solid var(--tone);
+          outline-offset: 2px;
+        }
+        #pair .pane-slot .frame {
+          cursor: zoom-in;
+        }
+        @media (max-width: 640px) {
+          #viewer-top [data-two] {
+            display: none;
+          }
         }
         #viewer-zoom[hidden] {
           display: none;
@@ -379,13 +462,33 @@
         #viewer-bottom[data-open] .row {
           align-items: flex-end;
         }
+        /* The band keeps one height whatever the note: the row always holds
+           two caption lines, and the group tag fits inside a line. Were a
+           one-line note shorter, the frame would refit at every step. */
+        #viewer-bottom .row {
+          min-height: 2rem;
+        }
+        #viewer-caption .tag-slot {
+          display: inline-flex;
+          align-items: center;
+          height: 16px;
+          margin-right: 0.25rem;
+          vertical-align: top;
+        }
+        #viewer-caption .tone-tag {
+          height: 15px;
+          min-width: 15px;
+          font-size: 10px;
+        }
         /* The strip: a bar per frame in runs by group, centered over the
            caption so it holds still from frame to frame. The open frame's bar
            is the large one, frames before it are half lit, and frames to come
            are faint. */
         #viewer-strip {
           display: flex;
+          align-items: center;
           justify-content: center;
+          height: 10px;
           margin: 0.125rem auto 0.5rem;
           max-width: 48rem;
         }
@@ -571,6 +674,9 @@
             <button id="viewer-zoom" hidden title="Back to fit (0)" aria-label="Back to fit" class="rounded-lg font-mono text-[11px] tabular-nums"><span data-chrome-text></span><i class="ph ph-x text-sm"></i></button>
           </div>
           <div class="controls">
+            <button data-two title="Two frames side by side (T)" aria-label="Two up" aria-pressed="false" class="flex items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium">
+              <i class="ph ph-columns text-sm"></i><span class="hidden sm:inline" data-chrome-text="Two up"></span>
+            </button>
             <button data-marks title="Show the annotations (A)" aria-label="Marks" aria-pressed="false" class="flex items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium">
               <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline" data-chrome-text="Marks"></span>
             </button>
@@ -1266,7 +1372,7 @@
           stage.querySelector(".frame")?.remove();
           mount(copy);
           const g = groupOf(index);
-          const tagged = g && label(index) ? `<span class="mr-1 inline-block align-[1px]">${groupTag(g, label(index))}</span>` : lead(index);
+          const tagged = g && label(index) ? `<span class="tag-slot">${groupTag(g, label(index))}</span>` : lead(index);
           viewerCaption.innerHTML = `<span class="font-medium">${tagged}${state.title}.</span> ${state.note}`;
           viewerCounter.textContent = `${index + 1} / ${states.length}`;
           paintStrip(index);
@@ -1290,18 +1396,28 @@
         const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
 
         // ---- the strip -------------------------------------------------------
-        // Only a page with groups has one. A tap on a bar opens that frame.
+        // Only a page with groups has one. Every frame gets a bar, in page
+        // order, in runs: a group's frames in its color, and frames outside
+        // any group, such as a lead-in shared by every option, in a neutral
+        // run of their own. A tap on a bar opens that frame.
         const viewerStrip = document.querySelector("#viewer-strip");
         function paintStrip(index) {
           viewerStrip.hidden = groupKeys.length === 0;
           if (viewerStrip.hidden) return;
+          const runs = [];
+          states.forEach((_, i) => {
+            const g = groupOf(i);
+            const last = runs.at(-1);
+            if (last && last.k === (g?.k ?? -1)) last.frames.push(i);
+            else runs.push({ k: g?.k ?? -1, tone: g ? `tone-${g.tone}` : "tone-plain", frames: [i] });
+          });
           const g = groupOf(index);
           const name = g ? `<span class="name tone-${g.tone}">${g.name}</span>` : "";
-          viewerStrip.innerHTML = `<div class="bars">${name}${groupKeys
+          viewerStrip.innerHTML = `<div class="bars">${name}${runs
             .map(
-              (_, k) =>
-                `<span class="run tone-${groupAt(k).tone}">${inGroup(k)
-                  .map((i) => `<button data-go="${i}" title="${lead(i)}${states[i].title}" aria-label="${lead(i)}${states[i].title}" class="${i < index ? "passed" : ""}"${i === index ? " aria-current=\"true\"" : ""}></button>`)
+              (run) =>
+                `<span class="run ${run.tone}">${run.frames
+                  .map((i) => `<button data-go="${i}" title="${lead(i)}${states[i].title}" aria-label="${lead(i)}${states[i].title}" class="${i < index ? "passed" : ""}"${i === index ? ' aria-current="true"' : ""}></button>`)
                   .join("")}</span>`,
             )
             .join("")}</div>`;
@@ -1321,6 +1437,101 @@
           showFrame(next[Math.min(at, next.length - 1)]);
         };
 
+        // ---- two up ----------------------------------------------------------
+        // T in the enlarged view puts a second frame beside the open one. Left
+        // and right step both, and up and down move the right one to the same
+        // place in another set, so Now 2 can sit beside A2, then B2. A zoom
+        // key, or a tap on either frame, goes back to that one frame alone,
+        // where the zoom works.
+        const pair = document.createElement("div");
+        pair.id = "pair";
+        pair.hidden = true;
+        viewer.append(pair);
+        const twoButton = viewerTop.querySelector("[data-two]");
+        let twoUp = false;
+        let offset = 1;
+        const partner = () => Math.min(states.length - 1, Math.max(0, openIndex + (offset || 1)));
+        const pane = (i) => {
+          const g = groupOf(i);
+          const copy = rack.querySelectorAll(".frame")[i].cloneNode(true);
+          return `<figure class="pane" data-index="${i}"><figcaption class="pane-head">${g && label(i) ? `<span class="tag-slot">${groupTag(g, label(i))}</span>` : lead(i)}<span class="font-medium">${states[i].title}.</span> <span class="opacity-70">${states[i].note}</span></figcaption><div class="pane-slot">${copy.outerHTML}</div></figure>`;
+        };
+        const paintPair = () => {
+          if (!twoUp || openIndex < 0) return;
+          const right = partner();
+          pair.style.top = `${topReserve()}px`;
+          pair.style.bottom = `${bottomH}px`;
+          pair.innerHTML = pane(openIndex) + pane(right);
+          for (const slot of pair.querySelectorAll(".pane-slot")) {
+            const f = slot.firstElementChild;
+            f.style.transform = "";
+            f.style.setProperty("--s", 0.01);
+            const s = Math.min(slot.clientWidth / Number(f.dataset.w), slot.clientHeight / Number(f.dataset.h));
+            f.style.setProperty("--s", s);
+          }
+          for (const b of viewerStrip.querySelectorAll("[data-go]")) b.classList.toggle("partner", Number(b.dataset.go) === right);
+          viewerCaption.innerHTML = `<span class="font-medium">Two up.</span> Left and right step both frames. Up and down move the right one to the same place in another set.`;
+        };
+        // On a page of sets the right side starts at the same place in the
+        // next set, so the first view is the comparison; otherwise it is the
+        // next frame.
+        const firstPartner = () => {
+          const g = groupOf(openIndex);
+          if (!g || groupKeys.length < 2) return 1;
+          const at = inGroup(g.k).indexOf(openIndex);
+          const next = inGroup((g.k + 1) % groupKeys.length);
+          return next[Math.min(at, next.length - 1)] - openIndex;
+        };
+        function setTwoUp(on) {
+          if (on && (states.length < 2 || innerWidth <= 640)) return;
+          twoUp = on;
+          offset = on ? firstPartner() : 1;
+          pair.hidden = !on;
+          viewer.toggleAttribute("data-two", on);
+          twoButton.setAttribute("aria-pressed", String(on));
+          if (on) {
+            toFit(false);
+            paintPair();
+          } else showFrame(openIndex);
+        }
+        pair.addEventListener("click", (event) => {
+          const chosen = event.target.closest(".pane");
+          if (!chosen) return;
+          setTwoUp(false);
+          showFrame(Number(chosen.dataset.index));
+        });
+        new MutationObserver(() => requestAnimationFrame(paintPair)).observe(viewerCounter, { childList: true, characterData: true, subtree: true });
+        addEventListener("resize", () => requestAnimationFrame(paintPair));
+        viewer.addEventListener("close", () => {
+          if (!twoUp) return;
+          twoUp = false;
+          pair.hidden = true;
+          viewer.removeAttribute("data-two");
+          twoButton.setAttribute("aria-pressed", "false");
+        });
+        document.addEventListener(
+          "keydown",
+          (event) => {
+            if (!viewer.open || event.metaKey || event.ctrlKey || event.altKey) return;
+            if (event.key === "t" || event.key === "T") {
+              event.preventDefault();
+              return setTwoUp(!twoUp);
+            }
+            if (twoUp && zoomKeys.has(event.key)) return setTwoUp(false);
+            if (!twoUp || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            const right = partner();
+            const g = groupOf(right);
+            if (!g || groupKeys.length < 2) return;
+            const at = inGroup(g.k).indexOf(right);
+            const next = inGroup((g.k + (event.key === "ArrowDown" ? 1 : -1) + groupKeys.length) % groupKeys.length);
+            offset = next[Math.min(at, next.length - 1)] - openIndex;
+            paintPair();
+          },
+          true,
+        );
+
         rack.addEventListener("click", (event) => {
           const frame = event.target.closest(".frame");
           if (!frame) return;
@@ -1331,6 +1542,7 @@
           const button = event.target.closest(".controls button");
           if (!button) return;
           if (button.dataset.marks !== undefined) return flipMarks();
+          if (button.dataset.two !== undefined) return setTwoUp(!twoUp);
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
