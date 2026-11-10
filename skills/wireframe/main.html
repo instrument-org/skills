@@ -75,9 +75,9 @@
         #rack .tile {
           transition: background-color 120ms ease-out;
         }
-        /* Group colors. Each tone sets --tone for both themes, and the
-           classes after it paint a group's tag, its tiles' top edge and its
-           bars in the enlarged view's strip. */
+        /* Group colors. Each tone sets --tone for both themes, which paints a
+           group's rule in the grid, its mark and labels, and its bars in the
+           enlarged view's strip. */
         .tone-gray {
           --tone: light-dark(#78716c, #d6d3d1);
         }
@@ -99,21 +99,22 @@
         .tone-plain {
           --tone: light-dark(#57534e, #f5f5f4);
         }
-        .tone-tag {
-          background: var(--tone);
-          color: light-dark(#fff, #1c1917);
+        .tone-text {
+          color: var(--tone);
         }
-        .tone-edge {
-          box-shadow: inset 0 3px 0 var(--tone);
-        }
-        /* A group's tag leading a caption sits inside the line, so a caption
-           with a tag is exactly as tall as one without. */
-        .tag-slot {
-          display: inline-flex;
-          align-items: center;
-          height: 1lh;
-          margin-right: 0.25rem;
-          vertical-align: top;
+        /* A group in the grid: its heading and tiles behind one rule in its
+           color down the left margin, so where it starts and ends shows at a
+           glance and the tiles stay on the plain page. The section sits in
+           the page's gutter, so its tiles are exactly as wide as loose ones,
+           and keeps the rack's columns and gap. */
+        #rack .group {
+          grid-column: 1 / -1;
+          display: grid;
+          grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr));
+          gap: 0.5rem;
+          margin: 0 0 1.25rem -1rem;
+          padding-left: 13px;
+          border-left: 3px solid var(--tone);
         }
         #rack .tile:hover {
           background-color: color-mix(in oklab, var(--color-card) 95%, var(--color-foreground));
@@ -396,11 +397,6 @@
         }
         #viewer-bottom[data-open] .row {
           align-items: flex-end;
-        }
-        #viewer .tone-tag {
-          height: 15px;
-          min-width: 15px;
-          font-size: 10px;
         }
         /* The strip: a bar per frame in runs by group, centered over the
            caption so it holds still from frame to frame. The open frame's bar
@@ -911,7 +907,6 @@
         };
         const groupOf = (i) => (groupKeys.includes(states[i].group) ? groupAt(groupKeys.indexOf(states[i].group)) : null);
         const inGroup = (k) => states.flatMap((s, i) => (s.group === groupKeys[k] ? [i] : []));
-        const startsGroup = (i) => Boolean(groupOf(i)) && (i === 0 || states[i - 1].group !== states[i].group);
         const label = (i) => {
           const g = groupOf(i);
           const n = states.slice(0, i + 1).filter((_, j) => (groupOf(j)?.k ?? -1) === (g?.k ?? -1)).length;
@@ -921,30 +916,19 @@
         };
         // The label as it leads a line of text: "B2 Pricing", "3. Pricing".
         const lead = (i) => (label(i) ? `${label(i)}${groupOf(i) ? " " : ". "}` : "");
-        const groupTag = (g, text) =>
-          `<span class="tone-${g.tone} tone-tag inline-grid h-[18px] min-w-[18px] place-items-center rounded-[4px] px-1 font-mono text-[11px] leading-none font-semibold">${text}</span>`;
-        // A set opens with one slim line across the grid: its mark, its name
-        // and its note, so the grid still reads as tiles.
-        const heading = (i) => {
-          if (!startsGroup(i)) return "";
-          const g = groupOf(i);
-          return `<div class="col-span-full flex min-w-0 flex-wrap items-center gap-x-2 px-1 text-[12px] leading-5 ${i ? "pt-3" : ""}">${g.mark ? groupTag(g, g.mark) : ""}<span class="font-semibold">${g.name}</span><span class="text-muted-foreground">${g.note}</span></div>`;
-        };
-        // The label as it leads a title in a caption: the group's tag, or
-        // "3. " for a frame outside any group.
+        // A group's heading: its mark in its color, its name, and its note.
+        const heading = (g) =>
+          `<div class="col-span-full flex min-w-0 flex-wrap items-baseline gap-x-2 px-1 text-[12px] leading-5">${g.mark ? `<span class="tone-${g.tone} tone-text font-semibold">${g.mark}</span>` : ""}<span class="font-semibold">${g.name}</span><span class="text-muted-foreground">${g.note}</span></div>`;
+        // The label as it leads a title in a caption: the group's mark and
+        // place in its color, or "3. " for a frame outside any group.
         const labelHtml = (i) => {
           const g = groupOf(i);
           if (!g) return `${label(i)}. `;
-          return label(i) ? `<span class="tag-slot">${groupTag(g, label(i))}</span>` : "";
+          return label(i) ? `<span class="tone-${g.tone} tone-text mr-1 font-mono font-semibold">${label(i)}</span>` : "";
         };
 
-        // In a caption the number takes a column of its own, so every line of
-        // the note starts at the title's left edge. The badge stays inline
-        // inside that column to keep the size it has in a line of text.
-        rack.innerHTML = states
-          .map(
-            (state, i) => `${heading(i)}
-          <figure class="${groupOf(i) ? `tone-${groupOf(i).tone} tone-edge` : ""} tile m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
+        const tileHtml = (state, i) => `
+          <figure class="tile m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
             <div class="slot flex h-[var(--slot-h)] items-center justify-center">
               <div
                 class="frame w-[calc(var(--w)*var(--s))] cursor-zoom-in overflow-hidden rounded-sm ring-[0.5px] ring-border h-[calc(var(--h)*var(--s))]"
@@ -958,8 +942,19 @@
             <figcaption class="mt-3 text-xs leading-5 text-muted-foreground/80">
               <span class="font-medium text-foreground/70">${labelHtml(i)}${state.title}.</span> ${state.note}
             </figcaption>
-          </figure>`,
-          )
+          </figure>`;
+
+        // Frames in page order: a run of one group's frames goes into one
+        // section under its heading, and a frame outside any group stands
+        // loose in the grid.
+        const runs = [];
+        states.forEach((state, i) => {
+          const g = groupOf(i);
+          if (g && runs.at(-1)?.g?.k === g.k) runs.at(-1).tiles.push(tileHtml(state, i));
+          else runs.push({ g, tiles: [tileHtml(state, i)] });
+        });
+        rack.innerHTML = runs
+          .map(({ g, tiles }) => (g ? `<section class="group tone-${g.tone}">${heading(g)}${tiles.join("")}</section>` : tiles.join("")))
           .join("");
 
         // ---- marks -----------------------------------------------------------
