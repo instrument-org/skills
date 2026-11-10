@@ -106,6 +106,15 @@
         .tone-edge {
           box-shadow: inset 0 3px 0 var(--tone);
         }
+        /* A group's tag leading a caption sits inside the line, so a caption
+           with a tag is exactly as tall as one without. */
+        .tag-slot {
+          display: inline-flex;
+          align-items: center;
+          height: 1lh;
+          margin-right: 0.25rem;
+          vertical-align: top;
+        }
         #rack .tile:hover {
           background-color: color-mix(in oklab, var(--color-card) 95%, var(--color-foreground));
         }
@@ -361,87 +370,6 @@
           gap: 0.375rem;
           padding-right: 0.5rem;
         }
-        /* Two up: the open frame and a second one side by side, each fitted
-           to half the stage, with its label, title and note above it. A
-           phone has no room for two, so it keeps one. */
-        #pair {
-          position: absolute;
-          left: 0;
-          right: 0;
-          z-index: 1;
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-          gap: 1.5rem;
-          padding: 0.75rem 1.5rem 1rem;
-        }
-        #pair[hidden] {
-          display: none;
-        }
-        /* Opacity, not visibility: an element inside a frame that sets its
-           own visibility would show through a hidden stage. */
-        #viewer[data-two] #stage,
-        #viewer[data-two] #viewer-map {
-          opacity: 0;
-          pointer-events: none;
-        }
-        #pair .pane {
-          min-width: 0;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-          gap: 0.5rem;
-        }
-        #pair .pane-head {
-          font-size: 12px;
-          line-height: 16px;
-          height: 32px;
-          overflow: hidden;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-          color: var(--vw-dim);
-        }
-        #pair .pane-head .font-medium {
-          color: var(--vw-ink);
-        }
-        #pair .tag-slot {
-          display: inline-flex;
-          align-items: center;
-          height: 16px;
-          margin-right: 0.25rem;
-          vertical-align: top;
-        }
-        #pair .tone-tag {
-          height: 15px;
-          min-width: 15px;
-          font-size: 10px;
-        }
-        #pair .pane-slot {
-          flex: 1;
-          min-width: 0;
-          min-height: 0;
-          overflow: hidden;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-        }
-        #pair .pane-slot .frame {
-          outline: none;
-        }
-        #viewer-strip button.partner {
-          opacity: 1;
-          outline: 1.5px solid var(--tone);
-          outline-offset: 2px;
-        }
-        #pair .pane-slot .frame {
-          cursor: zoom-in;
-        }
-        @media (max-width: 640px) {
-          #viewer-top [data-two] {
-            display: none;
-          }
-        }
         #viewer-zoom[hidden] {
           display: none;
         }
@@ -455,30 +383,21 @@
           background: var(--vw-pill);
           border-top: 1px solid var(--vw-line);
         }
+        /* The band keeps one height whatever the note: the row always holds
+           two caption lines, and a group's tag fits inside a line. Were a
+           one-line note shorter, the frame would refit at every step. */
         #viewer-bottom .row {
           display: flex;
           align-items: center;
           gap: 0.5rem;
           margin: 0 auto;
           max-width: 48rem;
+          min-height: 2rem;
         }
         #viewer-bottom[data-open] .row {
           align-items: flex-end;
         }
-        /* The band keeps one height whatever the note: the row always holds
-           two caption lines, and the group tag fits inside a line. Were a
-           one-line note shorter, the frame would refit at every step. */
-        #viewer-bottom .row {
-          min-height: 2rem;
-        }
-        #viewer-caption .tag-slot {
-          display: inline-flex;
-          align-items: center;
-          height: 16px;
-          margin-right: 0.25rem;
-          vertical-align: top;
-        }
-        #viewer-caption .tone-tag {
+        #viewer .tone-tag {
           height: 15px;
           min-width: 15px;
           font-size: 10px;
@@ -546,6 +465,65 @@
         }
         #viewer-strip button:hover {
           opacity: 1;
+        }
+        #viewer-strip button.partner {
+          opacity: 1;
+          outline: 1.5px solid var(--tone);
+          outline-offset: 2px;
+        }
+        /* Two up: the open frame and a second one side by side between the
+           bands, each fitted to its half under its label, title and note. */
+        #pair {
+          position: absolute;
+          left: 0;
+          right: 0;
+          z-index: 1;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 1.5rem;
+          padding: 0.75rem 1.5rem 1rem;
+        }
+        #pair[hidden] {
+          display: none;
+        }
+        #pair .pane {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          min-width: 0;
+          min-height: 0;
+          margin: 0;
+        }
+        #pair .pane-head {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          height: 32px;
+          overflow: hidden;
+          font-size: 12px;
+          line-height: 16px;
+          color: var(--vw-dim);
+        }
+        #pair .pane-head .font-medium {
+          color: var(--vw-ink);
+        }
+        #pair .pane-slot {
+          display: flex;
+          flex: 1;
+          justify-content: center;
+          align-items: flex-start;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+        }
+        #pair .pane-slot .frame {
+          outline: none;
+          cursor: zoom-in;
+        }
+        @media (max-width: 640px) {
+          #viewer-top [data-two] {
+            display: none;
+          }
         }
         #viewer-bottom [data-step] {
           flex: none;
@@ -670,6 +648,7 @@
         class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)]"
       >
         <div id="stage" autofocus tabindex="-1"></div>
+        <div id="pair" hidden></div>
         <div id="viewer-map" hidden><div class="map-frame"></div><div class="map-view"></div></div>
         <div id="viewer-top">
           <div class="controls">
@@ -951,10 +930,12 @@
           const g = groupOf(i);
           return `<div class="col-span-full flex min-w-0 flex-wrap items-center gap-x-2 px-1 text-[12px] leading-5 ${i ? "pt-3" : ""}">${g.mark ? groupTag(g, g.mark) : ""}<span class="font-semibold">${g.name}</span><span class="text-muted-foreground">${g.note}</span></div>`;
         };
-        const captionLead = (i) => {
+        // The label as it leads a title in a caption: the group's tag, or
+        // "3. " for a frame outside any group.
+        const labelHtml = (i) => {
           const g = groupOf(i);
           if (!g) return `${label(i)}. `;
-          return label(i) ? `<span class="mr-1 align-[1px]">${groupTag(g, label(i))}</span>` : "";
+          return label(i) ? `<span class="tag-slot">${groupTag(g, label(i))}</span>` : "";
         };
 
         // In a caption the number takes a column of its own, so every line of
@@ -975,7 +956,7 @@
               </div>
             </div>
             <figcaption class="mt-3 text-xs leading-5 text-muted-foreground/80">
-              <span class="font-medium text-foreground/70">${captionLead(i)}${state.title}.</span> ${state.note}
+              <span class="font-medium text-foreground/70">${labelHtml(i)}${state.title}.</span> ${state.note}
             </figcaption>
           </figure>`,
           )
@@ -1163,17 +1144,14 @@
         // The marks start off, and only data-marks="on" shows them.
         // The frames underneath are the design; this is what was said about them.
         // In the grid the switch is an item in the ⋯ menu; in the viewer it's
-        // a button that fills while the marks are on.
+        // a button, pressed while the marks are on.
         const marksItem = document.querySelector("#marks");
         const viewerMarks = document.querySelector("#viewer [data-marks]");
-        const ON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-transparent bg-accent text-foreground";
-        const OFF = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium border border-border text-muted-foreground";
 
         const paintMarks = () => {
           const on = document.body.dataset.marks === "on";
           marksItem.querySelector("span").dataset.chromeText = on ? "Hide marks" : "Show marks";
           marksItem.setAttribute("aria-label", on ? "Hide marks" : "Show marks");
-          viewerMarks.className = on ? ON : OFF;
           viewerMarks.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
           viewerMarks.setAttribute("aria-pressed", String(on));
         };
@@ -1364,31 +1342,51 @@
           };
         };
 
-        // ---- opening a frame -------------------------------------------------
+        // ---- the open frame ------------------------------------------------
+        // The viewer shows one frame, or two side by side. Two values say
+        // which: openIndex, and pairedWith, the second frame's distance from
+        // the open one, or null for one frame. showFrame() paints everything
+        // from those two, so every way in (keys, buttons, the strip, a tap on
+        // a pane, a link) sets them and calls it, and nothing else on screen
+        // keeps state of its own.
+        let pairedWith = null;
+        const pair = document.querySelector("#pair");
+        const viewerStrip = document.querySelector("#viewer-strip");
+        const twoButton = viewerTop.querySelector("[data-two]");
+        const tiles = () => rack.querySelectorAll(".frame");
+        const partner = () => (pairedWith === null ? null : (openIndex + pairedWith + states.length) % states.length);
+
         const showFrame = (index) => {
-          const state = states[index];
-          const tile = rack.querySelectorAll(".frame")[index];
+          const tile = tiles()[index];
           if (!tile) return;
           const before = frameOf() ? sizeOf() : null;
           openIndex = index;
-          const copy = tile.cloneNode(true);
           stage.querySelector(".frame")?.remove();
-          mount(copy);
-          const g = groupOf(index);
-          const tagged = g && label(index) ? `<span class="tag-slot">${groupTag(g, label(index))}</span>` : lead(index);
-          viewerCaption.innerHTML = `<span class="font-medium">${tagged}${state.title}.</span> ${state.note}`;
           viewerCounter.textContent = `${index + 1} / ${states.length}`;
-          paintStrip(index);
+          twoButton.setAttribute("aria-pressed", String(pairedWith !== null));
+          paintCaption();
+          paintStrip();
           if (!viewer.open) viewer.showModal();
           viewerBottom.removeAttribute("data-open");
           measureBand();
           viewerMap.dataset.for = "";
-          // A frame the size of the last keeps the view, so a set that walks
-          // one screen through its states is read at one spot across them.
-          // Any other size opens at fit.
-          const same = before && before.w === Number(copy.dataset.w) && before.h === Number(copy.dataset.h);
-          if (same) relayout();
-          else toFit(false);
+          if (pairedWith === null) {
+            pair.hidden = true;
+            pair.replaceChildren();
+            const copy = tile.cloneNode(true);
+            mount(copy);
+            // A frame the size of the last keeps the view, so a set that
+            // walks one screen through its states is read at one spot across
+            // them. Any other size opens at fit.
+            const same = before && before.w === Number(copy.dataset.w) && before.h === Number(copy.dataset.h);
+            if (same) relayout();
+            else toFit(false);
+          } else {
+            setZoomed(false);
+            viewerZoom.hidden = true;
+            viewerMap.hidden = true;
+            paintPair();
+          }
           // Replaced rather than pushed, so walking the set leaves one history
           // entry and the address bar always holds a link to the frame on screen.
           setFrameParam(index + 1);
@@ -1396,164 +1394,135 @@
           describe(index);
         };
 
-        const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
+        const paintCaption = () => {
+          const state = states[openIndex];
+          viewerCaption.innerHTML =
+            pairedWith === null
+              ? `<span class="font-medium">${labelHtml(openIndex)}${state.title}.</span> ${state.note}`
+              : `<span class="font-medium">Two up.</span> Left and right step both frames. Up and down move the right one to the same place in another set.`;
+        };
 
         // ---- the strip -------------------------------------------------------
         // Only a page with groups has one. Every frame gets a bar, in page
         // order, in runs: a group's frames in its color, and frames outside
         // any group, such as a lead-in shared by every option, in a neutral
-        // run of their own. A tap on a bar opens that frame.
-        const viewerStrip = document.querySelector("#viewer-strip");
-        function paintStrip(index) {
+        // run of their own. The open frame's bar is the large one and the
+        // second frame of two up is ringed. A tap on a bar opens that frame.
+        const paintStrip = () => {
           viewerStrip.hidden = groupKeys.length === 0;
           if (viewerStrip.hidden) return;
           const runs = [];
           states.forEach((_, i) => {
-            const g = groupOf(i);
-            const last = runs.at(-1);
-            if (last && last.k === (g?.k ?? -1)) last.frames.push(i);
-            else runs.push({ k: g?.k ?? -1, tone: g ? `tone-${g.tone}` : "tone-plain", frames: [i] });
+            const k = groupOf(i)?.k ?? -1;
+            if (runs.at(-1)?.k === k) runs.at(-1).frames.push(i);
+            else runs.push({ k, tone: k < 0 ? "tone-plain" : `tone-${groupAt(k).tone}`, frames: [i] });
           });
-          const g = groupOf(index);
-          const name = g ? `<span class="name tone-${g.tone}">${g.name}</span>` : "";
-          viewerStrip.innerHTML = `<div class="bars">${name}${runs
-            .map(
-              (run) =>
-                `<span class="run ${run.tone}">${run.frames
-                  .map((i) => `<button data-go="${i}" title="${lead(i)}${states[i].title}" aria-label="${lead(i)}${states[i].title}" class="${i < index ? "passed" : ""}"${i === index ? ' aria-current="true"' : ""}></button>`)
-                  .join("")}</span>`,
-            )
+          const g = groupOf(openIndex);
+          const right = partner();
+          const bar = (i) =>
+            `<button data-go="${i}" title="${lead(i)}${states[i].title}" aria-label="${lead(i)}${states[i].title}" class="${i < openIndex ? "passed" : ""} ${i === right ? "partner" : ""}"${i === openIndex ? ' aria-current="true"' : ""}></button>`;
+          viewerStrip.innerHTML = `<div class="bars">${g ? `<span class="name tone-${g.tone}">${g.name}</span>` : ""}${runs
+            .map((run) => `<span class="run ${run.tone}">${run.frames.map(bar).join("")}</span>`)
             .join("")}</div>`;
-        }
+        };
+
+        // ---- moving between frames -------------------------------------------
+        const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
+
+        // The same place in the group `delta` sets away, so A2 goes to B2, or
+        // to B's last frame when B is shorter. Null for a frame outside any
+        // group, or on a page with one group.
+        const across = (i, delta) => {
+          const g = groupOf(i);
+          if (!g || groupKeys.length < 2) return null;
+          const at = inGroup(g.k).indexOf(i);
+          const next = inGroup((g.k + delta + groupKeys.length) % groupKeys.length);
+          return next[Math.min(at, next.length - 1)];
+        };
+
+        // Up and down: one frame moves to the same place in another set; in
+        // two up only the right one moves, past the set the left one is in.
+        const hop = (delta) => {
+          if (pairedWith === null) {
+            const to = across(openIndex, delta);
+            if (to !== null) showFrame(to);
+            return;
+          }
+          let to = across(partner(), delta);
+          if (to === openIndex) to = across(to, delta);
+          if (to === null || to === openIndex) return;
+          pairedWith = to - openIndex;
+          showFrame(openIndex);
+        };
+
+        // ---- two up ----------------------------------------------------------
+        // T, or the Two up button, puts a second frame beside the open one:
+        // the same place in the next set on a page of sets, so the first view
+        // is the comparison, else the next frame. Each is fitted to half the
+        // stage under its own label, title and note. A zoom key, or a tap on
+        // either frame, goes back to that frame alone, where the zoom works.
+        // A phone has no room for two.
+        const setTwoUp = (on) => {
+          if (on && (states.length < 2 || innerWidth <= 640)) return;
+          pairedWith = on ? (across(openIndex, 1) ?? openIndex + 1) - openIndex : null;
+          showFrame(openIndex);
+        };
+
+        const pane = (i) => {
+          const copy = tiles()[i].cloneNode(true);
+          copy.style.transform = "";
+          return `<figure class="pane" data-index="${i}"><figcaption class="pane-head">${labelHtml(i)}<span class="font-medium">${states[i].title}.</span> ${states[i].note}</figcaption><div class="pane-slot">${copy.outerHTML}</div></figure>`;
+        };
+        const paintPair = () => {
+          pair.innerHTML = pane(openIndex) + pane(partner());
+          pair.hidden = false;
+          fitPair();
+        };
+        // Each copy is measured at a token size first, so a frame copied at
+        // the grid's scale can't widen its column before the fit is known.
+        const fitPair = () => {
+          pair.style.top = `${topReserve()}px`;
+          pair.style.bottom = `${bottomH}px`;
+          for (const slot of pair.querySelectorAll(".pane-slot")) {
+            const frame = slot.firstElementChild;
+            frame.style.setProperty("--s", 0.01);
+            frame.style.setProperty("--s", Math.min(slot.clientWidth / Number(frame.dataset.w), slot.clientHeight / Number(frame.dataset.h)));
+          }
+        };
+        pair.addEventListener("click", (event) => {
+          const chosen = event.target.closest(".pane");
+          if (!chosen) return;
+          pairedWith = null;
+          showFrame(Number(chosen.dataset.index));
+        });
+
+        // ---- ways in ---------------------------------------------------------
+        rack.addEventListener("click", (event) => {
+          const frame = event.target.closest(".frame");
+          if (frame) showFrame([...tiles()].indexOf(frame));
+        });
         viewerStrip.addEventListener("click", (event) => {
           const bar = event.target.closest("[data-go]");
           if (bar) showFrame(Number(bar.dataset.go));
         });
-
-        // Up and down open the same place in the set before or after, so A2
-        // goes to B2 and one screen can be compared across the options.
-        const hop = (delta) => {
-          const g = groupOf(openIndex);
-          if (!g || groupKeys.length < 2) return;
-          const at = inGroup(g.k).indexOf(openIndex);
-          const next = inGroup((g.k + delta + groupKeys.length) % groupKeys.length);
-          showFrame(next[Math.min(at, next.length - 1)]);
-        };
-
-        // ---- two up ----------------------------------------------------------
-        // T in the enlarged view puts a second frame beside the open one. Left
-        // and right step both, and up and down move the right one to the same
-        // place in another set, so Now 2 can sit beside A2, then B2. A zoom
-        // key, or a tap on either frame, goes back to that one frame alone,
-        // where the zoom works.
-        const pair = document.createElement("div");
-        pair.id = "pair";
-        pair.hidden = true;
-        viewer.append(pair);
-        const twoButton = viewerTop.querySelector("[data-two]");
-        let twoUp = false;
-        let offset = 1;
-        const partner = () => Math.min(states.length - 1, Math.max(0, openIndex + (offset || 1)));
-        const pane = (i) => {
-          const g = groupOf(i);
-          const copy = rack.querySelectorAll(".frame")[i].cloneNode(true);
-          return `<figure class="pane" data-index="${i}"><figcaption class="pane-head">${g && label(i) ? `<span class="tag-slot">${groupTag(g, label(i))}</span>` : lead(i)}<span class="font-medium">${states[i].title}.</span> <span class="opacity-70">${states[i].note}</span></figcaption><div class="pane-slot">${copy.outerHTML}</div></figure>`;
-        };
-        const paintPair = () => {
-          if (!twoUp || openIndex < 0) return;
-          const right = partner();
-          pair.style.top = `${topReserve()}px`;
-          pair.style.bottom = `${bottomH}px`;
-          pair.innerHTML = pane(openIndex) + pane(right);
-          for (const slot of pair.querySelectorAll(".pane-slot")) {
-            const f = slot.firstElementChild;
-            f.style.transform = "";
-            f.style.setProperty("--s", 0.01);
-            const s = Math.min(slot.clientWidth / Number(f.dataset.w), slot.clientHeight / Number(f.dataset.h));
-            f.style.setProperty("--s", s);
-          }
-          for (const b of viewerStrip.querySelectorAll("[data-go]")) b.classList.toggle("partner", Number(b.dataset.go) === right);
-          viewerCaption.innerHTML = `<span class="font-medium">Two up.</span> Left and right step both frames. Up and down move the right one to the same place in another set.`;
-        };
-        // On a page of sets the right side starts at the same place in the
-        // next set, so the first view is the comparison; otherwise it is the
-        // next frame.
-        const firstPartner = () => {
-          const g = groupOf(openIndex);
-          if (!g || groupKeys.length < 2) return 1;
-          const at = inGroup(g.k).indexOf(openIndex);
-          const next = inGroup((g.k + 1) % groupKeys.length);
-          return next[Math.min(at, next.length - 1)] - openIndex;
-        };
-        function setTwoUp(on) {
-          if (on && (states.length < 2 || innerWidth <= 640)) return;
-          twoUp = on;
-          offset = on ? firstPartner() : 1;
-          pair.hidden = !on;
-          viewer.toggleAttribute("data-two", on);
-          twoButton.setAttribute("aria-pressed", String(on));
-          if (on) {
-            toFit(false);
-            paintPair();
-          } else showFrame(openIndex);
-        }
-        pair.addEventListener("click", (event) => {
-          const chosen = event.target.closest(".pane");
-          if (!chosen) return;
-          setTwoUp(false);
-          showFrame(Number(chosen.dataset.index));
-        });
-        new MutationObserver(() => requestAnimationFrame(paintPair)).observe(viewerCounter, { childList: true, characterData: true, subtree: true });
-        addEventListener("resize", () => requestAnimationFrame(paintPair));
-        viewer.addEventListener("close", () => {
-          if (!twoUp) return;
-          twoUp = false;
-          pair.hidden = true;
-          viewer.removeAttribute("data-two");
-          twoButton.setAttribute("aria-pressed", "false");
-        });
-        document.addEventListener(
-          "keydown",
-          (event) => {
-            if (!viewer.open || event.metaKey || event.ctrlKey || event.altKey) return;
-            if (event.key === "t" || event.key === "T") {
-              event.preventDefault();
-              return setTwoUp(!twoUp);
-            }
-            if (twoUp && zoomKeys.has(event.key)) return setTwoUp(false);
-            if (!twoUp || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) return;
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            const right = partner();
-            const g = groupOf(right);
-            if (!g || groupKeys.length < 2) return;
-            const at = inGroup(g.k).indexOf(right);
-            const next = inGroup((g.k + (event.key === "ArrowDown" ? 1 : -1) + groupKeys.length) % groupKeys.length);
-            offset = next[Math.min(at, next.length - 1)] - openIndex;
-            paintPair();
-          },
-          true,
-        );
-
-        rack.addEventListener("click", (event) => {
-          const frame = event.target.closest(".frame");
-          if (!frame) return;
-          showFrame([...rack.querySelectorAll(".frame")].indexOf(frame));
-        });
-
         viewer.addEventListener("click", (event) => {
           const button = event.target.closest(".controls button");
           if (!button) return;
           if (button.dataset.marks !== undefined) return flipMarks();
-          if (button.dataset.two !== undefined) return setTwoUp(!twoUp);
+          if (button.dataset.two !== undefined) return setTwoUp(pairedWith === null);
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
-
         viewer.addEventListener("close", () => {
           openIndex = -1;
+          pairedWith = null;
           stage.querySelector(".frame")?.remove();
+          pair.hidden = true;
+          pair.replaceChildren();
           viewer.removeAttribute("data-controls");
+          setFrameParam(null);
+          keepFrame(null);
+          describe(null);
         });
 
         // A tap on the ground hides the bands and brings them back; a double
@@ -1619,6 +1588,7 @@
           const zoom = viewer.open && !event.altKey ? zoomKeys.get(event.key) : undefined;
           if (zoom && !(event.key === "1" && (event.metaKey || event.ctrlKey))) {
             event.preventDefault();
+            if (pairedWith !== null) setTwoUp(false);
             return zoom();
           }
           // With Cmd, Ctrl or Alt held the key belongs to the browser: select
@@ -1628,7 +1598,11 @@
             event.preventDefault();
             return flipMarks();
           }
-          if (viewer.open && (event.key === "ArrowUp" || event.key === "ArrowDown") && groupOf(openIndex)) {
+          if (viewer.open && (event.key === "t" || event.key === "T")) {
+            event.preventDefault();
+            return setTwoUp(pairedWith === null);
+          }
+          if (viewer.open && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
             event.preventDefault();
             return hop(event.key === "ArrowDown" ? 1 : -1);
           }
@@ -1648,7 +1622,11 @@
         // The stage, not the window: this also catches the page being laid out
         // for the first time after being hidden, which fires no resize event.
         new ResizeObserver(() => {
-          if (viewer.open && frameOf()) relayout();
+          if (!viewer.open) return;
+          if (pairedWith !== null) {
+            measureBand();
+            fitPair();
+          } else if (frameOf()) relayout();
         }).observe(stage);
 
         // ---- the view: pinch, wheel, drag, double tap and keys ---------------
@@ -2063,11 +2041,6 @@
           if (kept >= 0) showFrame(kept);
         };
 
-        viewer.addEventListener("close", () => {
-          setFrameParam(null);
-          keepFrame(null);
-          describe(null);
-        });
         openFromQuery();
 
         for (const button of document.querySelectorAll("[data-step]")) button.disabled = states.length < 2;
