@@ -1,19 +1,19 @@
 # Whiteboard patterns
 
-Technique only a board uses. The page, the fallback drawing and the editor mount are in `skeleton.html` and do not change from board to board; what changes is the scene, and the scene is written with the kit below.
+These are the techniques only a board needs. The page, the fallback drawing and the editor mount are in `skeleton.html`, and they stay the same from board to board. What changes is the scene, which you write with the kit below.
 
 ## The kit
 
-It ships, in both languages, as a library you import rather than code to copy:
+The kit ships in both languages, as a library you import rather than code you copy:
 
 - `scripts/board.mjs`: `node`, no dependencies
 - `scripts/board.py`: `python`, no dependencies
 
-The same functions, the same arguments and the same output; take whichever language the rest of the task is in. Run either directly (`node board.mjs`, `python board.py`) to write a sample scene and check it runs in your environment before writing a board.
+Both versions have the same functions and arguments and produce the same output, so use whichever language the rest of the task is in. Run either directly (`node board.mjs`, `python board.py`) to write a sample scene and check it runs in your environment before writing a board.
 
 Write a script of your own, import the kit **by its full path from where you are**, and call `write` at the end. Then paste the JSON it writes into the `#scene` block of your copy of `skeleton.html`, and build with `page.mjs`.
 
-Writing the JSON by hand instead is possible and is a bad trade: the two references every board depends on have to point both ways, and the kit is what makes them. `write` refuses a scene where one does not, rather than leaving you a board whose labels Excalidraw silently drops.
+You could write the JSON by hand, but don't. The two kinds of reference every board depends on have to point both ways, and the kit is what writes them correctly. `write` refuses a scene where one does not, rather than leaving you a board whose labels Excalidraw silently drops.
 
 | Call                                     | Draws                                                              |
 | ---------------------------------------- | ------------------------------------------------------------------ |
@@ -92,7 +92,7 @@ write("scene.json", "How a refund moves")
 
 ## Coordinates
 
-The board has no edges: the editor fits whatever was drawn to the window on open. Start the title at `(40, 0)`, lay the drawing out under it, and put the provenance note below the drawing. Sizes that read well at the fit: a box 200 by 80 with 20-point text, a title at 28, a marker note at 18, provenance at 14 in the plain face.
+The board has no edges, and the editor fits whatever you drew to the window when it opens. Start the title at `(40, 0)`, lay the drawing out under it, and put the provenance note below the drawing. Sizes that read well at the fit: a box 200 by 80 with 20-point text, a title at 28, a marker note at 18, provenance at 14 in the plain face.
 
 `fontFamily` is `1` for the hand-drawn face, `2` for plain, `3` for monospace. The title, labels and marker are hand-drawn; measurements, captions under images and the provenance note are plain, which is what makes them read as record rather than as drawing.
 
@@ -128,7 +128,7 @@ text(88, 226, "home", { size: 16, color: MUTED, font: 2, align: "center" });
 frame("Round two", [big, small]);
 ```
 
-Draw the SVG on a small grid with a real stroke width, because that is what ships; an icon that looks fine at 96 and fills in at 24 is the finding a sheet exists to show.
+Draw the SVG on a small grid with a real stroke width, because that's what will ship. A sheet exists to show findings like an icon that looks fine at 96 and fills in at 24.
 
 ## Marker
 

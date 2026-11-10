@@ -34,7 +34,7 @@
     hscroll:
       "make that element fluid (max-width:100%, minmax(0,1fr), flex-wrap, no px min-width); overflow-x:hidden on body only cuts it off",
     cramped:
-      'add class="bleed" to it so it takes the wide track (a table of four or more columns and a .grid already do), or give it fewer columns; a phone stacks it either way',
+      'give it fewer columns or shorter cells, or add class="bleed" so it takes the wide track; a phone stacks it either way',
     "scroller-drawing":
       "a drawing must fit the phone: drop the min-width so it scales, and give phones a stacked or listed version of whatever is then too small",
   };
@@ -1171,7 +1171,8 @@
         0,
         Math.min(sp.hero.bottom, sp.H) - Math.max(sp.hero.top, 0),
       );
-      if (!sp.hero.containsH1 && vis < Math.min(need, sp.hero.height))
+      // top, bottom and height are rounded apart, so allow 2px when the whole hero shows.
+      if (!sp.hero.containsH1 && vis < Math.min(need, sp.hero.height) - 2)
         miss.push(
           `only ${vis}px of the hero (${sp.hero.where}, starts at y=${sp.hero.top}) shows`,
         );

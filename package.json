@@ -35,6 +35,8 @@
     "test:scripts": "vitest run --project scripts",
     "generate:skills-md": "node scripts/generate-skill-md.ts",
     "page-check": "node tools/page-check/check.mjs",
+    "page-lab": "node tools/page-lab/serve.mjs",
+    "page-lab:build": "node tools/page-lab/build.mjs",
     "syncpack": "syncpack",
     "update:actions": "actions-up"
   },
