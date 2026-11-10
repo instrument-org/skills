@@ -280,6 +280,22 @@ describe("command", () => {
     `);
   });
 
+  it("runs through a symlinked skill folder, as agents reach it", () => {
+    const dir = fs.realpathSync(
+      fs.mkdtempSync(path.join(os.tmpdir(), "open-in-instrument-")),
+    );
+    tempDirs.push(dir);
+    const link = path.join(dir, "linked-script.ts");
+    fs.symlinkSync(SCRIPT, link);
+    const result = spawnSync(
+      process.execPath,
+      [link, "/Users/sam/plan.html", "--title", "Plan"],
+      { cwd: dir, encoding: "utf-8" },
+    );
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("[Open in Instrument](");
+  });
+
   it("exits 1 with usage when given no path", () => {
     const result = run([], os.tmpdir());
     expect(result.status).toBe(1);

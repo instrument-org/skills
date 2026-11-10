@@ -210,7 +210,11 @@ Options:
   --from <agent>   Names you as you would introduce yourself; used with several paths
   -h, --help       Display this message`;
 
-if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+// Agents reach the script through a symlinked skill folder, so the file it was
+// invoked by is compared where it really leads.
+if (
+  import.meta.url === pathToFileURL(realpathOrSelf(process.argv[1] ?? "")).href
+) {
   let parsed;
   try {
     parsed = parseArgs({
