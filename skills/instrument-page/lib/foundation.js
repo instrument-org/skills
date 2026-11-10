@@ -2,6 +2,7 @@
 //   data-show-who="maya"   a button that dims everything not marked data-who~="maya"
 //   data-copy="#id"        a button that copies that element's text (or the literal value)
 //   data-date="2026-10-13" gets class "today" on that date, in the reader's clock
+//   .chapters [data-at="1:05"] buttons that seek the figure's video, the playing one pressed
 //   <pre>                  Copy and Wrap; data-file="path" labels it; data-wrap="off" starts unwrapped
 //   <code class="language-ts"> inside a pre is highlighted, once page.mjs's highlight.js loads
 //   <img> in a figure or on its own line, shown smaller than it is: opens full size,
@@ -400,6 +401,34 @@
           open(e.target);
         }
       });
+    }
+
+    // Chapters: buttons with data-at="1:05" seek the video in the same figure,
+    // or the one data-video names, and the chapter playing is marked.
+    const seconds = (s) =>
+      String(s)
+        .split(":")
+        .reduce((n, part) => n * 60 + Number(part), 0);
+    for (const list of document.querySelectorAll(".chapters")) {
+      const video = list.dataset.video
+        ? document.getElementById(list.dataset.video)
+        : list.closest("figure")?.querySelector("video");
+      const marks = [...list.querySelectorAll("[data-at]")];
+      if (!video || !marks.length) continue;
+      const mark = () => {
+        let on = null;
+        for (const b of marks)
+          if (seconds(b.dataset.at) <= video.currentTime + 0.25) on = b;
+        for (const b of marks) b.setAttribute("aria-pressed", String(b === on));
+      };
+      for (const b of marks)
+        b.addEventListener("click", () => {
+          video.currentTime = seconds(b.dataset.at);
+          video.play().catch(() => {});
+          mark();
+        });
+      video.addEventListener("timeupdate", mark);
+      mark();
     }
 
     // Today.

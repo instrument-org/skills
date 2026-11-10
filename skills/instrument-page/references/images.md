@@ -43,6 +43,19 @@ Give every `<img>` a `width` and `height` so the line does not reflow as the pag
 
 Base64 costs a third more than the bytes it carries, so a 150 KB photo becomes a 200 KB attribute. Count the encoded size.
 
+## Video and audio
+
+A clip goes in the same way: name it in a `<video src>`, `<audio src>` or `<source src>` and `page.mjs` embeds it, up to 10 MB (an MP4, WebM, QuickTime, M4A, MP3, Ogg or WAV, judged by its bytes). The check fails a video with no `poster`, which shows a blank or black frame until played, and one with no `controls`, which the reader cannot pause or scrub; only a short silent loop may be `autoplay muted loop playsinline` instead. Use the browser's own player and never build one: it plays, scrubs and goes full screen everywhere the page opens.
+
+Encode a screen recording small before naming it, and save a poster from the moment that shows the point:
+
+```bash
+ffmpeg -i take.mov -vf "scale='min(1280,iw)':-2" -c:v libx264 -crf 30 -an -movflags +faststart walk.mp4
+ffmpeg -ss 7 -i walk.mp4 -frames:v 1 -vf scale=960:-2 poster.jpg
+```
+
+Keep sound with `-c:a aac -b:a 96k` in place of `-an`. A minute of 1280-wide screen recording comes to about 2 to 5 MB; past 10 MB, cut it with `-ss` and `-t` or split it into clips, one per claim.
+
 ## When there is no photo
 
 This is the common case, and the usual answers are both wrong: leaving a hole where a picture should be, or hotlinking one from a search result, which breaks the file and often points somewhere the reader did not ask to go.

@@ -220,7 +220,29 @@ A vertical list is the phone answer and often the desktop one too.
 </ol>
 ```
 
-For a horizontal strip (days across, rows per person, vehicle or system), draw it with `fit` from the first recipe and switch to this list when `w < 560`. Lanes (one row per thing whose state changes, on one clock) are the natural hero for an incident: color the span where each lane is wrong, and put the readings under them on the same x axis.
+For a horizontal strip (days across, rows per person, vehicle or system), draw it with `fit` from the first recipe and switch to this list when `w < 560`. Lanes (one row per thing whose state changes, on one clock) are the natural hero for an incident: color the span where each lane is wrong, and put the readings under them on the same x axis. When the lanes are spans with no curve to draw (steps of a build, requests in a waterfall, agents running side by side), `ul.lanes` draws them from markup: each segment's `--at` and `--w` are its start and length as percents of one axis you compute in a script, and `ul.legend` names the colors.
+
+```html
+<ul class="lanes bleed">
+  <li>
+    <span>Install</span
+    ><span class="lane"><i data-c="2" style="--w:22%"></i></span
+    ><span>46 s</span>
+  </li>
+  <li>
+    <span>Build</span
+    ><span class="lane"><i data-c="3" style="--at:22%;--w:61%"></i></span
+    ><span>128 s</span>
+  </li>
+  <li class="axis">
+    <span></span
+    ><span class="lane"
+      ><b style="--at:0%">0 s</b><b style="--at:50%">105 s</b
+      ><b style="--at:100%">210 s</b></span
+    >
+  </li>
+</ul>
+```
 
 - Order is the argument: say in the heading what the order explains ("Every delay traces to the March vendor switch"), and tone the one or two events that carry it (`data-tone="bad"` on the `li`); the rest stay plain.
 - Mark what is estimated or reconstructed (`<small>approx.</small>`) and what is still ahead (a dashed segment: `li.ahead { border-left: 2px dashed var(--line-2); margin-left: -2px; }`), and write the date of "now" on the page so a reader in a month knows where the line stood.
@@ -379,6 +401,45 @@ When the evidence is what a screen looked like (a change shipped, a bug reproduc
 - A caption says what to see in the picture, in a short sentence; the `alt` says what the picture shows, for a reader who cannot see it.
 - The same screenshot appears once. Refer back to it by its number.
 
+**A design against the build.** Three across in a `.pair.bleed`: before, the designer's frame, and the build, each caption opening with a bold label and date (`<b>Built, Nov 8.</b> Docked above the composer.`). Same window size and theme for every capture you take, so the difference is the design, not the crop.
+
+**Pins on a screenshot**, when the reader needs to know which part of the picture a sentence is about. A pin sits at a percent of the picture's box, so it holds at every width; measure `--x` and `--y` from the pixel position in the screenshot (x over its width, y over its height), never by eye, and put the pin beside its target rather than on it.
+
+```html
+<div class="split bleed">
+  <figure class="pinned">
+    <img src="shots/new-chat.png" width="1200" height="749" alt="..." />
+    <span class="pin" style="--x:51.7%;--y:20%">1</span>
+    <span class="pin" style="--x:75%;--y:72%">2</span>
+  </figure>
+  <ol class="pins">
+    <li>New chat opens as a panel over the current chat.</li>
+    <li>Sources as three tiles.</li>
+  </ol>
+</div>
+```
+
+**A recording**, when the point is motion or a sequence (a feature walked through, a bug reproduced, a release): a `video` with `controls` and a `poster` of the moment that shows the point, and chapters under it when it runs past twenty seconds. Each chapter names what happens, not where the time is. Encoding and size: [`references/images.md`](references/images.md), Video and audio.
+
+```html
+<figure>
+  <video
+    controls
+    muted
+    playsinline
+    preload="metadata"
+    poster="shots/poster.jpg"
+    src="shots/walk.mp4"
+  ></video>
+  <div class="chapters">
+    <button data-at="0:00">Opens Settings</button>
+    <button data-at="0:07">Grants access</button>
+    <button data-at="0:14">Clicks in another app</button>
+  </div>
+  <figcaption>Computer use on Windows, from a clean install.</figcaption>
+</figure>
+```
+
 ## Figures with a chart
 
 For "how did it go" and "what do the numbers say": one or two figures that carry the point, each with what it is compared against, then the chart that shows the comparison, then the table.
@@ -399,6 +460,7 @@ For "how did it go" and "what do the numbers say": one or two figures that carry
 ```
 
 - A figure without its comparison (last period, target, the other option) is a number, not a finding. Name the period and the source next to it.
+- A few named things on one number (the arms of an eval, pages per category) are `ul.bars`, not a chart: no script, the label beside each bar, the value at its end, and it reads on a phone. Set `--v` from a script over the data, as a percent of the largest, and tone the one bar the headline is about.
 - At most two big figures; the rest go in the chart or a table. A row of six big numbers is a dashboard nobody reads.
 - The chart draws from the page's JSON and the same data is in a table under it or in a `details`, so the page says everything with scripts off. See the chart recipe above.
 - Round to what the source supports and say "about" when you rounded. A change is shown as the change ("up 4 points"), with the base, never a percent of a percent.
@@ -409,7 +471,7 @@ The rules every judging page keeps, wherever the judging sits.
 
 - **Scores are coarse.** Letters, a word on a three-step scale, or a few dots, unless every input to the score is on the page and the arithmetic is shown. Never a decimal (7.8 out of 10) that implies precision the research does not have.
 - **Every number has a home**: the inputs, a named source with its date, or arithmetic over figures shown on the page. A figure you estimated says so where it appears.
-- **Named things link to their maker.** A product, vendor or place is a link to its maker's or owner's own home page, which survives being copied; not a deep product page, a search result, or an affiliate link.
+- **Named things link to their maker.** A product, vendor or place is a link to its maker's or owner's own home page, which survives being copied; not a deep product page, a search result, or an affiliate link. The page's own sources are the exception: a commit, pull request, issue or file links straight to it, a file at its commit, since those addresses hold.
 - **The pick is honest.** It is the reader's best option under their stated constraints, it shows what it loses on, it names what would flip it, and a sponsored or default option gets no thumb on the scale.
 
 ## Show my part

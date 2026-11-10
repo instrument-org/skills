@@ -839,6 +839,9 @@
     padding: 0.5rem 0.65rem;
     border-bottom: 1px solid var(--line);
   }
+  td {
+    vertical-align: top;
+  }
   :is(th, td):first-child {
     padding-left: 0;
   }
@@ -1096,6 +1099,107 @@
   :is(.bar[data-tone], .bar[data-c], [data-tone] .bar, [data-c] .bar)::before {
     background: var(--tone);
   }
+  /* ul.bars: one row per item, label then .bar then value:
+     <li><span>Retries</span><span class="bar" style="--v:40%"></span><span class="n">12</span></li> */
+  ul.bars,
+  ul.lanes,
+  ul.legend {
+    list-style: none;
+    padding: 0;
+  }
+  ul.bars,
+  ul.lanes {
+    display: grid;
+    grid-template-columns: minmax(6rem, max-content) minmax(8rem, 1fr) auto;
+    gap: 0.55rem 0.9rem;
+    align-items: center;
+  }
+  :is(ul.bars, ul.lanes) > li {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: center;
+    margin: 0;
+  }
+  ul.bars .bar {
+    height: 0.65rem;
+  }
+  ul.bars > li > :last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  /* ul.lanes: rows on one time axis. Each .lane holds <i> segments placed by
+     --at (start) and --w (length) as percents of the axis, so lanes line up;
+     a value after the lane is optional, and an li.axis row labels ticks. */
+  ul.lanes > li > :nth-child(3) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .lane {
+    position: relative;
+    height: 1.25rem;
+    border-radius: 4px;
+    background: var(--gray-100);
+  }
+  .lane > i {
+    position: absolute;
+    top: 0.2rem;
+    bottom: 0.2rem;
+    left: var(--at, 0%);
+    width: var(--w, 10%);
+    min-width: 2px;
+    border-radius: 3px;
+    background: var(--tone, var(--muted));
+  }
+  ul.lanes > li.axis > .lane {
+    background: none;
+    height: 1rem;
+  }
+  ul.lanes > li.axis > .lane > b {
+    position: absolute;
+    left: var(--at, 0%);
+    transform: translateX(calc(var(--at, 0%) * -1));
+    font: 500 0.75rem/1 var(--body-font);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  @media (max-width: 520px) {
+    ul.bars {
+      grid-template-columns: 1fr auto;
+    }
+    ul.bars .bar {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    ul.lanes {
+      grid-template-columns: 1fr auto;
+      row-gap: 0.25rem;
+    }
+    ul.lanes .lane {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+  /* ul.legend: a swatch per data-c or data-tone, in a row. */
+  ul.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    font-size: 0.86rem;
+  }
+  ul.legend > li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+  }
+  ul.legend > li::before {
+    content: "";
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 3px;
+    background: var(--tone, var(--muted));
+  }
   .n,
   td.n,
   th.n {
@@ -1106,21 +1210,23 @@
     font-family: var(--mono);
     font-variant-ligatures: none;
   }
-  ol.steps {
+  ol.steps,
+  ol.letters {
     list-style: none;
     padding: 0;
     counter-reset: s;
     display: grid;
     gap: calc(var(--flow) * 0.9);
   }
-  ol.steps > li {
+  :is(ol.steps, ol.letters) > li {
     counter-increment: s;
     display: grid;
     grid-template-columns: 2rem 1fr;
     column-gap: 0.8rem;
     margin: 0;
   }
-  ol.steps > li::before {
+  :is(ol.steps, ol.letters) > li::before,
+  .key {
     content: counter(s);
     grid-row: span 9;
     width: 2rem;
@@ -1131,6 +1237,20 @@
     background: var(--tone);
     color: var(--accent-ink);
     font: 700 0.9rem/1 var(--body-font);
+  }
+  /* ol.letters: items keyed A, B, C so a reader can answer by letter, aloud or
+     in chat. .key is the same mark inline: <h2><span class="key">A</span>...</h2>. */
+  ol.letters > li::before {
+    content: counter(s, upper-alpha);
+  }
+  .key {
+    content: none;
+    display: inline-grid;
+    width: 1.6em;
+    height: 1.6em;
+    margin-right: 0.45em;
+    font-size: 0.75em;
+    vertical-align: 0.2em;
   }
   ul.plain,
   ol.plain {
@@ -1264,7 +1384,7 @@
     color: var(--ink);
     border-bottom-color: var(--accent);
   }
-  :root:has(nav.strip) :is(section, article)[id] {
+  :root:has(nav.strip) :is(section, article, h2, h3, h4, figure)[id] {
     scroll-margin-top: 3.5rem;
   }
 
@@ -1377,8 +1497,82 @@
     background: var(--paper);
     border: 1px solid var(--line);
   }
-  .pair > figure > img {
+  figure > img,
+  .pinned > img {
     border: 1px solid var(--line);
+  }
+  video {
+    display: block;
+    width: 100%;
+    border-radius: calc(var(--radius) * 0.6);
+    border: 1px solid var(--line);
+    background: var(--gray-100);
+  }
+  audio {
+    display: block;
+    width: 100%;
+  }
+  /* .chapters: buttons with data-at="1:05" under a video; foundation.js seeks
+     the video in the same figure (or data-video="id") and marks the chapter playing. */
+  .chapters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    padding: 0;
+    list-style: none;
+  }
+  .chapters button {
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* .pinned: a picture with numbered pins at --x/--y percent of its box, keyed
+     by an ol.pins list beside or under it. */
+  .pinned {
+    position: relative;
+    display: block;
+    margin: 0;
+  }
+  .pinned > img {
+    width: 100%;
+  }
+  .pin,
+  ol.pins > li::before {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font: 700 0.8rem/1 var(--body-font);
+  }
+  .pinned > .pin {
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 3px var(--paper);
+    pointer-events: none;
+  }
+  ol.pins {
+    list-style: none;
+    padding: 0;
+    counter-reset: pin;
+    display: grid;
+    gap: 0.5rem;
+  }
+  ol.pins > li {
+    counter-increment: pin;
+    display: grid;
+    grid-template-columns: 1.6rem 1fr;
+    column-gap: 0.6rem;
+    align-items: start;
+    margin: 0;
+  }
+  ol.pins > li::before {
+    content: counter(pin);
   }
   .frames > figure > figcaption::before {
     content: counter(frame);

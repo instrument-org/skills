@@ -310,6 +310,28 @@ function fileChecks(own, push, inputText, reported = new Set()) {
         "only fonts.googleapis/gstatic and jsdelivr /npm/, unpkg, esm.sh or cdnjs at an exact version may load; inline everything else",
       );
   }
+  // A video shows its first frame, often black, until it plays, and one with
+  // no controls cannot be paused or scrubbed: only a short silent loop may go
+  // without them.
+  for (const m of own.matchAll(/<video\b[^>]*>/gi)) {
+    const tag = m[0];
+    const has = (attr) => new RegExp(`\\s${attr}(\\s|=|>|/)`, "i").test(tag);
+    const where = `<video> ${(tag.match(/\sid\s*=\s*["']([^"']+)/i)?.[1] ?? "").trim() || "#" + (m.index ?? 0)}`;
+    if (!has("poster"))
+      push(
+        "video-poster",
+        where,
+        "has no poster, so it shows a blank or black first frame until played",
+        "save a frame that shows what the clip is about (ffmpeg -ss 2 -i clip.mp4 -frames:v 1 poster.jpg) and name it in poster=",
+      );
+    if (!has("controls") && !(has("autoplay") && has("muted") && has("loop")))
+      push(
+        "video-controls",
+        where,
+        "has no controls, so the reader cannot play, pause or scrub it",
+        "add controls (a short silent loop may instead be autoplay muted loop playsinline); never build a player of your own",
+      );
+  }
   for (const m of own.matchAll(/url\((['"]?)(https?:[^)'"]+)\1\)/g))
     if (!ALLOWED.some((r) => r.test(m[2])) && !reported.has(m[2]))
       push("host", "CSS url()", `loads ${m[2]}`, "inline it as a data: URI");

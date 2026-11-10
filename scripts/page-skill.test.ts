@@ -123,7 +123,7 @@ describe("page.mjs", () => {
     expect(result.built).toContain("<!-- foundation:start");
     expect(result.built).toContain("__instrumentSnap(document.currentScript)");
     expect(result.stdout).toMatchInlineSnapshot(
-      `"page.html: pass, as far as the file shows. It is 59 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
+      `"page.html: pass, as far as the file shows. It is 65 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
     );
     expect(existsSync(join(SKILLS, "instrument-page", "lib", "probe.js"))).toBe(
       true,
@@ -145,7 +145,7 @@ describe("page.mjs", () => {
       FAIL long-paragraph: section > p "bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bu": 64 words -> split it, cut it to 60 words or fewer, or turn it into something seen: a list, a table, a labeled drawing
       FAIL prose-heavy: the first two screens: prose (blocks of 15+ words) is about 81% of what comes first, counting words, with a drawing as 150 -> bring it under 40%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below or into one <details>
       FAIL quote: section > blockquote "“We ship on Friday”": these words are not in any input, word for word -> copy the exact words from the input (an ellipsis may join two exact pieces), or say it as your own summary without quote marks; if it is not a quote at all, use <aside> or <p>, not <blockquote>
-      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 60 KB."
+      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 65 KB."
     `);
   });
   it("counts neither the kicker before the hero nor a footer paragraph", async () => {
@@ -259,7 +259,7 @@ describe("page.mjs embeds images", () => {
     expect(result.stdout.replace(/:\d+\//, ":PORT/")).toMatchInlineSnapshot(`
       "embedded shots/bike.png: PNG 480x320, 1 KB in the page
       embedded http://127.0.0.1:PORT/a.png?x=1&amp;y=2: PNG 300x200, 1 KB in the page
-      page.html: pass, as far as the file shows. It is 59 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
+      page.html: pass, as far as the file shows. It is 65 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
     `);
     expect(result.built).not.toContain("shots/bike.png");
     expect(result.built).not.toContain("127.0.0.1");
@@ -280,7 +280,7 @@ describe("page.mjs embeds images", () => {
       "FAIL image-oversize: <img> "big.png": 600 KB (PNG 2400x1600), over 500 KB -> save it again beside the page as JPEG quality 78 (a screenshot may stay PNG if that is smaller), at most 1600 pixels on the long edge for a screenshot and 720 for a photo, and name that file (references/images.md)
       FAIL image-missing: <img> "gone.png": no file at gone.png -> name a file that exists, relative to the page, or draw a stand-in as inline SVG
       FAIL image-not-image: <img> "note.png": these bytes are not a PNG, JPEG, GIF, WebP, AVIF or SVG -> name the image itself, not a page that shows it
-      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 59 KB."
+      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 65 KB."
     `);
   });
 
@@ -308,7 +308,35 @@ describe("page.mjs embeds images", () => {
       "embedded fonts/brand.woff2: WOFF2 font, 3 KB in the page
       FAIL font-missing: CSS url() "fonts/gone.otf": no file at fonts/gone.otf -> name the font file itself (an installed font is in the system's font folders, references/loading.md), or use a Google Font
       FAIL font-local: @font-face "Trial Face": names only local() fonts, which readers who lack them never see -> add url() naming the font file beside local() and page.mjs embeds it (references/loading.md, A font of its own), or use a Google Font
-      page.html: 2 FAIL. Fix each by fixing what it names, then run again. It is 62 KB."
+      page.html: 2 FAIL. Fix each by fixing what it names, then run again. It is 67 KB."
+    `);
+  });
+
+  const mp4 = Buffer.concat([
+    Buffer.from([0, 0, 0, 0x18]),
+    Buffer.from("ftypisom"),
+    Buffer.alloc(2000),
+  ]);
+
+  it("puts a video named by path into the page, and fails one with no poster or controls", async () => {
+    const result = await build(
+      `<figure><video controls poster="poster.png" src="walk.mp4"></video><figcaption>The walk.</figcaption></figure><video id="bare" src="walk.mp4"></video><video autoplay muted loop playsinline poster="poster.png" src="walk.mp4"></video><audio controls src="note.txt"></audio>`,
+      {
+        "walk.mp4": mp4,
+        "poster.png": png(960, 600),
+        "note.txt": "not a clip",
+      },
+    );
+    expect(result.code).toBe(1);
+    expect(result.built).toContain('src="data:video/mp4;base64,');
+    expect(result.built).not.toContain('src="walk.mp4"');
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "embedded poster.png: PNG 960x600, 1 KB in the page
+      embedded walk.mp4: MP4, 3 KB in the page
+      FAIL media-not-media: <audio> "note.txt": these bytes are not an MP4, WebM, QuickTime, M4A, MP3, Ogg or WAV clip -> name the clip itself, not a page that plays it
+      FAIL video-poster: <video> bare: has no poster, so it shows a blank or black first frame until played -> save a frame that shows what the clip is about (ffmpeg -ss 2 -i clip.mp4 -frames:v 1 poster.jpg) and name it in poster=
+      FAIL video-controls: <video> bare: has no controls, so the reader cannot play, pause or scrub it -> add controls (a short silent loop may instead be autoplay muted loop playsinline); never build a player of your own
+      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 73 KB."
     `);
   });
 });

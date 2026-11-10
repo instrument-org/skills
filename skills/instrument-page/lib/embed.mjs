@@ -1,5 +1,6 @@
-// Embeds every image a page names by path or URL as a data: URI, and every font
-// file a stylesheet names in url(). Called by check.mjs before the page is
+// Embeds every image a page names by path or URL as a data: URI, every video or
+// audio clip a <video>, <audio> or <source> names, and every font file a
+// stylesheet names in url(). Called by check.mjs before the page is
 // written; not read by the agent.
 //
 // A page travels as one file and a hosted copy may load images only as data:
@@ -27,10 +28,16 @@ const ENOUGH_EDGE = 1600;
 // One weight of a Latin font as WOFF2 is 20 to 60 KB; a desktop OTF with every
 // script and feature in it can pass this, and subsetting brings it back under.
 const MAX_FONT_BYTES = 400 * 1024;
+// A clip travels inside the page, base64 and all: a minute of 1280-wide screen
+// recording at CRF 30 is 2 to 5 MB, so a bigger file is unshrunk, not long.
+const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
 const FETCH_MS = 15_000;
 
 const FONT_RECIPE =
   "subset it to the characters the page uses and save it as WOFF2 beside the page, then name that file (references/loading.md, A font of its own)";
+
+const MEDIA_RECIPE =
+  "re-encode it beside the page, for a screen recording: ffmpeg -i in.mov -vf scale='min(1280,iw)':-2 -c:v libx264 -crf 30 -an -movflags +faststart clip.mp4 (keep the audio with -c:a aac -b:a 96k instead of -an), or cut it shorter with -ss and -t, and name that file (references/images.md, Video and audio)";
 
 const RECIPE =
   "save it again beside the page as JPEG quality 78 (a screenshot may stay PNG if that is smaller), at most 1600 pixels on the long edge for a screenshot and 720 for a photo, and name that file (references/images.md)";
@@ -67,6 +74,26 @@ function sniff(b) {
     )
   )
     return "image/svg+xml";
+  return null;
+}
+
+// The video or audio type from the bytes, for a clip a <video>, <audio> or <source> names.
+function sniffMedia(b) {
+  const ascii = (from, to) => b.subarray(from, to).toString("latin1");
+  if (b.length < 12) return null;
+  if (ascii(4, 8) === "ftyp") {
+    const brand = ascii(8, 12);
+    if (/^avi[fs]/.test(brand)) return null;
+    if (/^M4A/.test(brand)) return "audio/mp4";
+    if (brand === "qt  ") return "video/quicktime";
+    return "video/mp4";
+  }
+  if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3)
+    return "video/webm";
+  if (ascii(0, 4) === "OggS") return "audio/ogg";
+  if (ascii(0, 4) === "RIFF" && ascii(8, 12) === "WAVE") return "audio/wav";
+  if (ascii(0, 3) === "ID3" || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0))
+    return "audio/mpeg";
   return null;
 }
 
@@ -125,23 +152,33 @@ async function load(t) {
   return Buffer.from(await response.arrayBuffer());
 }
 
-// Every image reference in the page's own markup: <img src>, SVG <image href>,
-// <video poster>, and CSS url().
-const TAG = /<(img|image|video)\b[^>]*>/gi;
+// Every picture or clip reference in the page's own markup: <img src>, SVG
+// <image href>, <video poster> and <video src>, <audio src>, <source src>, and
+// CSS url().
+const TAG = /<(img|image|video|audio|source)\b[^>]*>/gi;
 const URL_FN = /url\(\s*(["']?)([^"')]+)\1\s*\)/g;
-const attrOf = (name) => {
-  const tag = name.toLowerCase();
-  const attr =
-    tag === "img" ? "src" : tag === "video" ? "poster" : "(?:xlink:)?href";
-  return new RegExp(`(\\s${attr}\\s*=\\s*)(["'])(.*?)\\2`, "i");
+const ATTRS = {
+  img: ["src"],
+  image: ["(?:xlink:)?href"],
+  video: ["poster", "src"],
+  audio: ["src"],
+  source: ["src"],
 };
+const attrOf = (attr) => new RegExp(`(\\s${attr}\\s*=\\s*)(["'])(.*?)\\2`, "i");
 
 function references(html) {
   const found = [];
   for (const m of html.matchAll(TAG)) {
-    const tag = m[0];
-    const a = attrOf(m[1]).exec(tag);
-    if (a) found.push({ where: `<${m[1]}>`, ref: a[3] });
+    const name = m[1].toLowerCase();
+    for (const attr of ATTRS[name]) {
+      const a = attrOf(attr).exec(m[0]);
+      if (a)
+        found.push({
+          where: `<${name}${attr === "poster" ? " poster" : ""}>`,
+          ref: a[3],
+          media: attr === "src" && name !== "img",
+        });
+    }
   }
   for (const m of html.matchAll(URL_FN))
     found.push({ where: "CSS url()", ref: m[2].trim() });
@@ -167,13 +204,20 @@ const FORMAT = {
   "font/woff": "WOFF font",
   "font/otf": "OTF font",
   "font/ttf": "TTF font",
+  "video/mp4": "MP4",
+  "video/quicktime": "QuickTime",
+  "video/webm": "WebM",
+  "audio/mp4": "M4A",
+  "audio/ogg": "Ogg",
+  "audio/wav": "WAV",
+  "audio/mpeg": "MP3",
 };
 
 export async function embedImages(html, pageDir, allowed, push) {
   const failed = new Set();
   const uris = new Map();
   const embedded = [];
-  for (const { where, ref } of references(html)) {
+  for (const { where, ref, media } of references(html)) {
     if (uris.has(ref) || failed.has(ref)) continue;
     const t = target(ref, pageDir, allowed);
     if (!t) continue;
@@ -188,7 +232,7 @@ export async function embedImages(html, pageDir, allowed, push) {
       bytes = await load(t);
     } catch (e) {
       fail(
-        fontName ? "font-missing" : "image-missing",
+        fontName ? "font-missing" : media ? "media-missing" : "image-missing",
         t.url
           ? `could not be downloaded (${reason(e)})`
           : `no file at ${relative(process.cwd(), t.path) || t.path}`,
@@ -197,6 +241,31 @@ export async function embedImages(html, pageDir, allowed, push) {
           : t.url
             ? "if this environment blocks downloads from scripts, save the image another way (your browser tool, curl, a file the user gave you) to a file beside the page and name that file; if the address is wrong, find the image's real address; otherwise draw a stand-in as inline SVG"
             : "name a file that exists, relative to the page, or draw a stand-in as inline SVG",
+      );
+      continue;
+    }
+    if (media) {
+      const type = sniffMedia(bytes);
+      if (!type) {
+        fail(
+          "media-not-media",
+          "these bytes are not an MP4, WebM, QuickTime, M4A, MP3, Ogg or WAV clip",
+          "name the clip itself, not a page that plays it",
+        );
+        continue;
+      }
+      if (bytes.byteLength > MAX_MEDIA_BYTES) {
+        fail(
+          "media-oversize",
+          `${kb(bytes.byteLength)} (${FORMAT[type]}), over ${kb(MAX_MEDIA_BYTES)}`,
+          MEDIA_RECIPE,
+        );
+        continue;
+      }
+      const uri = `data:${type};base64,${bytes.toString("base64")}`;
+      uris.set(ref, uri);
+      embedded.push(
+        `${ref.slice(0, 80)}: ${FORMAT[type]}, ${kb(uri.length)} in the page`,
       );
       continue;
     }
@@ -253,8 +322,12 @@ export async function embedImages(html, pageDir, allowed, push) {
   }
   const out = html
     .replace(TAG, (tag, name) =>
-      tag.replace(attrOf(name), (all, lead, q, v) =>
-        uris.has(v) ? `${lead}${q}${uris.get(v)}${q}` : all,
+      ATTRS[name.toLowerCase()].reduce(
+        (out, attr) =>
+          out.replace(attrOf(attr), (all, lead, q, v) =>
+            uris.has(v) ? `${lead}${q}${uris.get(v)}${q}` : all,
+          ),
+        tag,
       ),
     )
     .replace(URL_FN, (all, q, v) =>
