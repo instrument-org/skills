@@ -1,0 +1,14 @@
+{
+  "name": "@instrument-org/skill-open-in-instrument",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "24.13.1"
+  },
+  "scripts": {
+    "check:skill": "node ../../scripts/check-skill.ts",
+    "check:types": "tsc --noEmit",
+    "test": "vitest run"
+  }
+}
