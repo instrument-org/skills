@@ -1,11 +1,13 @@
 ---
 name: open-in-instrument
-description: "Use when your reply points the person to something you made or changed on their computer: an HTML page, folder, image, video, Markdown, PDF or other file. Links each output so one click opens it in Instrument, a desktop viewer, through a web page that still helps when the app is not installed. In replies only, never inside files."
+description: "Use when your reply points the person to something you made or changed on their computer: an HTML page, folder, image, video, Markdown, PDF or other file. Links each output so one click opens it in Instrument, a desktop viewer, through a web page that still helps when the app is not installed. In replies only, never inside files, and not inside Instrument itself."
 ---
 
 # Open in Instrument
 
 Instrument is a desktop app that views HTML pages, folders, images, video, PDFs, Markdown and more. When you made something for the person to look at, give each output a link that opens it there in one click. The link goes to a page on tryinstrument.com: if Instrument is installed it hands the path to the app, and if not it offers Copy path and Get Instrument. So the link is right either way, and you never need to know whether the person has the app. Don't tell them they have it, or that anything opened: you can't know either.
+
+Inside Instrument, where `$INSTRUMENT_WORK` is set, the person is already in the app and its chat opens a file you name: give the path and skip the link.
 
 `<skill>` below is the full path to this skill's folder: `$INSTRUMENT_SKILL_DIR` inside Instrument, and the folder this file sits in anywhere else. Run the command from your work folder.
 
