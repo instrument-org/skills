@@ -39,15 +39,38 @@ The inline style gives `--s` a reasonable starting value, so the first paint isn
 
 The grid sizes its slots from the frames themselves, so there is nothing to set. The middle frame of the set fills its tile's width, and a frame much taller than the rest, such as a phone among windows, scales down to the shared slot height.
 
-## Three ways a set of frames can vary
+## Four ways a set of frames can vary
 
-The `states` array doesn't have to be a sequence in time. There are three common setups:
+The `states` array doesn't have to be a sequence in time. There are four common setups:
 
 - **Moments.** Before, during and after an interaction. This is the default, and most proposals need it.
 - **Conditions.** One panel in every state it can be in: empty, loading, one item, many, denied, expired, offline. Use `panel` with a small `w` and `h`, and the grid fits five or six across.
 - **Widths.** The same screen at 1440, 900 and 390, to show the layout holds up. These take a lot of work, so only draw them when the responsive behavior is the question.
+- **Options.** Two or more ways to solve the same thing, for the reader to pick between. Put each option in a group (below), in the order you'd recommend them, with the current design first. Options often combine with moments or conditions: each option walks the same few screens, so the reader can say "B, but with A's empty state".
 
 Whichever you pick, each note should say how its frame differs from the others. If you could swap two frames and their notes would still fit, the frames aren't telling the reader anything.
+
+## Groups
+
+Sets of frames the reader will name back to you, such as options, the current design or rounds of a review, go in `groups`, and each frame joins one with `group`:
+
+```js
+const groups = {
+  now: { mark: "Now", tone: "gray", name: "Current design", note: "The site as it ships today." },
+  A: { mark: "A", name: "Plainly said", note: "One plain sentence up top and two quiet tones for the rest." },
+  B: { mark: "B", name: "Night shift", note: "The whole site dark, with the app glowing on its wallpaper." },
+};
+const states = [
+  { group: "now", title: "Home", note: "…", body: … },
+  { group: "A", title: "Home", note: "…", body: … },
+];
+```
+
+- `mark` is what the reader says back: a letter for an option, a short word such as `Now` for the current design, or `""` for no label. A frame's label is its mark and its place in the group, so the second frame of A is A2 and the second of Now is Now 2.
+- `note` says in one line what the whole set tries, so frame notes only say what each screen does.
+- `tone` is one of gray, sky, emerald, amber, rose or indigo. Leave it out and the sets take colors in order. Gray suits the current design.
+- Keep a group's frames next to each other in `states`. The grid opens each group with one slim line and edges its tiles in its color. The enlarged view names the group at the top left and shows a bar per frame in runs by group, and up and down jump to the same place in the next group, so A2 goes to B2.
+- Use groups only when there are two or more sets to tell apart. Most pages are one walk through one design and need none: leave `groups` empty, and the frames keep plain numbers.
 
 ## Marks
 

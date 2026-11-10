@@ -75,6 +75,34 @@
         #rack .tile {
           transition: background-color 120ms ease-out;
         }
+        /* Group colors. Each tone sets --tone for both themes, and the
+           classes after it paint a group's tag, its tiles' top edge and its
+           bars in the enlarged view's strip. */
+        .tone-gray {
+          --tone: light-dark(#78716c, #d6d3d1);
+        }
+        .tone-sky {
+          --tone: light-dark(#0284c7, #7dd3fc);
+        }
+        .tone-emerald {
+          --tone: light-dark(#059669, #6ee7b7);
+        }
+        .tone-amber {
+          --tone: light-dark(#d97706, #fcd34d);
+        }
+        .tone-rose {
+          --tone: light-dark(#e11d48, #fda4af);
+        }
+        .tone-indigo {
+          --tone: light-dark(#4f46e5, #a5b4fc);
+        }
+        .tone-tag {
+          background: var(--tone);
+          color: light-dark(#fff, #1c1917);
+        }
+        .tone-edge {
+          box-shadow: inset 0 3px 0 var(--tone);
+        }
         #rack .tile:hover {
           background-color: color-mix(in oklab, var(--color-card) 95%, var(--color-foreground));
         }
@@ -351,6 +379,68 @@
         #viewer-bottom[data-open] .row {
           align-items: flex-end;
         }
+        /* The strip: a bar per frame in runs by group, centered over the
+           caption so it holds still from frame to frame. The open frame's bar
+           is the large one, frames before it are half lit, and frames to come
+           are faint. */
+        #viewer-strip {
+          display: flex;
+          justify-content: center;
+          margin: 0.125rem auto 0.5rem;
+          max-width: 48rem;
+        }
+        #viewer-strip .bars {
+          position: relative;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0.25rem 0.5rem;
+        }
+        /* The open frame's group, named to the left of the bars so the bars
+           themselves never move. Too narrow a screen drops it, and the tag
+           in the caption carries the group alone. */
+        #viewer-strip .name {
+          position: absolute;
+          right: calc(100% + 0.75rem);
+          top: 50%;
+          transform: translateY(-50%);
+          white-space: nowrap;
+          font-size: 11px;
+          line-height: 1;
+          color: var(--tone);
+        }
+        @media (max-width: 640px) {
+          #viewer-strip .name {
+            display: none;
+          }
+        }
+        #viewer-strip[hidden] {
+          display: none;
+        }
+        #viewer-strip .run {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+        }
+        #viewer-strip button {
+          width: 10px;
+          height: 4px;
+          padding: 0;
+          border-radius: 9999px;
+          background: var(--tone);
+          opacity: 0.3;
+        }
+        #viewer-strip button.passed {
+          opacity: 0.7;
+        }
+        #viewer-strip button[aria-current] {
+          width: 14px;
+          height: 6px;
+          opacity: 1;
+        }
+        #viewer-strip button:hover {
+          opacity: 1;
+        }
         #viewer-bottom [data-step] {
           flex: none;
           width: 2.25rem;
@@ -490,6 +580,7 @@
           </div>
         </div>
         <div id="viewer-bottom">
+          <div id="viewer-strip" hidden></div>
           <div class="row controls">
             <button data-step="-1" title="Previous frame (←)" aria-label="Previous frame" class="grid place-items-center rounded-lg disabled:opacity-25"><i class="ph ph-caret-left"></i></button>
             <p id="viewer-caption"></p>
@@ -686,6 +777,16 @@
         // like an artboard ("Choose a plan"), and write its note as one sentence
         // in the first person saying what we're doing on that screen and why.
         // SKILL.md has the full rules for titles and notes.
+        //
+        // When the frames fall into sets the reader will name back to you
+        // (options, the current design, rounds), declare each set here and
+        // give its frames `group: "A"`. `mark` is what the reader says: a
+        // letter for an option, a word such as "Now", or "" for none. `note`
+        // says in one line what the whole set tries. `tone` is optional, one
+        // of gray, sky, emerald, amber, rose or indigo; without it sets take
+        // colors in order. Leave it empty for a plain sequence.
+        const groups = {};
+
         const states = [
           {
             title: "Screen name",
@@ -707,13 +808,53 @@
         {
         const rack = document.querySelector("#rack");
 
+        // ---- groups ----------------------------------------------------------
+        // A frame in a group is labeled by the group's mark and its place in
+        // the group, A2, or "Now 2" for a longer mark. A frame outside any
+        // group keeps its plain number.
+        const GROUPS = typeof groups === "object" && groups ? groups : {};
+        const TONES = ["gray", "sky", "emerald", "amber", "rose", "indigo"];
+        const RAMP = TONES.slice(1);
+        const groupKeys = [...new Set(states.map((s) => s.group).filter((g) => g in GROUPS))];
+        const groupAt = (k) => {
+          const g = GROUPS[groupKeys[k]];
+          const ramped = groupKeys.slice(0, k).filter((gk) => !TONES.includes(GROUPS[gk].tone)).length;
+          return { mark: "", name: "", note: "", ...g, k, tone: TONES.includes(g.tone) ? g.tone : RAMP[ramped % RAMP.length] };
+        };
+        const groupOf = (i) => (groupKeys.includes(states[i].group) ? groupAt(groupKeys.indexOf(states[i].group)) : null);
+        const inGroup = (k) => states.flatMap((s, i) => (s.group === groupKeys[k] ? [i] : []));
+        const startsGroup = (i) => Boolean(groupOf(i)) && (i === 0 || states[i - 1].group !== states[i].group);
+        const label = (i) => {
+          const g = groupOf(i);
+          const n = states.slice(0, i + 1).filter((_, j) => (groupOf(j)?.k ?? -1) === (g?.k ?? -1)).length;
+          if (!g) return String(n);
+          if (!g.mark) return "";
+          return g.mark.length === 1 ? `${g.mark}${n}` : `${g.mark} ${n}`;
+        };
+        // The label as it leads a line of text: "B2 Pricing", "3. Pricing".
+        const lead = (i) => (label(i) ? `${label(i)}${groupOf(i) ? " " : ". "}` : "");
+        const groupTag = (g, text) =>
+          `<span class="tone-${g.tone} tone-tag inline-grid h-[18px] min-w-[18px] place-items-center rounded-[4px] px-1 font-mono text-[11px] leading-none font-semibold">${text}</span>`;
+        // A set opens with one slim line across the grid: its mark, its name
+        // and its note, so the grid still reads as tiles.
+        const heading = (i) => {
+          if (!startsGroup(i)) return "";
+          const g = groupOf(i);
+          return `<div class="col-span-full flex min-w-0 flex-wrap items-center gap-x-2 px-1 text-[12px] leading-5 ${i ? "pt-3" : ""}">${g.mark ? groupTag(g, g.mark) : ""}<span class="font-semibold">${g.name}</span><span class="text-muted-foreground">${g.note}</span></div>`;
+        };
+        const captionLead = (i) => {
+          const g = groupOf(i);
+          if (!g) return `${label(i)}. `;
+          return label(i) ? `<span class="mr-1 align-[1px]">${groupTag(g, label(i))}</span>` : "";
+        };
+
         // In a caption the number takes a column of its own, so every line of
         // the note starts at the title's left edge. The badge stays inline
         // inside that column to keep the size it has in a line of text.
         rack.innerHTML = states
           .map(
-            (state, i) => `
-          <figure class="tile m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
+            (state, i) => `${heading(i)}
+          <figure class="${groupOf(i) ? `tone-${groupOf(i).tone} tone-edge` : ""} tile m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
             <div class="slot flex h-[var(--slot-h)] items-center justify-center">
               <div
                 class="frame w-[calc(var(--w)*var(--s))] cursor-zoom-in overflow-hidden rounded-sm ring-[0.5px] ring-border h-[calc(var(--h)*var(--s))]"
@@ -725,7 +866,7 @@
               </div>
             </div>
             <figcaption class="mt-3 text-xs leading-5 text-muted-foreground/80">
-              <span class="font-medium text-foreground/70">${i + 1}. ${state.title}.</span> ${state.note}
+              <span class="font-medium text-foreground/70">${captionLead(i)}${state.title}.</span> ${state.note}
             </figcaption>
           </figure>`,
           )
@@ -1124,8 +1265,11 @@
           const copy = tile.cloneNode(true);
           stage.querySelector(".frame")?.remove();
           mount(copy);
-          viewerCaption.innerHTML = `<span class="font-medium">${index + 1}. ${state.title}.</span> ${state.note}`;
+          const g = groupOf(index);
+          const tagged = g && label(index) ? `<span class="mr-1 inline-block align-[1px]">${groupTag(g, label(index))}</span>` : lead(index);
+          viewerCaption.innerHTML = `<span class="font-medium">${tagged}${state.title}.</span> ${state.note}`;
           viewerCounter.textContent = `${index + 1} / ${states.length}`;
+          paintStrip(index);
           if (!viewer.open) viewer.showModal();
           viewerBottom.removeAttribute("data-open");
           measureBand();
@@ -1144,6 +1288,38 @@
         };
 
         const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
+
+        // ---- the strip -------------------------------------------------------
+        // Only a page with groups has one. A tap on a bar opens that frame.
+        const viewerStrip = document.querySelector("#viewer-strip");
+        function paintStrip(index) {
+          viewerStrip.hidden = groupKeys.length === 0;
+          if (viewerStrip.hidden) return;
+          const g = groupOf(index);
+          const name = g ? `<span class="name tone-${g.tone}">${g.name}</span>` : "";
+          viewerStrip.innerHTML = `<div class="bars">${name}${groupKeys
+            .map(
+              (_, k) =>
+                `<span class="run tone-${groupAt(k).tone}">${inGroup(k)
+                  .map((i) => `<button data-go="${i}" title="${lead(i)}${states[i].title}" aria-label="${lead(i)}${states[i].title}" class="${i < index ? "passed" : ""}"${i === index ? " aria-current=\"true\"" : ""}></button>`)
+                  .join("")}</span>`,
+            )
+            .join("")}</div>`;
+        }
+        viewerStrip.addEventListener("click", (event) => {
+          const bar = event.target.closest("[data-go]");
+          if (bar) showFrame(Number(bar.dataset.go));
+        });
+
+        // Up and down open the same place in the set before or after, so A2
+        // goes to B2 and one screen can be compared across the options.
+        const hop = (delta) => {
+          const g = groupOf(openIndex);
+          if (!g || groupKeys.length < 2) return;
+          const at = inGroup(g.k).indexOf(openIndex);
+          const next = inGroup((g.k + delta + groupKeys.length) % groupKeys.length);
+          showFrame(next[Math.min(at, next.length - 1)]);
+        };
 
         rack.addEventListener("click", (event) => {
           const frame = event.target.closest(".frame");
@@ -1236,6 +1412,10 @@
           if (event.key === "a" || event.key === "A") {
             event.preventDefault();
             return flipMarks();
+          }
+          if (viewer.open && (event.key === "ArrowUp" || event.key === "ArrowDown") && groupOf(openIndex)) {
+            event.preventDefault();
+            return hop(event.key === "ArrowDown" ? 1 : -1);
           }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole
@@ -1622,8 +1802,8 @@
           }
           const note = document.createElement("div");
           note.innerHTML = states[index].note;
-          description.content = `${index + 1}. ${states[index].title}. ${note.textContent.trim()}`;
-          const shown = `${index + 1}. ${states[index].title}`;
+          description.content = `${lead(index)}${states[index].title}. ${note.textContent.trim()}`;
+          const shown = `${lead(index)}${states[index].title}`;
           document.title = pageTitle ? `${shown} · ${pageTitle}` : shown;
         };
         describe(null);

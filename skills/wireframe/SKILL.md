@@ -27,8 +27,8 @@ Don't use it for:
 - `shell.html` is the page shell. It holds Studio's theme as Tailwind tokens, the compiled stylesheet, the pinned Tailwind browser build, the icon set, and the share widget with its Share button. We draw frames with Tailwind classes, and projects' own wireframe kits do too. Don't edit anything between `shell:start` and `shell:end`.
 - `share.mjs` and `share.py` publish a finished page to a link (see "Hand it over" below).
 - `prototype.html` holds the other kind of page: one live screen instead of a grid (see "A prototype instead of frames" below).
-- `main.html` holds the title bar, the frame grid, the marks, the enlarged view, the `states` array you fill in, and a neutral kit of software pieces: `win`, `web`, `phone`, `panel`, `shell`, `navItem`, `group`, `btn`, `field`, `toggle`, `chip`, `grid`, `empty` and `bars`.
-- `patterns.md` explains how a frame is built from two elements, lists common screen sizes, and covers the three ways a set of frames can vary, how marks work, grey bars, and printing.
+- `main.html` holds the title bar, the frame grid, the marks, the enlarged view, the `groups` and `states` you fill in, and a neutral kit of software pieces: `win`, `web`, `phone`, `panel`, `shell`, `navItem`, `group`, `btn`, `field`, `toggle`, `chip`, `grid`, `empty` and `bars`.
+- `patterns.md` explains how a frame is built from two elements, lists common screen sizes, and covers the four ways a set of frames can vary (moments, conditions, widths and options), how marks work, grey bars, and printing.
 
 ## Worked example
 
@@ -38,7 +38,7 @@ node <skill>/new.mjs 2026-10-05-checkout-sold-out-mid-payment.html "Checkout: so
 
 Then edit the page's module script:
 
-1. Replace the `states` array between `// ---- the frames` and `// ---- render`.
+1. Replace the `states` array between `// ---- the frames` and `// ---- render`, and fill in `groups` if the frames fall into sets.
 2. Fill in the one line under the title and the `#source` line.
 3. Delete every helper you don't call.
 
@@ -95,7 +95,8 @@ agent-browser screenshot checkout.png
 
 Write these the way a designer talks to a teammate in a design review.
 
-- Name each frame the way you'd name an artboard in a design file. Use the screen's name in a word or two, such as _Welcome_, _Choose a plan_, _Import memories_ or _Allow notifications_. When several frames show the same screen, add the state after the name, so _Allow notifications_ is followed by _Notifications allowed_. When a frame shows the product as it ships today, add _(Current design)_, as in _Welcome (Current design)_. A title never explains anything, so it never has a colon, an "X, not Y", or a reason in it.
+- When the frames fall into two or more sets the reader will name back to you, such as options, the current design and rounds, declare them in `groups` and give each frame its `group` (see "Groups" in `patterns.md`). The page labels the frames A1, A2, B1 for you, so a title never carries a letter. Keep every option on one page, so the current design is drawn once and the reader can step from A to B without switching files. When you hand the page over, name the sets by their marks.
+- Name each frame the way you'd name an artboard in a design file. Use the screen's name in a word or two, such as _Welcome_, _Choose a plan_, _Import memories_ or _Allow notifications_. When several frames show the same screen, add the state after the name, so _Allow notifications_ is followed by _Notifications allowed_. When a frame shows the product as it ships today outside a current-design group, add _(Current design)_, as in _Welcome (Current design)_. A title never explains anything, so it never has a colon, an "X, not Y", or a reason in it.
 - Write each note in one sentence if you can, and use two or three only when you need them. Say what we're doing on this screen and why, in the first person and the active voice: "We check the seat is still free before we charge the card, so nobody pays for a seat they didn't get." Lead with the decision. "Hovering doesn't send anything. You have to click." tells the reader far more than "The thumbs buttons".
 - Assume the reader hasn't seen any earlier version. Don't write "unchanged", "from last round", or labels like "New:". If something has to be built, say so in a sentence: "This needs a new model call to write the prompts."
 - Read every title and note aloud before you hand the page over, and rewrite anything a person wouldn't say. These are the usual problems:
