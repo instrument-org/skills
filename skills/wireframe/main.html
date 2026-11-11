@@ -445,6 +445,7 @@
           gap: var(--gap, 3px);
         }
         #viewer-strip button {
+          position: relative;
           width: var(--bar, 10px);
           height: 4px;
           padding: 0;
@@ -459,6 +460,20 @@
           width: 14px;
           height: 6px;
           opacity: 1;
+        }
+        /* A bar is a few pixels; what takes the tap is a band 20px tall
+           reaching halfway across the gaps either side, so the strip has
+           no dead spots between bars. */
+        #viewer-strip button::before {
+          content: "";
+          position: absolute;
+          inset: -8px calc(var(--gap, 3px) / -2);
+        }
+        #viewer-strip .run > button:first-child::before {
+          left: calc(var(--run-gap, 0.5rem) / -2);
+        }
+        #viewer-strip .run > button:last-child::before {
+          right: calc(var(--run-gap, 0.5rem) / -2);
         }
         #viewer-strip button:hover {
           opacity: 1;
