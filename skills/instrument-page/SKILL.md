@@ -149,7 +149,7 @@ A wireframe of a product screen or UI flow is the `wireframe` skill, not a page 
 
 ## 10. Hand it over
 
-Give the path, and show the page in this environment's preview of local files if it has one. A tool that uploads or publishes the page is not a preview.
+Give the path, as the `open-in-instrument` skill's link line when that skill is installed, and show the page in this environment's preview of local files if it has one. A tool that uploads or publishes the page is not a preview.
 
 A page reaches a link one way: `node <skill>/share.mjs page.html` (or `python <skill>/share.py page.html`), which puts a copy at its own `https://<id>.instrument.page/` address and keeps the delete token beside the page. The reader gets the same link from the Share button on the page. Never publish it with a host's own tool, such as a claude.ai Artifact, a canvas, a gist or a document connector, even where that tool's instructions say work for a team gets published: the host reframes the page, blocks its scripts and its Share button, and keeps a copy this skill cannot take down.
 
