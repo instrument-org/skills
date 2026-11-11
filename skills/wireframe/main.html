@@ -401,7 +401,8 @@
         /* The strip: a bar per frame in runs by group, centered over the
            caption so it holds still from frame to frame. The open frame's bar
            is the large one, frames before it are half lit, and frames to come
-           are faint. */
+           are faint. The script narrows the bars and their gaps until the
+           strip fits on one row; it wraps only past the narrowest bar. */
         #viewer-strip {
           display: flex;
           align-items: center;
@@ -415,7 +416,7 @@
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
-          gap: 0.25rem 0.5rem;
+          gap: 0.25rem var(--run-gap, 0.5rem);
         }
         /* The open frame's group, named to the left of the bars so the bars
            themselves never move. Too narrow a screen drops it, and the tag
@@ -441,10 +442,10 @@
         #viewer-strip .run {
           display: flex;
           align-items: center;
-          gap: 3px;
+          gap: var(--gap, 3px);
         }
         #viewer-strip button {
-          width: 10px;
+          width: var(--bar, 10px);
           height: 4px;
           padding: 0;
           border-radius: 9999px;
@@ -1362,6 +1363,7 @@
           paintCaption();
           paintStrip();
           if (!viewer.open) viewer.showModal();
+          fitStrip();
           viewerBottom.removeAttribute("data-open");
           measureBand();
           viewerMap.dataset.for = "";
@@ -1419,6 +1421,22 @@
           viewerStrip.innerHTML = `<div class="bars">${g ? `<span class="name tone-${g.tone}">${g.name}</span>` : ""}${runs
             .map((run) => `<span class="run ${run.tone}">${run.frames.map(bar).join("")}</span>`)
             .join("")}</div>`;
+        };
+
+        // Every bar the same width, the widest that keeps the strip on one row:
+        // 10px when there is room, down to 3px, with the gaps tightened once
+        // bars drop under 6px. The open frame's bar keeps its 14px.
+        const fitStrip = () => {
+          if (viewerStrip.hidden) return;
+          const n = states.length;
+          const runs = viewerStrip.querySelectorAll(".run").length;
+          const room = viewerStrip.clientWidth - 14;
+          const widest = (gap, runGap) => Math.floor((room - (runs - 1) * runGap - (n - runs) * gap) / (n - 1));
+          let [gap, runGap] = [3, 8];
+          if (widest(gap, runGap) < 6) [gap, runGap] = [2, 6];
+          viewerStrip.style.setProperty("--bar", `${Math.max(3, Math.min(10, widest(gap, runGap)))}px`);
+          viewerStrip.style.setProperty("--gap", `${gap}px`);
+          viewerStrip.style.setProperty("--run-gap", `${runGap}px`);
         };
 
         // ---- moving between frames -------------------------------------------
@@ -1615,6 +1633,7 @@
         // for the first time after being hidden, which fires no resize event.
         new ResizeObserver(() => {
           if (!viewer.open) return;
+          fitStrip();
           if (pairedWith !== null) {
             measureBand();
             fitPair();
