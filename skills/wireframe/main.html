@@ -1521,16 +1521,13 @@
         });
 
         // A tap on the ground hides the bands and brings them back; a double
-        // tap zooms in at that spot, or back to fit. A mouse keeps the
-        // desktop's ways: a click on the ground closes, a double click on
-        // the frame zooms.
+        // tap zooms in at that spot, or back to fit. A single mouse click does
+        // nothing, since it is so often only a click to focus the window; a
+        // double click zooms, and Escape or the close button closes.
         let tapTimer = 0;
         let lastTap = null;
-        const tapped = (type, p, onFrame) => {
-          if (type === "mouse") {
-            if (!onFrame) viewer.close();
-            return;
-          }
+        const tapped = (type, p) => {
+          if (type === "mouse") return;
           const now = performance.now();
           if (lastTap && now - lastTap.t < 320 && Math.hypot(p.x - lastTap.x, p.y - lastTap.y) < 40) {
             clearTimeout(tapTimer);
@@ -1808,7 +1805,7 @@
           const [a, b] = [...pointers.values()];
           return { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
         };
-        const startPan = (p, type, moved, onFrame = false) => ({ kind: "pan", type, onFrame, x0: p.x, y0: p.y, x: p.x, y: p.y, t: performance.now(), vx: 0, vy: 0, moved, slide: 0 });
+        const startPan = (p, type, moved) => ({ kind: "pan", type, x0: p.x, y0: p.y, x: p.x, y: p.y, t: performance.now(), vx: 0, vy: 0, moved, slide: 0 });
 
         stage.addEventListener("pointerdown", (event) => {
           if (event.button !== 0) return;
@@ -1818,7 +1815,7 @@
           stopFling();
           stopGlide();
           stopWheel();
-          if (pointers.size === 1) gesture = startPan(p, event.pointerType, false, Boolean(event.target.closest(".frame")));
+          if (pointers.size === 1) gesture = startPan(p, event.pointerType, false);
           else if (pointers.size === 2) {
             const m = pinchOf();
             gesture = { kind: "pinch", d0: m.d, s0: view.s, fx: (m.x - view.x) / view.s, fy: (m.y - view.y) / view.s };
@@ -1877,7 +1874,7 @@
           }
           gesture = null;
           if (event.type === "pointercancel") return place();
-          if (!g.moved) return tapped(g.type, { x: g.x0, y: g.y0 }, g.onFrame);
+          if (!g.moved) return tapped(g.type, { x: g.x0, y: g.y0 });
           if (!isZoomed) {
             if (states.length > 1 && Math.abs(g.slide) >= 48 && Math.abs(g.slide) > Math.abs(g.y - g.y0) * 1.5) return step(g.slide < 0 ? 1 : -1);
             return place();
