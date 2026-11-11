@@ -16,18 +16,30 @@ const RUNTIMES = [
 ] as const;
 
 // The pages worker's upload half, as far as the script can tell it apart from
-// the real one: content addresses, a token minted once, 200 without one for
-// bytes already here, and the refusals the script is expected to translate.
+// the real one: content addresses, a delete token minted once, 200 without one
+// for bytes already here, a link token in the link's path that a lookup has to
+// show (a page from before link tokens has none), and the refusals the script
+// is expected to translate.
 // It lives in this process, so every spawn below is asynchronous: a blocking
 // spawn would hold the event loop the server answers on, and the child would
 // wait forever for a reply.
-const pages = new Map<string, string>();
+const pages = new Map<string, { deleteToken: string; linkToken: string }>();
 let server: Server;
 let origin: string;
 const endpoint = () => `${origin}/share`;
 
 const idOf = (body: Buffer) =>
   createHash("sha256").update(body).digest("hex").slice(0, 12);
+// Sixteen base32 letters, the shape of a real one, made from the id so a test
+// can name it.
+const linkTokenOf = (id: string) =>
+  [...createHash("sha256").update(`link:${id}`).digest("hex").slice(0, 16)]
+    .map((c) => "abcdefghijklmnop"[Number.parseInt(c, 16)])
+    .join("");
+const linkOf = (id: string) => {
+  const token = pages.get(id)?.linkToken ?? linkTokenOf(id);
+  return `${origin}/${id}/${token ? `${token}/` : ""}`;
+};
 
 beforeAll(async () => {
   server = createServer((request, response) => {
@@ -39,35 +51,50 @@ beforeAll(async () => {
         response.writeHead(status, { "content-type": "application/json" });
         response.end(JSON.stringify(payload));
       };
-      const id = request.url?.replace(/^\/share\/?/, "") ?? "";
+      const asked = new URL(request.url ?? "/", "http://localhost");
+      const id = asked.pathname.replace(/^\/share\/?/, "");
       if (request.method === "POST") {
         if (!/^\s*<!doctype html/i.test(body.subarray(0, 200).toString())) {
           return json(415, { error: "html only" });
         }
         const found = idOf(body);
-        const url = `${origin}/${found}/`;
         if (pages.has(found)) {
-          return json(200, { bytes: body.length, id: found, url });
+          return json(200, {
+            bytes: body.length,
+            id: found,
+            url: linkOf(found),
+          });
         }
-        pages.set(found, `tok-${found}`);
+        pages.set(found, {
+          deleteToken: `tok-${found}`,
+          linkToken: linkTokenOf(found),
+        });
         return json(201, {
           bytes: body.length,
           deleteToken: `tok-${found}`,
           id: found,
-          url,
+          url: linkOf(found),
         });
       }
-      const token = pages.get(id);
-      if (!token) return json(404, { error: "no such page" });
+      const held = pages.get(id);
+      if (!held) return json(404, { error: "no such page" });
       if (request.method === "GET") {
+        // The id alone is public, so without the link's token a page with one
+        // is not here.
+        if (
+          held.linkToken &&
+          asked.searchParams.get("token") !== held.linkToken
+        ) {
+          return json(404, { error: "no such page" });
+        }
         return json(200, {
           expires: "2026-10-13T12:00:00.000Z",
           id,
-          url: `${origin}/${id}/`,
+          url: linkOf(id),
         });
       }
       if (request.method === "DELETE") {
-        if (request.headers["x-delete-token"] !== token) {
+        if (request.headers["x-delete-token"] !== held.deleteToken) {
           return json(403, { error: "bad token" });
         }
         pages.delete(id);
@@ -132,7 +159,7 @@ describe.each(RUNTIMES)("share via %s", (runtime, script) => {
     const id = idOf(Buffer.from(PAGE));
     const { code, out } = await share();
     expect(code).toBe(0);
-    expect(firstLine(out)).toBe(`${origin}/${id}/`);
+    expect(firstLine(out)).toBe(`${origin}/${id}/${linkTokenOf(id)}/`);
     expect(out).toContain("expires 2026-10-13");
     expect(sidecar().links).toEqual([
       expect.objectContaining({
@@ -179,6 +206,18 @@ describe.each(RUNTIMES)("share via %s", (runtime, script) => {
     const oldId = sidecar().links[1].id;
     expect((await share("--delete", oldId)).out).toContain(`Deleted ${first}`);
     expect(sidecar().links).toHaveLength(1);
+  });
+
+  it("checks a link from before link tokens by its id alone", async () => {
+    await share();
+    const id = idOf(Buffer.from(PAGE));
+    pages.set(id, { deleteToken: `tok-${id}`, linkToken: "" });
+    const before = sidecar();
+    before.links[0].url = `${origin}/${id}/`;
+    writeFileSync(sidecarPath(), JSON.stringify(before));
+    expect((await share("--check")).out).toBe(
+      `${origin}/${id}/\nUp until 2026-10-13.`,
+    );
   });
 
   it("checks the newest link and forgets one that has gone", async () => {

@@ -6,9 +6,10 @@ button makes, from wherever the agent is running:
     python <this file> <slug>.html --delete   take the newest link down
     python <this file> <slug>.html --delete <id>
 
-A link is a copy of the file at https://<id>.instrument.page/, readable by
-anyone who has the address, unlisted, and gone after thirty days. The id is a
-hash of the bytes, so the same file always lands at the same link and an edited
+A link is a copy of the file at https://<id>.instrument.page/<token>/, readable
+by anyone who has the address, unlisted, and gone after thirty days. The token
+is random, so the address cannot be guessed from the host. The id is a hash of
+the bytes, so the same file always lands at the same link and an edited
 file gets a new one. Publishing mints a delete token, handed back once and never
 again; this script keeps it in <slug>.share.json beside the page, which is the
 only place it exists, so a later run (or a later agent) can take the link down.
@@ -26,6 +27,7 @@ import os
 import re
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -90,8 +92,20 @@ def request(method: str, url: str, body: bytes | None = None, headers: dict | No
             return error.code, {"error": raw.decode("utf-8", "replace")}
 
 
-def lookup(page_id: str):
-    status, answer = request("GET", f"{ENDPOINT}/{page_id}")
+def token_in(url: str | None) -> str:
+    """The link token in a page's address: the share host names a page's link
+    only to someone who shows it. A link published before links had tokens has
+    none, and is looked up by its id alone."""
+    if not url:
+        return ""
+    segments = urllib.parse.urlsplit(url).path.split("/")
+    return next((s for s in segments if re.fullmatch(r"[a-z2-7]{16}", s)), "")
+
+
+def lookup(page_id: str, url: str | None = None):
+    token = token_in(url)
+    query = f"?token={token}" if token else ""
+    status, answer = request("GET", f"{ENDPOINT}/{page_id}{query}")
     if status == 404:
         return None
     if status >= 400:
@@ -127,7 +141,7 @@ def publish(page: Path) -> str:
     sidecar = read_sidecar(page)
     known = next((link for link in sidecar["links"] if link["id"] == answer["id"]), None)
     try:
-        found = lookup(answer["id"])
+        found = lookup(answer["id"], answer.get("url"))
     except ShareError:
         found = None
     entry = {
@@ -168,7 +182,8 @@ def check(page: Path, page_id: str | None = None) -> str:
     target = page_id or (sidecar["links"][0]["id"] if sidecar["links"] else None)
     if not target:
         return f"{page} has never been published from here."
-    found = lookup(target)
+    known = next((link for link in sidecar["links"] if link["id"] == target), None)
+    found = lookup(target, known.get("url") if known else None)
     if not found:
         sidecar["links"] = [link for link in sidecar["links"] if link["id"] != target]
         write_sidecar(page, sidecar)

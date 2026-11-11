@@ -6,8 +6,9 @@
 //   node <this file> <slug>.html --delete   take the newest link down
 //   node <this file> <slug>.html --delete <id>
 //
-// A link is a copy of the file at https://<id>.instrument.page/, readable by
-// anyone who has the address, unlisted, and gone after thirty days. The id is
+// A link is a copy of the file at https://<id>.instrument.page/<token>/,
+// readable by anyone who has the address, unlisted, and gone after thirty days.
+// The token is random, so the address cannot be guessed from the host. The id is
 // a hash of the bytes, so the same file always lands at the same link and an
 // edited file gets a new one. Publishing mints a delete token, handed back
 // once and never again; this script keeps it in <slug>.share.json beside the
@@ -63,8 +64,19 @@ async function writeSidecar(page, sidecar) {
 
 const day = (iso) => (iso ? iso.slice(0, 10) : "an unknown day");
 
-async function lookup(id) {
-  const response = await fetch(`${ENDPOINT}/${id}`);
+// The share host names a page's link only to someone who shows its token, the
+// path segment after the host. A link published before links had tokens has
+// none, and is looked up by its id alone.
+const tokenIn = (url) =>
+  (url ? new URL(url).pathname.split("/") : []).find((segment) =>
+    /^[a-z2-7]{16}$/.test(segment),
+  ) ?? "";
+
+async function lookup(id, url) {
+  const token = tokenIn(url);
+  const response = await fetch(
+    `${ENDPOINT}/${id}${token ? `?token=${token}` : ""}`,
+  );
   if (response.status === 404) return null;
   if (!response.ok) throw new Error(`lookup answered ${response.status}`);
   return response.json();
@@ -113,7 +125,7 @@ export async function publish(page) {
 
   const sidecar = await readSidecar(page);
   const known = sidecar.links.find((link) => link.id === answer.id);
-  const found = await lookup(answer.id).catch(() => null);
+  const found = await lookup(answer.id, answer.url).catch(() => null);
   const entry = {
     id: answer.id,
     url: answer.url,
@@ -154,7 +166,8 @@ export async function check(page, id) {
   const sidecar = await readSidecar(page);
   const target = id ?? sidecar.links[0]?.id;
   if (!target) return `${page} has never been published from here.`;
-  const found = await lookup(target);
+  const known = sidecar.links.find((link) => link.id === target);
+  const found = await lookup(target, known?.url);
   if (!found) {
     sidecar.links = sidecar.links.filter((link) => link.id !== target);
     await writeSidecar(page, sidecar);

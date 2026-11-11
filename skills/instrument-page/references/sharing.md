@@ -4,7 +4,7 @@ Every page carries a Share button that publishes a copy of itself to a public li
 
 ## What a link is
 
-A copy of the file, byte for byte, at `https://<id>.instrument.page/`. Anyone with the address can read it; nothing lists it, search engines are told to stay out, and it expires thirty days after it went up. The id is a hash of the bytes, so the same file always lands at the same link and an edited file gets a new one, while the old one goes on serving the old version until it expires. Publishing mints a delete token, handed back once and never again. The hosted copy runs sandboxed and may load only from the origins in `allowed-sources.json`, which is what a page obeys already, so a page that passes the offline test looks the same hosted as it does from disk. Its Share button becomes a save button.
+A copy of the file, byte for byte, at `https://<id>.instrument.page/<token>/`. The token is random, so the address cannot be guessed from the host, and the host without it answers 404. Anyone with the whole address can read it; nothing lists it, search engines are told to stay out, and it expires thirty days after it went up. The id is a hash of the bytes, so the same file always lands at the same link and an edited file gets a new one, while the old one goes on serving the old version until it expires. Publishing mints a delete token, handed back once and never again. The hosted copy runs sandboxed and may load only from the origins in `allowed-sources.json`, which is what a page obeys already, so a page that passes the offline test looks the same hosted as it does from disk. Its Share button becomes a save button.
 
 ## What a hosted copy cannot do
 
@@ -55,13 +55,13 @@ A page that draws itself with script holds little in its bytes, and a wireframe 
 - Not asking for it, as `curl` does, gets the page as it was drawn, as HTML with every script taken out. Read this when you need the layout or the classes, since it is the page itself rather than a description of it.
 
 ```sh
-curl -sSL -H 'accept: text/markdown' https://<id>.instrument.page/
-curl -sSL https://<id>.instrument.page/
+curl -sSL -H 'accept: text/markdown' https://<id>.instrument.page/<token>/
+curl -sSL https://<id>.instrument.page/<token>/
 ```
 
 ## The endpoint, for when neither runtime is there
 
-`POST https://share.instrument.page/share` with `content-type: text/html` and the file as the body, from any origin. The body has to open with `<!doctype html>` and stay under 8 MB. It answers `201 {id, url, bytes, deleteToken}`, or `200 {id, url, bytes}` with no token when those bytes are already published, by anyone. `GET /share/<id>` answers `{id, url, expires}` or 404; `DELETE /share/<id>` with an `x-delete-token` header answers 204, 403 for a wrong token, 404 once gone. Twenty uploads a minute per address.
+`POST https://share.instrument.page/share` with `content-type: text/html` and the file as the body, from any origin. The body has to open with `<!doctype html>` and stay under 8 MB. It answers `201 {id, url, bytes, deleteToken}`, or `200 {id, url, bytes}` with no token when those bytes are already published, by anyone. `GET /share/<id>?token=<token>`, the token being the path segment of the link after the host, answers `{id, url, expires}`, and 404 without the token or once gone; `DELETE /share/<id>` with an `x-delete-token` header answers 204, 403 for a wrong token, 404 once gone. Twenty uploads a minute per address.
 
 ```sh
 curl -sS -H 'content-type: text/html' --data-binary @<slug>.html -o <slug>.share.json https://share.instrument.page/share
