@@ -1488,17 +1488,18 @@
           if (callouts[i]) viewerMarks.querySelector("kbd").insertAdjacentHTML("beforebegin", countPill(callouts[i]));
         };
 
-        // The first time a frame with callouts is enlarged, they show for a
-        // moment and fade. Each frame flashes once a visit, so stepping back
-        // and forth stays quiet, and never under reduced motion, where the
-        // count alone says they are there.
-        const flashed = new Set();
+        // Each time a frame with callouts comes up enlarged, they show for a
+        // moment and fade, so the reader sees where they are on every frame
+        // without having them on. Redrawing the same frame, as Compare does,
+        // doesn't flash it again, and reduced motion never flashes, leaving
+        // the count to say they are there.
+        let flashedOn = -1;
         const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
         let flashTimer;
         const flashCallouts = (i) => {
-          if (!callouts[i] || flashed.has(i)) return;
-          flashed.add(i);
-          if (reducedMotion.matches || document.body.dataset.marks === "on") return;
+          if (i === flashedOn) return;
+          flashedOn = i;
+          if (!callouts[i] || reducedMotion.matches || document.body.dataset.marks === "on") return;
           document.body.removeAttribute("data-mark-flash");
           void document.body.offsetWidth;
           document.body.setAttribute("data-mark-flash", "");
@@ -1713,7 +1714,10 @@
           stage.querySelector(".frame")?.remove();
           paintHead();
           paintStrip();
-          if (!viewer.open) viewer.showModal();
+          if (!viewer.open) {
+            flashedOn = -1;
+            viewer.showModal();
+          }
           fitStrip();
           viewerTop.removeAttribute("data-open");
           measureBand();
