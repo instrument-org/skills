@@ -371,25 +371,17 @@
         #viewer-label:empty {
           display: none;
         }
-        /* A recommended frame says so in a chip after its title, centered on
-           the line like the buttons; on a phone the chip is just its star. */
+        /* A recommended frame's star sits after its label, drawn as an
+           icon the size of the label and centered on the line. */
         #viewer-pick {
           display: inline-flex;
           flex: none;
-          align-items: center;
-          gap: 0.25rem;
-          height: 20px;
-          padding: 0 0.4375rem 0 0.3125rem;
-          border-radius: 9999px;
-          background: color-mix(in srgb, var(--tone) 18%, transparent);
+          margin-left: -0.25rem;
           color: var(--tone);
-          font-size: 11px;
-          line-height: 1;
-          font-weight: 600;
         }
         #viewer-pick svg {
-          width: 12px;
-          height: 12px;
+          width: 13px;
+          height: 13px;
           fill: currentColor;
         }
         #viewer-pick[hidden] {
@@ -564,12 +556,8 @@
           }
         }
         @media (max-width: 640px) {
-          #viewer [data-picks] .word,
-          #viewer-pick .word {
+          #viewer [data-picks] .word {
             display: none;
-          }
-          #viewer-pick {
-            padding: 0 0.3125rem;
           }
         }
         /* A phone on its side has little height to give the frame, so the
@@ -858,7 +846,7 @@
         <div id="viewer-top">
           <div class="ident">
             <p class="head">
-              <span id="viewer-counter"></span><span id="viewer-label"></span><span id="viewer-title"></span><span id="viewer-pick" hidden></span>
+              <span id="viewer-counter"></span><span id="viewer-label"></span><span id="viewer-pick" hidden></span><span id="viewer-title"></span>
               <button data-compare hidden aria-pressed="false" class="vbtn"><span class="word"></span><kbd data-chrome-text="C"></kbd></button>
             </p>
             <p id="viewer-caption"></p>
@@ -1655,7 +1643,7 @@
           describe(index);
         };
 
-        // The title block: place, label, title, the Recommended chip on a star, the Compare button
+        // The title block: place, label and star, title, the Compare button
         // when the frame has a pair, and the note under them. The switches
         // at the right follow what is on.
         const paintHead = () => {
@@ -1666,7 +1654,7 @@
           viewerLabel.textContent = g ? label(openIndex) : "";
           viewerPick.className = toneOf(openIndex);
           viewerPick.hidden = !state.pick;
-          viewerPick.innerHTML = state.pick ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.94 6.1 6.56.8-4.84 4.56 1.24 6.54L12 17.3l-5.9 3.2 1.24-6.54L2.5 9.4l6.56-.8z"/></svg><span class="word">${recommended(openIndex)}</span>` : "";
+          viewerPick.innerHTML = state.pick ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.94 6.1 6.56.8-4.84 4.56 1.24 6.54L12 17.3l-5.9 3.2 1.24-6.54L2.5 9.4l6.56-.8z"/></svg>` : "";
           viewerPick.title = recommended(openIndex);
           viewerTitle.textContent = state.title;
           viewerCaption.innerHTML = state.note;
