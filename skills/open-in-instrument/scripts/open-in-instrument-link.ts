@@ -1,6 +1,6 @@
 /**
  * Print the reply line that links outputs to Instrument: one line per output, or one link for several outputs of the same piece of work
- * @note Prints Markdown to stdout and warnings to stderr. It reads only whether each path exists and is a folder, and whether Instrument is installed where its installer puts it, and opens nothing.
+ * @note Prints Markdown to stdout and warnings to stderr; inside Instrument, where INSTRUMENT_WORK is set, prints only each absolute path, one per line. It reads only whether each path exists and is a folder, and whether Instrument is installed where its installer puts it, and opens nothing.
  */
 import { readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
@@ -158,6 +158,7 @@ export function buildReply({
   title,
   from,
   links = "web",
+  insideInstrument = false,
   cwd = process.cwd(),
   home = homedir(),
   platform = process.platform,
@@ -168,6 +169,8 @@ export function buildReply({
   title?: string;
   from?: string;
   links?: Links;
+  /** The person is already in the app, so only the paths are printed. */
+  insideInstrument?: boolean;
   cwd?: string;
   home?: string;
   platform?: NodeJS.Platform;
@@ -196,6 +199,13 @@ export function buildReply({
     }
   }
 
+  if (insideInstrument) {
+    return {
+      markdown: outputs.map((output) => output.full).join("\n"),
+      warnings,
+    };
+  }
+
   const name = title?.trim();
   const [only] = outputs;
   if (outputs.length === 1 && only) {
@@ -217,7 +227,9 @@ export function buildReply({
   }
   let link;
   if (links === "app") {
-    const params = outputs.map((output) => `path=${encode(output.appSlashPath)}`);
+    const params = outputs.map(
+      (output) => `path=${encode(output.appSlashPath)}`,
+    );
     link = `${APP_PROTOCOL}://files?${params.join("&")}`;
   } else {
     const params = [`title=${encode(name)}`];
@@ -383,6 +395,8 @@ Usage:
 Prints the Markdown to paste into your reply. One path prints one line; several
 paths print one link that opens them together, then each path on its own line.
 Relative paths resolve against the current folder. Warnings go to stderr.
+Inside Instrument, where INSTRUMENT_WORK is set, it prints only each absolute
+path, one per line, with no link: the person is already in the app.
 
 Options:
   --title <title>  Names the output, or for several the piece of work (default: the file name)
@@ -424,13 +438,19 @@ if (
     process.exit(1);
   }
   try {
-    const { links, warning } = resolveLinks({ flag: values.links });
-    if (warning) console.error(`warning: ${warning}`);
+    const insideInstrument = Boolean(process.env.INSTRUMENT_WORK);
+    let links: Links = "web";
+    if (!insideInstrument) {
+      const resolved = resolveLinks({ flag: values.links });
+      links = resolved.links;
+      if (resolved.warning) console.error(`warning: ${resolved.warning}`);
+    }
     const { markdown, warnings } = buildReply({
       paths: positionals,
       title: values.title,
       from: values.from,
       links,
+      insideInstrument,
     });
     for (const warning of warnings) console.error(`warning: ${warning}`);
     console.log(markdown);

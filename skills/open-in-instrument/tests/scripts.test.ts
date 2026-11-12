@@ -236,6 +236,38 @@ describe("warnings", () => {
   });
 });
 
+describe("inside Instrument", () => {
+  it("prints each absolute path on its own line, with no title or link", () => {
+    const stat = fakeFs({
+      "/Users/sam/Projects/pricing/out/comparison.html": "file",
+      "/Users/sam/Projects/pricing/out": "folder",
+    });
+    expect(
+      [
+        buildReply({
+          ...mac,
+          paths: ["out/comparison.html"],
+          title: "Pricing",
+          stat,
+          insideInstrument: true,
+        }),
+        buildReply({
+          ...mac,
+          paths: ["out/comparison.html", "out", "out/comparison.html"],
+          stat,
+          insideInstrument: true,
+        }),
+      ].map((reply) => reply.markdown),
+    ).toMatchInlineSnapshot(`
+      [
+        "/Users/sam/Projects/pricing/out/comparison.html",
+        "/Users/sam/Projects/pricing/out/comparison.html
+      /Users/sam/Projects/pricing/out/",
+      ]
+    `);
+  });
+});
+
 describe("app links", () => {
   it("links straight into the app, one output or a bundle, on both systems", () => {
     const stat = fakeFs({
@@ -518,10 +550,12 @@ describe("command", () => {
     tempDirs.length = 0;
   });
 
-  function run(args: string[], cwd: string) {
+  function run(args: string[], cwd: string, work?: string) {
+    const { INSTRUMENT_WORK: _, ...env } = process.env;
     const result = spawnSync(process.execPath, [SCRIPT, ...args], {
       cwd,
       encoding: "utf-8",
+      env: work === undefined ? env : { ...env, INSTRUMENT_WORK: work },
     });
     return {
       status: result.status,
@@ -577,7 +611,11 @@ describe("command", () => {
     const result = spawnSync(
       process.execPath,
       [link, "/Users/sam/plan.html", "--title", "Plan"],
-      { cwd: dir, encoding: "utf-8" },
+      {
+        cwd: dir,
+        encoding: "utf-8",
+        env: { ...process.env, INSTRUMENT_WORK: "" },
+      },
     );
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("[Open in Instrument](");
@@ -593,12 +631,8 @@ describe("command", () => {
     const app = run(["/Users/sam/plan.html", "--links", "app"], dir);
     const web = run(["/Users/sam/plan.html", "--links", "web"], dir);
     const odd = run(["/Users/sam/plan.html", "--links", "both"], dir);
-    expect([
-      app.stdout,
-      web.stdout,
-      odd.stdout,
-      odd.stderr,
-    ]).toMatchInlineSnapshot(`
+    expect([app.stdout, web.stdout, odd.stdout, odd.stderr])
+      .toMatchInlineSnapshot(`
       [
         "**plan.html** · \`/Users/sam/plan.html\` · [Open in Instrument](instrument://file/Users/sam/plan.html)
       ",
@@ -610,6 +644,33 @@ describe("command", () => {
       warning: /Users/sam/plan.html does not exist, so its link opens nothing. Check the path, or link the output once it is written.
       ",
       ]
+    `);
+  });
+
+  it("prints only the paths inside Instrument, whatever --links says", () => {
+    expect(
+      run(
+        [
+          "/Users/sam/plan.html",
+          "/Users/sam/notes.md",
+          "--title",
+          "Plan",
+          "--links",
+          "app",
+        ],
+        os.tmpdir(),
+        "/Users/sam/.instrument/work/sam/chat",
+      ),
+    ).toMatchInlineSnapshot(`
+      {
+        "status": 0,
+        "stderr": "warning: /Users/sam/plan.html does not exist, so its link opens nothing. Check the path, or link the output once it is written.
+      warning: /Users/sam/notes.md does not exist, so its link opens nothing. Check the path, or link the output once it is written.
+      ",
+        "stdout": "/Users/sam/plan.html
+      /Users/sam/notes.md
+      ",
+      }
     `);
   });
 

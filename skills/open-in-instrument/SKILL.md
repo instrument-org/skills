@@ -7,9 +7,9 @@ description: "Use whenever your reply names something you, or an agent you ran, 
 
 Instrument is a desktop app that views the kinds of file listed under What Instrument opens, and folders. When you made something of those kinds for the person to look at, give each output a link that opens it there in one click. The link opens the app directly when Instrument is installed on this machine, and otherwise goes to a page on tryinstrument.com that hands the path to the app if it is there and offers Copy path and Get Instrument if not. So the link is right either way, and you never need to know whether the person has the app. Don't tell them they have it, or that anything opened: you can't know either.
 
-This holds for outputs a subagent or another tool made that you pass on, and for every later reply that names them again. When another skill or instruction says to give or return the path, give it as this line: the line carries the path.
+This holds for outputs a subagent or another tool made that you pass on, and for every later reply that names them again. Outside Instrument, when another skill or instruction says to give or return the path, give it as this line: the line carries the path.
 
-Inside Instrument, where `$INSTRUMENT_WORK` is set, the person is already in the app and its chat opens a file you name: give the path and skip the link.
+Inside Instrument, where `$INSTRUMENT_WORK` is set, the person is already in the app and its chat opens a file you name: hand the output over the way the app's own instructions say, with no link line, even when another skill says to use this one. There the command prints only each absolute path.
 
 `<skill>` below is the full path to this skill's folder: `$INSTRUMENT_SKILL_DIR` inside Instrument, and the folder this file sits in anywhere else. Run the command from your work folder.
 
