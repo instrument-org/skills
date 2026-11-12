@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   buildReply,
+  installPaths,
   resolveLinks,
 } from "../scripts/open-in-instrument-link.ts";
 
@@ -341,111 +342,170 @@ describe("the home folder shows as ~", () => {
 });
 
 describe("where links go", () => {
-  const linux = { platform: "linux", home: "/home/sam" } as const;
-  const file = "/home/sam/.config/Instrument/agent-links";
-  const files = (entries: Record<string, string>) => (path: string) => {
-    const content = entries[path];
-    if (content === undefined) throw new Error(`ENOENT: ${path}`);
-    return content;
+  const none = {
+    env: {},
+    exists: () => false,
+    listDir: () => [],
+    readFile: () => "",
   };
+  const found = (paths: readonly string[]) => (file: string) =>
+    paths.includes(file);
 
-  it.each([
-    [
-      "the flag over everything",
-      "app",
-      { INSTRUMENT_LINKS: "web" },
-      { [file]: "web" },
-      "app",
-    ],
-    [
-      "the variable over the file",
-      undefined,
-      { INSTRUMENT_LINKS: "app" },
-      { [file]: "web" },
-      "app",
-    ],
-    ["the file over the default", undefined, {}, { [file]: " App\n" }, "app"],
-    ["the website by default", undefined, {}, {}, "web"],
-    [
-      "the flag, whatever its case",
-      "WEB",
-      { INSTRUMENT_LINKS: "app" },
-      {},
-      "web",
-    ],
-    [
-      "a blank value as none",
-      undefined,
-      { INSTRUMENT_LINKS: " " },
-      { [file]: "app\n" },
-      "app",
-    ],
-  ] as const)("%s", (_, flag, env, entries, links) => {
-    expect(
-      resolveLinks({ ...linux, flag, env, readFile: files(entries) }),
-    ).toEqual({ links });
-  });
-
-  it("falls back to the website and warns, naming where the value came from", () => {
+  it("checks where each system's installer puts the app", () => {
     const cases = [
-      ["desktop", {}, {}],
-      [undefined, { INSTRUMENT_LINKS: "both" }, { [file]: "app" }],
-      [undefined, {}, { [file]: "browser\n" }],
+      ["darwin", "/Users/sam", {}],
+      ["linux", "/home/sam", {}],
+      [
+        "win32",
+        "C:\\Users\\Sam",
+        {
+          LOCALAPPDATA: "C:\\Users\\Sam\\AppData\\Local",
+          ProgramFiles: "C:\\Program Files",
+        },
+      ],
+      ["win32", "C:\\Users\\Sam", {}],
     ] as const;
     expect(
-      cases.map(([flag, env, entries]) =>
-        resolveLinks({ ...linux, flag, env, readFile: files(entries) }),
+      cases.map(([platform, home, env]) =>
+        installPaths({ platform, home, env }),
       ),
     ).toMatchInlineSnapshot(`
       [
-        {
-          "links": "web",
-          "warning": "--links says "desktop", which is neither app nor web, so links go through the website.",
-        },
-        {
-          "links": "web",
-          "warning": "INSTRUMENT_LINKS says "both", which is neither app nor web, so links go through the website.",
-        },
-        {
-          "links": "web",
-          "warning": "/home/sam/.config/Instrument/agent-links says "browser", which is neither app nor web, so links go through the website.",
-        },
+        [
+          "/Applications/Instrument.app",
+          "/Users/sam/Applications/Instrument.app",
+        ],
+        [
+          "/opt/Instrument/instrument",
+          "/usr/share/applications/instrument.desktop",
+        ],
+        [
+          "C:\\Users\\Sam\\AppData\\Local\\Programs\\Instrument\\Instrument.exe",
+          "C:\\Program Files\\Instrument\\Instrument.exe",
+        ],
+        [
+          "C:\\Users\\Sam\\AppData\\Local\\Programs\\Instrument\\Instrument.exe",
+          "C:\\Program Files\\Instrument\\Instrument.exe",
+        ],
       ]
     `);
   });
 
-  it("reads the file from Instrument's settings folder on each system", () => {
-    const cases = [
-      ["darwin", "/Users/sam", {}],
-      ["linux", "/home/sam", {}],
-      ["linux", "/home/sam", { XDG_CONFIG_HOME: "/home/sam/cfg" }],
-      [
-        "win32",
-        "C:\\Users\\Sam",
-        { APPDATA: "C:\\Users\\Sam\\AppData\\Roaming" },
-      ],
-      ["win32", "C:\\Users\\Sam", {}],
-    ] as const;
-    const read: string[] = [];
-    for (const [platform, home, env] of cases) {
+  it.each([
+    ["darwin", "/Users/sam", "/Applications/Instrument.app"],
+    ["darwin", "/Users/sam", "/Users/sam/Applications/Instrument.app"],
+    ["linux", "/home/sam", "/opt/Instrument/instrument"],
+    ["linux", "/home/sam", "/usr/share/applications/instrument.desktop"],
+    [
+      "win32",
+      "C:\\Users\\Sam",
+      "C:\\Users\\Sam\\AppData\\Local\\Programs\\Instrument\\Instrument.exe",
+    ],
+    [
+      "win32",
+      "C:\\Users\\Sam",
+      "C:\\Program Files\\Instrument\\Instrument.exe",
+    ],
+  ] as const)(
+    "links into the app on %s when %s exists",
+    (platform, home, file) => {
+      expect(
+        resolveLinks({ ...none, platform, home, exists: found([file]) }),
+      ).toEqual({ links: "app" });
+    },
+  );
+
+  it.each([
+    ["darwin", "/Users/sam"],
+    ["linux", "/home/sam"],
+    ["win32", "C:\\Users\\Sam"],
+  ] as const)(
+    "links through the website on %s when nothing is found",
+    (platform, home) => {
+      expect(resolveLinks({ ...none, platform, home })).toEqual({
+        links: "web",
+      });
+    },
+  );
+
+  it("finds an AppImage by the desktop entry that claims the scheme, and not a preview's", () => {
+    const dir = "/home/sam/.local/share/applications";
+    const entries: Record<string, string> = {
+      [`${dir}/appimagekit_1a2b-Instrument.desktop`]:
+        "[Desktop Entry]\nName=Instrument\nExec=/home/sam/Apps/Instrument.AppImage %U\nMimeType=x-scheme-handler/instrument;\n",
+      [`${dir}/appimagekit_3c4d-Instrument_Preview.desktop`]:
+        "[Desktop Entry]\nName=Instrument Preview (night)\nMimeType=x-scheme-handler/instrument-preview-night;\n",
+      [`${dir}/notes.txt`]: "x-scheme-handler/instrument",
+    };
+    const read = (file: string) => {
+      const content = entries[file];
+      if (content === undefined) throw new Error(`ENOENT: ${file}`);
+      return content;
+    };
+    const names =
+      (...keys: string[]) =>
+      () =>
+        keys.map((key) => path.posix.basename(key));
+    const linux = { ...none, platform: "linux", home: "/home/sam" } as const;
+    expect([
       resolveLinks({
-        platform,
-        home,
-        env,
-        readFile: (path) => {
-          read.push(path);
+        ...linux,
+        listDir: names(...Object.keys(entries)),
+        readFile: read,
+      }),
+      resolveLinks({
+        ...linux,
+        listDir: names(
+          `${dir}/appimagekit_3c4d-Instrument_Preview.desktop`,
+          `${dir}/notes.txt`,
+        ),
+        readFile: read,
+      }),
+      resolveLinks({
+        ...linux,
+        listDir: () => {
           throw new Error("ENOENT");
         },
-      });
-    }
-    expect(read).toMatchInlineSnapshot(`
-      [
-        "/Users/sam/Library/Application Support/Instrument/agent-links",
-        "/home/sam/.config/Instrument/agent-links",
-        "/home/sam/cfg/Instrument/agent-links",
-        "C:\\Users\\Sam\\AppData\\Roaming\\Instrument\\agent-links",
-        "C:\\Users\\Sam\\AppData\\Roaming\\Instrument\\agent-links",
-      ]
+        readFile: read,
+      }),
+    ]).toEqual([{ links: "app" }, { links: "web" }, { links: "web" }]);
+  });
+
+  it.each([
+    ["web", true, "web"],
+    ["app", false, "app"],
+    [" APP ", false, "app"],
+    [" ", true, "app"],
+    [undefined, true, "app"],
+  ] as const)(
+    "--links %s overrides detection (installed: %s)",
+    (flag, installed, links) => {
+      expect(
+        resolveLinks({
+          ...none,
+          flag,
+          platform: "darwin",
+          home: "/Users/sam",
+          exists: () => installed,
+        }),
+      ).toEqual({ links });
+    },
+  );
+
+  it("falls back to the website and warns on a --links value it does not know", () => {
+    expect(
+      resolveLinks({
+        ...none,
+        flag: "desktop",
+        platform: "darwin",
+        home: "/Users/sam",
+        exists: () => true,
+      }),
+    ).toMatchInlineSnapshot(`
+      {
+        "links": "web",
+        "warning": "--links says "desktop", which is neither app nor web, so links go through the website.",
+      }
     `);
   });
 });
@@ -480,7 +540,16 @@ describe("command", () => {
     fs.writeFileSync(path.join(dir, "plan.html"), "<p>plan</p>");
     expect(
       run(
-        ["plan.html", "missing.md", "--title", "Plan", "--from", "Codex"],
+        [
+          "plan.html",
+          "missing.md",
+          "--title",
+          "Plan",
+          "--from",
+          "Codex",
+          "--links",
+          "web",
+        ],
         dir,
       ),
     ).toMatchInlineSnapshot(`
@@ -514,23 +583,22 @@ describe("command", () => {
     expect(result.stdout).toContain("[Open in Instrument](");
   });
 
-  it("honors INSTRUMENT_LINKS and lets --links override it", () => {
-    const dir = fs.realpathSync(
-      fs.mkdtempSync(path.join(os.tmpdir(), "open-in-instrument-")),
+  it("decides by itself whether this machine has the app, and takes --links over that", () => {
+    const dir = os.tmpdir();
+    const decided = run(["/Users/sam/plan.html"], dir);
+    expect(decided.status).toBe(0);
+    expect(decided.stdout).toMatch(
+      /\[Open in Instrument\]\((instrument:\/\/file|https:\/\/tryinstrument\.com\/open#)\/Users\/sam\/plan\.html\)/,
     );
-    tempDirs.push(dir);
-    const spawn = (args: string[], env: Record<string, string>) =>
-      spawnSync(process.execPath, [SCRIPT, ...args], {
-        cwd: dir,
-        encoding: "utf-8",
-        env: { ...process.env, ...env },
-      });
-    const viaEnv = spawn(["/Users/sam/plan.html"], { INSTRUMENT_LINKS: "app" });
-    const viaFlag = spawn(["/Users/sam/plan.html", "--links", "web"], {
-      INSTRUMENT_LINKS: "app",
-    });
-    const odd = spawn(["/Users/sam/plan.html"], { INSTRUMENT_LINKS: "both" });
-    expect([viaEnv.stdout, viaFlag.stdout, odd.stdout]).toMatchInlineSnapshot(`
+    const app = run(["/Users/sam/plan.html", "--links", "app"], dir);
+    const web = run(["/Users/sam/plan.html", "--links", "web"], dir);
+    const odd = run(["/Users/sam/plan.html", "--links", "both"], dir);
+    expect([
+      app.stdout,
+      web.stdout,
+      odd.stdout,
+      odd.stderr,
+    ]).toMatchInlineSnapshot(`
       [
         "**plan.html** · \`/Users/sam/plan.html\` · [Open in Instrument](instrument://file/Users/sam/plan.html)
       ",
@@ -538,9 +606,11 @@ describe("command", () => {
       ",
         "**plan.html** · \`/Users/sam/plan.html\` · [Open in Instrument](https://tryinstrument.com/open#/Users/sam/plan.html)
       ",
+        "warning: --links says "both", which is neither app nor web, so links go through the website.
+      warning: /Users/sam/plan.html does not exist, so its link opens nothing. Check the path, or link the output once it is written.
+      ",
       ]
     `);
-    expect(odd.stderr).toContain('warning: INSTRUMENT_LINKS says "both"');
   });
 
   it("exits 1 with usage when given no path", () => {

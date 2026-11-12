@@ -5,7 +5,7 @@ description: "Use whenever your reply names something you, or an agent you ran, 
 
 # Open in Instrument
 
-Instrument is a desktop app that views the kinds of file listed under What Instrument opens, and folders. When you made something of those kinds for the person to look at, give each output a link that opens it there in one click. The link goes to a page on tryinstrument.com: if Instrument is installed it hands the path to the app, and if not it offers Copy path and Get Instrument. So the link is right either way, and you never need to know whether the person has the app. Don't tell them they have it, or that anything opened: you can't know either.
+Instrument is a desktop app that views the kinds of file listed under What Instrument opens, and folders. When you made something of those kinds for the person to look at, give each output a link that opens it there in one click. The link opens the app directly when Instrument is installed on this machine, and otherwise goes to a page on tryinstrument.com that hands the path to the app if it is there and offers Copy path and Get Instrument if not. So the link is right either way, and you never need to know whether the person has the app. Don't tell them they have it, or that anything opened: you can't know either.
 
 This holds for outputs a subagent or another tool made that you pass on, and for every later reply that names them again. When another skill or instruction says to give or return the path, give it as this line: the line carries the path.
 
@@ -66,7 +66,7 @@ The link's words are always exactly `Open in Instrument`. Never link the title o
 
 ## Where the link goes
 
-The link goes through the website by default, which is right everywhere. A person who wants links straight into the app, as `instrument://`, sets `INSTRUMENT_LINKS=app` in their shell, or writes `app` into Instrument's `agent-links` file: `~/Library/Application Support/Instrument/agent-links` on macOS, `%APPDATA%\Instrument\agent-links` on Windows, `~/.config/Instrument/agent-links` on Linux. The command reads these itself. You never choose this, and you pass `--links` only when the person asked for one form in this conversation.
+The command links straight into Instrument, as `instrument://`, when the app is installed on this machine where its installer puts it, and through the website otherwise. You do nothing to choose. Pass `--links web` only when the person said the reply is for someone else, and `--links app` only when they said the app is installed somewhere unusual.
 
 ## Write the link by hand only if the command can't run
 

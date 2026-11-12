@@ -1,8 +1,8 @@
 /**
  * Print the reply line that links outputs to Instrument: one line per output, or one link for several outputs of the same piece of work
- * @note Prints Markdown to stdout and warnings to stderr. It reads only whether each path exists and is a folder, and the person's link preference, and opens nothing.
+ * @note Prints Markdown to stdout and warnings to stderr. It reads only whether each path exists and is a folder, and whether Instrument is installed where its installer puts it, and opens nothing.
  */
-import { readFileSync, realpathSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -226,8 +226,17 @@ export function buildReply({
   return { markdown: lines.join("\n"), warnings };
 }
 
-/** Where Instrument keeps its own settings on this platform, and so the person's link preference. */
-export function preferenceFile({
+/** What the release build is called on disk: the bundle, the install folder, the executable and its desktop entry. */
+const APP_PRODUCT_NAME = "Instrument";
+const APP_EXECUTABLE = "instrument";
+
+/**
+ * Where each system's installer puts the app, from electron-builder's config:
+ * the macOS bundle in either Applications folder, the NSIS per-user and
+ * per-machine folders on Windows, and on Linux the deb and rpm install folder
+ * and the desktop entry they register.
+ */
+export function installPaths({
   platform,
   home,
   env,
@@ -236,60 +245,123 @@ export function preferenceFile({
   home: string;
   env: Readonly<Record<string, string | undefined>>;
 }) {
-  if (platform === "win32") {
-    const appData = env.APPDATA || path.win32.join(home, "AppData", "Roaming");
-    return path.win32.join(appData, "Instrument", PREFERENCE_FILE);
+  if (platform === "darwin") {
+    return [
+      `/Applications/${APP_PRODUCT_NAME}.app`,
+      path.posix.join(home, "Applications", `${APP_PRODUCT_NAME}.app`),
+    ];
   }
-  const config =
-    platform === "darwin"
-      ? path.posix.join(home, "Library", "Application Support")
-      : env.XDG_CONFIG_HOME || path.posix.join(home, ".config");
-  return path.posix.join(config, "Instrument", PREFERENCE_FILE);
+  if (platform === "win32") {
+    const localAppData =
+      env.LOCALAPPDATA || path.win32.join(home, "AppData", "Local");
+    const programFiles = env.ProgramFiles || "C:\\Program Files";
+    return [
+      path.win32.join(
+        localAppData,
+        "Programs",
+        APP_PRODUCT_NAME,
+        `${APP_PRODUCT_NAME}.exe`,
+      ),
+      path.win32.join(
+        programFiles,
+        APP_PRODUCT_NAME,
+        `${APP_PRODUCT_NAME}.exe`,
+      ),
+    ];
+  }
+  return [
+    `/opt/${APP_PRODUCT_NAME}/${APP_EXECUTABLE}`,
+    `/usr/share/applications/${APP_EXECUTABLE}.desktop`,
+  ];
+}
+
+/** An AppImage is integrated by a desktop entry of any name in the person's own applications folder, claiming the app's scheme. */
+function appImageEntries(home: string) {
+  return path.posix.join(home, ".local", "share", "applications");
+}
+const SCHEME_HANDLER = new RegExp(
+  `x-scheme-handler/${APP_EXECUTABLE}(?:;|\\s|$)`,
+  "m",
+);
+
+/**
+ * Whether the release app is installed where its installer puts it. On Linux
+ * an AppImage has no fixed place, so the person's desktop entries are read for
+ * the one that claims the instrument: scheme. Nothing is run.
+ */
+export function appInstalled({
+  platform,
+  home,
+  env,
+  exists,
+  listDir,
+  readFile,
+}: {
+  platform: NodeJS.Platform;
+  home: string;
+  env: Readonly<Record<string, string | undefined>>;
+  exists: (file: string) => boolean;
+  listDir: (dir: string) => string[];
+  readFile: (file: string) => string;
+}) {
+  if (installPaths({ platform, home, env }).some(exists)) return true;
+  if (platform === "darwin" || platform === "win32") return false;
+  const dir = appImageEntries(home);
+  let entries: string[];
+  try {
+    entries = listDir(dir);
+  } catch {
+    return false;
+  }
+  return entries.some((name) => {
+    if (!name.endsWith(".desktop")) return false;
+    try {
+      return SCHEME_HANDLER.test(readFile(path.posix.join(dir, name)));
+    } catch {
+      return false;
+    }
+  });
 }
 
 /**
- * The person's choice of where links go: the --links flag, then INSTRUMENT_LINKS,
- * then the agent-links file in Instrument's settings folder, then the website.
- * A blank value is no value. Any other value that is neither app nor web counts as the website, with a warning naming its source.
+ * Where links go: as --links says when it was given, else straight into the
+ * app when it is installed on this machine, else through the website.
+ * A --links value that is neither app nor web counts as the website, with a warning.
  */
 export function resolveLinks({
   flag,
   env = process.env,
   platform = process.platform,
   home = homedir(),
+  exists = (file) => statSync(file, { throwIfNoEntry: false }) !== undefined,
+  listDir = (dir) => readdirSync(dir),
   readFile = (file) => readFileSync(file, "utf-8"),
 }: {
   flag?: string;
   env?: Readonly<Record<string, string | undefined>>;
   platform?: NodeJS.Platform;
   home?: string;
+  exists?: (file: string) => boolean;
+  listDir?: (dir: string) => string[];
   readFile?: (file: string) => string;
 }): { links: Links; warning?: string } {
-  const file = preferenceFile({ platform, home, env });
-  const sources: [string, string | undefined][] = [
-    ["--links", flag],
-    ["INSTRUMENT_LINKS", env.INSTRUMENT_LINKS],
-    [
-      file,
-      (() => {
-        try {
-          return readFile(file);
-        } catch {
-          return undefined;
-        }
-      })(),
-    ],
-  ];
-  for (const [source, raw] of sources) {
-    const value = raw?.trim().toLowerCase();
-    if (!value) continue;
-    if (value === "app" || value === "web") return { links: value };
+  const value = flag?.trim().toLowerCase();
+  if (value === "app" || value === "web") return { links: value };
+  if (value) {
     return {
       links: "web",
-      warning: `${source} says ${JSON.stringify(value)}, which is neither app nor web, so links go through the website.`,
+      warning: `--links says ${JSON.stringify(value)}, which is neither app nor web, so links go through the website.`,
     };
   }
-  return { links: "web" };
+  const installed = appInstalled({
+    platform,
+    home,
+    env,
+    exists,
+    listDir,
+    readFile,
+  });
+  return { links: installed ? "app" : "web" };
 }
 
 const USAGE = `open-in-instrument-link
@@ -305,9 +377,10 @@ Relative paths resolve against the current folder. Warnings go to stderr.
 Options:
   --title <title>  Names the output, or for several the piece of work (default: the file name)
   --from <agent>   Names you as you would introduce yourself; used with several paths
-  --links <where>  Where the link goes: web (tryinstrument.com/open, the default) or app
-                   (instrument://). Only when the person asked; otherwise their
-                   INSTRUMENT_LINKS variable or Instrument's agent-links file decides
+  --links <where>  Where the link goes: app (instrument://) or web
+                   (tryinstrument.com/open). Without it, app when Instrument is
+                   installed on this machine, else web. Pass web only when the
+                   person said the reply is for someone else
   -h, --help       Display this message`;
 
 // Agents reach the script through a symlinked skill folder, so the file it was
