@@ -563,7 +563,7 @@
         /* The strip: a bar per frame in runs by group, centered so it holds
            still from frame to frame. The open frame's bar is the large one,
            frames before it are half lit, and frames to come are faint. A
-           recommended frame is a star in place of its bar. The frame's label
+           recommended frame is a star in place of its bar, larger when open. The frame's label
            and its group's name hang under its own run, kept inside the strip by the
            script. The script narrows the bars and their gaps until the strip
            fits on one row; it wraps only past the narrowest bar. */
@@ -629,14 +629,14 @@
           height: 6px;
           opacity: 1;
         }
-        #viewer-strip button.pick:not([aria-current]) {
+        #viewer-strip button.pick {
           height: 10px;
           border-radius: 0;
           background: none;
           color: var(--tone);
           opacity: 0.75;
         }
-        #viewer-strip button.pick:not([aria-current])::after {
+        #viewer-strip button.pick::after {
           content: "★";
           position: absolute;
           inset: 0;
@@ -644,6 +644,14 @@
           place-items: center;
           font-size: 9px;
           line-height: 1;
+        }
+        /* Open, a recommended frame keeps its star, larger and fully lit. */
+        #viewer-strip button.pick[aria-current] {
+          height: 14px;
+          opacity: 1;
+        }
+        #viewer-strip button.pick[aria-current]::after {
+          font-size: 14px;
         }
         /* A bar is a few pixels; what takes the tap is a band 20px tall
            reaching halfway across the gaps either side, so the strip has
