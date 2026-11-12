@@ -275,15 +275,15 @@ describe("app links", () => {
       ),
     ).toMatchInlineSnapshot(`
       [
-        "**plan (v2).html** · \`~/My Pages/plan (v2).html\` · [Open in Instrument](instrument://file/Users/sam/My%20Pages/plan%20%28v2%29.html)",
-        "**My Pages** · \`~/My Pages/\` · [Open in Instrument](instrument://file/Users/sam/My%20Pages/)",
-        "**report (v2).pdf** · \`~\\My Docs\\report (v2).pdf\` · [Open in Instrument](instrument://file/C%3A/Users/Sam/My%20Docs/report%20%28v2%29.pdf)",
+        "**plan (v2).html** · \`~/My Pages/plan (v2).html\` · [Open in Instrument](instrument://file/~/My%20Pages/plan%20%28v2%29.html)",
+        "**My Pages** · \`~/My Pages/\` · [Open in Instrument](instrument://file/~/My%20Pages/)",
+        "**report (v2).pdf** · \`~\\My Docs\\report (v2).pdf\` · [Open in Instrument](instrument://file/~/My%20Docs/report%20%28v2%29.pdf)",
         "**deck.pdf** · \`\\\\nas\\share\\deck.pdf\` · [Open in Instrument](instrument://file//nas/share/deck.pdf)",
-        "**Pages & plan** · 2 files · [Open in Instrument](instrument://files?path=%2FUsers%2Fsam%2FMy%20Pages%2Fplan%20%28v2%29.html&path=%2FUsers%2Fsam%2FMy%20Pages%2F)
+        "**Pages & plan** · 2 files · [Open in Instrument](instrument://files?path=~%2FMy%20Pages%2Fplan%20%28v2%29.html&path=~%2FMy%20Pages%2F)
 
       - \`~/My Pages/plan (v2).html\`
       - \`~/My Pages/\`",
-        "**Q3 review** · 2 files · [Open in Instrument](instrument://files?path=%2FC%3A%2FUsers%2FSam%2FMy%20Docs%2Freport%20%28v2%29.pdf&path=%2FD%3A%2Fc%2Bd.png)
+        "**Q3 review** · 2 files · [Open in Instrument](instrument://files?path=~%2FMy%20Docs%2Freport%20%28v2%29.pdf&path=%2FD%3A%2Fc%2Bd.png)
 
       - \`~\\My Docs\\report (v2).pdf\`
       - \`D:\\c+d.png\`",
@@ -323,15 +323,15 @@ describe("the home folder shows as ~", () => {
     ).toMatchInlineSnapshot(`
       [
         "**plan.html** · \`~/Projects/plan.html\` · [Open in Instrument](https://tryinstrument.com/open#/Users/sam/Projects/plan.html)",
-        "**plan.html** · \`~/Projects/plan.html\` · [Open in Instrument](instrument://file/Users/sam/Projects/plan.html)",
+        "**plan.html** · \`~/Projects/plan.html\` · [Open in Instrument](instrument://file/~/Projects/plan.html)",
         "**plan.html** · \`~/Projects/plan.html\` · [Open in Instrument](https://tryinstrument.com/open#/home/sam/Projects/plan.html)",
-        "**plan.html** · \`~/Projects/plan.html\` · [Open in Instrument](instrument://file/home/sam/Projects/plan.html)",
+        "**plan.html** · \`~/Projects/plan.html\` · [Open in Instrument](instrument://file/~/Projects/plan.html)",
         "**plan.html** · \`~\\Projects\\plan.html\` · [Open in Instrument](https://tryinstrument.com/open#/C:/Users/Sam/Projects/plan.html)",
-        "**plan.html** · \`~\\Projects\\plan.html\` · [Open in Instrument](instrument://file/C%3A/Users/Sam/Projects/plan.html)",
+        "**plan.html** · \`~\\Projects\\plan.html\` · [Open in Instrument](instrument://file/~/Projects/plan.html)",
         "**plan.html** · \`~\\Projects\\plan.html\` · [Open in Instrument](https://tryinstrument.com/open#/C:/users/sam/Projects/plan.html)",
-        "**plan.html** · \`~\\Projects\\plan.html\` · [Open in Instrument](instrument://file/C%3A/users/sam/Projects/plan.html)",
+        "**plan.html** · \`~\\Projects\\plan.html\` · [Open in Instrument](instrument://file/~/Projects/plan.html)",
         "**sam** · \`~/\` · [Open in Instrument](https://tryinstrument.com/open#/Users/sam/)",
-        "**sam** · \`~/\` · [Open in Instrument](instrument://file/Users/sam/)",
+        "**sam** · \`~/\` · [Open in Instrument](instrument://file/~/)",
         "**plan.html** · \`/Users/samantha/plan.html\` · [Open in Instrument](https://tryinstrument.com/open#/Users/samantha/plan.html)",
         "**plan.html** · \`/Users/samantha/plan.html\` · [Open in Instrument](instrument://file/Users/samantha/plan.html)",
         "**plan.html** · \`/opt/pages/plan.html\` · [Open in Instrument](https://tryinstrument.com/open#/opt/pages/plan.html)",

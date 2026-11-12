@@ -38,7 +38,7 @@ node <skill>/scripts/open-in-instrument-link.ts <path> --title "<title>"
 node <skill>/scripts/open-in-instrument-link.ts <path> <path>... --title "<work>" --from "<you>"
 ```
 
-Paste what it prints into your reply as it is. It resolves relative paths against the current folder and `~` to the home folder, writes Windows paths in the link's form, ends a folder with a slash, and shows a path under the home folder as `~/…` while the link keeps it whole. On stderr it warns about a path that does not exist or sits in a temporary folder: fix the path or move the output, then run it again.
+Paste what it prints into your reply as it is. It resolves relative paths against the current folder and `~` to the home folder, writes Windows paths in the link's form, ends a folder with a slash, and shows a path under the home folder as `~/…`. A link into the app keeps that `~`, so it opens on each of the person's computers whatever their user name there; a website link keeps the path whole. On stderr it warns about a path that does not exist or sits in a temporary folder: fix the path or move the output, then run it again.
 
 - One output: one line. `--title` names it in a few words the person would recognize; without it, the file name.
 - Several outputs from one piece of work: one command, one link that opens them together. `--title` names the work and is required; `--from` names you as you would introduce yourself (`Claude Code`, `Codex`).

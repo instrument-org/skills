@@ -110,10 +110,9 @@ function resolveOutput(
     win
       ? child.toLowerCase().startsWith(parent.toLowerCase() + p.sep)
       : child.startsWith(parent + p.sep);
-  const display =
-    homeRoot && under(full, homeRoot)
-      ? "~" + full.slice(homeRoot.length)
-      : full;
+  const fromHome =
+    homeRoot && under(full, homeRoot) ? full.slice(homeRoot.length) : undefined;
+  const display = fromHome === undefined ? full : "~" + fromHome;
 
   // The link's form of the path: forward slashes, and on Windows the drive leads: /C:/Users/Sam.
   const slashed = win ? full.replaceAll("\\", "/") : full;
@@ -122,7 +121,17 @@ function resolveOutput(
   const linkPath = segments
     .map((segment, index) => (index === 1 && drive ? segment : encode(segment)))
     .join("/");
-  const appPath = segments.map(encode).join("/");
+  // The app reads a leading ~ as the home folder of the computer the link is
+  // opened on, so a link to a synced folder opens on each of the person's
+  // computers whatever their user name there.
+  const appSlashPath =
+    fromHome === undefined
+      ? slashPath
+      : "~" + (win ? fromHome.replaceAll("\\", "/") : fromHome);
+  const appPath = `${fromHome === undefined ? "" : "/"}${appSlashPath
+    .split("/")
+    .map(encode)
+    .join("/")}`;
 
   const inTemp = tempRoots.some((root) => {
     const rel = win
@@ -137,6 +146,7 @@ function resolveOutput(
     name: p.basename(absolute),
     slashPath,
     linkPath,
+    appSlashPath,
     appPath,
     exists: kind !== undefined,
     inTemp,
@@ -207,7 +217,7 @@ export function buildReply({
   }
   let link;
   if (links === "app") {
-    const params = outputs.map((output) => `path=${encode(output.slashPath)}`);
+    const params = outputs.map((output) => `path=${encode(output.appSlashPath)}`);
     link = `${APP_PROTOCOL}://files?${params.join("&")}`;
   } else {
     const params = [`title=${encode(name)}`];
