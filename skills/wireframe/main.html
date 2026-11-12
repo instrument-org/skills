@@ -737,7 +737,7 @@
           display: flex;
           flex: 1;
           justify-content: center;
-          align-items: center;
+          align-items: flex-start;
           min-width: 0;
           min-height: 0;
           overflow: hidden;
@@ -1750,14 +1750,24 @@
         };
         // Each copy is measured at a token size first, so a frame copied at
         // the grid's scale can't widen its column before the fit is known.
+        // Then both panes move down together by half the height the taller
+        // frame leaves, so the pair sits in the middle with each label
+        // right above its frame.
         const fitPair = () => {
           pair.style.top = `${topH}px`;
           pair.style.bottom = `${bottomH}px`;
-          for (const slot of pair.querySelectorAll(".pane-slot")) {
+          const panes = [...pair.querySelectorAll(".pane")];
+          let spare = Infinity;
+          for (const pane of panes) {
+            pane.style.transform = "";
+            const slot = pane.querySelector(".pane-slot");
             const frame = slot.firstElementChild;
             frame.style.setProperty("--s", 0.01);
-            frame.style.setProperty("--s", Math.min(slot.clientWidth / Number(frame.dataset.w), slot.clientHeight / Number(frame.dataset.h)));
+            const s = Math.min(slot.clientWidth / Number(frame.dataset.w), slot.clientHeight / Number(frame.dataset.h));
+            frame.style.setProperty("--s", s);
+            spare = Math.min(spare, slot.clientHeight - Number(frame.dataset.h) * s);
           }
+          for (const pane of panes) pane.style.transform = `translateY(${Math.max(0, spare / 2)}px)`;
         };
         pair.addEventListener("click", (event) => {
           const chosen = event.target.closest(".pane");
