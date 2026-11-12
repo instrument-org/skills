@@ -371,12 +371,12 @@
         #viewer-label:empty {
           display: none;
         }
-        /* A recommended frame's star sits after its label, drawn as an
-           icon the size of the label and centered on the line. */
+        /* A recommended frame's star leads its label, drawn as an icon the
+           size of the label and centered on the line. */
         #viewer-pick {
           display: inline-flex;
           flex: none;
-          margin-left: -0.25rem;
+          margin-right: -0.25rem;
           color: var(--tone);
         }
         #viewer-pick svg {
@@ -464,9 +464,6 @@
           box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
           color: var(--vw-dim);
           font: 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-        }
-        #viewer .vbtn .star {
-          color: var(--tone);
         }
         /* Compare belongs to the frame, so it sits in the frame's own title
            line, in its group's color. */
@@ -846,7 +843,7 @@
         <div id="viewer-top">
           <div class="ident">
             <p class="head">
-              <span id="viewer-counter"></span><span id="viewer-label"></span><span id="viewer-pick" hidden></span><span id="viewer-title"></span>
+              <span id="viewer-counter"></span><span id="viewer-pick" hidden></span><span id="viewer-label"></span><span id="viewer-title"></span>
               <button data-compare hidden aria-pressed="false" class="vbtn"><span class="word"></span><kbd data-chrome-text="C"></kbd></button>
             </p>
             <p id="viewer-caption"></p>
@@ -1645,7 +1642,7 @@
           describe(index);
         };
 
-        // The title block: place, label and star, title, the Compare button
+        // The title block: place, star and label, title, the Compare button
         // when the frame has a pair, and the note under them. The switches
         // at the right follow what is on.
         const paintHead = () => {
@@ -1669,7 +1666,6 @@
             compareButton.title = comparing ? "Back to this frame alone (C)" : `${lead(p.j)}${states[p.j].title} beside this one (C)`;
           }
           picksButton.hidden = picks.length === 0;
-          picksButton.className = `vbtn ${toneOf(picks.includes(openIndex) ? openIndex : (picks[0] ?? openIndex))}`;
           picksButton.setAttribute("aria-pressed", String(picksOnly));
           picksButton.title = picksOnly ? "Show every frame (R)" : "Show only the recommended frames (R)";
         };
