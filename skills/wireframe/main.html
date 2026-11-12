@@ -216,7 +216,7 @@
         }
         /* The words on the page's own controls are drawn from an attribute,
            so the Markdown a shared link answers with, and any reader of the
-           page's text, holds the frames and not "Show marks" or "Hide
+           page's text, holds the frames and not "Show callouts" or "Hide
            controls". Each control carries its name in aria-label too. */
         [data-chrome-text]::before {
           content: attr(data-chrome-text);
@@ -270,37 +270,38 @@
       </p>
 
       <!-- The enlarged view. One frame on a dark ground, with everything else
-           laid over it rather than beside it, on solid dark pills that read
-           over a white frame as well as over the ground. Along the bottom,
-           where a thumb reaches, one row and nothing more: the caption with
-           prev at its left end and next at its right, as wide as the
-           caption, so on a desktop the arrows sit under the frame rather than
-           in the window's corners. The caption keeps to two lines of small
-           type, so the band is the same height for every frame and every
-           zoom; a tap on it opens the whole note over the frame, and a tap
-           folds it again. Along the top: the count at the left, and beside
-           it the scale while the frame is zoomed, which a tap on brings back
-           to fit; marks and close at the right. The frame opens at the size
-           that fits between the top strip and the bottom band and never sits
-           under them until the reader zooms, when it may run under either.
-           Zoom has no control of its own: a pinch, a wheel with Cmd or Ctrl
-           held, a double tap or the keys take the frame in, and then the
-           lower right shows a thumbnail with the visible part marked, which a
-           tap or a drag on moves the view. -->
+           laid over it. At the top left, which frame this is, as the page's
+           own title bar says which page: its place in the page, its label,
+           its title, and the note on a second line, one line long until a
+           tap opens the rest. Beside the title, when the agent paired this
+           frame with another, a button saying what Compare will show. At
+           the top right, the switches: Recommended when the page stars any
+           frames, Marks, and Close. Every one is the same kind of button, its
+           word and then its key, with no icon. Along the bottom, only the
+           strip, with the frame's label and its group's name under its own run, and prev and
+           next: small arrow keys at the lower right on a desktop, buttons
+           under the thumbs on a touch screen. The frame fits between the two
+           and never sits under them until the reader zooms, when everything
+           but the scale fades so the drawing has the screen. Zoom has no
+           control of its own: a pinch, a wheel with Cmd or Ctrl held, a
+           double tap or the keys take the frame in, and then the lower right
+           shows a thumbnail with the visible part marked, which a tap or a
+           drag on moves the view. -->
       <style>
         /* The page itself never zooms while the viewer is open, so the
            controls stay where they are: every touch on the dialog is the
-           viewer's own, and only an opened caption keeps a native scroll. */
+           viewer's own, and only an opened note keeps a native scroll. */
         #viewer {
           touch-action: none;
           -webkit-user-select: none;
           user-select: none;
           --bottom-h: 0px;
-          --control-h: 2rem;
+          --control-h: 1.75rem;
           --vw-pill: #161616;
-          --vw-line: rgb(255 255 255 / 0.14);
-          --vw-ink: rgb(255 255 255 / 0.9);
-          --vw-dim: rgb(255 255 255 / 0.64);
+          --vw-line: rgb(255 255 255 / 0.16);
+          --vw-ink: rgb(255 255 255 / 0.92);
+          --vw-dim: rgb(255 255 255 / 0.62);
+          --vw-faint: rgb(255 255 255 / 0.42);
         }
         html:has(#viewer[open]) {
           background: #000;
@@ -325,119 +326,286 @@
           z-index: 2;
           color-scheme: dark;
           color: var(--vw-dim);
+          pointer-events: none;
         }
-        /* The top strip takes no taps itself, so the ground under it still
-           answers one; each control on it is a pill of its own. */
+        /* The top band takes no taps itself, so the ground under it still
+           answers one; the title block and each button take their own. */
         #viewer-top {
           top: 0;
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 0.375rem;
-          --band-pad: 0.75rem;
-          padding: calc(var(--band-pad) + env(safe-area-inset-top, 0px)) max(var(--band-pad), env(safe-area-inset-right, 0px)) var(--band-pad) max(var(--band-pad), env(safe-area-inset-left, 0px));
-          pointer-events: none;
+          align-items: flex-start;
+          gap: 1.5rem;
+          padding: calc(0.75rem + env(safe-area-inset-top, 0px)) max(1rem, env(safe-area-inset-right, 0px)) 0.625rem max(1rem, env(safe-area-inset-left, 0px));
         }
-        #viewer-top .controls {
-          display: flex;
-          align-items: center;
-          gap: 0.375rem;
-        }
-        #viewer-top :is(#viewer-counter, .controls > button) {
-          height: var(--control-h);
+        #viewer-top .ident {
+          flex: 1;
+          min-width: 0;
           pointer-events: auto;
-          border: 1px solid var(--vw-line);
-          background: var(--vw-pill);
-          color: var(--vw-dim);
-          box-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
         }
-        #viewer-top .controls > button:hover,
-        #viewer-top .controls > button[aria-pressed="true"] {
-          color: var(--vw-ink);
-        }
-        /* A switch that is on, Marks or Two up, takes a quiet fill. */
-        #viewer #viewer-top .controls > button[aria-pressed="true"] {
-          background: rgb(255 255 255 / 0.14);
-          border-color: rgb(255 255 255 / 0.4);
-        }
-        #viewer-counter,
-        #viewer-zoom {
-          display: inline-flex;
-          align-items: center;
-          padding: 0 0.625rem;
-          white-space: nowrap;
-        }
-        #viewer-zoom {
-          gap: 0.375rem;
-          padding-right: 0.5rem;
-        }
-        #viewer-zoom[hidden] {
-          display: none;
-        }
-        /* The bottom band: the caption between the arrows, two lines at
-           most, so the band is the same height whatever the note. Opened,
-           the note grows over the frame and the arrows keep to the band's
-           bottom edge. */
-        #viewer-bottom {
-          bottom: 0;
-          padding: 0.5rem max(1rem, env(safe-area-inset-right, 0px)) max(0.5rem, env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px));
-          background: var(--vw-pill);
-          border-top: 1px solid var(--vw-line);
-        }
-        /* The band keeps one height whatever the note: the row always holds
-           two caption lines, and a group's tag fits inside a line. Were a
-           one-line note shorter, the frame would refit at every step. */
-        #viewer-bottom .row {
+        #viewer-top .head {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          margin: 0 auto;
-          max-width: 48rem;
-          min-height: 2rem;
+          min-width: 0;
+          height: var(--control-h);
+          white-space: nowrap;
+          font-size: 13px;
+          line-height: 16px;
+          font-weight: 500;
+          color: var(--vw-ink);
         }
-        #viewer-bottom[data-open] .row {
-          align-items: flex-end;
+        #viewer-counter {
+          flex: none;
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          font-variant-numeric: tabular-nums;
         }
-        /* The strip: a bar per frame in runs by group, centered over the
-           caption so it holds still from frame to frame. The open frame's bar
-           is the large one, frames before it are half lit, and frames to come
-           are faint. The script narrows the bars and their gaps until the
-           strip fits on one row; it wraps only past the narrowest bar. */
-        #viewer-strip {
+        #viewer-counter span {
+          color: var(--vw-faint);
+        }
+        #viewer-label {
+          flex: none;
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          font-weight: 600;
+          color: var(--tone);
+        }
+        #viewer-label:empty {
+          display: none;
+        }
+        #viewer-title {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        /* The note: one line, so the band is the same height for every
+           frame. A tap opens the rest over the frame and a tap folds it. */
+        #viewer-caption {
+          margin-top: 0.125rem;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          font-size: 12px;
+          line-height: 16px;
+          color: var(--vw-dim);
+          -webkit-user-select: text;
+          user-select: text;
+          touch-action: pan-y;
+        }
+        #viewer-top[data-more] #viewer-caption {
+          cursor: pointer;
+        }
+        #viewer-top[data-open] {
+          background: rgb(0 0 0 / 0.92);
+        }
+        #viewer-top[data-open] #viewer-caption {
+          max-height: 40dvh;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          white-space: normal;
+        }
+        #viewer-top .controls {
+          display: flex;
+          flex: none;
+          align-items: center;
+          gap: 0.375rem;
+        }
+        /* The one kind of button: its word, then its key. Pressed, it takes
+           a quiet fill. */
+        #viewer .vbtn {
+          display: inline-flex;
+          flex: none;
+          align-items: center;
+          gap: 0.375rem;
+          height: var(--control-h);
+          padding: 0 0.3125rem 0 0.5rem;
+          border: 1px solid var(--vw-line);
+          border-radius: 6px;
+          background: var(--vw-pill);
+          color: var(--vw-ink);
+          font-size: 12px;
+          font-weight: 500;
+          white-space: nowrap;
+          pointer-events: auto;
+          box-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+          transition: opacity 0.2s;
+        }
+        #viewer .vbtn:hover {
+          border-color: rgb(255 255 255 / 0.32);
+        }
+        #viewer .vbtn[aria-pressed="true"] {
+          background: #2e2e2e;
+          border-color: rgb(255 255 255 / 0.4);
+        }
+        #viewer .vbtn[hidden] {
+          display: none;
+        }
+        #viewer .vbtn kbd {
+          display: inline-grid;
+          place-items: center;
+          min-width: 1rem;
+          height: 1rem;
+          padding: 0 0.25rem;
+          border-radius: 4px;
+          box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
+          color: var(--vw-dim);
+          font: 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+        #viewer .vbtn .star {
+          color: var(--tone);
+        }
+        /* Compare belongs to the frame, so it sits in the frame's own title
+           line, in its group's color. */
+        #viewer [data-compare] {
+          height: 1.5rem;
+          margin-left: 0.5rem;
+          color: var(--tone);
+        }
+        #viewer-zoom {
+          padding-right: 0.375rem;
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          font-size: 11px;
+          font-variant-numeric: tabular-nums;
+          color: var(--vw-dim);
+        }
+        /* The bottom band: the strip, and the arrow keys at the right. */
+        #viewer-bottom {
+          bottom: 0;
+          padding: 0.5rem max(1rem, env(safe-area-inset-right, 0px)) max(0.5rem, env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px));
+        }
+        #viewer-bottom .row {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 10px;
-          margin: 0.125rem auto 0.5rem;
+          gap: 0.75rem;
           max-width: 48rem;
+          min-height: 1.5rem;
+          margin: 0 auto;
+        }
+        #viewer-bottom .keys {
+          position: absolute;
+          right: max(1rem, env(safe-area-inset-right, 0px));
+          bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+          display: flex;
+          gap: 0.25rem;
+        }
+        #viewer-bottom .key {
+          display: grid;
+          place-items: center;
+          min-width: 1.5rem;
+          height: 1.5rem;
+          padding: 0 0.25rem;
+          border-radius: 6px;
+          box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
+          color: var(--vw-dim);
+          font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+          pointer-events: auto;
+          transition: opacity 0.2s;
+        }
+        #viewer-bottom .key:hover {
+          color: var(--vw-ink);
+        }
+        #viewer-bottom .thumb {
+          display: none;
+          flex: none;
+          place-items: center;
+          width: 2.75rem;
+          height: 2.25rem;
+          border: 1px solid var(--vw-line);
+          border-radius: 8px;
+          background: var(--vw-pill);
+          color: var(--vw-dim);
+          pointer-events: auto;
+        }
+        #viewer-bottom :is(.key, .thumb):disabled {
+          opacity: 0.25;
+        }
+        /* A touch screen has no arrow keys, so prev and next are buttons
+           under the thumbs and the keys' hints go. */
+        @media (pointer: coarse) {
+          #viewer {
+            --control-h: 2.25rem;
+          }
+          #viewer .vbtn kbd,
+          #viewer-bottom .keys {
+            display: none;
+          }
+          #viewer-bottom .thumb {
+            display: grid;
+          }
+        }
+        /* A phone has no room for two frames, upright or on its side, and
+           upright its Recommended button keeps only its star. */
+        @media (max-width: 640px), (max-height: 500px) {
+          #viewer [data-compare] {
+            display: none;
+          }
+        }
+        @media (max-width: 640px) {
+          #viewer [data-picks] .word {
+            display: none;
+          }
+        }
+        /* A phone on its side has little height to give the frame, so the
+           note goes and the bands keep close to the edges. */
+        @media (max-height: 500px) {
+          #viewer-top {
+            padding-top: calc(0.5rem + env(safe-area-inset-top, 0px));
+            padding-bottom: 0.375rem;
+          }
+          #viewer-caption {
+            display: none;
+          }
+          #viewer-bottom {
+            padding-top: 0.375rem;
+            padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+          }
+        }
+
+        /* The strip: a bar per frame in runs by group, centered so it holds
+           still from frame to frame. The open frame's bar is the large one,
+           frames before it are half lit, and frames to come are faint. A
+           recommended frame is a star in place of its bar. The frame's label
+           and its group's name hang under its own run, kept inside the strip by the
+           script. The script narrows the bars and their gaps until the strip
+           fits on one row; it wraps only past the narrowest bar. */
+        #viewer-strip {
+          position: relative;
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          justify-content: center;
+          height: 26px;
+          pointer-events: auto;
+        }
+        #viewer-strip[hidden] {
+          display: none;
         }
         #viewer-strip .bars {
           position: relative;
           display: flex;
           flex-wrap: wrap;
+          align-items: center;
           justify-content: center;
+          height: 10px;
           gap: 0.25rem var(--run-gap, 0.5rem);
         }
-        /* The open frame's group, named to the left of the bars so the bars
-           themselves never move. Too narrow a screen drops it, and the tag
-           in the caption carries the group alone. */
         #viewer-strip .name {
           position: absolute;
-          right: calc(100% + 0.75rem);
-          top: 50%;
-          transform: translateY(-50%);
+          top: 15px;
+          left: var(--name-x, 0px);
           white-space: nowrap;
           font-size: 11px;
           line-height: 1;
           color: var(--tone);
+          pointer-events: none;
         }
-        @media (max-width: 640px) {
-          #viewer-strip .name {
-            display: none;
-          }
+        /* The frame's label leads the name, as in the title block, so a
+           glance at the strip reads it too. */
+        #viewer-strip .name .pos {
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          font-weight: 600;
         }
-        #viewer-strip[hidden] {
-          display: none;
+        #viewer-strip .name .pos:not(:last-child) {
+          margin-right: 0.375rem;
         }
         #viewer-strip .run {
           display: flex;
@@ -461,6 +629,22 @@
           height: 6px;
           opacity: 1;
         }
+        #viewer-strip button.pick:not([aria-current]) {
+          height: 10px;
+          border-radius: 0;
+          background: none;
+          color: var(--tone);
+          opacity: 0.75;
+        }
+        #viewer-strip button.pick:not([aria-current])::after {
+          content: "★";
+          position: absolute;
+          inset: 0;
+          display: grid;
+          place-items: center;
+          font-size: 9px;
+          line-height: 1;
+        }
         /* A bar is a few pixels; what takes the tap is a band 20px tall
            reaching halfway across the gaps either side, so the strip has
            no dead spots between bars. */
@@ -483,8 +667,42 @@
           outline: 1.5px solid var(--tone);
           outline-offset: 2px;
         }
-        /* Two up: the open frame and a second one side by side between the
-           bands, each fitted to its half under its label, title and note. */
+        /* Recommended only: the strip holds just the stars, one per group,
+           the open one larger, so it reads as the list of picks. */
+        #viewer-strip[data-only] button:not(.pick),
+        #viewer-strip[data-only] .run:not(:has(.pick)) {
+          display: none;
+        }
+        #viewer-strip[data-only] .bars {
+          --run-gap: 0.75rem;
+          --gap: 0.75rem;
+        }
+        #viewer-strip[data-only] button.pick {
+          width: 14px;
+          height: 14px;
+          border-radius: 0;
+          background: none;
+          color: var(--tone);
+          opacity: 0.7;
+        }
+        #viewer-strip[data-only] button.pick::after {
+          content: "★";
+          position: absolute;
+          inset: 0;
+          display: grid;
+          place-items: center;
+          font-size: 11px;
+          line-height: 1;
+        }
+        #viewer-strip[data-only] button.pick[aria-current] {
+          opacity: 1;
+        }
+        #viewer-strip[data-only] button.pick[aria-current]::after {
+          font-size: 15px;
+        }
+
+        /* Compare: the paired frame and the open one side by side between
+           the bands, each fitted to its half under its label and title. */
         #pair {
           position: absolute;
           left: 0;
@@ -492,8 +710,8 @@
           z-index: 1;
           display: grid;
           grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-          gap: 1.5rem;
-          padding: 0.75rem 1.5rem 1rem;
+          gap: 1rem;
+          padding: 0.25rem 1rem 0.5rem;
         }
         #pair[hidden] {
           display: none;
@@ -507,23 +725,19 @@
           margin: 0;
         }
         #pair .pane-head {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-          height: 32px;
           overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          height: 16px;
           font-size: 12px;
           line-height: 16px;
-          color: var(--vw-dim);
-        }
-        #pair .pane-head .font-medium {
           color: var(--vw-ink);
         }
         #pair .pane-slot {
           display: flex;
           flex: 1;
           justify-content: center;
-          align-items: flex-start;
+          align-items: center;
           min-width: 0;
           min-height: 0;
           overflow: hidden;
@@ -532,87 +746,9 @@
           outline: none;
           cursor: zoom-in;
         }
-        @media (max-width: 640px) {
-          #viewer-top [data-two] {
-            display: none;
-          }
-        }
-        #viewer-bottom [data-step] {
-          flex: none;
-          width: 2.25rem;
-          height: var(--control-h);
-          border: 1px solid var(--vw-line);
-          color: var(--vw-dim);
-        }
-        #viewer-bottom [data-step]:hover {
-          color: var(--vw-ink);
-        }
-        #viewer-caption {
-          position: relative;
-          flex: 1;
-          min-width: 0;
-          -webkit-user-select: text;
-          user-select: text;
-          text-align: center;
-          font-size: 12px;
-          line-height: 16px;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-          overflow: hidden;
-          touch-action: pan-y;
-        }
-        #viewer-caption > span {
-          color: var(--vw-ink);
-        }
-        #viewer-bottom[data-open] #viewer-caption {
-          display: block;
-          max-height: 40dvh;
-          overflow-y: auto;
-          overscroll-behavior: contain;
-        }
-        /* The fold mark: a small caret at the caption's right end, pointing
-           the way the caption will go, only where the note runs past two
-           lines. */
-        #viewer-bottom[data-more] #viewer-caption {
-          padding-right: 1.25rem;
-          cursor: pointer;
-        }
-        #viewer-bottom[data-more] #viewer-caption::after {
-          content: "";
-          position: absolute;
-          right: 0.25rem;
-          bottom: 7px;
-          width: 6px;
-          height: 6px;
-          border-left: 1.5px solid currentColor;
-          border-top: 1.5px solid currentColor;
-          transform: rotate(45deg);
-          opacity: 0.7;
-        }
-        #viewer-bottom[data-more][data-open] #viewer-caption::after {
-          transform: rotate(225deg);
-          bottom: 9px;
-        }
-        /* A phone on its side has little height to give the frame, so the
-           top controls keep close to the corners. */
-        @media (max-height: 500px) {
-          #viewer-top {
-            --band-pad: 0.5rem;
-          }
-        }
-        @media (pointer: coarse) {
-          #viewer {
-            --control-h: 2.25rem;
-          }
-          /* Bigger targets under a finger: prev and next get tapped ten
-             times a page, and they sit where the thumbs rest. */
-          #viewer-bottom [data-step] {
-            width: 2.75rem;
-          }
-        }
+
         /* The thumbnail: the whole frame small, with the part on screen
-           boxed, at the lower right above the caption, only while the frame
+           boxed, at the lower right above the strip, only while the frame
            is zoomed. */
         #viewer-map {
           position: absolute;
@@ -649,8 +785,24 @@
           box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5);
           pointer-events: none;
         }
-        /* A tap on the ground hides the bands and the thumbnail, and brings
-           them back. The frame stays put. */
+        /* Zoomed, everything but the scale and the thumbnail fades, so the
+           drawing has the screen. Under a mouse, pointing at a control brings
+           it back; on a touch screen, a tap on the ground brings them all. */
+        #viewer-top .ident,
+        #viewer-strip {
+          transition: opacity 0.2s;
+        }
+        #viewer[data-zoomed]:not([data-controls="shown"]) :is(#viewer-top .ident, #viewer-top .vbtn:not(#viewer-zoom), #viewer-strip, #viewer-bottom .key, #viewer-bottom .thumb):not(:hover) {
+          opacity: 0;
+        }
+        @media (pointer: coarse) {
+          #viewer[data-zoomed]:not([data-controls="shown"]) :is(#viewer-top .ident, #viewer-top .vbtn:not(#viewer-zoom), #viewer-strip, #viewer-bottom .thumb) {
+            opacity: 0;
+            pointer-events: none;
+          }
+        }
+        /* A tap on the ground at fit hides the bands and the thumbnail, and
+           brings them back. The frame stays put. */
         #viewer[data-controls="hidden"] :is(#viewer-top, #viewer-bottom, #viewer-map) {
           visibility: hidden;
         }
@@ -663,28 +815,29 @@
         <div id="pair" hidden></div>
         <div id="viewer-map" hidden><div class="map-frame"></div><div class="map-view"></div></div>
         <div id="viewer-top">
-          <div class="controls">
-            <span id="viewer-counter" class="rounded-lg font-mono text-[11px] tabular-nums"></span>
-            <button id="viewer-zoom" hidden title="Back to fit (0)" aria-label="Back to fit" class="rounded-lg font-mono text-[11px] tabular-nums"><span data-chrome-text></span><i class="ph ph-x text-sm"></i></button>
+          <div class="ident">
+            <p class="head">
+              <span id="viewer-counter"></span><span id="viewer-label"></span><span id="viewer-title"></span>
+              <button data-compare hidden aria-pressed="false" class="vbtn"><span class="word"></span><kbd data-chrome-text="C"></kbd></button>
+            </p>
+            <p id="viewer-caption"></p>
           </div>
           <div class="controls">
-            <button data-two title="Two frames side by side (T)" aria-label="Two up" aria-pressed="false" class="flex items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium">
-              <i class="ph ph-columns text-sm"></i><span class="hidden sm:inline" data-chrome-text="Two up"></span>
-            </button>
-            <button data-marks title="Show the annotations (A)" aria-label="Marks" aria-pressed="false" class="flex items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium">
-              <i class="ph ph-circle-dashed text-sm"></i><span class="hidden sm:inline" data-chrome-text="Marks"></span>
-            </button>
-            <button id="viewer-close" title="Close (Esc)" aria-label="Close" class="grid w-8 place-items-center rounded-lg">
-              <i class="ph ph-x text-sm"></i>
-            </button>
+            <button id="viewer-zoom" hidden title="Back to fit (0)" aria-label="Back to fit" class="vbtn"><span data-chrome-text></span><kbd data-chrome-text="0"></kbd></button>
+            <button data-picks hidden aria-label="Recommended" aria-pressed="false" class="vbtn"><span class="star" data-chrome-text="★"></span><span class="word" data-chrome-text="Recommended"></span><kbd data-chrome-text="R"></kbd></button>
+            <button data-marks aria-label="Callouts" aria-pressed="false" class="vbtn"><span data-chrome-text="Callouts"></span><kbd data-chrome-text="A"></kbd></button>
+            <button id="viewer-close" title="Close (Esc)" aria-label="Close" class="vbtn"><span data-chrome-text="Close"></span><kbd data-chrome-text="Esc"></kbd></button>
           </div>
         </div>
         <div id="viewer-bottom">
-          <div id="viewer-strip" hidden></div>
-          <div class="row controls">
-            <button data-step="-1" title="Previous frame (←)" aria-label="Previous frame" class="grid place-items-center rounded-lg disabled:opacity-25"><i class="ph ph-caret-left"></i></button>
-            <p id="viewer-caption"></p>
-            <button data-step="1" title="Next frame (→)" aria-label="Next frame" class="grid place-items-center rounded-lg disabled:opacity-25"><i class="ph ph-caret-right"></i></button>
+          <div class="row">
+            <button data-step="-1" title="Previous frame" aria-label="Previous frame" class="thumb"><i class="ph ph-caret-left"></i></button>
+            <div id="viewer-strip" hidden></div>
+            <button data-step="1" title="Next frame" aria-label="Next frame" class="thumb"><i class="ph ph-caret-right"></i></button>
+          </div>
+          <div class="keys">
+            <button data-step="-1" title="Previous frame (←)" aria-label="Previous frame" class="key" data-chrome-text="←"></button>
+            <button data-step="1" title="Next frame (→)" aria-label="Next frame" class="key" data-chrome-text="→"></button>
           </div>
         </div>
         <div class="chrome-hint pointer-events-none absolute top-0 right-0 hidden text-[12px] leading-none text-muted-foreground/70 [color-scheme:dark]"><span class="rounded-bl-md bg-background/80 p-2"></span></div>
@@ -881,10 +1034,19 @@
         // When the frames fall into sets the reader will name back to you
         // (options, the current design, rounds), declare each set here and
         // give its frames `group: "A"`. `mark` is what the reader says: a
-        // letter for an option, a word such as "Now", or "" for none. `note`
+        // letter for an option with a `name` beside it, a word such as "Now"
+        // that is the set's whole name, so it takes no `name`, or "" for
+        // none, with a `name`. `note`
         // says in one line what the whole set tries. `tone` is optional, one
         // of gray, sky, emerald, amber, rose or indigo; without it sets take
         // colors in order. Leave it empty for a plain sequence.
+        //
+        // Two optional fields on a frame. `pick: true` stars the option you
+        // recommend, at most one per group. `compare: { with: "Now 1", as:
+        // "today's card" }` pairs the frame with one other, named by its
+        // label or by a title no other frame has, and the enlarged view
+        // offers "Compare with today's card" on C. A `with` that names no
+        // frame shows as an error above the frames.
         const groups = {};
 
         const states = [
@@ -919,10 +1081,14 @@
         const groupAt = (k) => {
           const g = GROUPS[groupKeys[k]];
           const ramped = groupKeys.slice(0, k).filter((gk) => !TONES.includes(GROUPS[gk].tone)).length;
-          return { mark: "", name: "", note: "", ...g, k, tone: TONES.includes(g.tone) ? g.tone : RAMP[ramped % RAMP.length] };
+          const set = { mark: "", name: "", note: "", ...g, k, tone: TONES.includes(g.tone) ? g.tone : RAMP[ramped % RAMP.length] };
+          // One name for the set everywhere it shows: a word mark is the
+          // name, a letter goes before its name, and with no mark the name
+          // stands alone.
+          set.called = set.mark.length > 1 ? set.mark : [set.mark, set.name].filter(Boolean).join(" ");
+          return set;
         };
         const groupOf = (i) => (groupKeys.includes(states[i].group) ? groupAt(groupKeys.indexOf(states[i].group)) : null);
-        const inGroup = (k) => states.flatMap((s, i) => (s.group === groupKeys[k] ? [i] : []));
         const label = (i) => {
           const g = groupOf(i);
           const n = states.slice(0, i + 1).filter((_, j) => (groupOf(j)?.k ?? -1) === (g?.k ?? -1)).length;
@@ -932,16 +1098,44 @@
         };
         // The label as it leads a line of text: "B2 Pricing", "3. Pricing".
         const lead = (i) => (label(i) ? `${label(i)}${groupOf(i) ? " " : ". "}` : "");
-        // A group's heading: its mark in its color, its name, and its note.
+        // A group's heading: its mark in its color, its name unless the mark
+        // is a word and so the name itself, and its note.
         const heading = (g) =>
-          `<div class="col-span-full flex min-w-0 flex-wrap items-baseline gap-x-2 px-1 text-[12px] leading-5">${g.mark ? `<span class="tone-${g.tone} tone-text font-semibold">${g.mark}</span>` : ""}<span class="font-semibold">${g.name}</span><span class="text-muted-foreground">${g.note}</span></div>`;
+          `<div class="col-span-full flex min-w-0 flex-wrap items-baseline gap-x-2 px-1 text-[12px] leading-5">${g.mark ? `<span class="tone-${g.tone} tone-text font-semibold">${g.mark}</span>` : ""}${g.mark.length > 1 ? "" : `<span class="font-semibold">${g.name}</span>`}<span class="text-muted-foreground">${g.note}</span></div>`;
         // The label as it leads a title in a caption: the group's mark and
-        // place in its color, or "3. " for a frame outside any group.
+        // place in its color, or "3. " for a frame outside any group, and a
+        // star after it on the frame the agent recommends.
+        const recommended = (i) => (groupOf(i)?.called ? `Recommended for ${groupOf(i).called}` : "Recommended");
+        const starHtml = (i) => (states[i].pick ? `<span class="tone-text mr-1" title="${recommended(i)}">★</span>` : "");
         const labelHtml = (i) => {
           const g = groupOf(i);
-          if (!g) return `${label(i)}. `;
-          return label(i) ? `<span class="tone-${g.tone} tone-text mr-1 font-mono font-semibold">${label(i)}</span>` : "";
+          if (!g) return `${label(i)}. ${starHtml(i)}`;
+          return `<span class="tone-${g.tone}">${label(i) ? `<span class="tone-text mr-1 font-mono font-semibold">${label(i)}</span>` : ""}${starHtml(i)}</span>`;
         };
+
+        // ---- pairs -----------------------------------------------------------
+        // A frame's `compare` names one other frame by its label ("Now 1")
+        // or by a title only one frame has. One that names none, or several,
+        // is listed above the frames, so the agent sees it when it checks.
+        const problems = [];
+        const findFrame = (ref) => {
+          const byLabel = states.findIndex((_, j) => label(j) && label(j) === ref);
+          if (byLabel >= 0) return [byLabel];
+          return states.flatMap((s, j) => (s.title === ref ? [j] : []));
+        };
+        const pairs = states.map((s, i) => {
+          if (!s.compare) return null;
+          const c = typeof s.compare === "string" ? { with: s.compare } : s.compare;
+          const found = findFrame(String(c.with ?? "")).filter((j) => j !== i);
+          const where = `${lead(i)}${s.title}`;
+          if (found.length !== 1) {
+            problems.push(`${where}: compare.with "${c.with}" ${found.length ? "names more than one frame; use its label, such as B2" : "names no other frame"}.`);
+            return null;
+          }
+          if (!c.as) problems.push(`${where}: compare has no \`as\`, the words after "Compare with".`);
+          return { j: found[0], as: c.as || states[found[0]].title };
+        });
+        const picks = states.flatMap((s, i) => (s.pick ? [i] : []));
 
         const tileHtml = (state, i) => `
           <figure class="tile m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
@@ -972,6 +1166,14 @@
         rack.innerHTML = runs
           .map(({ g, tiles }) => (g ? `<section class="group tone-${g.tone}">${heading(g)}${tiles.join("")}</section>` : tiles.join("")))
           .join("");
+        if (problems.length) {
+          const list = document.createElement("div");
+          list.className = "col-span-full rounded-md border border-error-500 p-3 text-[12px] leading-5 text-error-700";
+          list.setAttribute("role", "alert");
+          for (const p of problems) list.append(Object.assign(document.createElement("p"), { textContent: p }));
+          rack.prepend(list);
+          console.error(`wireframe: ${problems.join(" ")}`);
+        }
 
         // ---- marks -----------------------------------------------------------
         // Measures each marked element against its frame in true-size pixels,
@@ -1161,9 +1363,9 @@
 
         const paintMarks = () => {
           const on = document.body.dataset.marks === "on";
-          marksItem.querySelector("span").dataset.chromeText = on ? "Hide marks" : "Show marks";
-          marksItem.setAttribute("aria-label", on ? "Hide marks" : "Show marks");
-          viewerMarks.title = on ? "Hide the annotations (A)" : "Show the annotations (A)";
+          marksItem.querySelector("span").dataset.chromeText = on ? "Hide callouts" : "Show callouts";
+          marksItem.setAttribute("aria-label", on ? "Hide callouts" : "Show callouts");
+          viewerMarks.title = on ? "Hide the callouts (A)" : "Show the callouts (A)";
           viewerMarks.setAttribute("aria-pressed", String(on));
         };
 
@@ -1237,8 +1439,12 @@
         const viewerBottom = document.querySelector("#viewer-bottom");
         const viewerCaption = document.querySelector("#viewer-caption");
         const viewerCounter = document.querySelector("#viewer-counter");
+        const viewerLabel = document.querySelector("#viewer-label");
+        const viewerTitle = document.querySelector("#viewer-title");
         const viewerMap = document.querySelector("#viewer-map");
         const viewerZoom = document.querySelector("#viewer-zoom");
+        const compareButton = viewerTop.querySelector("[data-compare]");
+        const picksButton = viewerTop.querySelector("[data-picks]");
         const coarse = matchMedia("(pointer: coarse)");
         // A phone on its side has little height to give the frame.
         const short = matchMedia("(max-height: 500px)");
@@ -1248,42 +1454,41 @@
         const sizeOf = (frame = frameOf()) => ({ w: Number(frame.dataset.w), h: Number(frame.dataset.h) });
         // The bands over the stage. The frame fits between them, so their
         // heights are part of every measurement; they keep their height while
-        // hidden, so hiding them moves nothing. The bottom band is measured
-        // with the caption folded, so a note opened to read never moves the
-        // frame. A phone on its side gives the frame the top strip too: the
-        // controls there keep to the corners, clear of a frame centered at
-        // fit.
-        const topReserve = () => (short.matches ? 0 : viewerTop.offsetHeight);
+        // hidden or faded, so neither moves anything. The top band is
+        // measured with the note folded, so a note opened to read never
+        // moves the frame.
+        let topH = 0;
         let bottomH = 0;
         const measureBand = () => {
-          const open = viewerBottom.hasAttribute("data-open");
-          viewerBottom.toggleAttribute("data-open", false);
+          const open = viewerTop.hasAttribute("data-open");
+          viewerTop.toggleAttribute("data-open", false);
+          topH = viewerTop.offsetHeight;
+          viewerTop.toggleAttribute("data-more", viewerCaption.scrollWidth > viewerCaption.clientWidth + 1);
+          viewerTop.toggleAttribute("data-open", open);
           bottomH = viewerBottom.offsetHeight;
-          viewerBottom.toggleAttribute("data-more", viewerCaption.scrollHeight > viewerCaption.clientHeight + 1);
-          viewerBottom.toggleAttribute("data-open", open);
           viewer.style.setProperty("--bottom-h", `${bottomH}px`);
         };
-        const bands = () => ({ top: topReserve(), bottom: bottomH });
+        const topReserve = () => topH;
+        const bands = () => ({ top: topH, bottom: bottomH });
         // Room round the frame at fit: none on a phone, where every pixel of
         // width is the drawing's.
         const pad = () => (innerWidth < 640 || short.matches ? 0 : 16);
         const fitScale = (frame = frameOf()) => {
           const { w, h } = sizeOf(frame);
-          const top = topReserve();
-          const bottom = bottomH;
           const p = pad();
-          return Math.max(0.05, Math.min((stage.clientWidth - p * 2) / w, (stage.clientHeight - top - bottom - p * 2) / h));
+          return Math.max(0.05, Math.min((stage.clientWidth - p * 2) / w, (stage.clientHeight - topH - bottomH - p * 2) / h));
         };
 
-        // ---- the caption and the thumbnail -----------------------------------
-        // The caption keeps to two lines, and a tap on it opens the whole
-        // note over the frame, as tall as two fifths of the screen if it
-        // must be, until the next tap or the next frame. The thumbnail
-        // appears while the frame is zoomed.
+        // ---- the note and the thumbnail --------------------------------------
+        // The note keeps to one line, and a tap on it opens the whole note
+        // over the frame, as tall as two fifths of the screen if it must be,
+        // until the next tap or the next frame. The thumbnail appears while
+        // the frame is zoomed.
         viewerCaption.addEventListener("click", () => {
           // A drag that selected some of the note is not a tap on it.
           if (getSelection()?.toString()) return;
-          viewerBottom.toggleAttribute("data-open", !viewerBottom.hasAttribute("data-open"));
+          if (!viewerTop.hasAttribute("data-more") && !viewerTop.hasAttribute("data-open")) return;
+          viewerTop.toggleAttribute("data-open", !viewerTop.hasAttribute("data-open"));
         });
 
         // The thumbnail is a third copy of the frame, drawn at the width the
@@ -1354,35 +1559,37 @@
         };
 
         // ---- the open frame ------------------------------------------------
-        // The viewer shows one frame, or two side by side. Two values say
-        // which: openIndex, and pairedWith, the second frame's distance from
-        // the open one, or null for one frame. showFrame() paints everything
-        // from those two, so every way in (keys, buttons, the strip, a tap on
-        // a pane, a link) sets them and calls it, and nothing else on screen
-        // keeps state of its own.
-        let pairedWith = null;
+        // The viewer shows one frame, or the open frame beside the one the
+        // agent paired it with. Three values say what: openIndex, comparing,
+        // and picksOnly, which keeps the walk to the recommended frames.
+        // showFrame() paints everything from those, so every way in (keys,
+        // buttons, the strip, a tap on a pane, a link) sets them and calls
+        // it, and nothing else on screen keeps state of its own.
+        let comparing = false;
+        let picksOnly = false;
         const pair = document.querySelector("#pair");
         const viewerStrip = document.querySelector("#viewer-strip");
-        const twoButton = viewerTop.querySelector("[data-two]");
         const tiles = () => rack.querySelectorAll(".frame");
-        const partner = () => (pairedWith === null ? null : (openIndex + pairedWith + states.length) % states.length);
+        // A phone has no room for two, upright or on its side.
+        const canCompare = (i) => pairs[i] !== null && innerWidth > 640 && !short.matches;
+        const partner = () => (comparing ? pairs[openIndex].j : null);
+        const toneOf = (i) => `tone-${groupOf(i)?.tone ?? "plain"}`;
 
         const showFrame = (index) => {
           const tile = tiles()[index];
           if (!tile) return;
           const before = frameOf() ? sizeOf() : null;
           openIndex = index;
+          if (comparing && !canCompare(index)) comparing = false;
           stage.querySelector(".frame")?.remove();
-          viewerCounter.textContent = `${index + 1} / ${states.length}`;
-          twoButton.setAttribute("aria-pressed", String(pairedWith !== null));
-          paintCaption();
+          paintHead();
           paintStrip();
           if (!viewer.open) viewer.showModal();
           fitStrip();
-          viewerBottom.removeAttribute("data-open");
+          viewerTop.removeAttribute("data-open");
           measureBand();
           viewerMap.dataset.for = "";
-          if (pairedWith === null) {
+          if (!comparing) {
             pair.hidden = true;
             pair.replaceChildren();
             const copy = tile.cloneNode(true);
@@ -1406,20 +1613,46 @@
           describe(index);
         };
 
-        const paintCaption = () => {
+        // The title block: place, label and star, title, the Compare button
+        // when the frame has a pair, and the note under them. The switches
+        // at the right follow what is on.
+        const paintHead = () => {
           const state = states[openIndex];
-          viewerCaption.innerHTML =
-            pairedWith === null
-              ? `<span class="font-medium">${labelHtml(openIndex)}${state.title}.</span> ${state.note}`
-              : `<span class="font-medium">Two up.</span> Left and right step both frames. Up and down move the right one to the same place in another set.`;
+          const g = groupOf(openIndex);
+          viewerCounter.innerHTML = `${openIndex + 1}<span>/${states.length}</span>`;
+          viewerLabel.className = toneOf(openIndex);
+          viewerLabel.innerHTML = `${g ? label(openIndex) : ""}${state.pick ? `${g && label(openIndex) ? " " : ""}<span title="${recommended(openIndex)}">★</span>` : ""}`;
+          viewerTitle.textContent = state.title;
+          viewerCaption.innerHTML = state.note;
+          const p = pairs[openIndex];
+          compareButton.hidden = !p;
+          compareButton.className = `vbtn ${toneOf(openIndex)}`;
+          compareButton.setAttribute("aria-pressed", String(comparing));
+          if (p) {
+            compareButton.querySelector(".word").textContent = `Compare with ${p.as}`;
+            compareButton.title = comparing ? "Back to this frame alone (C)" : `${lead(p.j)}${states[p.j].title} beside this one (C)`;
+          }
+          picksButton.hidden = picks.length === 0;
+          picksButton.className = `vbtn ${toneOf(picks.includes(openIndex) ? openIndex : (picks[0] ?? openIndex))}`;
+          picksButton.setAttribute("aria-pressed", String(picksOnly));
+          picksButton.title = picksOnly ? "Show every frame (R)" : "Show only the recommended frames (R)";
         };
 
         // ---- the strip -------------------------------------------------------
         // Only a page with groups has one. Every frame gets a bar, in page
         // order, in runs: a group's frames in its color, and frames outside
         // any group, such as a lead-in shared by every option, in a neutral
-        // run of their own. The open frame's bar is the large one and the
-        // second frame of two up is ringed. A tap on a bar opens that frame.
+        // run of their own. The open frame's bar is the large one, a
+        // recommended frame is a star, and the frame compared with the open
+        // one is ringed. A tap on a bar opens that frame.
+        // Under the open run, the frame's label as the title block shows it,
+        // and the group's name after a letter: "A2 First option", or
+        // "Inbox 2" where the mark is a word and so the name already.
+        const stripName = () => {
+          const g = groupOf(openIndex);
+          const tag = label(openIndex) ? `<span class="pos">${label(openIndex)}</span>` : "";
+          return g && g.mark.length <= 1 && g.name ? `${tag}<span>${g.name}</span>` : tag;
+        };
         const paintStrip = () => {
           viewerStrip.hidden = groupKeys.length === 0;
           if (viewerStrip.hidden) return;
@@ -1430,86 +1663,95 @@
             else runs.push({ k, tone: k < 0 ? "tone-plain" : `tone-${groupAt(k).tone}`, frames: [i] });
           });
           const g = groupOf(openIndex);
-          const right = partner();
-          const bar = (i) =>
-            `<button data-go="${i}" title="${lead(i)}${states[i].title}" aria-label="${lead(i)}${states[i].title}" class="${i < openIndex ? "passed" : ""} ${i === right ? "partner" : ""}"${i === openIndex ? ' aria-current="true"' : ""}></button>`;
-          viewerStrip.innerHTML = `<div class="bars">${g ? `<span class="name tone-${g.tone}">${g.name}</span>` : ""}${runs
+          const other = partner();
+          const bar = (i) => {
+            const name = `${lead(i)}${states[i].title}${states[i].pick ? ` · ${recommended(i)}` : ""}`;
+            const cls = [i < openIndex ? "passed" : "", i === other ? "partner" : "", states[i].pick ? "pick" : ""].filter(Boolean).join(" ");
+            return `<button data-go="${i}" title="${name}" aria-label="${name}" class="${cls}"${i === openIndex ? ' aria-current="true"' : ""}></button>`;
+          };
+          viewerStrip.toggleAttribute("data-only", picksOnly);
+          viewerStrip.innerHTML = `<div class="bars">${runs
             .map((run) => `<span class="run ${run.tone}">${run.frames.map(bar).join("")}</span>`)
-            .join("")}</div>`;
+            .join("")}<span class="name ${g ? `tone-${g.tone}` : "tone-plain"}">${stripName()}</span></div>`;
         };
 
         // Every bar the same width, the widest that keeps the strip on one row:
         // 10px when there is room, down to 3px, with the gaps tightened once
-        // bars drop under 6px. The open frame's bar keeps its 14px.
+        // bars drop under 6px. The open frame's bar keeps its 14px. Then the
+        // group's name goes under the middle of its run, or of the open star
+        // when only the stars show, moved in as far as it must be to stay
+        // inside the strip.
         const fitStrip = () => {
           if (viewerStrip.hidden) return;
           const n = states.length;
           const runs = viewerStrip.querySelectorAll(".run").length;
           const room = viewerStrip.clientWidth - 14;
-          const widest = (gap, runGap) => Math.floor((room - (runs - 1) * runGap - (n - runs) * gap) / (n - 1));
+          const widest = (gap, runGap) => Math.floor((room - (runs - 1) * runGap - (n - runs) * gap) / Math.max(1, n - 1));
           let [gap, runGap] = [3, 8];
           if (widest(gap, runGap) < 6) [gap, runGap] = [2, 6];
           viewerStrip.style.setProperty("--bar", `${Math.max(3, Math.min(10, widest(gap, runGap)))}px`);
           viewerStrip.style.setProperty("--gap", `${gap}px`);
           viewerStrip.style.setProperty("--run-gap", `${runGap}px`);
+          const name = viewerStrip.querySelector(".name");
+          const current = viewerStrip.querySelector("[aria-current]");
+          if (!name || !current) return;
+          const under = picksOnly ? current : current.parentElement;
+          const bars = name.parentElement;
+          const center = under.offsetLeft + under.offsetWidth / 2;
+          const x = Math.max(-bars.offsetLeft, Math.min(viewerStrip.clientWidth - bars.offsetLeft - name.offsetWidth, center - name.offsetWidth / 2));
+          viewerStrip.style.setProperty("--name-x", `${Math.round(x)}px`);
         };
 
         // ---- moving between frames -------------------------------------------
-        const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
-
-        // The same place in the group `delta` sets away, so A2 goes to B2, or
-        // to B's last frame when B is shorter. Null for a frame outside any
-        // group, or on a page with one group.
-        const across = (i, delta) => {
-          const g = groupOf(i);
-          if (!g || groupKeys.length < 2) return null;
-          const at = inGroup(g.k).indexOf(i);
-          const next = inGroup((g.k + delta + groupKeys.length) % groupKeys.length);
-          return next[Math.min(at, next.length - 1)];
+        // With Recommended on, the arrows step from star to star.
+        const step = (delta) => {
+          if (picksOnly && picks.length) {
+            const at = picks.indexOf(openIndex);
+            const next = at >= 0 ? picks[(at + delta + picks.length) % picks.length] : (delta > 0 ? picks.find((i) => i > openIndex) ?? picks[0] : picks.findLast((i) => i < openIndex) ?? picks.at(-1));
+            return showFrame(next);
+          }
+          showFrame((openIndex + delta + states.length) % states.length);
         };
 
-        // Up and down: one frame moves to the same place in another set; in
-        // two up only the right one moves, past the set the left one is in.
-        const hop = (delta) => {
-          if (pairedWith === null) {
-            const to = across(openIndex, delta);
-            if (to !== null) showFrame(to);
-            return;
+        // R, or the Recommended button, keeps the walk to the starred frames.
+        // Turned on away from a star, it opens the star of the frame's own
+        // group, else the next one.
+        const setPicks = (on) => {
+          if (picks.length === 0) return;
+          picksOnly = on;
+          if (on && !picks.includes(openIndex)) {
+            const g = groupOf(openIndex)?.k;
+            const own = picks.find((i) => g !== undefined && groupOf(i)?.k === g);
+            return showFrame(own ?? picks.find((i) => i > openIndex) ?? picks[0]);
           }
-          let to = across(partner(), delta);
-          if (to === openIndex) to = across(to, delta);
-          if (to === null || to === openIndex) return;
-          pairedWith = to - openIndex;
           showFrame(openIndex);
         };
 
-        // ---- two up ----------------------------------------------------------
-        // T, or the Two up button, puts a second frame beside the open one:
-        // the same place in the next set on a page of sets, so the first view
-        // is the comparison, else the next frame. Each is fitted to half the
-        // stage under its own label, title and note. A zoom key, or a tap on
-        // either frame, goes back to that frame alone, where the zoom works.
-        // A phone has no room for two.
-        const setTwoUp = (on) => {
-          if (on && (states.length < 2 || innerWidth <= 640)) return;
-          pairedWith = on ? (across(openIndex, 1) ?? openIndex + 1) - openIndex : null;
+        // ---- compare ---------------------------------------------------------
+        // C, or the Compare button, puts the frame the agent paired with this
+        // one at its left, each fitted to half the stage under its label and
+        // title. C again, a zoom key, or a tap on either frame goes back to
+        // that frame alone, where the zoom works.
+        const setCompare = (on) => {
+          if (on && !canCompare(openIndex)) return;
+          comparing = on;
           showFrame(openIndex);
         };
 
         const pane = (i) => {
           const copy = tiles()[i].cloneNode(true);
           copy.style.transform = "";
-          return `<figure class="pane" data-index="${i}"><figcaption class="pane-head">${labelHtml(i)}<span class="font-medium">${states[i].title}.</span> ${states[i].note}</figcaption><div class="pane-slot">${copy.outerHTML}</div></figure>`;
+          return `<figure class="pane" data-index="${i}"><figcaption class="pane-head">${labelHtml(i)}<span class="font-medium">${states[i].title}</span></figcaption><div class="pane-slot">${copy.outerHTML}</div></figure>`;
         };
         const paintPair = () => {
-          pair.innerHTML = pane(openIndex) + pane(partner());
+          pair.innerHTML = pane(partner()) + pane(openIndex);
           pair.hidden = false;
           fitPair();
         };
         // Each copy is measured at a token size first, so a frame copied at
         // the grid's scale can't widen its column before the fit is known.
         const fitPair = () => {
-          pair.style.top = `${topReserve()}px`;
+          pair.style.top = `${topH}px`;
           pair.style.bottom = `${bottomH}px`;
           for (const slot of pair.querySelectorAll(".pane-slot")) {
             const frame = slot.firstElementChild;
@@ -1520,7 +1762,7 @@
         pair.addEventListener("click", (event) => {
           const chosen = event.target.closest(".pane");
           if (!chosen) return;
-          pairedWith = null;
+          comparing = false;
           showFrame(Number(chosen.dataset.index));
         });
 
@@ -1534,26 +1776,30 @@
           if (bar) showFrame(Number(bar.dataset.go));
         });
         viewer.addEventListener("click", (event) => {
-          const button = event.target.closest(".controls button");
+          const button = event.target.closest("#viewer-top button, #viewer-bottom button:not([data-go])");
           if (!button) return;
           if (button.dataset.marks !== undefined) return flipMarks();
-          if (button.dataset.two !== undefined) return setTwoUp(pairedWith === null);
+          if (button.dataset.compare !== undefined) return setCompare(!comparing);
+          if (button.dataset.picks !== undefined) return setPicks(!picksOnly);
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
         viewer.addEventListener("close", () => {
           openIndex = -1;
-          pairedWith = null;
+          comparing = false;
+          picksOnly = false;
           stage.querySelector(".frame")?.remove();
           pair.hidden = true;
           pair.replaceChildren();
           viewer.removeAttribute("data-controls");
+          viewer.removeAttribute("data-zoomed");
           setFrameParam(null);
           keepFrame(null);
           describe(null);
         });
 
-        // A tap on the ground hides the bands and brings them back; a double
+        // A tap on the ground hides the bands and brings them back, or, while
+        // zoomed, brings the faded controls back and fades them again; a double
         // tap zooms in at that spot, or back to fit. A single mouse click does
         // nothing, since it is so often only a click to focus the window; a
         // double click zooms, and Escape or the close button closes.
@@ -1570,7 +1816,8 @@
           lastTap = { t: now, ...p };
           tapTimer = setTimeout(() => {
             lastTap = null;
-            viewer.dataset.controls = viewer.dataset.controls === "hidden" ? "shown" : "hidden";
+            const was = viewer.dataset.controls;
+            viewer.dataset.controls = isZoomed ? (was === "shown" ? "faded" : "shown") : was === "hidden" ? "shown" : "hidden";
           }, 320);
         };
         // A double tap on a touch screen is handled above; some browsers also
@@ -1613,7 +1860,7 @@
           const zoom = viewer.open && !event.altKey ? zoomKeys.get(event.key) : undefined;
           if (zoom && !(event.key === "1" && (event.metaKey || event.ctrlKey))) {
             event.preventDefault();
-            if (pairedWith !== null) setTwoUp(false);
+            if (comparing) setCompare(false);
             return zoom();
           }
           // With Cmd, Ctrl or Alt held the key belongs to the browser: select
@@ -1623,13 +1870,13 @@
             event.preventDefault();
             return flipMarks();
           }
-          if (viewer.open && (event.key === "t" || event.key === "T")) {
+          if (viewer.open && (event.key === "c" || event.key === "C")) {
             event.preventDefault();
-            return setTwoUp(pairedWith === null);
+            return setCompare(!comparing);
           }
-          if (viewer.open && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
+          if (viewer.open && (event.key === "r" || event.key === "R")) {
             event.preventDefault();
-            return hop(event.key === "ArrowDown" ? 1 : -1);
+            return setPicks(!picksOnly);
           }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole
@@ -1649,7 +1896,8 @@
         new ResizeObserver(() => {
           if (!viewer.open) return;
           fitStrip();
-          if (pairedWith !== null) {
+          if (comparing && !canCompare(openIndex)) setCompare(false);
+          else if (comparing) {
             measureBand();
             fitPair();
           } else if (frameOf()) relayout();
@@ -1674,8 +1922,12 @@
         // fit cannot show and hide the thumbnail on the way.
         let isZoomed = false;
         const maxScale = () => Math.max(4, fitScale());
+        // Zoomed, the controls fade; a zoom that starts after a tap brought
+        // them back fades them again.
         const setZoomed = (z) => {
+          if (z && !isZoomed && viewer.dataset.controls === "shown") delete viewer.dataset.controls;
           isZoomed = z;
+          viewer.toggleAttribute("data-zoomed", z);
         };
 
         const mount = (copy) => {

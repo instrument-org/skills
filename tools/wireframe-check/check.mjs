@@ -1,10 +1,11 @@
 // Drives the wireframe skill's enlarged view in headless Chromium through
 // fixture pages, and prints one FAIL line per broken promise: no script
-// errors; a bottom band that keeps one height from frame to frame; a strip
-// that lights the open frame; two up showing exactly two frames inside the
-// window, with nothing behind them, at every step and through a resize;
-// and the ways out of two up. Each fixture is a page new.mjs writes, so the
-// check runs the main.html an agent would get.
+// errors; bands that keep one height from frame to frame; a title block
+// and strip that follow the open frame; Compare showing the paired frame
+// and the open one inside the window, with nothing behind them, through a
+// resize, and the ways out of it; Recommended walking only the stars; and
+// a pairing that names no frame listed on the page. Each fixture is a page
+// new.mjs writes, so the check runs the main.html an agent would get.
 //
 // A development tool, like page-check: nothing under skills/ imports it.
 //
@@ -23,15 +24,16 @@ const here = dirname(fileURLToPath(import.meta.url));
 const newPage = resolve(here, "../../skills/wireframe/new.mjs");
 
 // A frame: a box at its size with a title in it. `leak` puts an element in
-// it that sets its own visibility, which once showed through two up.
+// it that sets its own visibility, which once showed through a second
+// frame laid over the stage. `extra` adds fields, such as pick or compare.
 // Notes alternate between one line and two in the caption, since a band
 // that fits its note changes height between them.
 let notes = 0;
 const SHORT = "We check this frame.";
 const LONG =
   "We check this frame with a note long enough to run onto a second line of the caption under the frame, the way most notes do in practice.";
-const frame = (title, w, h, { leak = false } = {}) =>
-  `{ title: ${JSON.stringify(title)}, note: ${JSON.stringify(notes++ % 2 ? LONG : SHORT)}, w: ${w}, h: ${h}, body: \`<div class="h-full bg-card p-8"><p class="text-2xl font-semibold">${title}</p>${leak ? '<div style="visibility: visible">kept visible</div>' : ""}</div>\` }`;
+const frame = (title, w, h, { leak = false, extra = "" } = {}) =>
+  `{ title: ${JSON.stringify(title)},${extra ? ` ${extra},` : ""} note: ${JSON.stringify(notes++ % 2 ? LONG : SHORT)}, w: ${w}, h: ${h}, body: \`<div class="h-full bg-card p-8"><p class="text-2xl font-semibold">${title}</p>${leak ? '<div style="visibility: visible">kept visible</div>' : ""}</div>\` }`;
 const withGroup = (g, f) => f.replace("{ title:", `{ group: "${g}", title:`);
 
 export const FIXTURES = {
@@ -45,15 +47,26 @@ export const FIXTURES = {
     ],
   },
   grouped: {
-    groups: `{ now: { mark: "Now", tone: "gray", name: "Current design", note: "As it ships." }, A: { mark: "A", name: "First option", note: "One way." }, B: { mark: "B", name: "Second option", note: "Another way." } }`,
+    groups: `{ now: { mark: "Now", tone: "gray", note: "As it ships." }, A: { mark: "A", name: "First option", note: "One way." }, B: { mark: "B", name: "Second option", note: "Another way." } }`,
     states: [
       withGroup("now", frame("Home", 1280, 800)),
       withGroup("now", frame("Settings", 1280, 800)),
-      withGroup("A", frame("Home", 1280, 800, { leak: true })),
+      withGroup(
+        "A",
+        frame("Home", 1280, 800, {
+          leak: true,
+          extra: `compare: { with: "Now 1", as: "today's home" }`,
+        }),
+      ),
       withGroup("A", frame("Settings", 1280, 800)),
-      withGroup("A", frame("Done", 1280, 800)),
-      withGroup("B", frame("Home", 1280, 800)),
-      withGroup("B", frame("Settings", 1280, 800)),
+      withGroup("A", frame("Done", 1280, 800, { extra: "pick: true" })),
+      withGroup(
+        "B",
+        frame("Home", 1280, 800, {
+          extra: `compare: { with: "Done", as: "option A" }`,
+        }),
+      ),
+      withGroup("B", frame("Settings", 1280, 800, { extra: "pick: true" })),
     ],
   },
   "lead-in": {
@@ -70,6 +83,16 @@ export const FIXTURES = {
     states: [
       withGroup("A", frame("One", 1280, 800)),
       withGroup("A", frame("Two", 1280, 800)),
+    ],
+  },
+  "bad pair": {
+    groups: "{}",
+    problems: 1,
+    states: [
+      frame("One", 1280, 800, {
+        extra: `compare: { with: "Nothing", as: "nothing" }`,
+      }),
+      frame("Two", 1280, 800),
     ],
   },
   tall: {
@@ -102,20 +125,36 @@ const READ = `JSON.stringify((() => {
   const viewer = document.querySelector("#viewer");
   const pair = document.querySelector("#pair");
   const inside = (el) => { const r = el.getBoundingClientRect(); return r.left >= -1 && r.right <= innerWidth + 1 && r.width > 0; };
-  const current = [...document.querySelectorAll("#viewer-strip [aria-current]")].map((b) => Number(b.dataset.go));
-  const partner = [...document.querySelectorAll("#viewer-strip .partner")].map((b) => Number(b.dataset.go));
+  const strip = document.querySelector("#viewer-strip");
+  const shown = (b) => b.offsetWidth > 0;
+  const current = [...strip.querySelectorAll("[aria-current]")].map((b) => Number(b.dataset.go));
+  const partner = [...strip.querySelectorAll(".partner")].map((b) => Number(b.dataset.go));
   const panes = [...pair.querySelectorAll(".pane")];
+  const compare = document.querySelector("#viewer [data-compare]");
+  const picks = document.querySelector("#viewer [data-picks]");
+  const name = strip.querySelector(".name");
+  const sr = strip.getBoundingClientRect();
+  const nr = name?.getBoundingClientRect();
   return {
     open: viewer.open,
     counter: document.querySelector("#viewer-counter").textContent,
+    title: document.querySelector("#viewer-title").textContent,
+    top: document.querySelector("#viewer-top").offsetHeight,
     band: document.querySelector("#viewer-bottom").offsetHeight,
-    stripShown: !document.querySelector("#viewer-strip").hidden,
+    stripShown: !strip.hidden,
+    nameInside: !nr || (nr.left >= sr.left - 1 && nr.right <= sr.right + 1),
     current, partner,
+    barsShown: [...strip.querySelectorAll("[data-go]")].filter(shown).map((b) => Number(b.dataset.go)),
     stageFrames: document.querySelectorAll("#stage .frame").length,
     pairShown: !pair.hidden,
     panes: panes.map((p) => Number(p.dataset.index)),
     panesInside: panes.every((p) => inside(p.querySelector(".frame"))),
-    pressed: document.querySelector("#viewer [data-two]").getAttribute("aria-pressed"),
+    compareShown: !compare.hidden && compare.offsetWidth > 0,
+    compareWords: compare.querySelector(".word").textContent,
+    comparePressed: compare.getAttribute("aria-pressed"),
+    picksShown: !picks.hidden,
+    picksPressed: picks.getAttribute("aria-pressed"),
+    problems: document.querySelectorAll("#rack [role=alert] p").length,
     frameParam: new URLSearchParams(location.search).get("frame"),
   };
 })())`;
@@ -144,12 +183,24 @@ export async function run({ keep } = {}) {
     );
     await wait(120);
   };
+  const go = async (i) => {
+    await P.evaluate(
+      `(() => { const b = document.querySelector('#viewer-strip [data-go="${i}"]'); if (b) b.click(); else document.querySelectorAll("#rack .frame")[${i}].click(); })()`,
+    );
+    await wait(150);
+  };
 
   try {
     for (const [name, fixture] of Object.entries(FIXTURES)) {
       const fail = (msg) => fails.push(`FAIL ${name}: ${msg}`);
       const n = fixture.states.length;
       const grouped = !/^\{\s*\}$/.test(fixture.groups);
+      const paired = fixture.states.flatMap((s, i) =>
+        /compare:/.test(s) && !fixture.problems ? [i] : [],
+      );
+      const picks = fixture.states.flatMap((s, i) =>
+        /pick: true/.test(s) ? [i] : [],
+      );
       const path = build(dir, name, fixture);
       errors.length = 0;
       await P.viewport(1440, 900);
@@ -162,87 +213,148 @@ export async function run({ keep } = {}) {
       await wait(200);
 
       // One frame at a time, all the way round.
+      const tops = new Set();
       const bands = new Set();
       for (let i = 0; i < n; i++) {
         const v = await read();
+        tops.add(v.top);
         bands.add(v.band);
-        if (v.counter !== `${i + 1} / ${n}`)
+        if (v.counter !== `${i + 1}/${n}`)
           fail(`frame ${i + 1} shows the counter "${v.counter}"`);
         if (v.stageFrames !== 1)
           fail(`frame ${i + 1} has ${v.stageFrames} frames on the stage`);
-        if (v.pairShown) fail(`frame ${i + 1} shows two up unasked`);
+        if (v.pairShown) fail(`frame ${i + 1} compares unasked`);
         if (v.stripShown !== grouped)
           fail(`frame ${i + 1} ${grouped ? "hides" : "shows"} the strip`);
         if (grouped && (v.current.length !== 1 || v.current[0] !== i))
           fail(`frame ${i + 1} lights strip bars [${v.current}]`);
+        if (!v.nameInside)
+          fail(`frame ${i + 1} runs the group's name out of the strip`);
+        if (v.compareShown !== paired.includes(i))
+          fail(`frame ${i + 1} ${v.compareShown ? "shows" : "hides"} Compare`);
+        if (v.compareShown && !v.compareWords.startsWith("Compare with "))
+          fail(`frame ${i + 1} labels Compare "${v.compareWords}"`);
+        if (v.picksShown !== picks.length > 0)
+          fail(
+            `frame ${i + 1} ${v.picksShown ? "shows" : "hides"} Recommended`,
+          );
         if (v.frameParam !== String(i + 1))
           fail(`frame ${i + 1} leaves ?frame=${v.frameParam}`);
         await key("ArrowRight");
       }
-
-      // Two up, all the way round, and up and down on the right side.
-      await key("t");
-      for (let i = 0; i < n; i++) {
-        const v = await read();
-        bands.add(v.band);
-        if (!v.pairShown || v.panes.length !== 2)
-          fail(`two up on frame ${i + 1} shows ${v.panes.length} panes`);
-        else if (v.panes[0] === v.panes[1])
-          fail(`two up on frame ${i + 1} shows the same frame twice`);
-        if (v.stageFrames !== 0)
-          fail(
-            `two up on frame ${i + 1} keeps ${v.stageFrames} frame behind the panes`,
-          );
-        if (!v.panesInside)
-          fail(`two up on frame ${i + 1} runs a pane out of the window`);
-        if (v.pressed !== "true")
-          fail(`two up on frame ${i + 1} leaves the button unpressed`);
-        if (grouped && (v.partner.length !== 1 || v.partner[0] !== v.panes[1]))
-          fail(
-            `two up on frame ${i + 1} rings strip bars [${v.partner}] for pane ${v.panes[1]}`,
-          );
-        await key("ArrowRight");
-      }
-      if (grouped) {
-        const before = await read();
-        await key("ArrowDown");
-        const after = await read();
-        if (after.panes[0] !== before.panes[0])
-          fail("down in two up moved the left frame");
-        if (after.panes[0] === after.panes[1])
-          fail("down in two up put the left frame on the right");
-      }
+      if (tops.size !== 1)
+        fail(`the title block changes height: ${[...tops].join(", ")}px`);
       if (bands.size !== 1)
         fail(`the bottom band changes height: ${[...bands].join(", ")}px`);
+      if ((await read()).problems !== (fixture.problems ?? 0))
+        fail(
+          `the page lists ${(await read()).problems} pairing problems, not ${fixture.problems ?? 0}`,
+        );
 
-      // A resize keeps both panes inside the window.
-      for (const [w, h] of [
-        [960, 700],
-        [1600, 1000],
-      ]) {
-        await P.viewport(w, h);
-        await wait(250);
-        if (!(await read()).panesInside)
-          fail(`two up runs a pane out of a ${w}px window`);
+      // Compare, on every paired frame: the partner at the left, the open
+      // frame at the right, nothing behind them, both inside the window.
+      for (const i of paired) {
+        await go(i);
+        await key("c");
+        const v = await read();
+        if (!v.pairShown || v.panes.length !== 2)
+          fail(`compare on frame ${i + 1} shows ${v.panes.length} panes`);
+        else if (v.panes[1] !== i || v.panes[0] === i)
+          fail(`compare on frame ${i + 1} shows panes [${v.panes}]`);
+        if (v.stageFrames !== 0)
+          fail(
+            `compare on frame ${i + 1} keeps ${v.stageFrames} frame behind the panes`,
+          );
+        if (!v.panesInside)
+          fail(`compare on frame ${i + 1} runs a pane out of the window`);
+        if (v.comparePressed !== "true")
+          fail(`compare on frame ${i + 1} leaves the button unpressed`);
+        if (grouped && (v.partner.length !== 1 || v.partner[0] !== v.panes[0]))
+          fail(
+            `compare on frame ${i + 1} rings strip bars [${v.partner}] for pane ${v.panes[0]}`,
+          );
+        if (v.band !== [...bands][0] || v.top !== [...tops][0])
+          fail(`compare on frame ${i + 1} changes a band's height`);
+        await key("c");
+        const off = await read();
+        if (off.pairShown || off.stageFrames !== 1)
+          fail(`C again on frame ${i + 1} doesn't go back to one frame`);
       }
-      await P.viewport(1440, 900);
-      await wait(200);
+      if (paired.length) {
+        const i = paired[0];
+        await go(i);
+        await key("c");
+        // A resize keeps both panes inside the window, and a phone's width
+        // goes back to one frame.
+        for (const [w, h] of [
+          [960, 700],
+          [1600, 1000],
+        ]) {
+          await P.viewport(w, h);
+          await wait(250);
+          if (!(await read()).panesInside)
+            fail(`compare runs a pane out of a ${w}px window`);
+        }
+        await P.viewport(600, 900);
+        await wait(250);
+        let v = await read();
+        if (v.pairShown || v.compareShown) fail("a 600px window keeps Compare");
+        await P.viewport(1440, 900);
+        await wait(200);
+        // The ways out: a zoom key and a tap on a pane.
+        await key("c");
+        await key("1");
+        v = await read();
+        if (v.pairShown || v.stageFrames !== 1)
+          fail("a zoom key in compare doesn't go back to one frame");
+        await key("0");
+        await key("c");
+        const left = (await read()).panes[0];
+        await P.evaluate(`document.querySelectorAll("#pair .pane")[0].click()`);
+        await wait(150);
+        v = await read();
+        if (v.pairShown || v.counter !== `${left + 1}/${n}`)
+          fail("a tap on the left pane doesn't open it alone");
+      }
+      // C on a frame with no pair does nothing.
+      const lone = [...Array(n).keys()].find((i) => !paired.includes(i));
+      if (lone !== undefined) {
+        await go(lone);
+        await key("c");
+        if ((await read()).pairShown)
+          fail(`C on frame ${lone + 1}, which has no pair, compares`);
+      }
 
-      // The ways out: a zoom key, a tap on a pane, and closing.
-      await key("1");
-      let v = await read();
-      if (v.pairShown || v.stageFrames !== 1)
-        fail("a zoom key in two up doesn't go back to one frame");
-      await key("t");
-      const right = (await read()).panes[1];
-      await P.evaluate(`document.querySelectorAll("#pair .pane")[1].click()`);
-      await wait(150);
-      v = await read();
-      if (v.pairShown || v.counter !== `${right + 1} / ${n}`)
-        fail("a tap on the right pane doesn't open it alone");
+      // Recommended: R from a frame without a star opens its group's star,
+      // the arrows walk only the stars, and R again shows every frame.
+      if (picks.length) {
+        await go(0);
+        await key("r");
+        let v = await read();
+        if (v.picksPressed !== "true")
+          fail("R leaves the Recommended button unpressed");
+        if (
+          !picks.includes(v.current[0] ?? Number(v.counter.split("/")[0]) - 1)
+        )
+          fail(`R opens frame ${v.counter}, which has no star`);
+        if (grouped && v.barsShown.join() !== picks.join())
+          fail(`R shows strip bars [${v.barsShown}], not the stars [${picks}]`);
+        const seen = [];
+        for (let k = 0; k < picks.length; k++) {
+          seen.push(Number((await read()).counter.split("/")[0]) - 1);
+          await key("ArrowRight");
+        }
+        if ([...seen].sort((a, b) => a - b).join() !== picks.join())
+          fail(`the arrows under R visit [${seen}], not [${picks}]`);
+        await key("r");
+        v = await read();
+        if (v.picksPressed !== "false" || (grouped && v.barsShown.length !== n))
+          fail("R again doesn't bring every frame back");
+      }
+
       await P.evaluate(`document.querySelector("#viewer").close()`);
       await wait(100);
-      v = await read();
+      const v = await read();
       if (v.open || v.pairShown || v.stageFrames !== 0 || v.frameParam !== null)
         fail("closing leaves the viewer, its panes or ?frame= behind");
 

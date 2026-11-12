@@ -56,7 +56,7 @@ Sets of frames the reader will name back to you, such as options, the current de
 
 ```js
 const groups = {
-  now: { mark: "Now", tone: "gray", name: "Current design", note: "The site as it ships today." },
+  now: { mark: "Now", tone: "gray", note: "The site as it ships today." },
   A: { mark: "A", name: "Plainly said", note: "One plain sentence up top and two quiet tones for the rest." },
   B: { mark: "B", name: "Night shift", note: "The whole site dark, with the app glowing on its wallpaper." },
 };
@@ -67,9 +67,10 @@ const states = [
 ```
 
 - `mark` is what the reader says back: a letter for an option, a short word such as `Now` for the current design, or `""` for no label. A frame's label is its mark and its place in the group, so the second frame of A is A2 and the second of Now is Now 2.
+- A group has one name, shown the same way in the grid's heading, in the enlarged view's strip and in the frames' labels. A letter mark goes with a `name` ("A First option"). A word mark is the whole name, so leave `name` out: `{ mark: "Starters", note: "…" }`, never `{ mark: "Starters", name: "Prompt and opening suggestions" }`, which would label the frames "Starters 2" under a heading that says something else.
 - `note` says in one line what the whole set tries, so frame notes only say what each screen does.
 - `tone` is one of gray, sky, emerald, amber, rose or indigo. Leave it out and the sets take colors in order. Gray suits the current design.
-- Keep a group's frames next to each other in `states`. The grid draws each group under one slim heading, with a rule in its color down the left margin from the heading to its last frame, and labels its frames in that color. The enlarged view names the group at the top left and shows a bar per frame in runs by group, and up and down jump to the same place in the next group, so A2 goes to B2.
+- Keep a group's frames next to each other in `states`. The grid draws each group under one slim heading, with a rule in its color down the left margin from the heading to its last frame, and labels its frames in that color. The enlarged view shows a bar per frame in runs by group along the bottom, with the open group's name under its run.
 - Use groups only when there are two or more sets to tell apart. Most pages are one walk through one design and need none: leave `groups` empty, and the frames keep plain numbers.
 
 ## Marks
@@ -88,7 +89,7 @@ You can also put `ann` on its own inside any element to mark that element. That'
 
 Each helper leaves an invisible marker inside the element. After render, `drawMarks` measures every marked element against its frame and draws the ring and tag on one layer over the whole frame. That way a mark never changes the element's size, and no `overflow-hidden` parent can clip it. The tag goes beside a narrow element, above a wide one, and inside the corner of a whole pane.
 
-That layer has the class `ann`, as does anything else the reader can switch on and off. Marks start hidden, and the marks button shows them all by setting `data-marks="on"` on the body. One rule hides them whenever it isn't set:
+That layer has the class `ann`, as does anything else the reader can switch on and off. Marks start hidden, and the Callouts button shows them all by setting `data-marks="on"` on the body. One rule hides them whenever it isn't set:
 
 ```css
 body:not([data-marks="on"]) .ann {
