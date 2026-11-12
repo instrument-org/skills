@@ -38,7 +38,7 @@ node <skill>/scripts/open-in-instrument-link.ts <path> --title "<title>"
 node <skill>/scripts/open-in-instrument-link.ts <path> <path>... --title "<work>" --from "<you>"
 ```
 
-Paste what it prints into your reply as it is. It resolves relative paths against the current folder and `~` to the home folder, writes Windows paths in the link's form, and ends a folder with a slash. On stderr it warns about a path that does not exist or sits in a temporary folder: fix the path or move the output, then run it again.
+Paste what it prints into your reply as it is. It resolves relative paths against the current folder and `~` to the home folder, writes Windows paths in the link's form, ends a folder with a slash, and shows a path under the home folder as `~/…` while the link keeps it whole. On stderr it warns about a path that does not exist or sits in a temporary folder: fix the path or move the output, then run it again.
 
 - One output: one line. `--title` names it in a few words the person would recognize; without it, the file name.
 - Several outputs from one piece of work: one command, one link that opens them together. `--title` names the work and is required; `--from` names you as you would introduce yourself (`Claude Code`, `Codex`).
@@ -50,7 +50,7 @@ Paste what it prints into your reply as it is. It resolves relative paths agains
 One output:
 
 ```markdown
-**Pricing comparison** · `/Users/sam/Projects/pricing/comparison.html` · [Open in Instrument](https://tryinstrument.com/open#/Users/sam/Projects/pricing/comparison.html)
+**Pricing comparison** · `~/Projects/pricing/comparison.html` · [Open in Instrument](https://tryinstrument.com/open#/Users/sam/Projects/pricing/comparison.html)
 ```
 
 Several outputs from one piece of work:
@@ -58,11 +58,15 @@ Several outputs from one piece of work:
 ```markdown
 **Onboarding emails** · 2 files · [Open in Instrument](https://tryinstrument.com/open#title=Onboarding%20emails&from=Codex&f=%2FUsers%2Fsam%2FProjects%2Femails%2Fwelcome.html&f=%2FUsers%2Fsam%2FProjects%2Femails%2Fimages%2F)
 
-- `/Users/sam/Projects/emails/welcome.html`
-- `/Users/sam/Projects/emails/images/`
+- `~/Projects/emails/welcome.html`
+- `~/Projects/emails/images/`
 ```
 
 The link's words are always exactly `Open in Instrument`. Never link the title or any other words to Instrument, and add no emoji.
+
+## Where the link goes
+
+The link goes through the website by default, which is right everywhere. A person who wants links straight into the app, as `instrument://`, sets `INSTRUMENT_LINKS=app` in their shell, or writes `app` into Instrument's `agent-links` file: `~/Library/Application Support/Instrument/agent-links` on macOS, `%APPDATA%\Instrument\agent-links` on Windows, `~/.config/Instrument/agent-links` on Linux. The command reads these itself. You never choose this, and you pass `--links` only when the person asked for one form in this conversation.
 
 ## Write the link by hand only if the command can't run
 
