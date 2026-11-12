@@ -11,7 +11,7 @@ It writes a handful of fixture pages with the skill's own `new.mjs` (no groups, 
 - no script errors
 - the title block and the bottom band keep one height across every frame, alone and compared, with notes of one line and of two
 - the counter, the strip's lit bar, the group's name inside the strip, and `?frame=` follow the open frame
-- Compare shows only on paired frames, reads "Compare with …", and on C shows the paired frame at the left and the open one at the right, nothing behind them, both inside the window, also after resizing to 960 and 1600 wide, with the paired one ringed in the strip; a 600px window drops it
+- Compare shows only on paired frames, reads "Compare with …", and on C shows the paired frame at the left and the open one at the right, nothing behind them, both inside the window, also after resizing to 960 and 1600 wide, with the paired one ringed in the strip; a 600px window drops it and widening brings it back; it stays on across a frame with no pair, which shows alone
 - C again, a zoom key and a tap on a pane go back to one frame, and C on a frame with no pair does nothing
 - Recommended shows only on a page with stars; R opens a star, the strip shows only the stars, the arrows visit each star, and R again brings every frame back
 - a pairing that names no frame is listed above the grid

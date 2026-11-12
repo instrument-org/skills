@@ -1590,8 +1590,10 @@
 
         // ---- the open frame ------------------------------------------------
         // The viewer shows one frame, or the open frame beside the one the
-        // agent paired it with. Three values say what: openIndex, comparing,
-        // and picksOnly, which keeps the walk to the recommended frames.
+        // agent paired it with. Three values say what: openIndex; comparing,
+        // which once on stays on from frame to frame, showing a pair wherever
+        // the open frame has one and room allows; and picksOnly, which keeps
+        // the walk to the recommended frames.
         // showFrame() paints everything from those, so every way in (keys,
         // buttons, the strip, a tap on a pane, a link) sets them and calls
         // it, and nothing else on screen keeps state of its own.
@@ -1602,7 +1604,8 @@
         const tiles = () => rack.querySelectorAll(".frame");
         // A phone has no room for two, upright or on its side.
         const canCompare = (i) => pairs[i] !== null && innerWidth > 640 && !short.matches;
-        const partner = () => (comparing ? pairs[openIndex].j : null);
+        const paired = () => comparing && canCompare(openIndex);
+        const partner = () => (paired() ? pairs[openIndex].j : null);
         const toneOf = (i) => `tone-${groupOf(i)?.tone ?? "plain"}`;
 
         const showFrame = (index) => {
@@ -1610,7 +1613,6 @@
           if (!tile) return;
           const before = frameOf() ? sizeOf() : null;
           openIndex = index;
-          if (comparing && !canCompare(index)) comparing = false;
           stage.querySelector(".frame")?.remove();
           paintHead();
           paintStrip();
@@ -1619,7 +1621,7 @@
           viewerTop.removeAttribute("data-open");
           measureBand();
           viewerMap.dataset.for = "";
-          if (!comparing) {
+          if (!paired()) {
             pair.hidden = true;
             pair.replaceChildren();
             const copy = tile.cloneNode(true);
@@ -1940,8 +1942,8 @@
         new ResizeObserver(() => {
           if (!viewer.open) return;
           fitStrip();
-          if (comparing && !canCompare(openIndex)) setCompare(false);
-          else if (comparing) {
+          if (comparing && pair.hidden === canCompare(openIndex)) showFrame(openIndex);
+          else if (paired()) {
             measureBand();
             fitPair();
           } else if (frameOf()) relayout();

@@ -112,7 +112,7 @@ Here's one rewrite. Before: "Said plainly as memory, with memory's fingerprint o
 ### Recommending and comparing
 
 - When you have a pick among the options, star it with `pick: true`, at most once per group, and only where you would actually choose it. The star says "recommended", so don't write the word in a title or note. With no pick, star nothing.
-- When one frame is worth seeing beside another, usually an option beside the current design it replaces, pair them with `compare: { with: "Now 1", as: "today's card" }`. `with` is the other frame's label, or a title only one frame has. `as` finishes the button's words, "Compare with today's card", so it names what the reader will see, in a few words. Pair only the frames where the comparison settles something. Check that no pairing error shows above the frames.
+- When one frame is worth seeing beside another, usually an option beside the current design it replaces, pair them with `compare: { with: "Now 1", as: "today's card" }`. `with` is the other frame's label, or a title only one frame has. `as` finishes the button's words, "Compare with today's card", so it names what the reader will see, in a few words. Pair only the frames where the comparison settles something, and when one option is paired with the current design, pair each option's matching frame too: Compare stays on as the reader walks the frames, so an option left unpaired drops out of the side by side. Check that no pairing error shows above the frames.
 
 ## A prototype instead of frames
 

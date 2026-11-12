@@ -3,7 +3,7 @@
 // errors; bands that keep one height from frame to frame; a title block
 // and strip that follow the open frame; Compare showing the paired frame
 // and the open one inside the window, with nothing behind them, through a
-// resize, and the ways out of it; Recommended walking only the stars; and
+// resize, staying on from frame to frame, and the ways out of it; Recommended walking only the stars; and
 // a pairing that names no frame listed on the page. Each fixture is a page
 // new.mjs writes, so the check runs the main.html an agent would get.
 //
@@ -300,9 +300,29 @@ export async function run({ keep } = {}) {
         let v = await read();
         if (v.pairShown || v.compareShown) fail("a 600px window keeps Compare");
         await P.viewport(1440, 900);
-        await wait(200);
+        await wait(250);
+        if (!(await read()).pairShown)
+          fail("widening past a phone's width doesn't bring the pair back");
+        // Compare stays on from frame to frame: a frame with no pair shows
+        // alone, and the next paired frame shows its pair.
+        const between = [...Array(n).keys()].find(
+          (k) => k !== i && !paired.includes(k),
+        );
+        if (between !== undefined) {
+          await go(between);
+          v = await read();
+          if (v.pairShown || v.stageFrames !== 1)
+            fail(
+              `compare on, frame ${between + 1}, which has no pair, doesn't show alone`,
+            );
+          await go(paired.at(-1));
+          if (!(await read()).pairShown)
+            fail(
+              `compare on, frame ${paired.at(-1) + 1} doesn't show its pair after a frame with none`,
+            );
+          await go(i);
+        }
         // The ways out: a zoom key and a tap on a pane.
-        await key("c");
         await key("1");
         v = await read();
         if (v.pairShown || v.stageFrames !== 1)
