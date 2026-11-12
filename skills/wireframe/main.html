@@ -1203,20 +1203,22 @@
 
         // ---- marks -----------------------------------------------------------
         // Measures each marked element against its frame in true-size pixels,
-        // so the layer scales with the drawing and the enlarged copy, a clone,
-        // carries it along. A narrow thing takes its tag beside it at the right,
-        // a wide one above it, a whole pane inside its own corner; each falls
-        // back to the next, then to below.
+        // so the layer scales with the drawing. The enlarged copies of a frame
+        // are measured again once they are on screen, since a copy taken
+        // before the page settled carries a layer measured too early. A narrow
+        // thing takes its tag beside it at the right, a wide one above it, a
+        // whole pane inside its own corner; each falls back to the next, then
+        // to below.
         const MARK_PAD = 5;
         const TAG_H = 18;
 
-        const drawMarks = () => {
-          for (const root of rack.querySelectorAll(".frame > *")) {
+        const drawMarks = (roots = document.querySelectorAll("#rack .frame > *, #stage .frame > *, #pair .frame > *")) => {
+          for (const root of roots) {
             root.querySelector(".marks")?.remove();
             const markers = [...root.querySelectorAll("i.mark")];
             if (markers.length === 0) continue;
             const frame = root.parentElement;
-            const s = parseFloat(frame.style.getPropertyValue("--s")) || 1;
+            const s = frame.getBoundingClientRect().width / Number(frame.dataset.w) || 1;
             const fw = Number(frame.dataset.w);
             const fh = Number(frame.dataset.h);
             const rr = root.getBoundingClientRect();
@@ -1281,7 +1283,7 @@
         drawMarks();
         setTimeout(drawMarks, 250);
         document.fonts?.ready.then(() => setTimeout(drawMarks, 0));
-        document.fonts?.addEventListener("loadingdone", drawMarks);
+        document.fonts?.addEventListener("loadingdone", () => drawMarks());
         window.addEventListener("load", () => setTimeout(drawMarks, 300));
 
         // ---- density ---------------------------------------------------------
@@ -1629,6 +1631,7 @@
             const same = before && before.w === Number(copy.dataset.w) && before.h === Number(copy.dataset.h);
             if (same) relayout();
             else toFit(false);
+            drawMarks(stage.querySelectorAll(".frame > *"));
           } else {
             setZoomed(false);
             viewerZoom.hidden = true;
@@ -1779,6 +1782,7 @@
           pair.innerHTML = pane(partner()) + pane(openIndex);
           pair.hidden = false;
           fitPair();
+          drawMarks(pair.querySelectorAll(".frame > *"));
         };
         // Each copy is measured at a token size first, so a frame copied at
         // the grid's scale can't widen its column before the fit is known.
