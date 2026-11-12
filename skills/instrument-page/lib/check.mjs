@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
+import { findSecrets } from "../share.mjs";
 import { embedImages } from "./embed.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -926,6 +927,14 @@ export async function main(argv, { prerender = null, cmd } = {}) {
     }
     const built = assemble(own, styles, css, js);
     writeFileSync(path, built);
+    // Read from the file as written, so each line number is one the agent can open.
+    for (const s of findSecrets(built))
+      push(
+        "secret",
+        `line ${s.line} "${s.masked}"`,
+        `looks like ${s.kind}, which a shared link would make public`,
+        `replace it with a placeholder or masked text such as ${s.masked}`,
+      );
     fileChecks(own0, push, inputText, embedded.failed);
     const page = readPage(own);
     pageRules(page, push);

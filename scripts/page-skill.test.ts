@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import { createServer } from "node:http";
 import {
   existsSync,
@@ -146,6 +147,24 @@ describe("page.mjs", () => {
       FAIL prose-heavy: the first two screens: prose (blocks of 15+ words) is about 81% of what comes first, counting words, with a drawing as 150 -> bring it under 40%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below or into one <details>
       FAIL quote: section > blockquote "“We ship on Friday”": these words are not in any input, word for word -> copy the exact words from the input (an ellipsis may join two exact pieces), or say it as your own summary without quote marks; if it is not a quote at all, use <aside> or <p>, not <blockquote>
       page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 65 KB."
+    `);
+  });
+  it("fails a key-shaped string at its line in the built file, masked", async () => {
+    // Put together at run time, so no key-shaped literal sits in the repo.
+    const key =
+      "sk" +
+      "_live_" +
+      createHash("sha256").update("page").digest("hex").slice(0, 32);
+    const result = await check(
+      `<header><h1>The late bus costs less</h1></header><section class="hero"><svg viewBox="0 0 10 10" width="400" height="200"></svg></section>\n<p>Pay with <code>${key}</code></p>`,
+    );
+    expect(result.code).toBe(1);
+    expect(result.stdout).not.toContain(key);
+    const line = result.built.split("\n").findIndex((l) => l.includes(key)) + 1;
+    expect(result.stdout.replace(`line ${line} `, "line N "))
+      .toMatchInlineSnapshot(`
+      "FAIL secret: line N "sk_live_...4797": looks like a Stripe live key, which a shared link would make public -> replace it with a placeholder or masked text such as sk_live_...4797
+      page.html: 1 FAIL. Fix each by fixing what it names, then run again. It is 65 KB."
     `);
   });
   it("counts neither the kicker before the hero nor a footer paragraph", async () => {

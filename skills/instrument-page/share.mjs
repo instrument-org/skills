@@ -5,6 +5,7 @@
 //   node <this file> <slug>.html --check    is the link still up, and until when
 //   node <this file> <slug>.html --delete   take the newest link down
 //   node <this file> <slug>.html --delete <id>
+//   node <this file> <slug>.html --allow-secrets
 //
 // A link is a copy of the file at https://<id>.instrument.page/<token>/,
 // readable by anyone who has the address, unlisted, and gone after thirty days.
@@ -13,8 +14,10 @@
 // edited file gets a new one. Publishing mints a delete token, handed back
 // once and never again; this script keeps it in <slug>.share.json beside the
 // page, which is the only place it exists, so a later run (or a later agent)
-// can take the link down. Read references/sharing.md for when to publish at
-// all.
+// can take the link down. Publishing stops on any string shaped like a live
+// credential (findSecrets, below) and names each by line; --allow-secrets
+// publishes anyway, for a page whose keys are samples. Read
+// references/sharing.md for when to publish at all.
 //
 // The same commands, the same sidecar and the same words as share.py beside
 // it; take whichever runtime is here. No dependencies. INSTRUMENT_SHARE_ENDPOINT
@@ -40,6 +43,142 @@ const PLACEHOLDERS = [
     "its instrument:idea meta still reads TEMPLATE",
   ],
 ];
+
+// Strings shaped like a live credential, from gitleaks' default rules
+// (config/gitleaks.toml): its pattern for each, where group 1 (when there is
+// one) is the secret, and the Shannon entropy the secret has to exceed. A
+// pattern that gitleaks ends with quotes, whitespace or a semicolon also ends
+// at < and &, the edges of a value in HTML. page.mjs fails a page on the same
+// strings, and share.py holds the same table.
+const END = String.raw`(?:[\x60'"\t\n\f\r ;<&]|\\[nr]|$)`;
+const SECRETS = [
+  [
+    "an AWS access key ID",
+    String.raw`\b((?:A3T[A-Z0-9]|AKIA|ASIA|ABIA|ACCA)[A-Z2-7]{16})\b`,
+    "",
+    3,
+  ],
+  ["a GitHub token", String.raw`gh[pousr]_[0-9a-zA-Z]{36}`, "", 3],
+  ["a GitHub token", String.raw`github_pat_\w{82}`, "", 3],
+  ["a GitLab token", String.raw`glpat-[\w-]{20}`, "", 3],
+  [
+    "a Slack token",
+    String.raw`xoxb-[0-9]{10,13}-[0-9]{10,13}[a-zA-Z0-9-]*`,
+    "",
+    3,
+  ],
+  [
+    "a Slack token",
+    String.raw`xox[pe](?:-[0-9]{10,13}){3}-[a-zA-Z0-9-]{28,34}`,
+    "",
+    2,
+  ],
+  ["a Slack token", String.raw`xapp-\d-[A-Z0-9]+-\d+-[a-z0-9]+`, "i", 2],
+  ["a Slack token", String.raw`xoxe.xox[bp]-\d-[A-Z0-9]{163,166}`, "i", 2],
+  ["a Slack token", String.raw`xoxe-\d-[A-Z0-9]{146}`, "i", 2],
+  ["a Slack token", String.raw`xoxb-[0-9]{8,14}-[a-zA-Z0-9]{18,26}`, "", 2],
+  ["a Slack token", String.raw`xox[os]-\d+-\d+-\d+-[a-fA-F\d]+`, "", 2],
+  ["a Slack token", String.raw`xox[ar]-(?:\d-)?[0-9a-zA-Z]{8,48}`, "", 2],
+  [
+    "a Slack webhook URL",
+    String.raw`(?:https?://)?hooks.slack.com/(?:services|workflows|triggers)/[A-Za-z0-9+/]{43,56}`,
+    "",
+    0,
+  ],
+  [
+    "an OpenAI API key",
+    String.raw`\b(sk-(?:proj|svcacct|admin)-(?:[A-Za-z0-9_-]{74}|[A-Za-z0-9_-]{58})T3BlbkFJ(?:[A-Za-z0-9_-]{74}|[A-Za-z0-9_-]{58})\b|sk-[a-zA-Z0-9]{20}T3BlbkFJ[a-zA-Z0-9]{20})` +
+      END,
+    "",
+    3,
+  ],
+  [
+    "an Anthropic API key",
+    String.raw`\b(sk-ant-(?:api03|admin01)-[a-zA-Z0-9_\-]{93}AA)` + END,
+    "",
+    0,
+  ],
+  [
+    "a Stripe live key",
+    String.raw`\b((?:sk|rk)_live_[a-zA-Z0-9]{10,99})` + END,
+    "",
+    2,
+  ],
+  ["a Google API key", String.raw`\b(AIza[\w-]{35})` + END, "", 4],
+  ["an npm token", String.raw`\b(npm_[a-z0-9]{36})` + END, "i", 2],
+  [
+    "a private key",
+    String.raw`-----BEGIN[ A-Z0-9_-]{0,100}PRIVATE KEY(?: BLOCK)?-----[\s\S-]{64,}?KEY(?: BLOCK)?-----`,
+    "i",
+    0,
+  ],
+].map(([kind, source, flags, entropy]) => ({
+  kind,
+  pattern: new RegExp(source, `g${flags}`),
+  entropy,
+}));
+
+/** What a masked secret keeps: the prefix that names its kind. */
+const HEAD =
+  /^(?:(?:https?:\/\/)?hooks\.slack\.com\/\w+\/|sk-ant-(?:api03|admin01)-|sk-(?:proj|svcacct|admin)-|[sr]k_live_|github_pat_|glpat-|xoxe.xox[bp]-|xox.-|xapp-|gh[pousr]_|npm_|sk-|.{4})/i;
+
+const mask = (secret) => {
+  const begin = secret.match(/^-----BEGIN[^\n]*?-----/);
+  return begin
+    ? `${begin[0]}...`
+    : `${secret.match(HEAD)?.[0] ?? ""}...${secret.slice(-4)}`;
+};
+
+// Bits per character, as gitleaks measures it.
+const entropyOf = (text) => {
+  const counts = new Map();
+  for (const char of text) counts.set(char, (counts.get(char) ?? 0) + 1);
+  let bits = 0;
+  for (const count of counts.values()) {
+    const share = count / text.length;
+    bits -= share * Math.log2(share);
+  }
+  return bits;
+};
+
+// A sample from documentation or a masked value, rather than a key: AWS's
+// documented keys end in EXAMPLE, gitleaks skips the alphabet run, and a run
+// of x or 0 or an ellipsis is a value someone blanked out.
+const isSample = (secret) =>
+  /example/i.test(secret) ||
+  secret.toLowerCase().includes("abcdefghijklmnopqrstuvwxyz") ||
+  /x{6}|X{6}|0{6}|\.\.\.|…/.test(secret);
+
+/** Every string in text shaped like a live credential, by line, masked. */
+export function findSecrets(text) {
+  const found = [];
+  for (const { kind, pattern, entropy } of SECRETS) {
+    for (const match of text.matchAll(pattern)) {
+      const secret = match[1] ?? match[0];
+      if (entropy && entropyOf(secret) <= entropy) continue;
+      if (isSample(secret)) continue;
+      found.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        kind,
+        secret,
+      });
+    }
+  }
+  found.sort((a, b) => a.start - b.start || b.end - a.end);
+  const hits = [];
+  let reached = 0;
+  for (const hit of found) {
+    if (hit.start < reached) continue;
+    reached = hit.end;
+    hits.push({
+      kind: hit.kind,
+      line: text.slice(0, hit.start).split("\n").length,
+      masked: mask(hit.secret),
+    });
+  }
+  return hits;
+}
 
 const sidecarPath = (page) =>
   join(dirname(page), basename(page, extname(page)) + ".share.json");
@@ -82,7 +221,7 @@ async function lookup(id, url) {
   return response.json();
 }
 
-export async function publish(page) {
+export async function publish(page, { allowSecrets = false } = {}) {
   const bytes = await readFile(page);
   const head = bytes.subarray(0, 8192).toString("utf8");
   if (!/^\s*<!doctype html/i.test(head)) {
@@ -96,6 +235,16 @@ export async function publish(page) {
         `${page} is not finished: ${why}. Publishing would make it public.`,
       );
     }
+  }
+  const secrets = allowSecrets ? [] : findSecrets(bytes.toString("utf8"));
+  if (secrets.length) {
+    throw new Error(
+      [
+        `${page} was not published: it holds what looks like a secret, and anyone with the link could read it.`,
+        ...secrets.map((s) => `  line ${s.line}: ${s.kind}, ${s.masked}`),
+        "Replace each with a placeholder or masked text and run again. If none is a working secret, run again with --allow-secrets.",
+      ].join("\n"),
+    );
   }
 
   const response = await fetch(ENDPOINT, {
@@ -216,16 +365,23 @@ if (
   pathToFileURL(realpathSync(process.argv[1])).href === import.meta.url
 ) {
   const [page, flag, id] = process.argv.slice(2);
-  if (!page || (flag && !["--check", "--delete"].includes(flag))) {
+  if (
+    !page ||
+    (flag && !["--allow-secrets", "--check", "--delete"].includes(flag))
+  ) {
     console.error(
-      "usage: node share.mjs <page.html> [--check | --delete [id]]",
+      "usage: node share.mjs <page.html> [--allow-secrets | --check | --delete [id]]",
     );
     process.exit(2);
   }
   try {
-    const run =
-      flag === "--check" ? check : flag === "--delete" ? remove : publish;
-    console.log(await run(page, id));
+    console.log(
+      flag === "--check"
+        ? await check(page, id)
+        : flag === "--delete"
+          ? await remove(page, id)
+          : await publish(page, { allowSecrets: flag === "--allow-secrets" }),
+    );
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);

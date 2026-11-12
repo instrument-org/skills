@@ -5,6 +5,7 @@ button makes, from wherever the agent is running:
     python <this file> <slug>.html --check    is the link still up, and until when
     python <this file> <slug>.html --delete   take the newest link down
     python <this file> <slug>.html --delete <id>
+    python <this file> <slug>.html --allow-secrets
 
 A link is a copy of the file at https://<id>.instrument.page/<token>/, readable
 by anyone who has the address, unlisted, and gone after thirty days. The token
@@ -13,7 +14,9 @@ the bytes, so the same file always lands at the same link and an edited
 file gets a new one. Publishing mints a delete token, handed back once and never
 again; this script keeps it in <slug>.share.json beside the page, which is the
 only place it exists, so a later run (or a later agent) can take the link down.
-Read references/sharing.md for when to publish at all.
+Publishing stops on any string shaped like a live credential (find_secrets,
+below) and names each by line; --allow-secrets publishes anyway, for a page
+whose keys are samples. Read references/sharing.md for when to publish at all.
 
 The same commands, the same sidecar and the same words as share.mjs beside it;
 take whichever runtime is here. Standard library only. INSTRUMENT_SHARE_ENDPOINT
@@ -23,6 +26,7 @@ overrides the share host, for a local or staging pages worker.
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import sys
@@ -44,6 +48,112 @@ PLACEHOLDERS = [
         "its instrument:idea meta still reads TEMPLATE",
     ),
 ]
+
+# Strings shaped like a live credential, from gitleaks' default rules
+# (config/gitleaks.toml): its pattern for each, where group 1 (when there is
+# one) is the secret, and the Shannon entropy the secret has to exceed. A
+# pattern that gitleaks ends with quotes, whitespace or a semicolon also ends
+# at < and &, the edges of a value in HTML. share.mjs holds the same table.
+END = r"""(?:[\x60'"\t\n\f\r ;<&]|\\[nr]|$)"""
+SECRETS = [
+    (kind, re.compile(pattern, re.ASCII | flags), entropy)
+    for kind, pattern, flags, entropy in [
+        ("an AWS access key ID", r"\b((?:A3T[A-Z0-9]|AKIA|ASIA|ABIA|ACCA)[A-Z2-7]{16})\b", 0, 3),
+        ("a GitHub token", r"gh[pousr]_[0-9a-zA-Z]{36}", 0, 3),
+        ("a GitHub token", r"github_pat_\w{82}", 0, 3),
+        ("a GitLab token", r"glpat-[\w-]{20}", 0, 3),
+        ("a Slack token", r"xoxb-[0-9]{10,13}-[0-9]{10,13}[a-zA-Z0-9-]*", 0, 3),
+        ("a Slack token", r"xox[pe](?:-[0-9]{10,13}){3}-[a-zA-Z0-9-]{28,34}", 0, 2),
+        ("a Slack token", r"xapp-\d-[A-Z0-9]+-\d+-[a-z0-9]+", re.I, 2),
+        ("a Slack token", r"xoxe.xox[bp]-\d-[A-Z0-9]{163,166}", re.I, 2),
+        ("a Slack token", r"xoxe-\d-[A-Z0-9]{146}", re.I, 2),
+        ("a Slack token", r"xoxb-[0-9]{8,14}-[a-zA-Z0-9]{18,26}", 0, 2),
+        ("a Slack token", r"xox[os]-\d+-\d+-\d+-[a-fA-F\d]+", 0, 2),
+        ("a Slack token", r"xox[ar]-(?:\d-)?[0-9a-zA-Z]{8,48}", 0, 2),
+        (
+            "a Slack webhook URL",
+            r"(?:https?://)?hooks.slack.com/(?:services|workflows|triggers)/[A-Za-z0-9+/]{43,56}",
+            0,
+            0,
+        ),
+        (
+            "an OpenAI API key",
+            r"\b(sk-(?:proj|svcacct|admin)-(?:[A-Za-z0-9_-]{74}|[A-Za-z0-9_-]{58})T3BlbkFJ(?:[A-Za-z0-9_-]{74}|[A-Za-z0-9_-]{58})\b|sk-[a-zA-Z0-9]{20}T3BlbkFJ[a-zA-Z0-9]{20})"
+            + END,
+            0,
+            3,
+        ),
+        ("an Anthropic API key", r"\b(sk-ant-(?:api03|admin01)-[a-zA-Z0-9_\-]{93}AA)" + END, 0, 0),
+        ("a Stripe live key", r"\b((?:sk|rk)_live_[a-zA-Z0-9]{10,99})" + END, 0, 2),
+        ("a Google API key", r"\b(AIza[\w-]{35})" + END, 0, 4),
+        ("an npm token", r"\b(npm_[a-z0-9]{36})" + END, re.I, 2),
+        (
+            "a private key",
+            r"-----BEGIN[ A-Z0-9_-]{0,100}PRIVATE KEY(?: BLOCK)?-----[\s\S-]{64,}?KEY(?: BLOCK)?-----",
+            re.I,
+            0,
+        ),
+    ]
+]
+
+# What a masked secret keeps: the prefix that names its kind.
+HEAD = re.compile(
+    r"(?:(?:https?://)?hooks\.slack\.com/\w+/|sk-ant-(?:api03|admin01)-|sk-(?:proj|svcacct|admin)-|[sr]k_live_|github_pat_|glpat-|xoxe.xox[bp]-|xox.-|xapp-|gh[pousr]_|npm_|sk-|.{4})",
+    re.ASCII | re.I,
+)
+
+
+def mask(secret: str) -> str:
+    begin = re.match(r"-----BEGIN[^\n]*?-----", secret)
+    if begin:
+        return f"{begin[0]}..."
+    head = HEAD.match(secret)
+    return f"{head[0] if head else ''}...{secret[-4:]}"
+
+
+def entropy_of(text: str) -> float:
+    """Bits per character, as gitleaks measures it."""
+    counts: dict[str, int] = {}
+    for char in text:
+        counts[char] = counts.get(char, 0) + 1
+    bits = 0.0
+    for count in counts.values():
+        share = count / len(text)
+        bits -= share * math.log2(share)
+    return bits
+
+
+def is_sample(secret: str) -> bool:
+    """A sample from documentation or a masked value, rather than a key: AWS's
+    documented keys end in EXAMPLE, gitleaks skips the alphabet run, and a run
+    of x or 0 or an ellipsis is a value someone blanked out."""
+    return bool(
+        re.search("example", secret, re.I)
+        or "abcdefghijklmnopqrstuvwxyz" in secret.lower()
+        or re.search(r"x{6}|X{6}|0{6}|\.\.\.|…", secret)
+    )
+
+
+def find_secrets(text: str) -> list[dict]:
+    """Every string in text shaped like a live credential, by line, masked."""
+    found = []
+    for kind, pattern, entropy in SECRETS:
+        for match in pattern.finditer(text):
+            secret = match[1] if pattern.groups else match[0]
+            if entropy and entropy_of(secret) <= entropy:
+                continue
+            if is_sample(secret):
+                continue
+            found.append((match.start(), match.end(), kind, secret))
+    found.sort(key=lambda hit: (hit[0], -hit[1]))
+    hits = []
+    reached = 0
+    for start, end, kind, secret in found:
+        if start < reached:
+            continue
+        reached = end
+        hits.append({"kind": kind, "line": text.count("\n", 0, start) + 1, "masked": mask(secret)})
+    return hits
 
 
 class ShareError(Exception):
@@ -113,7 +223,7 @@ def lookup(page_id: str, url: str | None = None):
     return answer
 
 
-def publish(page: Path) -> str:
+def publish(page: Path, allow_secrets: bool = False) -> str:
     data = page.read_bytes()
     head = data[:8192].decode("utf-8", "replace")
     if not re.match(r"\s*<!doctype html", head, re.I):
@@ -123,6 +233,17 @@ def publish(page: Path) -> str:
     for pattern, why in PLACEHOLDERS:
         if pattern.search(head):
             raise ShareError(f"{page} is not finished: {why}. Publishing would make it public.")
+    secrets = [] if allow_secrets else find_secrets(data.decode("utf-8", "replace"))
+    if secrets:
+        raise ShareError(
+            "\n".join(
+                [
+                    f"{page} was not published: it holds what looks like a secret, and anyone with the link could read it.",
+                    *(f"  line {s['line']}: {s['kind']}, {s['masked']}" for s in secrets),
+                    "Replace each with a placeholder or masked text and run again. If none is a working secret, run again with --allow-secrets.",
+                ]
+            )
+        )
 
     status, answer = request("POST", ENDPOINT, data, {"content-type": "text/html"})
     # Size is left to the host, which counts what it refuses.
@@ -223,12 +344,19 @@ def remove(page: Path, page_id: str | None = None) -> str:
 
 def main(argv: list[str]) -> int:
     page, flag, page_id = (argv + [None, None, None])[:3]
-    if not page or (flag and flag not in ("--check", "--delete")):
-        print("usage: python share.py <page.html> [--check | --delete [id]]", file=sys.stderr)
+    if not page or (flag and flag not in ("--allow-secrets", "--check", "--delete")):
+        print(
+            "usage: python share.py <page.html> [--allow-secrets | --check | --delete [id]]",
+            file=sys.stderr,
+        )
         return 2
-    run = check if flag == "--check" else remove if flag == "--delete" else publish
     try:
-        print(run(Path(page), page_id) if flag else run(Path(page)))
+        if flag == "--check":
+            print(check(Path(page), page_id))
+        elif flag == "--delete":
+            print(remove(Path(page), page_id))
+        else:
+            print(publish(Path(page), allow_secrets=flag == "--allow-secrets"))
     except ShareError as error:
         print(error, file=sys.stderr)
         return 1

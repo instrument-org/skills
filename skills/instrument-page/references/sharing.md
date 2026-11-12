@@ -43,6 +43,12 @@ node <skill>/share.mjs <slug>.html --delete        # take the newest link down
 node <skill>/share.mjs <slug>.html --delete <id>   # take an earlier one down
 ```
 
+Before it sends anything, the script looks for strings shaped like a working credential: an AWS, GitHub, GitLab, Slack, OpenAI, Anthropic, Stripe, Google or npm key or token, a Slack webhook URL, or a private key block. When it finds one it publishes nothing and names each by line, showing only its first and last few characters. Replace each with a placeholder or masked text, then run it again. When you are sure none is a working secret, such as a sample copied from a vendor's documentation, `--allow-secrets` publishes the page anyway:
+
+```sh
+node <skill>/share.mjs <slug>.html --allow-secrets
+```
+
 After an edit, tell the reader which link is current. Delete the earlier one when they confirm nobody still needs it, not before: a link they already sent on that goes dead is worse than a stale copy that expires on its own.
 
 Tell the reader what you kept: the link, that anyone holding it can read the page, the day it expires, and that `--delete` takes it down.
