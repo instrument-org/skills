@@ -371,6 +371,30 @@
         #viewer-label:empty {
           display: none;
         }
+        /* A recommended frame says so in a chip after its title, centered on
+           the line like the buttons; on a phone the chip is just its star. */
+        #viewer-pick {
+          display: inline-flex;
+          flex: none;
+          align-items: center;
+          gap: 0.25rem;
+          height: 20px;
+          padding: 0 0.4375rem 0 0.3125rem;
+          border-radius: 9999px;
+          background: color-mix(in srgb, var(--tone) 18%, transparent);
+          color: var(--tone);
+          font-size: 11px;
+          line-height: 1;
+          font-weight: 600;
+        }
+        #viewer-pick svg {
+          width: 12px;
+          height: 12px;
+          fill: currentColor;
+        }
+        #viewer-pick[hidden] {
+          display: none;
+        }
         #viewer-title {
           min-width: 0;
           overflow: hidden;
@@ -540,8 +564,12 @@
           }
         }
         @media (max-width: 640px) {
-          #viewer [data-picks] .word {
+          #viewer [data-picks] .word,
+          #viewer-pick .word {
             display: none;
+          }
+          #viewer-pick {
+            padding: 0 0.3125rem;
           }
         }
         /* A phone on its side has little height to give the frame, so the
@@ -563,8 +591,9 @@
         /* The strip: a bar per frame in runs by group, centered so it holds
            still from frame to frame. The open frame's bar is the large one,
            frames before it are half lit, and frames to come are faint. A
-           recommended frame is a star in place of its bar, larger when open. The frame's label
-           and its group's name hang under its own run, kept inside the strip by the
+           recommended frame is a star in place of its bar, scaled up when
+           open so the row never changes size. The frame's label and its
+           group's name hang under its own run, kept inside the strip by the
            script. The script narrows the bars and their gaps until the strip
            fits on one row; it wraps only past the narrowest bar. */
         #viewer-strip {
@@ -645,13 +674,17 @@
           font-size: 9px;
           line-height: 1;
         }
-        /* Open, a recommended frame keeps its star, larger and fully lit. */
+        /* Open, a recommended frame keeps its star, larger and fully lit.
+           The star grows by transform, so its button stays 10px tall like
+           every other and the row does not move. */
+        #viewer-strip button.pick::after {
+          transition: transform 120ms ease-out;
+        }
         #viewer-strip button.pick[aria-current] {
-          height: 14px;
           opacity: 1;
         }
         #viewer-strip button.pick[aria-current]::after {
-          font-size: 14px;
+          transform: scale(1.6);
         }
         /* A bar is a few pixels; what takes the tap is a band 20px tall
            reaching halfway across the gaps either side, so the strip has
@@ -687,7 +720,7 @@
         }
         #viewer-strip[data-only] button.pick {
           width: 14px;
-          height: 14px;
+          height: 10px;
           border-radius: 0;
           background: none;
           color: var(--tone);
@@ -706,7 +739,7 @@
           opacity: 1;
         }
         #viewer-strip[data-only] button.pick[aria-current]::after {
-          font-size: 15px;
+          transform: scale(1.4);
         }
 
         /* Compare: the paired frame and the open one side by side between
@@ -825,7 +858,7 @@
         <div id="viewer-top">
           <div class="ident">
             <p class="head">
-              <span id="viewer-counter"></span><span id="viewer-label"></span><span id="viewer-title"></span>
+              <span id="viewer-counter"></span><span id="viewer-label"></span><span id="viewer-title"></span><span id="viewer-pick" hidden></span>
               <button data-compare hidden aria-pressed="false" class="vbtn"><span class="word"></span><kbd data-chrome-text="C"></kbd></button>
             </p>
             <p id="viewer-caption"></p>
@@ -1448,6 +1481,7 @@
         const viewerCaption = document.querySelector("#viewer-caption");
         const viewerCounter = document.querySelector("#viewer-counter");
         const viewerLabel = document.querySelector("#viewer-label");
+        const viewerPick = document.querySelector("#viewer-pick");
         const viewerTitle = document.querySelector("#viewer-title");
         const viewerMap = document.querySelector("#viewer-map");
         const viewerZoom = document.querySelector("#viewer-zoom");
@@ -1621,7 +1655,7 @@
           describe(index);
         };
 
-        // The title block: place, label and star, title, the Compare button
+        // The title block: place, label, title, the Recommended chip on a star, the Compare button
         // when the frame has a pair, and the note under them. The switches
         // at the right follow what is on.
         const paintHead = () => {
@@ -1629,7 +1663,11 @@
           const g = groupOf(openIndex);
           viewerCounter.innerHTML = `${openIndex + 1}<span>/${states.length}</span>`;
           viewerLabel.className = toneOf(openIndex);
-          viewerLabel.innerHTML = `${g ? label(openIndex) : ""}${state.pick ? `${g && label(openIndex) ? " " : ""}<span title="${recommended(openIndex)}">★</span>` : ""}`;
+          viewerLabel.textContent = g ? label(openIndex) : "";
+          viewerPick.className = toneOf(openIndex);
+          viewerPick.hidden = !state.pick;
+          viewerPick.innerHTML = state.pick ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.94 6.1 6.56.8-4.84 4.56 1.24 6.54L12 17.3l-5.9 3.2 1.24-6.54L2.5 9.4l6.56-.8z"/></svg><span class="word">${recommended(openIndex)}</span>` : "";
+          viewerPick.title = recommended(openIndex);
           viewerTitle.textContent = state.title;
           viewerCaption.innerHTML = state.note;
           const p = pairs[openIndex];
