@@ -48,6 +48,14 @@ Prefer `z.output` over `z.infer` for type inference.
 
 A commit that makes a choice ends with decision trailers, so the reasoning outlives the session that held it: `Rejected: <alternative> | <reason>`, `Commits-to: <contract later code must keep>`, `Not-tested: <what was not checked>`, `Related: <sha>`, and `Tested:` only for checks beyond the unit suites. Each line must make sense to a reader who never saw the session; leave one out rather than pad it. A commit that makes no choice carries none. Vocabulary and examples: `skills-commit-message` skill.
 
+## Problem reports
+
+Feedback, crashes, hangs and errors people send from the app are problem reports, each with a fingerprint (`feedback:<id>`), read with the reports CLI in the `internal` reference (`agent-reference get internal`). A skill fix for one is tied to it in both places, so the report says what fixed it and the fix says what it was for:
+
+- The commit carries `Report: <fingerprint>`, one line per report it fixes.
+- Once the commit is pushed, resolve the report with the pushed commit's URL: `pnpm --filter @instrument/reports reports resolve <fingerprint> --in <next app version> --note "<what changed, in a line> <commit URL>"`. Its Slack card updates itself. Run it from a checkout at the internal repo's `origin/main`, and check that `reports show <fingerprint>` lists the note, since an older CLI ignores `--note`.
+- A report with several complaints names in the note the ones the fix leaves open.
+
 ## Repository knowledge base
 
 Durable, versioned docs are the system of record; prefer them over chat/history. Keep them evergreen and safe to share: leave out secrets and anything tied to one machine, person, or moment. See [`docs/README.md`](docs/README.md) for the taxonomy (`decisions/`, `findings/`, `plans/`, `reviews/`). Before a code review, read `REVIEW.md` and [`docs/reviews/`](docs/reviews/README.md), which records each review and what came of its findings; a fix for a finding carries a `Review:` trailer.
