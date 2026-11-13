@@ -37,30 +37,49 @@
           z-index: 60;
           pointer-events: none;
         }
+        /* Placed in the frame's true-size pixels and sized in screen pixels,
+           so a ring stays a hairline and a tag stays readable at any scale.
+           --k is one screen pixel at whatever scale the frame is drawn. */
+        .marks {
+          --k: calc(1px / var(--s, 1));
+        }
         .mark-ring {
           position: absolute;
-          border-radius: 8px;
-          box-shadow:
-            0 0 0 2px var(--line),
-            0 0 0 6px color-mix(in srgb, var(--line) 16%, transparent);
+          left: calc(var(--x) - 4 * var(--k));
+          top: calc(var(--y) - 4 * var(--k));
+          width: calc(var(--w) + 8 * var(--k));
+          height: calc(var(--h) + 8 * var(--k));
+          border-radius: calc(6 * var(--k));
+          box-shadow: 0 0 0 calc(1.5 * var(--k)) var(--line);
         }
+        /* The words sit on the ring's top edge, 6px in from its left, or its
+           right where the frame's edge is near, and just inside the ring
+           where the frame's top would clip them. */
         .mark-tag {
           position: absolute;
+          left: calc(var(--x) + 6 * var(--k));
+          top: calc(var(--y) - 4 * var(--k));
+          transform: translateY(-50%);
           display: inline-flex;
           align-items: center;
-          gap: 4px;
-          height: 18px;
-          padding: 0 6px;
-          border-radius: 5px;
+          height: calc(16 * var(--k));
+          padding: 0 calc(5 * var(--k));
+          border-radius: calc(4 * var(--k));
           background: var(--tag);
           color: #fff;
-          font: 600 10px/1 Inter, ui-sans-serif, system-ui, sans-serif;
+          box-shadow: 0 0 0 var(--k) #fff;
+          font: 600 calc(10 * var(--k)) / 1 Inter, ui-sans-serif, system-ui, sans-serif;
           letter-spacing: 0.04em;
           text-transform: uppercase;
           white-space: nowrap;
         }
-        .mark-tag i {
-          font-size: 11px;
+        .mark-tag.end {
+          left: auto;
+          right: calc(var(--fw) - var(--x) - var(--w) + 6 * var(--k));
+        }
+        .mark-tag.in {
+          top: calc(var(--y) + 4 * var(--k));
+          transform: none;
         }
         /* A mark's note is for whoever reads the page as text, never drawn. */
         .mark-note {
@@ -1077,13 +1096,13 @@
           </div>`;
 
         // ---- annotations -----------------------------------------------------
-        // For the reader, not the product: a pointer on what is being clicked,
-        // and a dashed ring with a label, in two colors no interface uses for
-        // itself. Orange is a click; violet is what appeared or changed. Put the
-        // click on the frame where it happens and let the next frame be the
-        // result; when the clicked thing survives into the result, put the click
-        // there instead. One click per frame, and never a green row or a check
-        // mark standing in for either, because those look like the design.
+        // For the reader, not the product: a thin ring round a region, in two
+        // colors no interface uses for itself. Orange marks a region, with a
+        // few words on its ring when you have something to say about it
+        // (`noted`); violet with NEW marks what appeared or changed (`fresh`).
+        // `clickable` rings the thing being clicked, with no words. Never a
+        // green row or a check mark standing in for any of them, because those
+        // look like the design.
         //
         // The helpers leave an invisible marker inside the element they name;
         // the ring and tag are drawn after render on a layer over the whole
@@ -1101,7 +1120,7 @@
         /** Marks the element that contains it: `label` is the tag's word, `tone` its color. */
         const ann = (label, tone = "click") => `<i class="mark" data-label="${label}" data-tone="${tone}"></i>`;
 
-        /** Marks the element that contains it as the thing being clicked, with a pointer in the tag. */
+        /** Marks the element that contains it as the thing being clicked: a ring with no words. */
         const cursor = `<i class="mark" data-label="click" data-tone="click" data-pointer></i>`;
 
         /** Wraps a block so it can be marked: a row, a card, a page section. */
@@ -1264,13 +1283,9 @@
         // Measures each marked element against its frame in true-size pixels,
         // so the layer scales with the drawing. The enlarged copies of a frame
         // are measured again once they are on screen, since a copy taken
-        // before the page settled carries a layer measured too early. A narrow
-        // thing takes its tag beside it at the right, a wide one above it, a
-        // whole pane inside its own corner; each falls back to the next, then
-        // to below.
-        const MARK_PAD = 5;
-        const TAG_H = 18;
-
+        // before the page settled carries a layer measured too early. A click,
+        // or a mark with no words, is a bare ring; "new" puts NEW on a violet
+        // ring; any other word is a note, written on an orange ring.
         const drawMarks = (roots = document.querySelectorAll("#rack .frame > *, #stage .frame > *, #pair .frame > *")) => {
           for (const root of roots) {
             root.querySelector(".marks")?.remove();
@@ -1279,7 +1294,6 @@
             const frame = root.parentElement;
             const s = frame.getBoundingClientRect().width / Number(frame.dataset.w) || 1;
             const fw = Number(frame.dataset.w);
-            const fh = Number(frame.dataset.h);
             const rr = root.getBoundingClientRect();
             // A ring and a pointer on one element draw as one mark.
             const groups = new Map();
@@ -1295,38 +1309,27 @@
             for (const g of groups.values()) {
               const r = g.el.getBoundingClientRect();
               if (r.width === 0 || r.height === 0) continue;
-              const left = (r.left - rr.left) / s - MARK_PAD;
-              const top = (r.top - rr.top) / s - MARK_PAD;
-              const width = r.width / s + MARK_PAD * 2;
-              const height = r.height / s + MARK_PAD * 2;
-              const tagW = g.label.length * 7 + (g.pointer ? 15 : 0) + 12;
-              const beside = left + width + 6 + tagW <= fw;
-              const above = top - TAG_H - 4 >= 0;
-              let tagLeft = Math.max(0, Math.min(left, fw - tagW));
-              let tagTop = top - TAG_H - 4;
-              if (height > 240) {
-                tagLeft = left + 8;
-                tagTop = top + 8;
-              } else if (beside && (width < fw * 0.4 || !above)) {
-                tagLeft = left + width + 6;
-                tagTop = top + (height - TAG_H) / 2;
-              } else if (!above) {
-                tagTop = top + height + 4 + TAG_H <= fh ? top + height + 4 : top + 3;
-              }
+              const x = (r.left - rr.left) / s;
+              const y = (r.top - rr.top) / s;
+              const w = r.width / s;
+              const h = r.height / s;
               const tone = TONE[g.tone] || TONE.click;
+              const words = g.pointer || !g.label || g.label === "click" ? "" : g.label;
+              const vars = `--x:${x}px;--y:${y}px;--w:${w}px;--h:${h}px;--fw:${fw}px;--line:${tone.line};--tag:${tone.tag}`;
+              const side = [x + (words.length * 7 + 18) / s > fw ? "end" : "", y < 12 / s ? "in" : ""].join(" ").trim();
               layer.insertAdjacentHTML(
                 "beforeend",
-                `<span class="mark-ring" style="left:${left}px;top:${top}px;width:${width}px;height:${height}px;--line:${tone.line}"></span>` +
-                  `<span class="mark-tag" style="left:${tagLeft}px;top:${tagTop}px;--tag:${tone.tag}">${g.pointer ? `<i class="ph ph-cursor"></i>` : ""}<span data-chrome-text="${g.label.replaceAll('"', "&quot;")}"></span></span>`,
+                `<span class="mark-ring" style="${vars}"></span>` +
+                  (words ? `<span class="mark-tag ${side}" style="${vars}"><span data-chrome-text="${words.replaceAll('"', "&quot;")}"></span></span>` : ""),
               );
               // The Markdown a shared link answers with holds every element's
               // text, hidden or not, so the tag's word is drawn from an
               // attribute like the page's own controls, and the mark reads as
               // this line instead: its word and what it sits on, the element's
               // words or, for an icon alone, the icon's name.
-              const words = g.el.textContent.replace(/\s+/g, " ").trim();
+              const text = g.el.textContent.replace(/\s+/g, " ").trim();
               const icons = [...g.el.querySelectorAll("i.ph")].map((i) => /\bph-([\w-]+)/.exec(i.className)?.[1].replaceAll("-", " ")).join(", ");
-              const on = words.length > 60 ? `${words.slice(0, 60)}…` : words || icons;
+              const on = text.length > 60 ? `${text.slice(0, 60)}…` : text || icons;
               const note = document.createElement("p");
               note.className = "mark-note";
               note.textContent = `(${g.label} mark${on ? `: ${on}` : ""})`;
