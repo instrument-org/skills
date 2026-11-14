@@ -32,7 +32,7 @@ Someone who sees only the first screen (1280 by 800 on a desk, the first swipe o
 1. A kicker line: for whom, from what, when.
 2. The `h1`: the point.
 3. At most one short sentence under it.
-4. The `.hero`: the answer itself, as compact as it can be. Usually one of these: the decision with its one-line reason; three to six summary bullets; the small table or chart that is the answer; the one picture that proves it; the demo already playing when the subject is behavior.
+4. The `.hero`: the answer itself, as compact as it can be. Usually one of these: the decision with its one-line reason; three to six summary bullets; the small table or chart that is the answer; the one picture that proves it; the demo already playing when the subject is behavior. When the point is an amount (a cost, a total, a gap, a change), the hero is a chart of it drawn to one scale, with the figures the headline names.
 
 If the whole page fits on that screen, stop there: a short page is a feature, not a shortfall.
 
@@ -43,11 +43,12 @@ The rest of the page is depth for the reader who wants it, built from the unit y
 - **Pictures carry the depth.** Each unit leads with its picture, and the words are its caption. Show the real thing: real screenshots, real output, real quotes, real numbers. When the material has screenshots, use them generously: a reader recognizes a screen faster than they read a description of it, so slice a long one into the parts that matter, each in its own unit, cropped to what changed.
 - **Draw the mechanism, not its name.** A drawing earns its place when it shows what the reader would otherwise assemble from prose: where something flows, what changes between before and after, the one step each option adds or removes. Comparing two states? Draw both, one above the other, and the difference between them. Label the arrows with what moves ("re-reads the whole chat", "polls every 30s"), draw quantities to one scale, and keep the text big enough to read. No strips of little boxes joined by arrows: a sequence is numbered steps going down the page.
 - **Motion plays on open.** Behavior over time (animation, scrolling, a sequence of states) runs when the page loads, as a CSS animation, an autoplaying muted looping clip, or a canvas. The reader never clicks to see it happen; controls to try variations come after.
-- **Nothing hidden.** No tabs, toggles, steppers, carousels, accordions or `details` for anything the reader needs. Everything is visible by scrolling.
+- **Nothing hidden.** No tabs, toggles, steppers, carousels, accordions or `details` for anything the reader needs. Everything is visible by scrolling, and visible before it is scrolled to: never fade, type or slide content in as the reader reaches it, since a link preview, a screenshot, a printout or a fast reader then sees an empty box.
 - **Answerable items** are a numbered `ol`, each led by a short bold name the reader can say back and your recommendation, so one sentence answers them all ("yes to 2, 3 but cheaper").
 - **Before and after** sit side by side at the same size (`.pair`).
 - **Figures**: exact only where the figure is the point; round the rest. When the reader will check the math, show it where they check it, as a table whose rows add up to the total; otherwise leave the arithmetic out.
-- **Words**: plain. No coined names, no marketing voice, no jargon left unexplained, no em dashes. No paragraph over 60 words; most under 30.
+- **Words.** The `h1` is the one place for a claim; each unit's claim is its bold first line. Section headings are labels in the words the field already uses (Impact, Timeline, Root cause; Ingredients, Method; Decisions, Action items), and a sentence only when it is a plain fact a person would say out loud. Call things by their real names, say how something works instead of a slogan, and use the order a person speaks in. No coined names, no marketing voice, no jargon left unexplained, no em dashes. No paragraph over 60 words; most under 30.
+- **Read it aloud.** Before you build, read every heading and sentence aloud and rewrite anything a person would not say. The usual problems: a topic, a comma and a trailing phrase ("Results, week by week"); a heading that starts with "What" to sound like a sentence ("What the plan includes"); a thing that talks or decides ("the invoice tells us", "the email holds"); a claim squeezed into a riddle ("The answer is a shorter queue"); a condition tacked onto the end ("once fees are counted"); a contrast against a point nobody made ("X, not Y"); a label and a colon in front of the point ("Allowed: the row says so").
 - **No notes at the bottom.** The page ends with its last unit: no footer of sources, method, provenance, "how this was made" or "how the numbers were worked out". A source the reader may want to open is a link where its fact appears; anything illustrative or uncertain is said where it appears.
 
 ## 4. Write it
@@ -112,6 +113,7 @@ Last, a cold read. Take a screenshot and look only at the first screen: does it 
 ## 6. Rules every page keeps
 
 - Every number comes from the inputs, a named source, or arithmetic over figures shown. A figure you assumed is labeled illustrative where it appears.
+- A total says what it leaves out. Call it all-in, full or final only when nothing known is outside it; otherwise name what is not counted ("plus permits and appliances").
 - Scores are coarse (a word, a few dots) unless every input is on the page; never a decimal that implies precision the research does not have.
 - Quote only exact words, with who said it and when; otherwise paraphrase without quote marks.
 - When options end in different states, never call one cheaper without saying so. A pick says what it loses on and what would flip it.
