@@ -2125,8 +2125,10 @@
 
         // Some viewers reload the page without the ?frame= query, so we also
         // save the open frame in session storage and reopen it on load. We find
-        // it by title, so adding a frame above it still reopens the same one.
-        // If its title changed, we use its number.
+        // it at its number when the title there still matches, so frames that
+        // share a title across groups each reopen as themselves; else by
+        // title, so adding a frame above it still reopens the same one; else
+        // by its number.
         const keptKey = `wireframe-frame:${location.pathname}:${document.title}`;
         const keepFrame = (index) => {
           try {
@@ -2138,6 +2140,7 @@
           try {
             const kept = JSON.parse(sessionStorage.getItem(keptKey) ?? "null");
             if (!kept) return -1;
+            if (states[kept.index]?.title === kept.title) return kept.index;
             const byTitle = states.findIndex((state) => state.title === kept.title);
             return byTitle >= 0 ? byTitle : kept.index < states.length ? kept.index : -1;
           } catch {
