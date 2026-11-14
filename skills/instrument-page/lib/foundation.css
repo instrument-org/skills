@@ -305,6 +305,9 @@
     font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* A word longer than its line, such as a path or an address, breaks
+       inside rather than running past the column. */
+    overflow-wrap: break-word;
     display: grid;
     align-content: start;
     row-gap: calc(var(--flow) * 2);
@@ -1218,17 +1221,24 @@
     display: grid;
     gap: calc(var(--flow) * 0.9);
   }
+  /* An item is plain flowing text with its mark hung in the margin, as in
+     ul.ticks, so a link or a code in it wraps like any word. A grid would make
+     each of them a row of its own. */
   :is(ol.steps, ol.letters) > li {
     counter-increment: s;
-    display: grid;
-    grid-template-columns: 2rem 1fr;
-    column-gap: 0.8rem;
+    position: relative;
+    min-height: 2rem;
+    padding-left: 2.8rem;
     margin: 0;
+  }
+  :is(ol.steps, ol.letters) > li::before {
+    position: absolute;
+    top: 0;
+    left: 0;
   }
   :is(ol.steps, ol.letters) > li::before,
   .key {
     content: counter(s);
-    grid-row: span 9;
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
@@ -1456,16 +1466,14 @@
     min-width: 0;
     max-width: 100%;
   }
-  .site-icon-word {
-    white-space: nowrap;
-  }
+  /* A link's first word, with its site's icon painted in the padding before
+     it. A line may break before or after an image, but never at the edge of
+     padding, so the icon stays with the word and with a "(" in front. */
   .site-icon {
-    display: inline-block;
-    width: 0.8em;
-    height: 0.8em;
-    margin-right: 0.3em;
-    vertical-align: -0.05em;
-    border-radius: 2px;
+    padding-left: 1.1em;
+    background: var(--site-icon) left center / 0.8em no-repeat;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   /* Pictures side by side. .frames: a numbered contact sheet whose cells are
@@ -1565,14 +1573,15 @@
   }
   ol.pins > li {
     counter-increment: pin;
-    display: grid;
-    grid-template-columns: 1.6rem 1fr;
-    column-gap: 0.6rem;
-    align-items: start;
+    position: relative;
+    padding-left: 2.2rem;
     margin: 0;
   }
   ol.pins > li::before {
     content: counter(pin);
+    position: absolute;
+    top: 0;
+    left: 0;
   }
   .frames > figure > figcaption::before {
     content: counter(frame);

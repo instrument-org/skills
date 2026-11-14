@@ -31,8 +31,8 @@
   #places .what { font-size: .78rem; color: var(--muted); }
   #places .why { font-size: .84rem; line-height: 1.45; margin-top: .25rem; }
   #places .out { display: flex; flex-wrap: wrap; gap: 0 .75rem; font-size: .78rem; margin-top: .35rem; }
-  /* A place's picture; the small site icons the foundation adds to links are left alone. */
-  #places img:not(.site-icon) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; margin-top: .5rem; }
+  /* A place's picture. */
+  #places img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; margin-top: .5rem; }
   #source { margin: 0; padding: .5rem 1rem; border-top: 1px solid var(--line); border-bottom: 0; font-size: .75rem; line-height: 1.4; color: var(--muted); }
   #source summary { font-weight: 500; }
   #source ul { padding-left: 1rem; margin-top: .4rem; }
@@ -53,7 +53,7 @@
   .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--paper); }
   .maplibregl-popup-close-button { color: var(--muted); font-size: 16px; padding: 2px 7px; }
   .popup { width: 15rem; font-size: .84rem; line-height: 1.4; }
-  .popup img:not(.site-icon) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 12px 12px 0 0; }
+  .popup img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 12px 12px 0 0; }
   .popup div { padding: .6rem .75rem; }
   /* The control glyphs are black drawings; on dark they turn white. */
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) :is(.maplibregl-ctrl button .maplibregl-ctrl-icon, .maplibregl-ctrl-attrib-button) { filter: invert(1); } }
@@ -169,7 +169,7 @@
   const popup = (p) => {
     const box = document.createElement("div");
     box.className = "popup";
-    const img = p.el.querySelector("img:not(.site-icon)");
+    const img = p.el.querySelector("img");
     if (img) box.append(img.cloneNode());
     const body = document.createElement("div");
     const b = document.createElement("b");

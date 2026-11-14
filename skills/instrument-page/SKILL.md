@@ -91,7 +91,7 @@ No paragraph over 60 words outside the footer; most under 30. Pick one or two th
 
 **Widths**: prose, headings and lists sit in a reading column; dense modules take the wide track beside it by themselves: a table of four or more columns (bare, or as the table of a `.scroll` or `figure`), `.grid`, `.rail`, `.cols` and `ol.flow`. Put `.bleed` on anything else that needs the room, such as a chart, a three-column table of long cells, or a grid of your own, and `.narrow` on a module that should stay in the column. A section of prose never goes wide.
 
-A top-level `section` is a full-width grid whose children sit in the reading column: put a panel look, a custom grid or `.hero` styling on a `div` or `figure` inside it. In `ol.steps`, wrap each item's content in one `span`.
+A top-level `section` is a full-width grid whose children sit in the reading column: put a panel look, a custom grid or `.hero` styling on a `div` or `figure` inside it.
 
 **Color by meaning**: `data-tone="good|warn|bad|accent|muted"` or `data-c="1"` to `"8"` (one per person, team, option) on any element or SVG shape. In SVG, `class="outline|ink|muted|paper|wash|line|faint"`. In your own CSS use only tokens: `--ink --ink-2 --muted --line --line-2 --paper --ground --accent --good --warn --bad` (each with `-wash`), `--c1`..`--c8`, `--tone`, `--radius`, `--mono`, `--serif`. Never hex: the page follows the reader's light or dark theme.
 

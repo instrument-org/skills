@@ -331,16 +331,12 @@ When the reader asked "which one", the hero is the answer with its reasons, then
 ```html
 <ol class="steps hero">
   <li>
-    <span
-      ><b>Shut the water at the stop valve.</b> Under the kitchen sink, turned
-      clockwise. <small>Done when the cold tap runs dry.</small></span
-    >
+    <b>Shut the water at the stop valve.</b> Under the kitchen sink, turned
+    clockwise. <small>Done when the cold tap runs dry.</small>
   </li>
   <li data-tone="warn">
-    <span
-      ><b>Drain the tank before you lift it.</b> It holds about 3 gallons and
-      cracks if dropped.</span
-    >
+    <b>Drain the tank before you lift it.</b> It holds about 3 gallons and
+    cracks if dropped.
   </li>
 </ol>
 <ul class="todo">

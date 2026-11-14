@@ -265,7 +265,7 @@
       // inside a link, a control or a line of text, or marked alt="", is not one,
       // and a page that brings its own picture dialog keeps it.
       const NOT_SHOT =
-        "a, button, label, summary, nav, svg, [data-zoom], [data-gallery='off'], .site-icon";
+        "a, button, label, summary, nav, svg, [data-zoom], [data-gallery='off']";
       const blockImage = (img) =>
         img.closest("figure") ||
         ![...img.parentNode.childNodes].some(
@@ -437,43 +437,39 @@
     for (const el of document.querySelectorAll(`[data-date="${today}"]`))
       el.classList.add("today");
 
-    // A link wears the icon of the site it goes to. Only the origin is sent.
+    // A link wears the icon of the site it goes to, painted beside its first
+    // word by a span around that word (.site-icon). Only the origin is sent.
     for (const a of document.querySelectorAll(
       'a[href^="https://"]:not(.no-icon)',
     )) {
       if (a.querySelector("img, svg")) continue;
-      const i = new Image();
-      i.alt = "";
-      i.className = "site-icon";
-      i.src =
-        "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
-        encodeURIComponent(new URL(a.href).origin);
-      // A line may break between an image and the text beside it, so the icon
-      // and the first word it leads go in a span that cannot break.
       const walker = document.createTreeWalker(a, NodeFilter.SHOW_TEXT);
       let text = walker.nextNode();
       while (text && !text.data.trim()) text = walker.nextNode();
-      let host = a;
-      if (text) {
-        const at = text.data.search(/\S/);
-        const word = at > 0 ? text.splitText(at) : text;
-        const space = word.data.search(/\s/);
-        if (space > 0) word.splitText(space);
-        host = document.createElement("span");
-        host.className = "site-icon-word";
-        word.replaceWith(host);
-        host.append(word);
-      }
-      const drop = () => {
-        i.remove();
-        if (host !== a) host.replaceWith(...host.childNodes);
-      };
+      if (!text) continue;
+      const src =
+        "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
+        encodeURIComponent(new URL(a.href).origin);
+      const at = text.data.search(/\S/);
+      const word = at > 0 ? text.splitText(at) : text;
+      const space = word.data.search(/\s/);
+      if (space > 0) word.splitText(space);
+      const host = document.createElement("span");
+      host.className = "site-icon";
+      host.style.setProperty("--site-icon", `url("${src}")`);
+      // A short word, such as a file name, stays whole; a long one, such as
+      // an address, may still break so it never runs past the column.
+      if (word.data.length <= 20) host.style.whiteSpace = "nowrap";
+      word.replaceWith(host);
+      host.append(word);
+      const drop = () => host.replaceWith(...host.childNodes);
+      const i = new Image();
       i.onerror = drop;
       // The service answers an unknown host with its own 16px globe.
       i.onload = () => {
         if (i.naturalWidth <= 16) drop();
       };
-      host.prepend(i);
+      i.src = src;
     }
   });
 })();
