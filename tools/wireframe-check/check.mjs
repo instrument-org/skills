@@ -195,9 +195,8 @@ export async function run({ keep } = {}) {
         if (v.stageFrames !== 1)
           fail(`frame ${i + 1} has ${v.stageFrames} frames on the stage`);
         if (v.compareLeft) fail(`frame ${i + 1} still has Compare's parts`);
-        if (v.stripShown !== grouped)
-          fail(`frame ${i + 1} ${grouped ? "hides" : "shows"} the strip`);
-        if (grouped && (v.current.length !== 1 || v.current[0] !== i))
+        if (!v.stripShown) fail(`frame ${i + 1} hides the strip`);
+        if (v.current.length !== 1 || v.current[0] !== i)
           fail(`frame ${i + 1} lights strip bars [${v.current}]`);
         if (!v.nameInside)
           fail(`frame ${i + 1} runs the group's name out of the strip`);
@@ -223,7 +222,7 @@ export async function run({ keep } = {}) {
       const still = await read();
       if (still.stageFrames !== 1 || still.counter !== `1/${n}`)
         fail("C or R changes what the stage shows");
-      if (grouped && still.barsShown.length !== n)
+      if (still.barsShown.length !== n)
         fail(`the strip shows ${still.barsShown.length} of ${n} bars`);
 
       await P.evaluate(`document.querySelector("#viewer").close()`);

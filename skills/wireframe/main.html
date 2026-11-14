@@ -1556,21 +1556,25 @@
         };
 
         // ---- the strip -------------------------------------------------------
-        // Only a page with groups has one. Every frame gets a bar, in page
-        // order, in runs: a group's frames in its color, and frames outside
-        // any group, such as a lead-in shared by every option, in a neutral
-        // run of their own. The open frame's bar is the large one, a
+        // Every page of two frames or more has one. Every frame gets a bar, in
+        // page order, in runs: a group's frames in its color, and frames
+        // outside any group, such as a lead-in shared by every option, in a
+        // neutral run of their own; a page with no groups is one neutral run.
+        // The open frame's bar is the large one, a
         // recommended frame is a star. A tap on a bar opens that frame.
         // Under the open run, the frame's label as the title block shows it,
         // and the group's name after a letter: "A2 First option", or
-        // "Inbox 2" where the mark is a word and so the name already.
+        // "Inbox 2" where the mark is a word and so the name already. A page
+        // with no groups has no name to give, and its number is in the title
+        // block already, so nothing hangs under its strip.
         const stripName = () => {
+          if (groupKeys.length === 0) return "";
           const g = groupOf(openIndex);
           const tag = label(openIndex) ? `<span class="pos">${label(openIndex)}</span>` : "";
           return g && g.mark.length <= 1 && g.name ? `${tag}<span>${g.name}</span>` : tag;
         };
         const paintStrip = () => {
-          viewerStrip.hidden = groupKeys.length === 0;
+          viewerStrip.hidden = states.length < 2;
           if (viewerStrip.hidden) return;
           const runs = [];
           states.forEach((_, i) => {
