@@ -76,8 +76,8 @@ const states = [
 ## Marks
 
 ```js
-noted(someRow, "named by AI"); // orange ring with your few words on it
-fresh(chip("Frozen", "bg-error-100 text-error-700")); // violet ring with NEW, only on a revision
+noted(someRow, "named by AI"); // your few words, beside the frame enlarged and on an orange ring in the grid
+fresh(chip("Frozen", "bg-error-100 text-error-700")); // NEW, the same way on a violet ring, only on a revision
 ```
 
 `clickable` and `cursor` draw nothing, and stay so older pages and kits still build.
@@ -88,9 +88,9 @@ You can also put `ann` on its own inside any element to mark that element. That'
 `<div>${field("Card number", { value: "•••• 4417" })}${ann("saved to Keychain")}</div>`;
 ```
 
-Each helper leaves an invisible marker inside the element. After render, `drawMarks` measures every marked element against its frame and draws the ring and its words on one layer over the whole frame. That way a mark never changes the element's size, and no `overflow-hidden` parent can clip it. Rings and words keep one size on screen at any scale, so they read in the grid and stay small when zoomed. The words sit on the ring's top edge, so they cover a thin strip and nothing beside the element.
+Each helper leaves an invisible marker inside the element. After render, `drawMarks` measures every marked element against its frame and draws the ring and its words on one layer over the whole frame, which keeps the list of what it measured. That way a mark never changes the element's size, and no `overflow-hidden` parent can clip it. Rings and words keep one size on screen at any scale, so they read in the grid and stay small when zoomed. The words sit on the ring's top edge, so they cover a thin strip and nothing beside the element. Enlarged, where the window has room beside the frame, the viewer writes that list into the margin instead: each callout's words level with what they name, with a short tick on the frame's edge, and the rings and tags over the drawing stay off. Each time a frame comes up, a spotlight dims it for a moment everywhere but the elements named.
 
-That layer has the class `ann`, as does anything else the reader can switch on and off. Marks start hidden, and the Callouts button shows them all by setting `data-marks="on"` on the body. While they're hidden, a frame's marks flash each time it comes up enlarged, so a mark drawn by hand needs the class `ann` to flash. One rule hides them whenever it isn't set:
+That layer has the class `ann`, as does anything else the reader can switch on and off. Over the drawing, marks start hidden, and the Callouts button (`A`) shows them all by setting `data-marks="on"` on the body. Enlarged beside a margin, the same switch holds the spotlight and draws a leader from each callout's words to its element. One rule hides them whenever it isn't set:
 
 ```css
 body:not([data-marks="on"]) .ann {
@@ -98,7 +98,7 @@ body:not([data-marks="on"]) .ann {
 }
 ```
 
-The rule sits on the body, so it covers both the grid and the enlarged view, which is a copy of the frame placed inside the same body. If you draw a mark by hand instead of through the kit, give it the `ann` class. Otherwise it stays visible while marks are off, which is worse than having no button at all. If the reader should never lose a callout, it isn't an annotation. Draw it inside the frame as real interface.
+The rule sits on the body, so it covers both the grid and the enlarged view, which is a copy of the frame placed inside the same body. If you draw a mark by hand instead of through the kit, give it the `ann` class. Otherwise it stays visible while marks are off, which is worse than having no button at all. A mark drawn by hand shows only with the switch on: it has no words in the margin and no place in the spotlight, so put `ann("words")` inside the element where you can. If the reader should never lose a callout, it isn't an annotation. Draw it inside the frame as real interface.
 
 ## Grey bars
 

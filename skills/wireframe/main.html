@@ -241,27 +241,111 @@
           content: attr(data-chrome-text);
         }
 
-        /* While the callouts are off, each time a frame is enlarged its
-           callouts show for a moment and fade, so the reader learns they
-           exist without having them on. */
+        /* The Callouts switch dims on a frame with none. */
         #viewer [data-marks][data-none] {
           opacity: 0.45;
         }
-        @keyframes mark-flash {
-          0% {
-            opacity: 0;
-          }
-          12%,
-          60% {
+
+        /* Enlarged, each callout's words sit in the margin beside the frame,
+           level with what they name, on the side it is nearer, in the
+           viewer's own ink; NEW, or Click for a mark with no words, in small
+           bold capitals before what it names. A short tick on the frame's edge stands
+           level with each element, and A swaps the ticks for leaders. The
+           margin is the same for every frame of the page, so stepping
+           through frames never moves the drawing. While it shows, the rings
+           and tags over the drawing stay off. */
+        #margin {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          font: 11px/14px Inter, ui-sans-serif, system-ui, sans-serif;
+          color: var(--vw-ink);
+        }
+        #margin svg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          overflow: visible;
+        }
+        #margin .mw {
+          position: absolute;
+          text-wrap: pretty;
+        }
+        #margin .mw.l {
+          text-align: right;
+        }
+        #margin .mw b {
+          font-size: 9.5px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+        #margin .mw.new span {
+          color: var(--vw-dim);
+        }
+        #margin .tick {
+          stroke: rgb(255 255 255 / 0.55);
+          stroke-width: 1.5;
+        }
+        #margin .lead path {
+          stroke: rgb(255 255 255 / 0.5);
+        }
+        #margin .lead circle {
+          fill: rgb(255 255 255 / 0.75);
+        }
+        body:not([data-marks="on"]) #margin .lead,
+        body[data-marks="on"] #margin .tick,
+        #viewer[data-margin] #stage :is(.mark-ring, .mark-tag) {
+          display: none;
+        }
+
+        /* The spotlight: the frame dimmed everywhere but what its callouts
+           name, through crisp rounded holes a little larger than each
+           element. The script lifts it with each frame and fades it; with A
+           it holds, deeper. */
+        #spot {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          pointer-events: none;
+          overflow: visible;
+          opacity: 0;
+        }
+        #spot .spot-fill {
+          fill: #000;
+          fill-opacity: 0.15;
+        }
+        /* Where the frame is already dark, dimming does little, so what is
+           named is lifted a touch toward white. */
+        #spot .spot-lift {
+          fill: #fff;
+          fill-opacity: 0.075;
+        }
+        body[data-marks="on"] #spot[data-has] {
+          opacity: 1;
+          transition: opacity 0.15s;
+        }
+        body[data-marks="on"] #spot .spot-fill {
+          fill-opacity: 0.3;
+        }
+        body[data-marks="on"] #spot .spot-lift {
+          fill-opacity: 0.15;
+        }
+        /* Reduced motion never fades it: it holds while the frame is open. */
+        @media (prefers-reduced-motion: reduce) {
+          #spot[data-has] {
             opacity: 1;
           }
-          100% {
-            opacity: 0;
-          }
         }
-        body[data-mark-flash]:not([data-marks="on"]) #stage .ann {
-          display: block;
-          animation: mark-flash 1.1s ease-out forwards;
+        /* Cmd+. takes the margin and the spotlight with the rest of the
+           chrome. Hidden rather than removed, so the words keep the places
+           they were measured at; nothing inside may set visibility back. */
+        body[data-chrome="off"] :is(#margin, #spot) {
+          visibility: hidden;
         }
       </style>
 
@@ -774,6 +858,8 @@
         class="m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-[rgb(0_0_0/0.92)] p-0 [overscroll-behavior:contain] backdrop:bg-[rgb(0_0_0/0.92)]"
       >
         <div id="stage" autofocus tabindex="-1"></div>
+        <svg id="spot" aria-hidden="true"></svg>
+        <div id="margin"></div>
         <div id="viewer-map" hidden><div class="map-frame"></div><div class="map-view"></div></div>
         <div id="viewer-top">
           <div class="ident">
@@ -1107,7 +1193,9 @@
         // are measured again once they are on screen, since a copy taken
         // before the page settled carries a layer measured too early. A click,
         // or a mark with no words, is a bare ring; "new" puts NEW on a violet
-        // ring; any other word is a note, written on an orange ring.
+        // ring; any other word is a note, written on an orange ring. Each
+        // layer keeps the list of its marks, which the enlarged view writes
+        // into the margin beside the frame.
         const drawMarks = (roots = document.querySelectorAll("#rack .frame > *, #stage .frame > *")) => {
           for (const root of roots) {
             root.querySelector(".marks")?.remove();
@@ -1128,6 +1216,7 @@
             }
             const layer = document.createElement("div");
             layer.className = "marks ann";
+            layer.list = [];
             for (const g of groups.values()) {
               const r = g.el.getBoundingClientRect();
               if (r.width === 0 || r.height === 0) continue;
@@ -1156,8 +1245,13 @@
               note.className = "mark-note";
               note.textContent = `(${g.label} mark${on ? `: ${on}` : ""})`;
               layer.append(note);
+              // In the margin, what a click or NEW sits on is named by its
+              // first line of text.
+              const first = (g.el.innerText || "").split("\n").map((l) => l.trim()).find(Boolean) || icons;
+              layer.list.push({ x, y, w, h, label: g.label, words, on: first.length > 32 ? `${first.slice(0, 32)}…` : first });
             }
             root.appendChild(layer);
+            if (root.closest("#stage")) paintMargin(true);
           }
         };
 
@@ -1284,6 +1378,7 @@
         const flipMarks = () => {
           document.body.dataset.marks = document.body.dataset.marks === "on" ? "off" : "on";
           paintMarks();
+          stopSpotFade();
         };
 
         marksItem.addEventListener("click", () => {
@@ -1301,22 +1396,31 @@
         );
         const paintCallouts = (i) => viewerMarks.toggleAttribute("data-none", !callouts[i]);
 
-        // Each time a frame with callouts comes up enlarged, they show for a
-        // moment and fade, so the reader sees where they are on every frame
-        // without having them on. Redrawing the same frame doesn't flash it
-        // again, and reduced motion never flashes.
-        let flashedOn = -1;
+        // Each time a frame with callouts comes up enlarged, the spotlight
+        // (paintSpot) comes up with it at once, holds 600ms and fades over
+        // 800ms, so the reader sees what is named on every frame without
+        // having the callouts on. A step before it is gone starts it over,
+        // so fast arrowing keeps it up until the reader stops. Redrawing the
+        // same frame doesn't start it again, a frame with none lets it go
+        // with its holes, A holds it, and reduced motion never fades it.
+        let liftedOn = -1;
         const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-        let flashTimer;
-        const flashCallouts = (i) => {
-          if (i === flashedOn) return;
-          flashedOn = i;
-          if (!callouts[i] || reducedMotion.matches || document.body.dataset.marks === "on") return;
-          document.body.removeAttribute("data-mark-flash");
-          void document.body.offsetWidth;
-          document.body.setAttribute("data-mark-flash", "");
-          clearTimeout(flashTimer);
-          flashTimer = setTimeout(() => document.body.removeAttribute("data-mark-flash"), 1100);
+        const spotEl = document.querySelector("#spot");
+        let spotFade = null;
+        const stopSpotFade = () => {
+          spotFade?.cancel();
+          spotFade = null;
+        };
+        const liftSpot = (i) => {
+          if (i === liftedOn) return;
+          liftedOn = i;
+          if (!callouts[i]) return;
+          stopSpotFade();
+          if (reducedMotion.matches || document.body.dataset.marks === "on") return;
+          spotFade = spotEl.animate(
+            [{ opacity: 1 }, { opacity: 1, offset: 600 / 1400, easing: "cubic-bezier(0.45, 0, 0.55, 1)" }, { opacity: 0 }],
+            { duration: 1400, fill: "forwards" },
+          );
         };
 
         // ---- chrome ----------------------------------------------------------
@@ -1411,10 +1515,15 @@
         // Room round the frame at fit: none on a phone, where every pixel of
         // width is the drawing's.
         const pad = () => (innerWidth < 640 || short.matches ? 0 : 16);
+        // Room each side of the frame for its callouts' words, the same for
+        // every frame of a page that has any, so the drawing holds still from
+        // frame to frame. A screen too narrow to spare it keeps the callouts
+        // over the drawing instead.
+        const sideRoom = () => (callouts.some(Boolean) && innerWidth >= 1000 && !short.matches ? Math.round(Math.min(180, innerWidth * 0.1)) : 0);
         const fitScale = (frame = frameOf()) => {
           const { w, h } = sizeOf(frame);
           const p = pad();
-          return Math.max(0.05, Math.min((stage.clientWidth - p * 2) / w, (stage.clientHeight - topH - bottomH - p * 2) / h));
+          return Math.max(0.05, Math.min((stage.clientWidth - p * 2 - sideRoom() * 2) / w, (stage.clientHeight - topH - bottomH - p * 2) / h));
         };
 
         // ---- the note and the thumbnail --------------------------------------
@@ -1513,7 +1622,7 @@
           paintHead();
           paintStrip();
           if (!viewer.open) {
-            flashedOn = -1;
+            liftedOn = -1;
             viewer.showModal();
           }
           fitStrip();
@@ -1530,7 +1639,7 @@
           else toFit(false);
           drawMarks(stage.querySelectorAll(".frame > *"));
           paintCallouts(index);
-          flashCallouts(index);
+          liftSpot(index);
           // Replaced rather than pushed, so walking the set leaves one history
           // entry and the address bar always holds a link to the frame on screen.
           setFrameParam(index + 1);
@@ -1641,6 +1750,8 @@
         viewer.addEventListener("close", () => {
           openIndex = -1;
           stage.querySelector(".frame")?.remove();
+          stopSpotFade();
+          paintMargin();
           viewer.removeAttribute("data-controls");
           viewer.removeAttribute("data-zoomed");
           setFrameParam(null);
@@ -1742,6 +1853,264 @@
           if (frameOf()) relayout();
         }).observe(stage);
 
+        // ---- the spotlight ----------------------------------------------------
+        // A mask over the open frame with crisp rounded holes where its
+        // callouts are, each padded past its element and kept inside the
+        // frame. Stepping between frames of the same size, a hole moves to a
+        // callout near it and about its size; every other hole fades out
+        // where it was and its replacement fades in where it is, and onto a
+        // frame with none the dim ebbs with the closing holes. A step that
+        // lands mid-move sets out from wherever the holes are, so fast
+        // arrowing never queues. Zooming, panning and redraws of the same
+        // frame track at once, and so does everything under reduced motion.
+        const SPOT_PAD = 8;
+        const SPOT_RX = 6;
+        const SPOT_MS = 240;
+        spotEl.innerHTML =
+          '<defs><mask id="spot-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%"><rect class="spot-box" fill="#fff"/><g class="spot-holes" fill="#000"></g></mask>' +
+          '<mask id="spot-lift" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%"><rect class="spot-box" fill="#000"/><g class="spot-holes" fill="#fff"></g></mask></defs>' +
+          '<g class="spot-body"><rect class="spot-fill spot-box" mask="url(#spot-mask)"/><rect class="spot-lift spot-box" mask="url(#spot-lift)"/></g>';
+        const spotBoxes = spotEl.querySelectorAll(".spot-box");
+        const spotHoles = spotEl.querySelectorAll(".spot-holes");
+        const spotBody = spotEl.querySelector(".spot-body");
+        // A hole is a move from one box to another ({ x, y, w, h, a }, a its
+        // strength); one that is going away is dying. The level is the dim
+        // itself.
+        let holes = [];
+        let level = { from: 0, to: 0, t0: 0 };
+        let spotFrame = -1;
+        let spotSize = "";
+        let spotRaf = 0;
+        const progress = (t0, now) => {
+          const t = Math.min(1, Math.max(0, (now - t0) / SPOT_MS));
+          return 1 - (1 - t) ** 3;
+        };
+        const mix = (a, b, k) => a + (b - a) * k;
+        const holeAt = (o, now) => {
+          const k = progress(o.t0, now);
+          return { x: mix(o.from.x, o.to.x, k), y: mix(o.from.y, o.to.y, k), w: mix(o.from.w, o.to.w, k), h: mix(o.from.h, o.to.h, k), a: mix(o.from.a, o.to.a, k) };
+        };
+        const still = (box) => ({ from: box, to: box, t0: -1e9 });
+        const faded = (box) => ({ ...box, a: 0 });
+        const drawSpot = () => {
+          cancelAnimationFrame(spotRaf);
+          spotRaf = 0;
+          const now = performance.now();
+          holes = holes.filter((o) => !o.dying || progress(o.t0, now) < 1);
+          const markup = holes
+            .map((o) => {
+              const r = holeAt(o, now);
+              if (r.a < 0.005 || r.w < 0.5 || r.h < 0.5) return "";
+              const rx = Math.min(SPOT_RX, r.w / 2, r.h / 2);
+              return `<rect x="${r.x.toFixed(1)}" y="${r.y.toFixed(1)}" width="${r.w.toFixed(1)}" height="${r.h.toFixed(1)}" rx="${rx.toFixed(1)}" fill-opacity="${r.a.toFixed(3)}"/>`;
+            })
+            .join("");
+          for (const g of spotHoles) g.innerHTML = markup;
+          const lv = mix(level.from, level.to, progress(level.t0, now));
+          spotBody.setAttribute("opacity", lv.toFixed(3));
+          const moving = progress(level.t0, now) < 1 || holes.some((o) => progress(o.t0, now) < 1);
+          if (moving) spotRaf = requestAnimationFrame(drawSpot);
+          else if (lv === 0) {
+            holes = [];
+            spotEl.removeAttribute("data-has");
+          }
+        };
+        const centerOf = (r) => [r.x + r.w / 2, r.y + r.h / 2];
+        const apart = (a, b) => {
+          const [ax, ay] = centerOf(a);
+          const [bx, by] = centerOf(b);
+          return Math.hypot(ax - bx, ay - by);
+        };
+        const alike = (a, b) => Math.max(a.w / b.w, b.w / a.w) < 2.5 && Math.max(a.h / b.h, b.h / a.h) < 2.5;
+        // For each target, the hole that moves to it, or -1: at most one
+        // each, nearest first, within a fifth of the frame and about its
+        // size.
+        const pairHoles = (from, to, span) => {
+          const pairs = [];
+          from.forEach((a, i) => to.forEach((b, j) => apart(a, b) < span / 5 && alike(a, b) && pairs.push([apart(a, b), i, j])));
+          pairs.sort((p, q) => p[0] - q[0]);
+          const of = to.map(() => -1);
+          const used = new Set();
+          for (const [, i, j] of pairs) {
+            if (used.has(i) || of[j] >= 0) continue;
+            used.add(i);
+            of[j] = i;
+          }
+          return of;
+        };
+        const paintSpot = (redrawn) => {
+          const frame = frameOf();
+          const layer = frame?.querySelector(".marks");
+          // A frame whose marks aren't measured on the stage yet (its copy
+          // carries the grid's layer, without the list) keeps the spot as it
+          // is, so stepping between two frames with callouts never lets it
+          // fade.
+          if (viewer.open && frame?.querySelector("i.mark") && !layer?.list) return;
+          const now = performance.now();
+          const calm = reducedMotion.matches;
+          if (!viewer.open || openIndex < 0 || !frame) {
+            holes = [];
+            level = { from: 0, to: 0, t0: 0 };
+            spotFrame = -1;
+            spotEl.removeAttribute("data-has");
+            spotEl.dataset.at = "";
+            drawSpot();
+            return;
+          }
+          const s = view.s;
+          const fx = view.x;
+          const fy = view.y;
+          const { w, h } = sizeOf(frame);
+          const at = [openIndex, fx, fy, s, innerWidth, innerHeight].join();
+          if (!redrawn && spotEl.dataset.at === at) return;
+          spotEl.dataset.at = at;
+          const stepped = openIndex !== spotFrame;
+          const sameSize = spotSize === `${w}x${h}`;
+          spotFrame = openIndex;
+          spotSize = `${w}x${h}`;
+          for (const r of spotBoxes) {
+            r.setAttribute("x", fx);
+            r.setAttribute("y", fy);
+            r.setAttribute("width", w * s);
+            r.setAttribute("height", h * s);
+          }
+          const targets = (layer?.list || []).map((m) => {
+            const x0 = Math.max(fx, fx + m.x * s - SPOT_PAD);
+            const y0 = Math.max(fy, fy + m.y * s - SPOT_PAD);
+            const x1 = Math.min(fx + w * s, fx + (m.x + m.w) * s + SPOT_PAD);
+            const y1 = Math.min(fy + h * s, fy + (m.y + m.h) * s + SPOT_PAD);
+            return { x: x0, y: y0, w: x1 - x0, h: y1 - y0, a: 1 };
+          });
+          const live = holes.filter((o) => !o.dying).map((o) => holeAt(o, now));
+          const dying = holes.filter((o) => o.dying);
+          const lv = mix(level.from, level.to, progress(level.t0, now));
+          if (!targets.length) {
+            if (calm || !live.length) {
+              holes = [];
+              level = { from: 0, to: 0, t0: 0 };
+              spotEl.removeAttribute("data-has");
+            } else {
+              holes = [...dying, ...live.map((r) => ({ from: r, to: faded(r), t0: now, dying: true }))];
+              level = { from: lv, to: 0, t0: now };
+            }
+            drawSpot();
+            return;
+          }
+          spotEl.setAttribute("data-has", "");
+          level = { from: 1, to: 1, t0: 0 };
+          // The same frame drawn again while its holes are still moving (its
+          // marks measured once more as it settles) keeps them on their way,
+          // bound for the new spots.
+          const going = holes.filter((o) => !o.dying);
+          if (!calm && !stepped && going.length === targets.length && going.some((o) => progress(o.t0, now) < 1)) {
+            going.forEach((o, j) => (o.to = targets[j]));
+            drawSpot();
+            return;
+          }
+          // Arriving from nothing, or not stepping at all, the holes are
+          // simply where the callouts are.
+          if (calm || !stepped || !live.length) {
+            holes = targets.map(still);
+            drawSpot();
+            return;
+          }
+          const of = sameSize ? pairHoles(live, targets, Math.max(w, h) * s) : targets.map(() => -1);
+          const kept = new Set(of);
+          holes = [
+            ...dying,
+            ...live.filter((_, i) => !kept.has(i)).map((r) => ({ from: r, to: faded(r), t0: now, dying: true })),
+            ...targets.map((t, j) => (of[j] >= 0 ? { from: live[of[j]], to: t, t0: now } : { from: faded(t), to: t, t0: now })),
+          ];
+          drawSpot();
+        };
+
+        // ---- callouts in the margin -------------------------------------------
+        // Each callout's words beside the frame, level with the element where
+        // the words above leave room, a tick on the frame's edge, and a
+        // leader from the words to the element for A, drawn in the margin's
+        // own layer so it can cross the frame. Only at fit and with room to
+        // spare: zoomed in, or on a narrow screen, the callouts are over the
+        // drawing, behind A.
+        const marginEl = document.querySelector("#margin");
+        const NS = "http://www.w3.org/2000/svg";
+        const quote = (t) => t.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
+        const wordsOf = (m) => {
+          const kind = m.label === "new" ? "New" : m.words ? "" : "Click";
+          return kind ? `<b data-chrome-text="${kind}"></b> <span data-chrome-text="${quote(m.on)}"></span>` : `<span data-chrome-text="${quote(m.words)}"></span>`;
+        };
+        const paintMargin = (redrawn = false) => {
+          paintSpot(redrawn);
+          const frame = frameOf();
+          const layer = frame?.querySelector(".marks");
+          const room = sideRoom();
+          const shown = viewer.open && frame && !isZoomed && room > 0;
+          viewer.toggleAttribute("data-margin", Boolean(shown));
+          if (!shown || !layer?.list?.length) {
+            marginEl.replaceChildren();
+            marginEl.dataset.at = "";
+            return;
+          }
+          const s = view.s;
+          const fx = view.x;
+          const fy = view.y;
+          const fw = sizeOf(frame).w * s;
+          const at = [openIndex, fx, fy, s, innerHeight].join();
+          if (!redrawn && marginEl.dataset.at === at) return;
+          marginEl.dataset.at = at;
+          marginEl.replaceChildren();
+          const svg = document.createElementNS(NS, "svg");
+          marginEl.append(svg);
+          const sides = { l: [], r: [] };
+          for (const m of layer.list) {
+            const ex = fx + m.x * s;
+            const ey = fy + m.y * s;
+            const ew = m.w * s;
+            const eh = m.h * s;
+            sides[ex + ew / 2 < fx + fw / 2 ? "l" : "r"].push({ ...m, ex, ey, ew, eh, cy: ey + Math.min(eh / 2, 12) });
+          }
+          const bottom = stage.clientHeight - bottomH - 8;
+          for (const [side, items] of Object.entries(sides)) {
+            items.sort((a, b) => a.cy - b.cy);
+            const els = items.map((m) => {
+              const el = document.createElement("div");
+              el.className = `mw ${side}${m.label === "new" ? " new" : ""}`;
+              el.style.width = `${room - 24}px`;
+              if (side === "l") el.style.right = `${marginEl.clientWidth - fx + 14}px`;
+              else el.style.left = `${fx + fw + 14}px`;
+              el.innerHTML = wordsOf(m);
+              marginEl.append(el);
+              return el;
+            });
+            // Down from the top, each below the last; then up from the bottom
+            // of the clear area, so a long run never leaves the screen.
+            const tops = [];
+            let floor = topH + 4;
+            items.forEach((m, k) => {
+              tops[k] = Math.max(m.cy - 7, floor);
+              floor = tops[k] + els[k].offsetHeight + 6;
+            });
+            let ceiling = bottom;
+            for (let k = items.length - 1; k >= 0; k--) {
+              tops[k] = Math.min(tops[k], ceiling - els[k].offsetHeight);
+              ceiling = tops[k] - 6;
+            }
+            items.forEach((m, k) => {
+              els[k].style.top = `${tops[k]}px`;
+              const ly = tops[k] + 7;
+              const edge = side === "l" ? fx : fx + fw;
+              const out = side === "l" ? -1 : 1;
+              const px = side === "l" ? m.ex : m.ex + m.ew;
+              const py = Math.min(Math.max(ly, m.ey + Math.min(4, m.eh / 2)), m.ey + m.eh - Math.min(4, m.eh / 2));
+              const ty = m.ey + Math.min(m.eh / 2, 10);
+              svg.insertAdjacentHTML(
+                "beforeend",
+                `<g class="lead"><path d="M${px} ${py} L${edge} ${ly} L${edge + out * 10} ${ly}" fill="none" stroke-width="1.25"/><circle cx="${px}" cy="${py}" r="2.5"/></g>` +
+                  `<path class="tick" d="M${edge + out * 3} ${ty} h${out * 7}"/>`,
+              );
+            });
+          }
+        };
+
         // ---- the view: pinch, wheel, drag, double tap and keys ---------------
         // The frame's scale and where its top-left corner sits on the stage.
         // The view never goes below fit, and above it the frame can reach
@@ -1798,6 +2167,7 @@
           clamp(view);
           frame.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.s / raster})`;
           paintReadout(isZoomed);
+          paintMargin();
           const { top, bottom } = bands();
           paintMap(isZoomed, {
             x0: -view.x / view.s,

@@ -1,7 +1,8 @@
 // Drives the wireframe skill's enlarged view in headless Chromium through
 // fixture pages, and prints one FAIL line per broken promise: no script
 // errors; bands that keep one height from frame to frame; a title block
-// and strip that follow the open frame; and a frame still carrying a `compare` field, which pages written
+// and strip that follow the open frame; callouts in the margin and a
+// spotlight that fades, held by A and hidden by Cmd+.; and a frame still carrying a `compare` field, which pages written
 // before Compare was removed have, ignored without a word. Each fixture is a page
 // new.mjs writes, so the check runs the main.html an agent would get.
 //
@@ -23,15 +24,24 @@ const newPage = resolve(here, "../../skills/wireframe/new.mjs");
 
 // A frame: a box at its size with a title in it. `leak` puts an element in
 // it that sets its own visibility, which once showed through a second
-// frame laid over the stage. `extra` adds fields, such as pick.
+// frame laid over the stage. `extra` adds fields, such as pick. `marked`
+// adds callouts: a note, a NEW and a bare click, written with the page's
+// own helpers.
 // Notes alternate between one line and two in the caption, since a band
 // that fits its note changes height between them.
 let notes = 0;
 const SHORT = "We check this frame.";
 const LONG =
   "We check this frame with a note long enough to run onto a second line of the caption under the frame, the way most notes do in practice.";
-const frame = (title, w, h, { leak = false, extra = "" } = {}) =>
-  `{ title: ${JSON.stringify(title)},${extra ? ` ${extra},` : ""} note: ${JSON.stringify(notes++ % 2 ? LONG : SHORT)}, w: ${w}, h: ${h}, body: \`<div class="h-full bg-card p-8"><p class="text-2xl font-semibold">${title}</p>${leak ? '<div style="visibility: visible">kept visible</div>' : ""}</div>\` }`;
+const MARKED =
+  '${noted(`<p class="w-64 p-2">Saved an hour ago</p>`, "Says when, not what")}${fresh(`<p class="w-40 p-2">Undo</p>`)}${noted(`<p class="ml-auto w-24 p-2">Send</p>`, "click")}';
+const frame = (
+  title,
+  w,
+  h,
+  { leak = false, marked = false, extra = "" } = {},
+) =>
+  `{ title: ${JSON.stringify(title)},${extra ? ` ${extra},` : ""} note: ${JSON.stringify(notes++ % 2 ? LONG : SHORT)}, w: ${w}, h: ${h}, body: \`<div class="h-full bg-card p-8"><p class="text-2xl font-semibold">${title}</p>${leak ? '<div style="visibility: visible">kept visible</div>' : ""}${marked ? MARKED : ""}</div>\` }`;
 const withGroup = (g, f) => f.replace("{ title:", `{ group: "${g}", title:`);
 
 export const FIXTURES = {
@@ -90,6 +100,15 @@ export const FIXTURES = {
       withGroup("B", frame("Pricing", 1280, 1600)),
     ],
   },
+  callouts: {
+    groups: "{}",
+    states: [
+      frame("Draft", 1280, 800, { marked: true }),
+      frame("Sent", 1280, 800, { marked: true }),
+      frame("Empty", 1280, 800),
+      frame("Phone", 390, 844, { marked: true }),
+    ],
+  },
 };
 
 const build = (dir, name, { groups, states }) => {
@@ -133,6 +152,26 @@ const READ = `JSON.stringify((() => {
   };
 })())`;
 
+// The callouts beside the open frame and the spotlight over it: where the
+// frame sits, the margin's words, ticks and leaders the reader can see, the
+// spotlight's opacity and its holes, and any ring drawn over the drawing.
+const CALLOUTS = `JSON.stringify((() => {
+  const f = document.querySelector("#stage .frame").getBoundingClientRect();
+  const spot = document.querySelector("#spot");
+  const seen = (el) => getComputedStyle(el).visibility !== "hidden" && el.getBoundingClientRect().width > 0;
+  const count = (sel) => [...document.querySelectorAll(sel)].filter(seen).length;
+  return {
+    box: [f.left, f.top, f.width, f.height].map(Math.round).join(),
+    words: [...document.querySelectorAll("#margin .mw")].filter(seen).map((w) => [...w.querySelectorAll("[data-chrome-text]")].map((t) => t.dataset.chromeText).join(" ")),
+    ticks: count("#margin .tick"),
+    leads: count("#margin .lead path"),
+    rings: count("#stage .mark-ring"),
+    spot: seen(spot) ? Number(getComputedStyle(spot).opacity) * Number(spot.querySelector(".spot-body")?.getAttribute("opacity") ?? 0) : 0,
+    holes: spot.querySelectorAll(".spot-holes")[0]?.children.length ?? 0,
+  };
+})())`;
+const WORDS = ["Says when, not what", "New Undo", "Click Send"];
+
 export async function run({ keep } = {}) {
   const dir = keep
     ? resolve(keep)
@@ -151,6 +190,13 @@ export async function run({ keep } = {}) {
   );
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const read = async () => JSON.parse(await P.evaluate(READ));
+  const callouts = async () => JSON.parse(await P.evaluate(CALLOUTS));
+  const hideChrome = async () => {
+    await P.evaluate(
+      `document.dispatchEvent(new KeyboardEvent("keydown", { key: ".", metaKey: true, bubbles: true }))`,
+    );
+    await wait(120);
+  };
   const key = async (k) => {
     await P.evaluate(
       `document.dispatchEvent(new KeyboardEvent("keydown", { key: ${JSON.stringify(k)}, bubbles: true }))`,
@@ -224,6 +270,61 @@ export async function run({ keep } = {}) {
         fail("C or R changes what the stage shows");
       if (still.barsShown.length !== n)
         fail(`the strip shows ${still.barsShown.length} of ${n} bars`);
+
+      if (name === "callouts") {
+        // The words beside the frame on every frame that has callouts, and
+        // a frame that stays put from one frame of its size to the next,
+        // callouts or none.
+        await go(0);
+        const first = await callouts();
+        if (first.words.sort().join("|") !== [...WORDS].sort().join("|"))
+          fail(`the margin reads [${first.words.join(" | ")}]`);
+        if (first.ticks !== 3)
+          fail(`the margin shows ${first.ticks} ticks, not 3`);
+        if (first.leads || first.rings)
+          fail("leaders or rings show with the callouts off");
+        if (first.spot < 0.9 || first.holes !== 3)
+          fail(
+            `a frame arrives with the spotlight at ${first.spot.toFixed(2)} and ${first.holes} holes`,
+          );
+        for (const i of [1, 2]) {
+          await go(i);
+          const next = await callouts();
+          if (next.box !== first.box)
+            fail(`frame ${i + 1} sits at ${next.box}, frame 1 at ${first.box}`);
+        }
+        await go(3);
+        if ((await callouts()).words.length !== 3)
+          fail("a frame of another size loses its margin words");
+        // The spotlight fades once the reader stops; A holds it and draws
+        // leaders in place of the ticks.
+        await go(0);
+        await wait(2000);
+        const faded = await callouts();
+        if (faded.spot > 0.05)
+          fail(`the spotlight is still at ${faded.spot.toFixed(2)} after 2s`);
+        // Cmd+. takes the margin and the spotlight with the controls, with
+        // A off and on.
+        const bare = async (when) => {
+          await hideChrome();
+          const c = await callouts();
+          if (c.words.length || c.ticks || c.leads || c.spot)
+            fail(
+              `Cmd+. ${when} leaves ${c.words.length} words, ${c.ticks} ticks, ${c.leads} leaders and the spotlight at ${c.spot.toFixed(2)}`,
+            );
+          await hideChrome();
+        };
+        await bare("with A off");
+        await key("a");
+        await wait(300);
+        const held = await callouts();
+        if (held.spot < 0.9 || held.leads !== 3 || held.ticks || held.rings)
+          fail(
+            `A shows the spotlight at ${held.spot.toFixed(2)}, ${held.leads} leaders, ${held.ticks} ticks and ${held.rings} rings`,
+          );
+        await bare("with A on");
+        await key("a");
+      }
 
       await P.evaluate(`document.querySelector("#viewer").close()`);
       await wait(100);
