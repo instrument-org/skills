@@ -77,7 +77,7 @@ const states = [
 
 ```js
 noted(someRow, "named by AI"); // your few words, beside the frame enlarged and on an orange ring in the grid
-fresh(chip("Frozen", "bg-error-100 text-error-700")); // NEW, the same way on a violet ring, only on a revision
+fresh(chip("Frozen", "bg-error-100 text-error-700")); // NEW, only on a revision
 ```
 
 `clickable` and `cursor` draw nothing, and stay so older pages and kits still build.
@@ -131,17 +131,17 @@ A frame is the snapshot in its own document, so its styles reach only that frame
 
 ### Edits
 
-Each returns the element, so edits chain. Each marks what it changed NEW, unless its last argument is `{ quiet: true }`.
+Each returns the element, so edits chain. Edits mark nothing: mark only what the reader should look at, with `.note()` or `.fresh()`.
 
 - `.text("Plans")` sets an element's one piece of words, and `.text("Pricing", "Plans")` replaces those words where an element holds several.
 - `.html("…")` replaces the insides, and `.replace("…")` the element itself.
 - `.before("…")`, `.after("…")`, `.append("…")` and `.prepend("…")` add HTML, or a clone, beside or inside it.
-- `.clone()` copies an element to change and then place: `$("Basic").up("li").clone().find("Basic").text("Team")` and then `$("Pro").up("li").after(copy)`. A clone is marked once placed.
+- `.clone()` copies an element to change and then place: `$("Basic").up("li").clone().find("Basic").text("Team")` and then `$("Pro").up("li").after(copy)`.
 - `.remove()` takes it out, and `.hide()` keeps its room and draws nothing.
 - `.attr(name, value)` sets an attribute, and `null` removes it. `.addClass("…")` and `.removeClass("…")` change classes.
 - `.look(target)` takes another element's classes, so a link can take a button's look.
 - `.css("width: 320px")` adds inline style.
-- `.note("words")` puts a callout on it, like `noted`, and `.fresh()` NEW, like `fresh`, for a change no edit marked. `.click()` draws nothing, like `clickable`.
+- `.note("words")` puts a callout on it, like `noted`, and `.fresh()` NEW, like `fresh`. `noted`, `fresh` and `ann` inside HTML you add mark the element that holds them. `.click()` draws nothing, like `clickable`.
 
 What you add is styled by the snapshot's own stylesheets, which keep only the rules its page used, so reach for `.look()`, `.clone()` or inline `style` before a class the page never had.
 

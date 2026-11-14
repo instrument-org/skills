@@ -114,11 +114,11 @@ const states = [
 ```
 
 - `$(target)` finds exactly one element by its words, a role, a label or a selector (every target and edit is in "Frames from a snapshot" in `patterns.md`). A target that matches nothing or several draws that frame as an error and throws one naming the close matches, which `agent-browser errors` shows.
-- Every edit marks what it changed NEW, unless it ends with `{ quiet: true }`, and `.note("words")` adds a callout. `.click()` draws nothing, like `clickable`.
+- Edits mark nothing. `.note("words")` adds a callout and `.fresh()` NEW, and `noted` or `fresh` inside HTML you add works too. `.click()` draws nothing, like `clickable`.
 - The snapshot keeps only the style rules its page used, so style what you add with `.look(target)`, a `.clone()` of a neighbor, or inline `style`.
 - Frames draw as they come near the screen, so before a full-page screenshot run `agent-browser eval 'dispatchEvent(new Event("beforeprint"))'`.
 
-A snapshot holds whatever the page showed, names and figures included. Capture from a test account where you can, edit the rest out with `{ quiet: true }`, and never share the user's own screens without asking. Password fields are never kept. It can't capture a native app, and `add-snapshot.mjs` prints what it drew without, such as another site's embedded page.
+A snapshot holds whatever the page showed, names and figures included. Capture from a test account where you can, edit the rest out, and never share the user's own screens without asking. Password fields are never kept. It can't capture a native app, and `add-snapshot.mjs` prints what it drew without, such as another site's embedded page.
 
 ## Rules
 
@@ -131,8 +131,8 @@ A snapshot holds whatever the page showed, names and figures included. Capture f
 ### Frames
 
 - Draw several states, one per frame. Usually that's before, during and after one interaction. You can also show one panel in every condition it can be in (empty, loading, one item, many, denied, offline), or one screen at three widths. Never hand over a single frame with a paragraph of explanation.
-- A callout is two to five words that say what the drawing can't: a behavior ("named by AI"), a reason or limit ("Mac and Linux only"), or what happens off screen ("closes in the app"). Use `noted(el, "words")`. Enlarged, the words sit in a narrow column beside the frame, so a long one wraps onto several lines. Never repeat the element's own text or name what it is, and never mark a frame just to give it a mark: most frames need none. Don't mark what gets clicked, since a button already reads as clickable; `clickable` draws nothing.
-- `fresh` puts NEW on what a revision changed, against a design the page also shows (the current design, or an earlier round). On a page that proposes something new throughout, leave it out. Don't use a green row or a check mark as a mark, because those look like part of the product. If you draw a mark by hand, give it the class `ann`, or it stays on screen while marks are off; it shows only with `A`, with nothing in the margin.
+- A callout outlines what to look at when the frame doesn't make it obvious. Its words, one short sentence, say what the drawing and the note can't: a behavior a still can't show ("scrolled into view on open"), a reason ("site name, so you judge the source first"), why something is missing, where data comes from, a limit ("Mac and Linux only"), or an open question. Use `noted(el, "words")`; the words show over the drawing on `A`. Never repeat the element's text or the note. Most frames need no callout.
+- `fresh` puts NEW on what a revision changed, against a design the page also shows (the current design, or an earlier round). On a page that proposes something new throughout, leave it out. Don't use a green row or a check mark as a mark, because those look like part of the product. If you draw a mark by hand, give it the class `ann`, or it stays on screen while marks are off; it shows only with `A`.
 - Frames stay in the light scheme even when the reader turns the page dark. To draw a frame in dark mode, give it `dark: true` and draw it with the theme's colors (`bg-background`, `text-foreground` and the rest), not fixed ones like `bg-white`; for both modes, draw the screen twice, once with `dark: true`.
 - Draw everything at its real size. A window is 1280x800, a phone is 390x844, and a panel is whatever it measures. Use the normal type scale. Don't shrink anything by hand, set a scale, or use classes like `text-[9px]`, because the page already scales frames with `transform`.
 - Use grey bars for incidental text. Write real, final-quality copy for the words that matter: labels, warnings, empty states, and the buttons the proposal is about. Never use lorem ipsum.

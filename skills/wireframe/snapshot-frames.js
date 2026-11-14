@@ -165,7 +165,9 @@
   /**
    * A frame from the snapshot `name`, edited by `edit($)`. `$(target)` finds
    * exactly one element by what a person reads and hands back its edits.
-   * Every edit marks what it changed NEW unless it ends with `{ quiet: true }`.
+   * Edits mark nothing: a callout is drawn only where the frame asks for one,
+   * with `.note()`, `.fresh()` or `.mark()`, or with `noted()`, `fresh()` or
+   * `ann()` in HTML it inserts.
    * A target that matches nothing, or several, draws the frame as an error
    * that says so, and is thrown after the page draws, so a check of the
    * page's errors still fails while a person opening it sees why.
@@ -216,33 +218,15 @@
       return [...tpl.content.childNodes];
     };
     const nodesOf = (x) => (typeof x === "string" ? parse(x) : [x.el]);
-    /** Inserted nodes are marked, words alone wrapped so the mark has a box. */
-    const placed = (nodes, o) => {
-      if (o?.quiet) return;
-      for (const n of nodes) {
-        if (n.nodeType === 1) markOn(n);
-        else if (n.nodeType === 3 && n.nodeValue.trim()) {
-          const span = doc.createElement("span");
-          n.replaceWith(span);
-          span.append(n);
-          markOn(span);
-        }
-      }
-    };
-    const wrap = (el, detached = false) => {
-      const changed = (o) => {
-        if (!detached && !o?.quiet) markOn(el);
-      };
-      const insert = (how) => (x, o) => {
-        const nodes = nodesOf(x);
-        el[how](...nodes);
-        placed(nodes, o);
+    const wrap = (el) => {
+      const insert = (how) => (x) => {
+        el[how](...nodesOf(x));
         return w;
       };
       const w = {
         el,
         /** One element inside this one. */
-        find: (t) => wrap(find(el, t, name), detached),
+        find: (t) => wrap(find(el, t, name)),
         /** The nearest element around this one matching a selector or a role ("button", "row"). */
         up: (sel) => {
           let a = el.parentElement;
@@ -263,12 +247,11 @@
             throw new Error(
               `snap("${name}"): no ${sel} around ${describe(el)}`,
             );
-          return wrap(a, detached);
+          return wrap(a);
         },
         /** `.text(to)` sets the one piece of words inside; `.text(from, to)` replaces those words. */
-        text: (a, b, c) => {
-          const [from, to, o] =
-            typeof b === "string" ? [a, b, c] : [undefined, a, b];
+        text: (a, b) => {
+          const [from, to] = typeof b === "string" ? [a, b] : [undefined, a];
           const walker = doc.createTreeWalker(el, 4);
           const nodes = [];
           for (let n = walker.nextNode(); n; n = walker.nextNode())
@@ -300,28 +283,25 @@
           const label = el.getAttribute("aria-label");
           if (label && from && label.includes(from))
             el.setAttribute("aria-label", label.replace(from, to));
-          changed(o);
           return w;
         },
         /** New insides. */
-        html: (html, o) => {
+        html: (html) => {
           el.innerHTML = html;
-          changed(o);
           return w;
         },
         /** HTML, or a clone, in this element's place. */
-        replace: (x, o) => {
+        replace: (x) => {
           const nodes = nodesOf(x);
           el.replaceWith(...nodes);
-          placed(nodes, o);
-          return nodes[0]?.nodeType === 1 ? wrap(nodes[0], detached) : w;
+          return nodes[0]?.nodeType === 1 ? wrap(nodes[0]) : w;
         },
         before: insert("before"),
         after: insert("after"),
         append: insert("append"),
         prepend: insert("prepend"),
-        /** A copy to change and then place with before, after, append or replace; marked once placed. */
-        clone: () => wrap(el.cloneNode(true), true),
+        /** A copy to change and then place with before, after, append or replace. */
+        clone: () => wrap(el.cloneNode(true)),
         remove: () => {
           el.remove();
           return w;
@@ -334,24 +314,21 @@
           );
           return w;
         },
-        attr: (n, v, o) => {
+        attr: (n, v) => {
           if (v === null) el.removeAttribute(n);
           else el.setAttribute(n, v);
-          changed(o);
           return w;
         },
-        addClass: (c, o) => {
+        addClass: (c) => {
           el.classList.add(...c.split(/\s+/).filter(Boolean));
-          changed(o);
           return w;
         },
-        removeClass: (c, o) => {
+        removeClass: (c) => {
           el.classList.remove(...c.split(/\s+/).filter(Boolean));
-          changed(o);
           return w;
         },
         /** Takes another element's look: its classes, and its variant and size as a button's. */
-        look: (t, o) => {
+        look: (t) => {
           const src = find(doc, t, name);
           el.setAttribute("class", src.getAttribute("class") ?? "");
           for (const a of ["data-variant", "data-size"]) {
@@ -359,13 +336,11 @@
             if (v === null) el.removeAttribute(a);
             else el.setAttribute(a, v);
           }
-          changed(o);
           return w;
         },
         /** Adds inline style, as "left: 40px; width: 320px". */
-        css: (s, o) => {
+        css: (s) => {
           el.setAttribute("style", `${el.getAttribute("style") ?? ""};${s}`);
-          changed(o);
           return w;
         },
         /** A callout of a few words on this element, like noted(). */
@@ -392,6 +367,12 @@
       root: wrap(doc.body),
     });
     if (edit) edit($);
+    // Marks written into inserted HTML (`ann`, `noted`, `fresh`) become the
+    // frame's callouts on the element that holds them.
+    for (const i of doc.querySelectorAll("i.mark")) {
+      if (i.parentElement) markOn(i.parentElement, i.dataset.label || "new");
+      i.remove();
+    }
     const id = frames.length;
     frames.push({
       name,
