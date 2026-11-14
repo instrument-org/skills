@@ -10,6 +10,7 @@ It writes a handful of fixture pages with the skill's own `new.mjs` (no groups, 
 
 - no script errors
 - the title block and the bottom band keep one height across every frame, with notes of one line and of two
+- on a page turned dark, every frame draws in the light scheme except one with `dark: true`
 - the counter, the strip's lit bar, the group's name inside the strip, and `?frame=` follow the open frame
 - a frame with a `compare` field, from a page written for an older viewer, lists no problem, and C does nothing
 - on frames with callouts, the margin shows each callout's words and a tick, and a frame of one size sits in the same place on every frame, callouts or none

@@ -138,6 +138,16 @@
         #rack .tile:hover {
           background-color: color-mix(in oklab, var(--color-card) 95%, var(--color-foreground));
         }
+        /* A frame draws a product, not this page, so it keeps the light
+           scheme when the reader turns the page dark, and a drawing that
+           fixes some colors and takes others from the theme still reads. A
+           frame with `dark: true` draws in the dark scheme instead. */
+        .frame {
+          color-scheme: light;
+        }
+        .frame[data-scheme="dark"] {
+          color-scheme: dark;
+        }
         #rack .frame {
           outline: 2px solid transparent;
           outline-offset: 2px;
@@ -1088,8 +1098,9 @@
         // of gray, sky, emerald, amber, rose or indigo; without it sets take
         // colors in order. Leave it empty for a plain sequence.
         //
-        // One optional field on a frame: `pick: true` stars the option you
-        // recommend, at most one per group.
+        // Two optional fields on a frame: `pick: true` stars the option you
+        // recommend, at most one per group, and `dark: true` draws the frame
+        // in the dark scheme, which frames otherwise never take.
         const groups = {};
 
         const states = [
@@ -1162,7 +1173,7 @@
             <div class="slot flex h-[var(--slot-h)] items-center justify-center">
               <div
                 class="frame w-[calc(var(--w)*var(--s))] cursor-zoom-in overflow-hidden rounded-sm ring-[0.5px] ring-border h-[calc(var(--h)*var(--s))]"
-                data-w="${state.w || W}"
+                data-w="${state.w || W}"${state.dark ? ' data-scheme="dark"' : ""}
                 data-h="${state.h || H}"
                 style="--w:${state.w || W}px; --h:${state.h || H}px; --s:0.2"
               >

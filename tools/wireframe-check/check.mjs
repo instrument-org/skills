@@ -50,7 +50,7 @@ export const FIXTURES = {
     states: [
       frame("Window", 1280, 800, { leak: true }),
       frame("Phone", 390, 844),
-      frame("Panel", 640, 360),
+      frame("Panel", 640, 360, { extra: "dark: true" }),
       frame("Window again", 1280, 800),
     ],
   },
@@ -146,6 +146,7 @@ const READ = `JSON.stringify((() => {
     barsShown: [...strip.querySelectorAll("[data-go]")].filter(shown).map((b) => Number(b.dataset.go)),
     pickBars: [...strip.querySelectorAll(".pick")].map((b) => Number(b.dataset.go)),
     stageFrames: document.querySelectorAll("#stage .frame").length,
+    scheme: getComputedStyle(document.querySelector("#stage .frame") ?? document.body).colorScheme,
     compareLeft: document.querySelectorAll("#pair, #viewer [data-compare]").length,
     alerts: document.querySelectorAll("#rack [role=alert]").length,
     frameParam: new URLSearchParams(location.search).get("frame"),
@@ -223,6 +224,8 @@ export async function run({ keep } = {}) {
       await P.viewport(1440, 900);
       await P.navigate(pathToFileURL(path).href);
       await wait(400);
+      // Dark, so the frames' own scheme shows: light unless they ask.
+      await P.evaluate(`document.documentElement.dataset.theme = "dark"`);
       // One per row, the setting under which a copied tile is widest.
       await P.evaluate(
         `(() => { const r = document.querySelector("#per-row"); r.value = 1; r.dispatchEvent(new Event("input")); document.querySelector("#rack .frame").click(); })()`,
@@ -252,6 +255,9 @@ export async function run({ keep } = {}) {
           );
         if (v.frameParam !== String(i + 1))
           fail(`frame ${i + 1} leaves ?frame=${v.frameParam}`);
+        const dark = /dark: true/.test(fixture.states[i]);
+        if (v.scheme !== (dark ? "dark" : "light"))
+          fail(`frame ${i + 1} draws in the ${v.scheme} scheme on a dark page`);
         await key("ArrowRight");
       }
       if (tops.size !== 1)
