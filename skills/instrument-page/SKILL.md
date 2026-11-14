@@ -34,19 +34,21 @@ Someone who sees only the first screen (1280 by 800 on a desk, the first swipe o
 3. At most one short sentence under it.
 4. The `.hero`: the answer itself, as compact as it can be. Usually one of these: the decision with its one-line reason; three to six summary bullets; the small table or chart that is the answer; the one picture that proves it; the demo already playing when the subject is behavior.
 
-If the whole page fits on that screen, stop there: a short page is a feature, not a shortfall. Sources go in the footer.
+If the whole page fits on that screen, stop there: a short page is a feature, not a shortfall.
 
 ## 3. Below it, one unit, repeated
 
 The rest of the page is depth for the reader who wants it, built from the unit you named. Every instance has the same parts in the same order: a bold one-line claim, then the thing itself (a real screenshot, a clip, a small drawing, a short table, a quoted exchange), then at most two short sentences. The reader learns the unit once and then scrolls.
 
-- **Show the real thing**: real screenshots, real output, real quotes, real numbers. A drawing explains a mechanism; keep it simple, labeled, and big enough to read. No strips of little boxes joined by arrows: a sequence is numbered steps going down the page.
+- **Pictures carry the depth.** Each unit leads with its picture, and the words are its caption. Show the real thing: real screenshots, real output, real quotes, real numbers. When the material has screenshots, use them generously: a reader recognizes a screen faster than they read a description of it, so slice a long one into the parts that matter, each in its own unit, cropped to what changed.
+- **Draw the mechanism, not its name.** A drawing earns its place when it shows what the reader would otherwise assemble from prose: where something flows, what changes between before and after, the one step each option adds or removes. Comparing two states? Draw both, one above the other, and the difference between them. Label the arrows with what moves ("re-reads the whole chat", "polls every 30s"), draw quantities to one scale, and keep the text big enough to read. No strips of little boxes joined by arrows: a sequence is numbered steps going down the page.
 - **Motion plays on open.** Behavior over time (animation, scrolling, a sequence of states) runs when the page loads, as a CSS animation, an autoplaying muted looping clip, or a canvas. The reader never clicks to see it happen; controls to try variations come after.
 - **Nothing hidden.** No tabs, toggles, steppers, carousels, accordions or `details` for anything the reader needs. Everything is visible by scrolling.
 - **Answerable items** are a numbered `ol`, each led by a short bold name the reader can say back and your recommendation, so one sentence answers them all ("yes to 2, 3 but cheaper").
 - **Before and after** sit side by side at the same size (`.pair`).
-- **Figures**: exact only where the figure is the point; round the rest; the arithmetic goes in the footer.
-- **Words**: plain. No coined names, no marketing voice, no jargon left unexplained, no em dashes. No paragraph over 60 words outside the footer; most under 30.
+- **Figures**: exact only where the figure is the point; round the rest. When the reader will check the math, show it where they check it, as a table whose rows add up to the total; otherwise leave the arithmetic out.
+- **Words**: plain. No coined names, no marketing voice, no jargon left unexplained, no em dashes. No paragraph over 60 words; most under 30.
+- **No notes at the bottom.** The page ends with its last unit: no footer of sources, method, provenance, "how this was made" or "how the numbers were worked out". A source the reader may want to open is a link where its fact appears; anything illustrative or uncertain is said where it appears.
 
 ## 4. Write it
 
@@ -56,7 +58,10 @@ The rest of the page is depth for the reader who wants it, built from the unit y
 <html lang="en" data-layout="wide" data-feel="minimal">
   <head>
     <title>The point, 10 words or fewer</title>
-    <meta name="description" content="One sentence for the link unfurl, with the key figure." />
+    <meta
+      name="description"
+      content="One sentence for the link unfurl, with the key figure."
+    />
     <style>
       /* only what this page invents, colored with tokens */
     </style>
@@ -74,14 +79,13 @@ The rest of the page is depth for the reader who wants it, built from the unit y
       <h2>Unit one: its claim</h2>
       ...
     </section>
-    <footer><p>Made from ... on ...; what is illustrative; the arithmetic.</p></footer>
   </body>
 </html>
 ```
 
 `data-layout="wide"` keeps every block on one left edge with prose at a reading width; use `column` only for a short note that is all prose. `data-feel` is `minimal` for most pages, `dense` when tables carry it (a roster, an audit), `editorial` when prose carries it (a letter, a long read), `bold` when one fact carries it (a launch, a thank-you).
 
-**Plain elements are already designed**: `hgroup` (a `p` before the h1 is the kicker, after it the lede), headings, lists, `dl`, `table`, `blockquote`, `aside` (tinted note), `figure`/`figcaption`, `mark`, `code`, `pre`, `footer`.
+**Plain elements are already designed**: `hgroup` (a `p` before the h1 is the kicker, after it the lede), headings, lists, `dl`, `table`, `blockquote`, `aside` (tinted note), `figure`/`figcaption`, `mark`, `code`, `pre`.
 
 **Code** is `<pre data-file="apps/api/client.ts"><code class="language-ts">`, escaped (`&lt;`, `&amp;`): it is highlighted, and every `pre` gets Copy and Wrap. Terminal output is a bare `<pre>`; `<span data-tone="bad">` inside it marks a line. Never color code by hand or build your own copy button.
 
@@ -107,11 +111,11 @@ Last, a cold read. Take a screenshot and look only at the first screen: does it 
 
 ## 6. Rules every page keeps
 
-- Every number comes from the inputs, a named source, or arithmetic over figures shown. A figure you assumed is labeled illustrative where it appears and in the footer.
+- Every number comes from the inputs, a named source, or arithmetic over figures shown. A figure you assumed is labeled illustrative where it appears.
 - Scores are coarse (a word, a few dots) unless every input is on the page; never a decimal that implies precision the research does not have.
 - Quote only exact words, with who said it and when; otherwise paraphrase without quote marks.
 - When options end in different states, never call one cheaper without saying so. A pick says what it loses on and what would flip it.
-- Show disagreements between sources instead of silently picking one. Where research is thin, the footer says so.
+- Show disagreements between sources instead of silently picking one. Where research is thin, say so where it matters.
 - A named product, vendor or place links to its maker's or owner's home page, never a deep link or search result. A commit, pull request or file the page is about links straight to it.
 - Single file: name an image or clip by its path or URL and `page.mjs` embeds it, or draw it as SVG ([`references/images.md`](references/images.md)); only Google Fonts and exact-version libraries from cdn.jsdelivr.net/npm, unpkg, esm.sh or cdnjs may load ([`references/loading.md`](references/loading.md)).
 
