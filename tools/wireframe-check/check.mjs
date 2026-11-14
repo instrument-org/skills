@@ -333,11 +333,25 @@ export async function run({ keep } = {}) {
         );
         if (drawn !== "Pricing,Plans")
           fail(`the grid's snapshot frames read [${drawn}]`);
-        const missed = await P.evaluate(
-          `(() => { try { snap("pricing", ($) => $("Choose Plus")); return "no error"; } catch (e) { return e.message; } })()`,
-        );
-        if (!/nothing matches.*Close: .*Choose Pro/.test(missed))
-          fail(`a missed target says "${missed}"`);
+        // A missed target draws its frame as the error and throws once the
+        // page has drawn, so a person sees why and a check still fails.
+        const missedBy = (edit) =>
+          P.evaluate(`new Promise((done) => {
+            let html = "";
+            const on = (e) => {
+              removeEventListener("error", on);
+              e.preventDefault();
+              done({ thrown: e.message, shown: html.includes("data-snap-broken") ? html.replace(/<[^>]+>/g, " ") : "" });
+            };
+            addEventListener("error", on);
+            html = snap("pricing", ${edit});
+            setTimeout(() => done({ thrown: "no error", shown: "" }), 1000);
+          })`);
+        const missed = await missedBy(`($) => $("Choose Plus")`);
+        if (!/nothing matches.*Close: .*Choose Pro/.test(missed.thrown))
+          fail(`a missed target throws "${missed.thrown}"`);
+        if (!/can't be drawn.*nothing matches/.test(missed.shown))
+          fail(`a missed target's frame reads "${missed.shown.slice(0, 120)}"`);
         // The Share button publishes the page as the shell's last script
         // kept it, so the snapshots and their script must be in that copy.
         const shared = await P.evaluate(
@@ -345,11 +359,9 @@ export async function run({ keep } = {}) {
         );
         if (shared.length)
           fail(`the copy the Share button publishes lacks ${shared.join(" and ")}`);
-        const several = await P.evaluate(
-          `(() => { try { snap("pricing", ($) => $({ contains: "/ month" })); return "no error"; } catch (e) { return e.message; } })()`,
-        );
-        if (!/matches 2 elements.*nth/.test(several))
-          fail(`a target matching two says "${several}"`);
+        const several = await missedBy(`($) => $({ contains: "/ month" })`);
+        if (!/matches 2 elements.*nth/.test(several.thrown))
+          fail(`a target matching two throws "${several.thrown}"`);
       }
 
       if (name === "callouts") {

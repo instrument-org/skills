@@ -115,7 +115,7 @@ A frame is the snapshot in its own document, so its styles reach only that frame
 
 ### Targets
 
-`$(target)` returns exactly one element, or stops the page with an error naming what came close.
+`$(target)` returns exactly one element. Otherwise the frame draws as an error and the page throws one naming what came close.
 
 | Target                                   | Finds                                                                                                                 |
 | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |

@@ -164,11 +164,33 @@
 
   /**
    * A frame from the snapshot `name`, edited by `edit($)`. `$(target)` finds
-   * exactly one element by what a person reads and hands back its edits; a
-   * target that matches nothing, or several, throws, which stops the page.
+   * exactly one element by what a person reads and hands back its edits.
    * Every edit marks what it changed NEW unless it ends with `{ quiet: true }`.
+   * A target that matches nothing, or several, draws the frame as an error
+   * that says so, and is thrown after the page draws, so a check of the
+   * page's errors still fails while a person opening it sees why.
    */
   const snap = (name, edit) => {
+    try {
+      return draw(name, edit);
+    } catch (error) {
+      setTimeout(() => {
+        throw error;
+      });
+      return broken(name, error);
+    }
+  };
+  /** A frame that can't be drawn, at the snapshot's size, saying why. */
+  const broken = (name, error) => {
+    let size = { w: 1280, h: 800 };
+    try {
+      size = page(name);
+    } catch {}
+    const esc = (s) =>
+      String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    return `<div data-snap-broken style="width:${size.w}px;height:${size.h}px;display:flex;align-items:center;justify-content:center;padding:48px;background:#fef2f2;color:#7f1d1d;font:500 20px/1.5 system-ui,sans-serif;text-align:left"><div style="max-width:720px"><div style="font-weight:600;margin-bottom:8px">This frame can't be drawn.</div><div style="font:400 16px/1.5 ui-monospace,monospace;color:#991b1b">${esc(error instanceof Error ? error.message : error)}</div><div style="margin-top:12px;font-size:16px;color:#7f1d1d">An edit names something this snapshot doesn't have, usually because the page changed since the wireframe was made.</div></div></div>`;
+  };
+  const draw = (name, edit) => {
     const p = page(name);
     const doc = new DOMParser().parseFromString(htmlOf(name), "text/html");
     const marks = [];

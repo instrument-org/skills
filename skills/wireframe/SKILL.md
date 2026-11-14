@@ -113,7 +113,7 @@ const states = [
 ];
 ```
 
-- `$(target)` finds exactly one element by its words, a role, a label or a selector (every target and edit is in "Frames from a snapshot" in `patterns.md`). A target that matches nothing or several stops the page with an error naming the close matches, which `agent-browser errors` shows.
+- `$(target)` finds exactly one element by its words, a role, a label or a selector (every target and edit is in "Frames from a snapshot" in `patterns.md`). A target that matches nothing or several draws that frame as an error and throws one naming the close matches, which `agent-browser errors` shows.
 - Every edit marks what it changed NEW, unless it ends with `{ quiet: true }`, and `.note("words")` adds a callout. `.click()` draws nothing, like `clickable`.
 - The snapshot keeps only the style rules its page used, so style what you add with `.look(target)`, a `.clone()` of a neighbor, or inline `style`.
 - Frames draw as they come near the screen, so before a full-page screenshot run `agent-browser eval 'dispatchEvent(new Event("beforeprint"))'`.
