@@ -84,7 +84,8 @@ describe("addSnapshots", () => {
 });
 
 describe("writeInto", () => {
-  const page = "<html><body><main id=rack></main>\n</body></html>";
+  const page =
+    "<html><body><main id=rack></main>\n<!-- shell:start --><script>window.__instrumentSource = 1</script><!-- shell:end -->\n</body></html>";
   const store = addSnapshots(
     { sheets: {}, pages: {} },
     { a: readSnapshot(doc("<script>alert(1)</script></script>")) },
@@ -110,6 +111,22 @@ describe("writeInto", () => {
     expect(twice.indexOf("wireframe-snapshot-frames")).toBeLessThan(
       twice.indexOf("</body>"),
     );
+  });
+
+  it("goes before the shell's last block, so a published copy carries it", () => {
+    const out = writeInto(page, store, "/* runtime */");
+    expect(out.indexOf("wireframe-snapshot-frames")).toBeLessThan(
+      out.indexOf("__instrumentSource"),
+    );
+    expect(out.indexOf("wireframe-snapshots")).toBeLessThan(
+      out.indexOf("__instrumentSource"),
+    );
+  });
+
+  it("refuses a page without the shell's last block", () => {
+    expect(() =>
+      writeInto("<html><body></body></html>", store, ""),
+    ).toThrowErrorMatchingInlineSnapshot(`[Error: no shell block at the end of the page's body; is it a wireframe page from new.mjs?]`);
   });
 });
 

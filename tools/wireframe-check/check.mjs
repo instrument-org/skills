@@ -338,6 +338,13 @@ export async function run({ keep } = {}) {
         );
         if (!/nothing matches.*Close: .*Choose Pro/.test(missed))
           fail(`a missed target says "${missed}"`);
+        // The Share button publishes the page as the shell's last script
+        // kept it, so the snapshots and their script must be in that copy.
+        const shared = await P.evaluate(
+          `["wireframe-snapshots", "wireframe-snapshot-frames"].filter((id) => !(window.__instrumentSource ?? "").includes(\`id="\${id}"\`))`,
+        );
+        if (shared.length)
+          fail(`the copy the Share button publishes lacks ${shared.join(" and ")}`);
         const several = await P.evaluate(
           `(() => { try { snap("pricing", ($) => $({ contains: "/ month" })); return "no error"; } catch (e) { return e.message; } })()`,
         );

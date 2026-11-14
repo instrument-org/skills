@@ -74,18 +74,24 @@ export function addSnapshots(store, added) {
   return out;
 }
 
-/** The page with its snapshot data and the frames' script in place before </body>. */
+/**
+ * The page with its snapshot data and the frames' script in place just before
+ * the shell's last block. That block keeps the page as written for the share
+ * widget and only sees what comes before it, so anything after it would be
+ * missing from a published copy.
+ */
 export function writeInto(page, store, runtime) {
   // Every < written as \u003c, so nothing in a snapshot can end the script early.
   const json = JSON.stringify(store).replace(/</g, "\\u003c");
   const blocks = `<script type="application/json" id="wireframe-snapshots">${json}</script>\n<script id="wireframe-snapshot-frames">${runtime}</script>\n`;
   const rest = page.replace(DATA, "").replace(RUNTIME, "");
-  const at = rest.lastIndexOf("</body>");
-  if (at < 0)
+  const end = rest.lastIndexOf("</body>");
+  const at = rest.lastIndexOf("<!-- shell:start -->", end);
+  if (end < 0 || at < rest.indexOf("<body"))
     throw new Error(
-      "no </body> in the page; is it a wireframe page from new.mjs?",
+      "no shell block at the end of the page's body; is it a wireframe page from new.mjs?",
     );
-  return rest.slice(0, at) + blocks + rest.slice(at);
+  return rest.slice(0, at) + blocks + "    " + rest.slice(at);
 }
 
 export function readStore(page) {
