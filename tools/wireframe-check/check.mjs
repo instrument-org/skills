@@ -190,7 +190,7 @@ const READ = `JSON.stringify((() => {
 
 // The callouts over the open frame and the spotlight on it: where the
 // frame sits, the tags' words, outlines and leaders the reader can see, the
-// spotlight's opacity and its holes, and any ring drawn inside the frame.
+// spotlight's opacity and its holes.
 const CALLOUTS = `JSON.stringify((() => {
   const f = document.querySelector("#stage .frame").getBoundingClientRect();
   const spot = document.querySelector("#spot");
@@ -201,7 +201,6 @@ const CALLOUTS = `JSON.stringify((() => {
     words: [...document.querySelectorAll("#tags .tg")].filter(seen).map((w) => [...w.querySelectorAll("[data-chrome-text]")].map((t) => t.dataset.chromeText).join(" ")),
     outlines: count("#tags .tg-box"),
     leads: count("#tags .tg-lead"),
-    rings: count("#stage .mark-ring"),
     spot: seen(spot) ? Number(getComputedStyle(spot).opacity) * Number(spot.querySelector(".spot-body")?.getAttribute("opacity") ?? 0) : 0,
     holes: spot.querySelectorAll(".spot-holes")[0]?.children.length ?? 0,
   };
@@ -377,9 +376,9 @@ export async function run({ keep } = {}) {
         // where a frame of its size without callouts does.
         await go(0);
         const first = await callouts();
-        if (first.words.length || first.outlines || first.leads || first.rings)
+        if (first.words.length || first.outlines || first.leads)
           fail(
-            `with A off a frame shows ${first.words.length} tags, ${first.outlines} outlines, ${first.leads} leaders and ${first.rings} rings`,
+            `with A off a frame shows ${first.words.length} tags, ${first.outlines} outlines and ${first.leads} leaders`,
           );
         if (first.spot < 0.9 || first.holes !== 3)
           fail(
@@ -409,16 +408,16 @@ export async function run({ keep } = {}) {
           await hideChrome();
         };
         await bare("with A off");
-        // A holds the spotlight and draws the tags, an outline round every
-        // named element, and no ring inside the frame.
+        // A holds the spotlight and draws the tags and an outline round
+        // every named element.
         await key("a");
         await wait(300);
         const held = await callouts();
         if (held.words.sort().join("|") !== [...WORDS].sort().join("|"))
           fail(`A's tags read [${held.words.join(" | ")}]`);
-        if (held.spot < 0.9 || held.outlines !== 3 || held.rings)
+        if (held.spot < 0.9 || held.outlines !== 3)
           fail(
-            `A shows the spotlight at ${held.spot.toFixed(2)}, ${held.outlines} outlines and ${held.rings} rings`,
+            `A shows the spotlight at ${held.spot.toFixed(2)} and ${held.outlines} outlines`,
           );
         await bare("with A on");
         await go(3);
@@ -432,6 +431,27 @@ export async function run({ keep } = {}) {
       const v = await read();
       if (v.open || v.stageFrames !== 0 || v.frameParam !== null)
         fail("closing leaves the viewer or ?frame= behind");
+
+      if (name === "callouts") {
+        // In the grid, A draws the same tags over the tiles without moving
+        // one: words where a tile is wide enough, outlines everywhere.
+        const tiles = `JSON.stringify([...document.querySelectorAll("#rack .frame")].map((f) => Object.values(f.getBoundingClientRect().toJSON()).map(Math.round).join()))`;
+        const before = await P.evaluate(tiles);
+        await key("a");
+        await wait(300);
+        const grid = JSON.parse(
+          await P.evaluate(
+            `JSON.stringify({ tags: document.querySelectorAll("#rack > .tags .tg").length, outlines: document.querySelectorAll("#rack > .tags .tg-box").length })`,
+          ),
+        );
+        if (grid.outlines !== 9 || grid.tags < 2)
+          fail(
+            `A in the grid draws ${grid.tags} tags and ${grid.outlines} outlines`,
+          );
+        if ((await P.evaluate(tiles)) !== before)
+          fail("A in the grid moves the tiles");
+        await key("a");
+      }
 
       for (const e of new Set(errors)) fail(`script error: ${e}`);
     }
