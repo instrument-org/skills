@@ -161,7 +161,12 @@
       sheets.push(`<link rel="stylesheet" href="${sheet.href}">`);
       continue;
     }
-    const css = cut(rules).join("\n");
+    // A newer Chrome writes color-mix() in its default space with the space left
+    // out, which an older browser viewing the wireframe drops, and with it every
+    // see-through color; so the space is spelled out.
+    const css = cut(rules)
+      .join("\n")
+      .replace(/color-mix\((?!\s*in\s)/g, "color-mix(in oklab, ");
     if (css.trim())
       sheets.push(`<style>${await inlineCss(css, base, cache)}</style>`);
   }
