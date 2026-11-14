@@ -1196,6 +1196,23 @@
         // ring; any other word is a note, written on an orange ring. Each
         // layer keeps the list of its marks, which the enlarged view writes
         // into the margin beside the frame.
+        // The part of an element its frame actually shows: its box cut by
+        // every ancestor up to the frame that clips or scrolls, so a callout
+        // on a long list in a scrolled pane names the rows on screen, not
+        // rows scrolled out of view. Null when none of it shows.
+        const visibleRect = (el, root) => {
+          const r = el.getBoundingClientRect();
+          let { left, top, right, bottom } = r;
+          for (let a = el.parentElement; a && a !== root.parentElement; a = a.parentElement) {
+            if (getComputedStyle(a).overflow === "visible") continue;
+            const c = a.getBoundingClientRect();
+            left = Math.max(left, c.left);
+            top = Math.max(top, c.top);
+            right = Math.min(right, c.right);
+            bottom = Math.min(bottom, c.bottom);
+          }
+          return right - left > 0 && bottom - top > 0 ? { left, top, width: right - left, height: bottom - top } : null;
+        };
         const drawMarks = (roots = document.querySelectorAll("#rack .frame > *, #stage .frame > *")) => {
           for (const root of roots) {
             root.querySelector(".marks")?.remove();
@@ -1218,8 +1235,8 @@
             layer.className = "marks ann";
             layer.list = [];
             for (const g of groups.values()) {
-              const r = g.el.getBoundingClientRect();
-              if (r.width === 0 || r.height === 0) continue;
+              const r = visibleRect(g.el, root);
+              if (!r) continue;
               const x = (r.left - rr.left) / s;
               const y = (r.top - rr.top) / s;
               const w = r.width / s;
@@ -1263,6 +1280,18 @@
         document.fonts?.ready.then(() => setTimeout(drawMarks, 0));
         document.fonts?.addEventListener("loadingdone", () => drawMarks());
         window.addEventListener("load", () => setTimeout(drawMarks, 300));
+        // A frame can scroll its own panes after it is copied to the stage,
+        // as a chat that keeps to its newest message does, which moves what
+        // a callout names; the stage's copy is measured again when it does.
+        let rescroll = 0;
+        document.querySelector("#stage").addEventListener(
+          "scroll",
+          () => {
+            cancelAnimationFrame(rescroll);
+            rescroll = requestAnimationFrame(() => drawMarks(document.querySelectorAll("#stage .frame > *")));
+          },
+          true,
+        );
 
         // ---- density ---------------------------------------------------------
         // Fit as many tiles per row as the width allows, then derive each frame's
