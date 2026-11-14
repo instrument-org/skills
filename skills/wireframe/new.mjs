@@ -4,11 +4,12 @@
 // <main>, the name in the title and the h1. Then edit the `states` array
 // between "// ---- the frames" and "// ---- render" in the page, and delete
 // the helpers you do not call. With --prototype it writes one live screen
-// from prototype.html instead: edit `SCREEN` under "// ---- the screen".
-// Refuses to overwrite an existing file.
+// from prototype.html instead: edit `SCREEN` under "// ---- the screen". Run from inside a git repository, it names the
+// repository in an `instrument:repo` meta. Refuses to overwrite an existing file.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { repoName, tagRepo } from "./repo.mjs";
 
 const args = process.argv.slice(2);
 const prototype = args.includes("--prototype");
@@ -40,9 +41,12 @@ const page = shell
       ? `<main class="flex h-dvh flex-col">\n${main}\n    </main>`
       : `<main class="flex min-h-dvh flex-col px-4 pb-8">\n${main}\n    </main>`,
   );
-writeFileSync(out, page);
+const repo = repoName(process.cwd());
+writeFileSync(out, tagRepo(page, repo));
 console.log(
   prototype
     ? `${out}: written. Draw the screen in its \`SCREEN\`, then open it in your browser tool and check its errors and a screenshot.`
     : `${out}: written. Draw the frames in its \`states\` array, then open it in your browser tool and check its errors and a screenshot.`,
 );
+if (!repo)
+  console.warn("No repository found here, so this page has no repo tag.");

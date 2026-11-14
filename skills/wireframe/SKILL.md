@@ -21,7 +21,8 @@ Don't use it for:
 
 `<skill>` is the full path to this skill's folder. Run commands from the task folder.
 
-- `new.mjs` writes a new wireframe page from the two files below.
+- `new.mjs` writes a new wireframe page from the two files below. Inside a git repository, it adds an `instrument:repo` meta tag naming the repository, which the index app files the page under.
+- `repo.mjs` provides that name and tag, for a project's own kit to call when it builds pages itself.
 - `shell.html` is the page shell. It holds Studio's theme as Tailwind tokens, the compiled stylesheet, the pinned Tailwind browser build, the icon set, and the share widget with its Share button. We draw frames with Tailwind classes, and projects' own wireframe kits do too. Don't edit anything between `shell:start` and `shell:end`.
 - `share.mjs` and `share.py` publish a finished page to a link (see "Hand it over" below).
 - `prototype.html` holds the other kind of page: one live screen instead of a grid (see "A prototype instead of frames" below).
