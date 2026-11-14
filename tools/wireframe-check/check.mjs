@@ -3,9 +3,7 @@
 // errors; bands that keep one height from frame to frame; a title block
 // and strip that follow the open frame; a frame that fits as wide with
 // callouts as without; a spotlight that fades, held by A, which also draws
-// the callouts as tags over the frame, all hidden by Cmd+.; a frame still
-// carrying a `compare` field, which pages written before Compare was
-// removed have, ignored without a word; and frames drawn from a snapshot,
+// the callouts as tags over the frame, all hidden by Cmd+.; and frames drawn from a snapshot,
 // edited by name, with the callouts their edits ask for and a missed target
 // that names what came close. Each fixture is a page new.mjs
 // writes, so the check runs the main.html an agent would get.
@@ -101,15 +99,6 @@ export const FIXTURES = {
       withGroup("A", frame("Two", 1280, 800)),
     ],
   },
-  "old compare": {
-    groups: "{}",
-    states: [
-      frame("One", 1280, 800, {
-        extra: `compare: { with: "Two", as: "the other" }`,
-      }),
-      frame("Two", 1280, 800),
-    ],
-  },
   tall: {
     groups: `{ A: { mark: "A", name: "Long page", note: "Tall." }, B: { mark: "B", name: "Other page", note: "Tall too." } }`,
     states: [
@@ -182,7 +171,6 @@ const READ = `JSON.stringify((() => {
     pickBars: [...strip.querySelectorAll(".pick")].map((b) => Number(b.dataset.go)),
     stageFrames: document.querySelectorAll("#stage .frame").length,
     scheme: getComputedStyle(document.querySelector("#stage .frame") ?? document.body).colorScheme,
-    compareLeft: document.querySelectorAll("#pair, #viewer [data-compare]").length,
     alerts: document.querySelectorAll("#rack [role=alert]").length,
     frameParam: new URLSearchParams(location.search).get("frame"),
   };
@@ -279,7 +267,6 @@ export async function run({ keep } = {}) {
           fail(`frame ${i + 1} shows the counter "${v.counter}"`);
         if (v.stageFrames !== 1)
           fail(`frame ${i + 1} has ${v.stageFrames} frames on the stage`);
-        if (v.compareLeft) fail(`frame ${i + 1} still has Compare's parts`);
         if (!v.stripShown) fail(`frame ${i + 1} hides the strip`);
         if (v.current.length !== 1 || v.current[0] !== i)
           fail(`frame ${i + 1} lights strip bars [${v.current}]`);
@@ -302,16 +289,6 @@ export async function run({ keep } = {}) {
         fail(`the bottom band changes height: ${[...bands].join(", ")}px`);
       if ((await read()).alerts)
         fail("the page lists a problem above the frames");
-
-      // C and R do nothing now, on any frame.
-      await go(0);
-      await key("c");
-      await key("r");
-      const still = await read();
-      if (still.stageFrames !== 1 || still.counter !== `1/${n}`)
-        fail("C or R changes what the stage shows");
-      if (still.barsShown.length !== n)
-        fail(`the strip shows ${still.barsShown.length} of ${n} bars`);
 
       if (name === "snapshots") {
         // The edits' callouts as tags, measured inside the frame's own
@@ -365,7 +342,9 @@ export async function run({ keep } = {}) {
           `["wireframe-snapshots", "wireframe-snapshot-frames"].filter((id) => !(window.__instrumentSource ?? "").includes(\`id="\${id}"\`))`,
         );
         if (shared.length)
-          fail(`the copy the Share button publishes lacks ${shared.join(" and ")}`);
+          fail(
+            `the copy the Share button publishes lacks ${shared.join(" and ")}`,
+          );
         const several = await missedBy(`($) => $({ contains: "/ month" })`);
         if (!/matches 2 elements.*nth/.test(several.thrown))
           fail(`a target matching two throws "${several.thrown}"`);

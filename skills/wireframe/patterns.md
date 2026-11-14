@@ -2,27 +2,6 @@
 
 How the pieces of a wireframe page work, beyond what `SKILL.md` covers.
 
-## How a frame is built
-
-Each frame is two nested boxes. The outer box takes the scaled size, and the inner box is laid out at true size and scaled down into it:
-
-```html
-<div
-  class="frame w-[calc(var(--w)*var(--s))] h-[calc(var(--h)*var(--s))] overflow-hidden"
-  data-w="1280"
-  data-h="800"
-  style="--w:1280px; --h:800px; --s:0.2"
->
-  <div class="w-[var(--w)] h-[var(--h)] origin-top-left scale-[var(--s)]">
-    …
-  </div>
-</div>
-```
-
-The grid lays out the outer box, and the drawing lives in the inner one. Only `--s` changes. Everything here is Tailwind arbitrary values and CSS variables, so the page needs no stylesheet of its own.
-
-The inline style gives `--s` a reasonable starting value, so the first paint isn't full size. The layout pass replaces it a moment later.
-
 ## Common sizes
 
 | Thing              | Draw it at            |
@@ -76,29 +55,17 @@ const states = [
 ## Marks
 
 ```js
-noted(someRow, "named by AI"); // your few words, beside the frame enlarged and on an orange ring in the grid
+noted(someRow, "named by AI"); // your few words, over the frame when the reader presses A
 fresh(chip("Frozen", "bg-error-100 text-error-700")); // NEW, only on a revision
 ```
 
-`clickable` and `cursor` draw nothing, and stay so older pages and kits still build.
-
-You can also put `ann` on its own inside any element to mark that element. That's how you put a ring on something the kit built:
+You can also put `ann("words")` on its own inside any element to mark that element, which is how you mark something a kit built:
 
 ```js
 `<div>${field("Card number", { value: "•••• 4417" })}${ann("saved to Keychain")}</div>`;
 ```
 
-Each helper leaves an invisible marker inside the element. After render, `drawMarks` measures every marked element against its frame and draws the ring and its words on one layer over the whole frame, which keeps the list of what it measured. That way a mark never changes the element's size, and no `overflow-hidden` parent can clip it. Rings and words keep one size on screen at any scale, so they read in the grid and stay small when zoomed. The words sit on the ring's top edge, so they cover a thin strip and nothing beside the element. Enlarged, where the window has room beside the frame, the viewer writes that list into the margin instead: each callout's words level with what they name, with a short tick on the frame's edge, and the rings and tags over the drawing stay off. Each time a frame comes up, a spotlight dims it for a moment everywhere but the elements named.
-
-That layer has the class `ann`, as does anything else the reader can switch on and off. Over the drawing, marks start hidden, and the Callouts button (`A`) shows them all by setting `data-marks="on"` on the body. Enlarged beside a margin, the same switch holds the spotlight and draws a leader from each callout's words to its element. One rule hides them whenever it isn't set:
-
-```css
-body:not([data-marks="on"]) .ann {
-  display: none;
-}
-```
-
-The rule sits on the body, so it covers both the grid and the enlarged view, which is a copy of the frame placed inside the same body. If you draw a mark by hand instead of through the kit, give it the `ann` class. Otherwise it stays visible while marks are off, which is worse than having no button at all. A mark drawn by hand shows only with the switch on: it has no words in the margin and no place in the spotlight, so put `ann("words")` inside the element where you can. If the reader should never lose a callout, it isn't an annotation. Draw it inside the frame as real interface.
+Each helper leaves an invisible marker inside the element, and the viewer measures it after render, so a mark never changes the element's size and no `overflow-hidden` parent clips it. If you draw a mark by hand instead, give it the class `ann` so it hides with the rest when callouts are off. If the reader should never lose a callout, it isn't an annotation: draw it inside the frame as real interface.
 
 ## Frames from a snapshot
 
@@ -137,11 +104,11 @@ Each returns the element, so edits chain. Edits mark nothing: mark only what the
 - `.html("…")` replaces the insides, and `.replace("…")` the element itself.
 - `.before("…")`, `.after("…")`, `.append("…")` and `.prepend("…")` add HTML, or a clone, beside or inside it.
 - `.clone()` copies an element to change and then place: `$("Basic").up("li").clone().find("Basic").text("Team")` and then `$("Pro").up("li").after(copy)`.
-- `.remove()` takes it out, and `.hide()` keeps its room and draws nothing.
+- `.remove()` takes it out.
 - `.attr(name, value)` sets an attribute, and `null` removes it. `.addClass("…")` and `.removeClass("…")` change classes.
 - `.look(target)` takes another element's classes, so a link can take a button's look.
 - `.css("width: 320px")` adds inline style.
-- `.note("words")` puts a callout on it, like `noted`, and `.fresh()` NEW, like `fresh`. `noted`, `fresh` and `ann` inside HTML you add mark the element that holds them. `.click()` draws nothing, like `clickable`.
+- `.note("words")` puts a callout on it, like `noted`, and `.fresh()` NEW, like `fresh`. `noted`, `fresh` and `ann` inside HTML you add mark the element that holds them.
 
 What you add is styled by the snapshot's own stylesheets, which keep only the rules its page used, so reach for `.look()`, `.clone()` or inline `style` before a class the page never had.
 
@@ -171,7 +138,3 @@ Wrap them in `space-y-2.5`. Vary the width of the last bar, because three bars a
 The kit in `main.html` is a starting point. A file that draws six phones has no use for `win`, `web`, `shell`, `grid` or `group`, and every one you leave behind is a function the next reader has to check for callers. Delete whatever you don't call.
 
 It works the other way too. If your frames repeat something the kit doesn't cover, write a small function that returns it as a string. That's most of what keeps these files short, and it's why a six-frame file isn't six copies of one window.
-
-## Printing
-
-Tiles have `break-inside-avoid`, so no frame splits across a page break when you print. Frames print at the scale they have on screen, so print from a window the width you want on paper. The enlarged view and the grid toggle have `print:hidden`, and nothing else needs a print rule.

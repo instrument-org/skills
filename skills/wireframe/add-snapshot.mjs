@@ -30,10 +30,9 @@ export function readSnapshot(text) {
     throw new Error(
       "not a snapshot: expected snapshot.js's output, or an HTML document",
     );
-  const meta =
-    /<meta name="(?:wireframe-snapshot|walkthrough-still)" content="(\d+)x(\d+)/.exec(
-      snap.html,
-    );
+  const meta = /<meta name="wireframe-snapshot" content="(\d+)x(\d+)/.exec(
+    snap.html,
+  );
   return {
     w: snap.w ?? Number(meta?.[1] ?? 1280),
     h: snap.h ?? Number(meta?.[2] ?? 800),
@@ -169,10 +168,6 @@ const main = () => {
         ? `; over the 8 MB a shared link takes, so remove a snapshot you don't draw from`
         : ""),
   );
-  if (!page.includes("wireframe:remark"))
-    console.log(
-      "This page's viewer is older than snapshot frames: callouts on them draw only once you reload. Make the page again with new.mjs.",
-    );
 };
 
 if (

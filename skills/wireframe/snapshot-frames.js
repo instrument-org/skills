@@ -166,7 +166,7 @@
    * A frame from the snapshot `name`, edited by `edit($)`. `$(target)` finds
    * exactly one element by what a person reads and hands back its edits.
    * Edits mark nothing: a callout is drawn only where the frame asks for one,
-   * with `.note()`, `.fresh()` or `.mark()`, or with `noted()`, `fresh()` or
+   * with `.note()` or `.fresh()`, or with `noted()`, `fresh()` or
    * `ann()` in HTML it inserts.
    * A target that matches nothing, or several, draws the frame as an error
    * that says so, and is thrown after the page draws, so a check of the
@@ -188,8 +188,7 @@
     try {
       size = page(name);
     } catch {}
-    const esc = (s) =>
-      String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
     return `<div data-snap-broken style="width:${size.w}px;height:${size.h}px;display:flex;align-items:center;justify-content:center;padding:48px;background:#fef2f2;color:#7f1d1d;font:500 20px/1.5 system-ui,sans-serif;text-align:left"><div style="max-width:720px"><div style="font-weight:600;margin-bottom:8px">This frame can't be drawn.</div><div style="font:400 16px/1.5 ui-monospace,monospace;color:#991b1b">${esc(error instanceof Error ? error.message : error)}</div><div style="margin-top:12px;font-size:16px;color:#7f1d1d">An edit names something this snapshot doesn't have, usually because the page changed since the wireframe was made.</div></div></div>`;
   };
   const draw = (name, edit) => {
@@ -306,14 +305,6 @@
           el.remove();
           return w;
         },
-        /** Keeps its room and draws nothing. */
-        hide: () => {
-          el.setAttribute(
-            "style",
-            `${el.getAttribute("style") ?? ""};visibility:hidden`,
-          );
-          return w;
-        },
         attr: (n, v) => {
           if (v === null) el.removeAttribute(n);
           else el.setAttribute(n, v);
@@ -348,14 +339,9 @@
           markOn(el, words);
           return w;
         },
-        /** NEW on this element, like fresh(), for a change no edit marked. */
+        /** NEW on this element, like fresh(). */
         fresh: () => {
           markOn(el, "new");
-          return w;
-        },
-        /** `.mark()` is NEW and `.mark("words")` a callout, as #note and #fresh. */
-        mark: (label = "new") => {
-          markOn(el, label);
           return w;
         },
         /** Draws nothing, like clickable(): a button already reads as clickable. */

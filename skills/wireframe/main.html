@@ -1043,8 +1043,7 @@
         const cursor = "";
 
         /** Wraps a block so it can be marked: a row, a card, a page section. */
-        const noted = (inner, label, tone = "click", { pointer = false, cls = "" } = {}) =>
-          `<div class="${cls}">${inner}${ann(label, tone)}${pointer ? cursor : ""}</div>`;
+        const noted = (inner, label, tone = "click", { cls = "" } = {}) => `<div class="${cls}">${inner}${ann(label, tone)}</div>`;
         const clickable = (inner, cls = "") => `<div class="${cls}">${inner}</div>`;
         const fresh = (inner, cls = "") => noted(inner, "new", "new", { cls });
 
@@ -1203,15 +1202,9 @@
             const frame = root.parentElement;
             const s = frame.getBoundingClientRect().width / Number(frame.dataset.w) || 1;
             const rr = root.getBoundingClientRect();
-            // A ring and a pointer on one element draw as one mark.
+            // Two markers on one element draw as one mark, the last one's.
             const groups = new Map();
-            for (const m of markers) {
-              const el = m.parentElement;
-              const g = groups.get(el) || { el, label: m.dataset.label, tone: m.dataset.tone, pointer: false };
-              if ("pointer" in m.dataset) g.pointer = true;
-              else Object.assign(g, { label: m.dataset.label, tone: m.dataset.tone });
-              groups.set(el, g);
-            }
+            for (const m of markers) groups.set(m.parentElement, { el: m.parentElement, label: m.dataset.label, tone: m.dataset.tone });
             const layer = document.createElement("div");
             layer.className = "marks ann";
             layer.list = [];
@@ -1222,7 +1215,7 @@
               const y = (r.top - rr.top) / s;
               const w = r.width / s;
               const h = r.height / s;
-              const words = g.pointer || !g.label || g.label === "click" ? "" : g.label;
+              const words = !g.label || g.label === "click" ? "" : g.label;
               // The Markdown a shared link answers with holds every element's
               // text, hidden or not, so a tag's words are drawn from an
               // attribute like the page's own controls, and the mark reads as

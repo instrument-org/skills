@@ -5,7 +5,7 @@ description: "Use when asked to wireframe, mock up or sketch a product screen or
 
 # Wireframe
 
-This skill draws a flow through a piece of software as a grid of frames. We draw each frame at the real size of the screen and scale it down to fit, with a title and a short note under it. Callouts name a region of a frame in a few words, or NEW. Enlarged, their words sit in the margin beside the frame, level with what they name, and each time a frame comes up it dims for a moment everywhere but the regions named. In the grid they are thin rings with the words on them, hidden until the reader shows them with a button or the `A` key; enlarged, `A` holds the dimming and draws a line from each callout's words to its region. A slider in the title bar sets how many frames a row holds, from one at the full width to four across. Tapping a frame enlarges it, and adding `?frame=3` to the URL opens the page with the third frame enlarged. Enlarged, a frame can be pinched, scrolled with Cmd or Ctrl held, or stepped with + and −, up to four times its true size, and dragged about. A double tap zooms in at that spot and back, 1 is true size and 0 is fit, and the next frame opens at the same spot, so one screen can be compared across its states at a detail. The enlarged view names the frame at the top left, with its note under it, and holds a strip of the frames along the bottom. The arrow keys step through the frames, and on a touch screen prev and next are buttons under the thumbs. Zoomed, the controls fade so the drawing has the screen. The page itself never zooms there, so on a phone the controls stay put. The line under the title is also the page's description, which a link preview shows under the title, and a link with `?frame=3` shows that frame's title and note instead.
+This skill draws a flow through a piece of software as a grid of frames. We draw each frame at the real size of the screen and scale it down to fit, with a title and a short note under it. Callouts outline a region of a frame, and their words show over it when the reader presses `A`. Tapping a frame enlarges it, the arrow keys step through the frames, and adding `?frame=3` to the URL opens the page at the third frame. The line under the title is also the page's description, which a link preview shows, and a link with `?frame=3` shows that frame's title and note instead.
 
 ## When to use it
 
@@ -21,8 +21,7 @@ Don't use it for:
 
 `<skill>` is the full path to this skill's folder. Run commands from the task folder.
 
-- `new.mjs` writes a new wireframe page from the two files below. Inside a git repository, it adds an `instrument:repo` meta tag with the repository's name, so wireframes from several products can share one folder and still be told apart.
-- `repo.mjs` provides that name and meta tag, for a project's own kit to call when it builds pages itself.
+- `new.mjs` writes a new wireframe page from the two files below.
 - `shell.html` is the page shell. It holds Studio's theme as Tailwind tokens, the compiled stylesheet, the pinned Tailwind browser build, the icon set, and the share widget with its Share button. We draw frames with Tailwind classes, and projects' own wireframe kits do too. Don't edit anything between `shell:start` and `shell:end`.
 - `share.mjs` and `share.py` publish a finished page to a link (see "Hand it over" below).
 - `prototype.html` holds the other kind of page: one live screen instead of a grid (see "A prototype instead of frames" below).
@@ -73,7 +72,7 @@ agent-browser errors
 agent-browser screenshot checkout.png
 ```
 
-`errors` must come back empty, so fix the script until it does. Then look at the screenshot and make sure every frame is drawn, each one has its caption, and nothing is cut off. Marks start hidden, so press `A` and take a second screenshot to check that each ring sits on the element it names. The browser can only open the page if it's in the task folder or a folder the user granted. If you have no browser tool, tell the user you couldn't check the page.
+`errors` must come back empty, so fix the script until it does. Then look at the screenshot and make sure every frame is drawn, each one has its caption, and nothing is cut off. Marks start hidden, so press `A` and take a second screenshot to check that each callout sits on the element it names. The browser can only open the page if it's in the task folder or a folder the user granted. If you have no browser tool, tell the user you couldn't check the page.
 
 ## Frames from a snapshot
 
@@ -114,7 +113,7 @@ const states = [
 ```
 
 - `$(target)` finds exactly one element by its words, a role, a label or a selector (every target and edit is in "Frames from a snapshot" in `patterns.md`). A target that matches nothing or several draws that frame as an error and throws one naming the close matches, which `agent-browser errors` shows.
-- Edits mark nothing. `.note("words")` adds a callout and `.fresh()` NEW, and `noted` or `fresh` inside HTML you add works too. `.click()` draws nothing, like `clickable`.
+- Edits mark nothing. `.note("words")` adds a callout and `.fresh()` NEW, and `noted` or `fresh` inside HTML you add works too.
 - The snapshot keeps only the style rules its page used, so style what you add with `.look(target)`, a `.clone()` of a neighbor, or inline `style`.
 - Frames draw as they come near the screen, so before a full-page screenshot run `agent-browser eval 'dispatchEvent(new Event("beforeprint"))'`.
 
