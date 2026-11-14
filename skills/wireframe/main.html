@@ -50,7 +50,7 @@
           width: calc(var(--w) + 8 * var(--k));
           height: calc(var(--h) + 8 * var(--k));
           border-radius: calc(6 * var(--k));
-          box-shadow: 0 0 0 calc(1.5 * var(--k)) var(--line);
+          box-shadow: 0 0 0 var(--k) rgb(24 24 27 / 0.6);
         }
         /* The words sit on the ring's top edge, 6px in from its left, or its
            right where the frame's edge is near, and just inside the ring
@@ -65,7 +65,7 @@
           height: calc(16 * var(--k));
           padding: 0 calc(5 * var(--k));
           border-radius: calc(4 * var(--k));
-          background: var(--tag);
+          background: rgb(24 24 27 / 0.9);
           color: #fff;
           box-shadow: 0 0 0 var(--k) #fff;
           font: 600 calc(10 * var(--k)) / 1 Inter, ui-sans-serif, system-ui, sans-serif;
@@ -256,58 +256,71 @@
           opacity: 0.45;
         }
 
-        /* Enlarged, each callout's words sit in the margin beside the frame,
-           level with what they name, on the side it is nearer, in the
-           viewer's own ink; NEW, or Click for a mark with no words, in small
-           bold capitals before what it names. A short tick on the frame's edge stands
-           level with each element, and A swaps the ticks for leaders. The
-           margin is the same for every frame of the page, so stepping
-           through frames never moves the drawing. While it shows, the rings
-           and tags over the drawing stay off. */
-        #margin {
+        /* Enlarged, the frame's callouts are its spotlight alone until the
+           reader presses A, which draws each callout's words in a small ink
+           tag over the drawing beside what it names, joined to it by a
+           hairline that ends in a dot, with a hairline outline round the
+           element. NEW is a word in small dimmed capitals, never a color.
+           While the tags layer is drawn, the rings and tags inside the frame
+           stay off; zoomed in, or in the grid, those take A instead. */
+        #tags {
           position: absolute;
           inset: 0;
           z-index: 1;
           pointer-events: none;
-          font: 11px/14px Inter, ui-sans-serif, system-ui, sans-serif;
-          color: var(--vw-ink);
         }
-        #margin svg {
+        #tags svg {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           overflow: visible;
         }
-        #margin .mw {
+        #tags .tg {
           position: absolute;
+          max-width: 240px;
+          padding: 3px 7px 4px;
+          border-radius: 5px;
+          background: rgb(24 24 27 / 0.9);
+          color: #fff;
+          font: 500 11px/14px Inter, ui-sans-serif, system-ui, sans-serif;
+          letter-spacing: -0.003em;
           text-wrap: pretty;
+          box-shadow:
+            0 1px 2px rgb(0 0 0 / 0.18),
+            0 4px 12px rgb(0 0 0 / 0.12);
         }
-        #margin .mw.l {
-          text-align: right;
-        }
-        #margin .mw b {
-          font-size: 9.5px;
-          font-weight: 600;
-          letter-spacing: 0.06em;
+        #tags .tg b {
+          font-size: 9px;
+          font-weight: 650;
+          letter-spacing: 0.07em;
           text-transform: uppercase;
+          color: rgb(255 255 255 / 0.6);
         }
-        #margin .mw.new span {
-          color: var(--vw-dim);
+        #tags .tg b + span {
+          margin-left: 4px;
         }
-        #margin .tick {
-          stroke: rgb(255 255 255 / 0.55);
-          stroke-width: 1.5;
+        #tags .tg-lead {
+          stroke: rgb(24 24 27 / 0.75);
+          stroke-width: 1;
+          fill: none;
         }
-        #margin .lead path {
-          stroke: rgb(255 255 255 / 0.5);
+        #tags .tg-dot {
+          fill: rgb(24 24 27 / 0.9);
+          stroke: #fff;
+          stroke-width: 1.25;
         }
-        #margin .lead circle {
-          fill: rgb(255 255 255 / 0.75);
+        #tags .tg-box {
+          fill: none;
+          stroke: rgb(24 24 27 / 0.55);
+          stroke-width: 1;
         }
-        body:not([data-marks="on"]) #margin .lead,
-        body[data-marks="on"] #margin .tick,
-        #viewer[data-margin] #stage :is(.mark-ring, .mark-tag) {
+        /* Hidden rather than removed, so the tags are measured and placed
+           before A shows them. */
+        body:not([data-marks="on"]) #tags {
+          visibility: hidden;
+        }
+        #viewer[data-tags] #stage :is(.mark-ring, .mark-tag) {
           display: none;
         }
 
@@ -351,10 +364,10 @@
             opacity: 1;
           }
         }
-        /* Cmd+. takes the margin and the spotlight with the rest of the
-           chrome. Hidden rather than removed, so the words keep the places
+        /* Cmd+. takes the tags and the spotlight with the rest of the
+           chrome. Hidden rather than removed, so the tags keep the places
            they were measured at; nothing inside may set visibility back. */
-        body[data-chrome="off"] :is(#margin, #spot) {
+        body[data-chrome="off"] :is(#tags, #spot) {
           visibility: hidden;
         }
       </style>
@@ -869,7 +882,7 @@
       >
         <div id="stage" autofocus tabindex="-1"></div>
         <svg id="spot" aria-hidden="true"></svg>
-        <div id="margin"></div>
+        <div id="tags"></div>
         <div id="viewer-map" hidden><div class="map-frame"></div><div class="map-view"></div></div>
         <div id="viewer-top">
           <div class="ident">
@@ -1047,15 +1060,14 @@
           </div>`;
 
         // ---- annotations -----------------------------------------------------
-        // For the reader, not the product: a thin ring round a region, in two
-        // colors no interface uses for itself. Orange marks a region, with a
-        // few words on its ring when you have something to say about it
-        // (`noted`); violet with NEW marks what a revision changed (`fresh`).
-        // `clickable` and `cursor` draw nothing: a button already reads as
-        // clickable. They stay so pages and kits that use them still build.
-        // Never a
-        // green row or a check mark standing in for any of them, because those
-        // look like the design.
+        // For the reader, not the product: a hairline round a region in the
+        // viewer's ink, never a color, so it can't be mistaken for the
+        // design. `noted` marks a region with a few words when you have
+        // something to say about it; `fresh` marks what a revision changed,
+        // which reads NEW. `clickable` and `cursor` draw nothing: a button
+        // already reads as clickable. They stay so pages and kits that use
+        // them still build. Never a green row or a check mark standing in for
+        // any of them, because those look like the design.
         //
         // The helpers leave an invisible marker inside the element they name;
         // the ring and tag are drawn after render on a layer over the whole
@@ -1065,12 +1077,7 @@
         // hand: a ring without it stays on when the reader asked for the
         // drawing on its own.
 
-        const TONE = {
-          click: { line: "#ea580c", tag: "#c2410c" },
-          new: { line: "#8b5cf6", tag: "#6d28d9" },
-        };
-
-        /** Marks the element that contains it: `label` is the tag's word, `tone` its color. */
+        /** Marks the element that contains it: `label` is the tag's word. `tone` is kept for pages that pass one; every mark is ink. */
         const ann = (label, tone = "click") => `<i class="mark" data-label="${label}" data-tone="${tone}"></i>`;
 
         /** Draws nothing; kept for pages and kits that mark the thing being clicked. */
@@ -1203,10 +1210,10 @@
         // so the layer scales with the drawing. The enlarged copies of a frame
         // are measured again once they are on screen, since a copy taken
         // before the page settled carries a layer measured too early. A click,
-        // or a mark with no words, is a bare ring; "new" puts NEW on a violet
-        // ring; any other word is a note, written on an orange ring. Each
-        // layer keeps the list of its marks, which the enlarged view writes
-        // into the margin beside the frame.
+        // or a mark with no words, is a bare ring; "new" puts NEW on its
+        // ring; any other word is a note on its ring. Each layer keeps the
+        // list of its marks, which the enlarged view draws as tags over the
+        // frame.
         // The part of an element its frame actually shows: its box cut by
         // every ancestor up to the frame that clips or scrolls, so a callout
         // on a long list in a scrolled pane names the rows on screen, not
@@ -1252,9 +1259,8 @@
               const y = (r.top - rr.top) / s;
               const w = r.width / s;
               const h = r.height / s;
-              const tone = TONE[g.tone] || TONE.click;
               const words = g.pointer || !g.label || g.label === "click" ? "" : g.label;
-              const vars = `--x:${x}px;--y:${y}px;--w:${w}px;--h:${h}px;--fw:${fw}px;--line:${tone.line};--tag:${tone.tag}`;
+              const vars = `--x:${x}px;--y:${y}px;--w:${w}px;--h:${h}px;--fw:${fw}px`;
               const side = [x + (words.length * 7 + 18) / s > fw ? "end" : "", y < 12 / s ? "in" : ""].join(" ").trim();
               layer.insertAdjacentHTML(
                 "beforeend",
@@ -1273,13 +1279,10 @@
               note.className = "mark-note";
               note.textContent = `(${g.label} mark${on ? `: ${on}` : ""})`;
               layer.append(note);
-              // In the margin, what a click or NEW sits on is named by its
-              // first line of text.
-              const first = (g.el.innerText || "").split("\n").map((l) => l.trim()).find(Boolean) || icons;
-              layer.list.push({ x, y, w, h, label: g.label, words, on: first.length > 32 ? `${first.slice(0, 32)}…` : first });
+              layer.list.push({ x, y, w, h, label: g.label, words });
             }
             root.appendChild(layer);
-            if (root.closest("#stage")) paintMargin(true);
+            if (root.closest("#stage")) paintTags(true);
           }
         };
 
@@ -1558,15 +1561,10 @@
         // Room round the frame at fit: none on a phone, where every pixel of
         // width is the drawing's.
         const pad = () => (innerWidth < 640 || short.matches ? 0 : 16);
-        // Room each side of the frame for its callouts' words, the same for
-        // every frame of a page that has any, so the drawing holds still from
-        // frame to frame. A screen too narrow to spare it keeps the callouts
-        // over the drawing instead.
-        const sideRoom = () => (callouts.some(Boolean) && innerWidth >= 1000 && !short.matches ? Math.round(Math.min(180, innerWidth * 0.1)) : 0);
         const fitScale = (frame = frameOf()) => {
           const { w, h } = sizeOf(frame);
           const p = pad();
-          return Math.max(0.05, Math.min((stage.clientWidth - p * 2 - sideRoom() * 2) / w, (stage.clientHeight - topH - bottomH - p * 2) / h));
+          return Math.max(0.05, Math.min((stage.clientWidth - p * 2) / w, (stage.clientHeight - topH - bottomH - p * 2) / h));
         };
 
         // ---- the note and the thumbnail --------------------------------------
@@ -1794,7 +1792,7 @@
           openIndex = -1;
           stage.querySelector(".frame")?.remove();
           stopSpotFade();
-          paintMargin();
+          paintTags();
           viewer.removeAttribute("data-controls");
           viewer.removeAttribute("data-zoomed");
           setFrameParam(null);
@@ -2067,90 +2065,181 @@
           drawSpot();
         };
 
-        // ---- callouts in the margin -------------------------------------------
-        // Each callout's words beside the frame, level with the element where
-        // the words above leave room, a tick on the frame's edge, and a
-        // leader from the words to the element for A, drawn in the margin's
-        // own layer so it can cross the frame. Only at fit and with room to
-        // spare: zoomed in, or on a narrow screen, the callouts are over the
-        // drawing, behind A.
-        const marginEl = document.querySelector("#margin");
+        // ---- callouts as tags over the frame ---------------------------------
+        // For A, each callout's words in a tag over the drawing, joined to
+        // what it names by a hairline. A tag takes the place near its element
+        // that hides the least of the drawing's text, other tags and other
+        // named elements, with the shortest hairline that crosses the least of
+        // them, and a frame's tags lean to one side together where
+        // that costs little, so a run of them reads as a column rather than a
+        // scatter. A mark with no words draws its outline alone; a bare NEW
+        // reads New. Only at fit: zoomed in, the rings inside the frame take
+        // A instead.
+        const tagsEl = document.querySelector("#tags");
         const NS = "http://www.w3.org/2000/svg";
         const quote = (t) => t.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
         const wordsOf = (m) => {
-          const kind = m.label === "new" ? "New" : m.words ? "" : "Click";
-          return kind ? `<b data-chrome-text="${kind}"></b> <span data-chrome-text="${quote(m.on)}"></span>` : `<span data-chrome-text="${quote(m.words)}"></span>`;
+          if (m.label === "new") return `<b data-chrome-text="New"></b>`;
+          return m.words ? `<span data-chrome-text="${quote(m.words)}"></span>` : "";
         };
-        const paintMargin = (redrawn = false) => {
+        const TAG_GAPS = [12, 28, 52, 84, 130, 190];
+        const paintTags = (redrawn = false) => {
           paintSpot(redrawn);
           const frame = frameOf();
           const layer = frame?.querySelector(".marks");
-          const room = sideRoom();
-          const shown = viewer.open && frame && !isZoomed && room > 0;
-          viewer.toggleAttribute("data-margin", Boolean(shown));
+          const shown = viewer.open && frame && !isZoomed;
+          viewer.toggleAttribute("data-tags", Boolean(shown));
           if (!shown || !layer?.list?.length) {
-            marginEl.replaceChildren();
-            marginEl.dataset.at = "";
+            tagsEl.replaceChildren();
+            tagsEl.dataset.at = "";
             return;
           }
           const s = view.s;
           const fx = view.x;
           const fy = view.y;
-          const fw = sizeOf(frame).w * s;
-          const at = [openIndex, fx, fy, s, innerHeight].join();
-          if (!redrawn && marginEl.dataset.at === at) return;
-          marginEl.dataset.at = at;
-          marginEl.replaceChildren();
+          const { w, h } = sizeOf(frame);
+          const at = [openIndex, fx, fy, s, innerWidth, innerHeight].join();
+          if (!redrawn && tagsEl.dataset.at === at) return;
+          tagsEl.dataset.at = at;
+          tagsEl.replaceChildren();
           const svg = document.createElementNS(NS, "svg");
-          marginEl.append(svg);
-          const sides = { l: [], r: [] };
-          for (const m of layer.list) {
-            const ex = fx + m.x * s;
-            const ey = fy + m.y * s;
-            const ew = m.w * s;
-            const eh = m.h * s;
-            sides[ex + ew / 2 < fx + fw / 2 ? "l" : "r"].push({ ...m, ex, ey, ew, eh, cy: ey + Math.min(eh / 2, 12) });
-          }
-          const bottom = stage.clientHeight - bottomH - 8;
-          for (const [side, items] of Object.entries(sides)) {
-            items.sort((a, b) => a.cy - b.cy);
-            const els = items.map((m) => {
-              const el = document.createElement("div");
-              el.className = `mw ${side}${m.label === "new" ? " new" : ""}`;
-              el.style.width = `${room - 24}px`;
-              if (side === "l") el.style.right = `${marginEl.clientWidth - fx + 14}px`;
-              else el.style.left = `${fx + fw + 14}px`;
-              el.innerHTML = wordsOf(m);
-              marginEl.append(el);
-              return el;
-            });
-            // Down from the top, each below the last; then up from the bottom
-            // of the clear area, so a long run never leaves the screen.
-            const tops = [];
-            let floor = topH + 4;
-            items.forEach((m, k) => {
-              tops[k] = Math.max(m.cy - 7, floor);
-              floor = tops[k] + els[k].offsetHeight + 6;
-            });
-            let ceiling = bottom;
-            for (let k = items.length - 1; k >= 0; k--) {
-              tops[k] = Math.min(tops[k], ceiling - els[k].offsetHeight);
-              ceiling = tops[k] - 6;
+          tagsEl.append(svg);
+          const base = tagsEl.getBoundingClientRect();
+          // The drawing's text as boxes on the stage, the frame's own and a
+          // snapshot's inside its iframe.
+          const ink = [];
+          const readInk = (root, ox, oy, k) => {
+            const walk = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+            const range = root.ownerDocument.createRange();
+            for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+              if (!n.textContent.trim() || n.parentElement.closest(".marks, .mark-note")) continue;
+              range.selectNodeContents(n);
+              for (const r of range.getClientRects()) if (r.width > 1 && r.height > 1) ink.push({ x: ox + r.left * k, y: oy + r.top * k, w: r.width * k, h: r.height * k });
             }
-            items.forEach((m, k) => {
-              els[k].style.top = `${tops[k]}px`;
-              const ly = tops[k] + 7;
-              const edge = side === "l" ? fx : fx + fw;
-              const out = side === "l" ? -1 : 1;
-              const px = side === "l" ? m.ex : m.ex + m.ew;
-              const py = Math.min(Math.max(ly, m.ey + Math.min(4, m.eh / 2)), m.ey + m.eh - Math.min(4, m.eh / 2));
-              const ty = m.ey + Math.min(m.eh / 2, 10);
-              svg.insertAdjacentHTML(
-                "beforeend",
-                `<g class="lead"><path d="M${px} ${py} L${edge} ${ly} L${edge + out * 10} ${ly}" fill="none" stroke-width="1.25"/><circle cx="${px}" cy="${py}" r="2.5"/></g>` +
-                  `<path class="tick" d="M${edge + out * 3} ${ty} h${out * 7}"/>`,
-              );
-            });
+          };
+          readInk(frame, -base.left, -base.top, 1);
+          for (const f of frame.querySelectorAll("iframe")) {
+            try {
+              const b = f.getBoundingClientRect();
+              if (f.contentDocument?.body && f.offsetWidth) readInk(f.contentDocument.body, b.left - base.left, b.top - base.top, b.width / f.offsetWidth);
+            } catch {}
+          }
+          const overlap = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+          const items = layer.list
+            .map((m) => ({ ...m, ex: fx + m.x * s, ey: fy + m.y * s, ew: m.w * s, eh: m.h * s }))
+            .sort((a, b) => a.ey - b.ey || a.ex - b.ex);
+          const named = items.map((m) => ({ x: m.ex, y: m.ey, w: m.ew, h: m.eh }));
+          const clear = {
+            x0: Math.max(fx, 0) + 6,
+            y0: Math.max(fy, topH) + 6,
+            x1: Math.min(fx + w * s, tagsEl.clientWidth) - 6,
+            y1: Math.min(fy + h * s, stage.clientHeight - bottomH) - 6,
+          };
+          const els = items.map((m) => {
+            const html = wordsOf(m);
+            if (!html) return null;
+            const el = document.createElement("div");
+            el.className = "tg";
+            el.innerHTML = html;
+            tagsEl.append(el);
+            // Two shapes to place: its natural width up to the cap, and a
+            // narrower one for a tight gap. The one chosen is held, so a tag
+            // placed near the frame's edge never wraps again.
+            const wide = el.offsetWidth;
+            el.style.width = `${Math.min(wide, 130)}px`;
+            el.shapes = [
+              { tw: wide, th: 0, extra: 0 },
+              { tw: el.offsetWidth, th: el.offsetHeight, extra: 15 },
+            ];
+            el.style.width = `${wide}px`;
+            el.shapes[0].th = el.offsetHeight;
+            if (el.shapes[1].tw >= wide) el.shapes.pop();
+            return el;
+          });
+          // The hairline from the nearest point of an element's outline to
+          // the nearest edge of its tag.
+          const lineOf = (m, at) => {
+            const px = Math.min(Math.max(at.x + at.tw / 2, m.ex - 3), m.ex + m.ew + 3);
+            const py = Math.min(Math.max(at.y + at.th / 2, m.ey - 3), m.ey + m.eh + 3);
+            return [px, py, Math.min(Math.max(px, at.x), at.x + at.tw), Math.min(Math.max(py, at.y), at.y + at.th)];
+          };
+          const layout = (lean) => {
+            const placed = [];
+            const spots = [];
+            let total = 0;
+            for (const [k, m] of items.entries()) {
+              if (!els[k]) {
+                spots.push(null);
+                continue;
+              }
+              const tries = [];
+              for (const { tw, th, extra } of els[k].shapes)
+              for (const [i, gap] of TAG_GAPS.entries()) {
+                const midY = m.ey + Math.min(m.eh, 40) / 2 - th / 2;
+                const midX = m.ex + m.ew / 2 - tw / 2;
+                const far = gap * 0.6 + i * 6 + extra;
+                for (const [y, off] of [
+                  [midY, 0],
+                  [m.ey, 5],
+                  [m.ey + m.eh - th, 5],
+                ]) {
+                  tries.push({ x: m.ex + m.ew + gap, y, side: "r", cost: far + off, tw, th });
+                  tries.push({ x: m.ex - gap - tw, y, side: "l", cost: 10 + far + off, tw, th });
+                }
+                tries.push({ x: midX, y: m.ey - gap - th, side: "t", cost: 20 + far, tw, th });
+                tries.push({ x: m.ex, y: m.ey - gap - th, side: "t", cost: 25 + far, tw, th });
+                tries.push({ x: m.ex + m.ew - tw, y: m.ey - gap - th, side: "t", cost: 25 + far, tw, th });
+                tries.push({ x: midX, y: m.ey + m.eh + gap, side: "b", cost: 30 + far, tw, th });
+                tries.push({ x: m.ex, y: m.ey + m.eh + gap, side: "b", cost: 35 + far, tw, th });
+                tries.push({ x: m.ex + m.ew - tw, y: m.ey + m.eh + gap, side: "b", cost: 35 + far, tw, th });
+              }
+              let best = null;
+              for (const t of tries) {
+                const { tw, th } = t;
+                t.x = Math.min(Math.max(t.x, clear.x0), clear.x1 - tw);
+                t.y = Math.min(Math.max(t.y, clear.y0), clear.y1 - th);
+                const box = { x: t.x - 4, y: t.y - 4, w: tw + 8, h: th + 8 };
+                let c = t.cost + (t.side === lean ? 0 : 40);
+                for (const r of ink) c += overlap(box, r) * 2;
+                for (const r of named) c += overlap({ x: t.x, y: t.y, w: tw, h: th }, r) * 50;
+                for (const r of placed) c += overlap(box, r) * 100;
+                // The hairline costs by its length, and, sampled every 3px,
+                // by each sample on text, another named element or a tag.
+                const [px, py, qx, qy] = lineOf(m, t);
+                const length = Math.hypot(qx - px, qy - py);
+                c += length * 0.3;
+                const steps = Math.floor(length / 3);
+                const on = (r, x, y) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+                for (let j = 1; j < steps; j++) {
+                  const x = px + ((qx - px) * j) / steps;
+                  const y = py + ((qy - py) * j) / steps;
+                  if (ink.some((r) => on(r, x, y))) c += 8;
+                  if (named.some((r, n) => n !== k && on(r, x, y))) c += 12;
+                  if (placed.some((r) => on(r, x, y))) c += 40;
+                }
+                if (!best || c < best.c) best = { ...t, c };
+              }
+              total += best.c;
+              spots.push(best);
+              placed.push({ x: best.x - 4, y: best.y - 4, w: best.tw + 8, h: best.th + 8 });
+            }
+            return { total, spots };
+          };
+          const plan = ["r", "l", "t", "b"].map(layout).reduce((a, b) => (b.total < a.total ? b : a));
+          for (const [k, m] of items.entries()) {
+            const r = Math.min(6, m.eh / 2 + 3);
+            svg.insertAdjacentHTML("beforeend", `<rect class="tg-box" x="${m.ex - 3}" y="${m.ey - 3}" width="${m.ew + 6}" height="${m.eh + 6}" rx="${r}"/>`);
+            const at = plan.spots[k];
+            if (!at) continue;
+            els[k].style.width = `${at.tw}px`;
+            els[k].style.left = `${at.x}px`;
+            els[k].style.top = `${at.y}px`;
+            // The dot sits where the hairline meets the element's outline.
+            const [px, py, tx, ty] = lineOf(m, at);
+            svg.insertAdjacentHTML(
+              "beforeend",
+              (Math.hypot(tx - px, ty - py) > 4 ? `<path class="tg-lead" d="M${tx} ${ty} L${px} ${py}"/>` : "") + `<circle class="tg-dot" cx="${px}" cy="${py}" r="2.25"/>`,
+            );
           }
         };
 
@@ -2210,7 +2299,7 @@
           clamp(view);
           frame.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.s / raster})`;
           paintReadout(isZoomed);
-          paintMargin();
+          paintTags();
           const { top, bottom } = bands();
           paintMap(isZoomed, {
             x0: -view.x / view.s,

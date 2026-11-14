@@ -1,11 +1,13 @@
 // Drives the wireframe skill's enlarged view in headless Chromium through
 // fixture pages, and prints one FAIL line per broken promise: no script
 // errors; bands that keep one height from frame to frame; a title block
-// and strip that follow the open frame; callouts in the margin and a
-// spotlight that fades, held by A and hidden by Cmd+.; and a frame still carrying a `compare` field, which pages written
-// before Compare was removed have, ignored without a word; and frames drawn
-// from a snapshot, edited by name, with their callouts in the margin and a
-// missed target that names what came close. Each fixture is a page new.mjs
+// and strip that follow the open frame; a frame that fits as wide with
+// callouts as without; a spotlight that fades, held by A, which also draws
+// the callouts as tags over the frame, all hidden by Cmd+.; a frame still
+// carrying a `compare` field, which pages written before Compare was
+// removed have, ignored without a word; and frames drawn from a snapshot,
+// edited by name, with the callouts their edits ask for and a missed target
+// that names what came close. Each fixture is a page new.mjs
 // writes, so the check runs the main.html an agent would get.
 //
 // A development tool, like page-check: nothing under skills/ imports it.
@@ -32,11 +34,12 @@ const PRICING = `<!doctype html>
 <style>body{margin:0;padding:48px;font:16px/1.5 system-ui,sans-serif;color:#18181b}.card{display:inline-block;width:320px;margin-right:24px;padding:24px;border:1px solid #e4e4e7;border-radius:12px;vertical-align:top}.btn{display:inline-block;padding:8px 16px;border-radius:8px;background:#064e3b;color:#fff;text-decoration:none}</style>
 </head><body><h1>Pricing</h1><div class="card"><h2>Basic</h2><p><b>$10</b> / month</p><a class="btn" href="#">Choose Basic</a></div><div class="card"><h2>Pro</h2><p><b>$40</b> / month</p><a class="btn" href="#">Choose Pro</a></div></body></html>`;
 const SNAP_EDITS = `($) => {
-  $({ role: "heading", text: "Pricing" }).text("Plans");
+  $({ role: "heading", text: "Pricing" }).text("Plans").fresh();
   $({ contains: "/ month", nth: 2 }).after("<p>or $384 a year</p>");
+  $("or $384 a year").note("billed once");
   $("Choose Pro").note("starts a trial");
 }`;
-const SNAP_WORDS = ["New Plans", "New or $384 a year", "starts a trial"];
+const SNAP_WORDS = ["New", "billed once", "starts a trial"];
 
 // A frame: a box at its size with a title in it. `leak` puts an element in
 // it that sets its own visibility, which once showed through a second
@@ -185,9 +188,9 @@ const READ = `JSON.stringify((() => {
   };
 })())`;
 
-// The callouts beside the open frame and the spotlight over it: where the
-// frame sits, the margin's words, ticks and leaders the reader can see, the
-// spotlight's opacity and its holes, and any ring drawn over the drawing.
+// The callouts over the open frame and the spotlight on it: where the
+// frame sits, the tags' words, outlines and leaders the reader can see, the
+// spotlight's opacity and its holes, and any ring drawn inside the frame.
 const CALLOUTS = `JSON.stringify((() => {
   const f = document.querySelector("#stage .frame").getBoundingClientRect();
   const spot = document.querySelector("#spot");
@@ -195,15 +198,16 @@ const CALLOUTS = `JSON.stringify((() => {
   const count = (sel) => [...document.querySelectorAll(sel)].filter(seen).length;
   return {
     box: [f.left, f.top, f.width, f.height].map(Math.round).join(),
-    words: [...document.querySelectorAll("#margin .mw")].filter(seen).map((w) => [...w.querySelectorAll("[data-chrome-text]")].map((t) => t.dataset.chromeText).join(" ")),
-    ticks: count("#margin .tick"),
-    leads: count("#margin .lead path"),
+    words: [...document.querySelectorAll("#tags .tg")].filter(seen).map((w) => [...w.querySelectorAll("[data-chrome-text]")].map((t) => t.dataset.chromeText).join(" ")),
+    outlines: count("#tags .tg-box"),
+    leads: count("#tags .tg-lead"),
     rings: count("#stage .mark-ring"),
     spot: seen(spot) ? Number(getComputedStyle(spot).opacity) * Number(spot.querySelector(".spot-body")?.getAttribute("opacity") ?? 0) : 0,
     holes: spot.querySelectorAll(".spot-holes")[0]?.children.length ?? 0,
   };
 })())`;
-const WORDS = ["Says when, not what", "New Undo", "Click Send"];
+// A bare NEW reads New, and a bare click draws its outline with no tag.
+const WORDS = ["Says when, not what", "New"];
 
 export async function run({ keep } = {}) {
   const dir = keep
@@ -311,23 +315,27 @@ export async function run({ keep } = {}) {
         fail(`the strip shows ${still.barsShown.length} of ${n} bars`);
 
       if (name === "snapshots") {
-        // The edits' callouts in the margin, measured inside the frame's
-        // own document, and none on the unedited frame.
+        // The edits' callouts as tags, measured inside the frame's own
+        // document, and none on the unedited frame.
         await go(1);
         await wait(600);
+        await key("a");
+        await wait(300);
         const edited = await callouts();
+        await key("a");
         if (edited.words.sort().join("|") !== [...SNAP_WORDS].sort().join("|"))
-          fail(
-            `the edited snapshot's margin reads [${edited.words.join(" | ")}]`,
-          );
+          fail(`the edited snapshot's tags read [${edited.words.join(" | ")}]`);
         if (edited.holes !== 3)
           fail(
             `the edited snapshot's spotlight has ${edited.holes} holes, not 3`,
           );
         await go(0);
         await wait(300);
-        if ((await callouts()).words.length)
+        await key("a");
+        await wait(300);
+        if ((await callouts()).outlines)
           fail("the unedited snapshot has callouts");
+        await key("a");
         const drawn = await P.evaluate(
           `[...document.querySelectorAll("#rack .snap > iframe")].map((f) => f.contentDocument?.querySelector("h1")?.textContent ?? "").join()`,
         );
@@ -365,17 +373,14 @@ export async function run({ keep } = {}) {
       }
 
       if (name === "callouts") {
-        // The words beside the frame on every frame that has callouts, and
-        // a frame that stays put from one frame of its size to the next,
-        // callouts or none.
+        // At rest the spotlight alone, no words; and a frame that sits
+        // where a frame of its size without callouts does.
         await go(0);
         const first = await callouts();
-        if (first.words.sort().join("|") !== [...WORDS].sort().join("|"))
-          fail(`the margin reads [${first.words.join(" | ")}]`);
-        if (first.ticks !== 3)
-          fail(`the margin shows ${first.ticks} ticks, not 3`);
-        if (first.leads || first.rings)
-          fail("leaders or rings show with the callouts off");
+        if (first.words.length || first.outlines || first.leads || first.rings)
+          fail(
+            `with A off a frame shows ${first.words.length} tags, ${first.outlines} outlines, ${first.leads} leaders and ${first.rings} rings`,
+          );
         if (first.spot < 0.9 || first.holes !== 3)
           fail(
             `a frame arrives with the spotlight at ${first.spot.toFixed(2)} and ${first.holes} holes`,
@@ -386,36 +391,39 @@ export async function run({ keep } = {}) {
           if (next.box !== first.box)
             fail(`frame ${i + 1} sits at ${next.box}, frame 1 at ${first.box}`);
         }
-        await go(3);
-        if ((await callouts()).words.length !== 3)
-          fail("a frame of another size loses its margin words");
-        // The spotlight fades once the reader stops; A holds it and draws
-        // leaders in place of the ticks.
+        // The spotlight fades once the reader stops.
         await go(0);
         await wait(2000);
         const faded = await callouts();
         if (faded.spot > 0.05)
           fail(`the spotlight is still at ${faded.spot.toFixed(2)} after 2s`);
-        // Cmd+. takes the margin and the spotlight with the controls, with
+        // Cmd+. takes the tags and the spotlight with the controls, with
         // A off and on.
         const bare = async (when) => {
           await hideChrome();
           const c = await callouts();
-          if (c.words.length || c.ticks || c.leads || c.spot)
+          if (c.words.length || c.outlines || c.leads || c.spot)
             fail(
-              `Cmd+. ${when} leaves ${c.words.length} words, ${c.ticks} ticks, ${c.leads} leaders and the spotlight at ${c.spot.toFixed(2)}`,
+              `Cmd+. ${when} leaves ${c.words.length} tags, ${c.outlines} outlines, ${c.leads} leaders and the spotlight at ${c.spot.toFixed(2)}`,
             );
           await hideChrome();
         };
         await bare("with A off");
+        // A holds the spotlight and draws the tags, an outline round every
+        // named element, and no ring inside the frame.
         await key("a");
         await wait(300);
         const held = await callouts();
-        if (held.spot < 0.9 || held.leads !== 3 || held.ticks || held.rings)
+        if (held.words.sort().join("|") !== [...WORDS].sort().join("|"))
+          fail(`A's tags read [${held.words.join(" | ")}]`);
+        if (held.spot < 0.9 || held.outlines !== 3 || held.rings)
           fail(
-            `A shows the spotlight at ${held.spot.toFixed(2)}, ${held.leads} leaders, ${held.ticks} ticks and ${held.rings} rings`,
+            `A shows the spotlight at ${held.spot.toFixed(2)}, ${held.outlines} outlines and ${held.rings} rings`,
           );
         await bare("with A on");
+        await go(3);
+        if ((await callouts()).words.length !== WORDS.length)
+          fail("a frame of another size loses its tags");
         await key("a");
       }
 
