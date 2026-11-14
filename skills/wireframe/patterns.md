@@ -89,7 +89,7 @@ You can also put `ann` on its own inside any element to mark that element. That'
 
 Each helper leaves an invisible marker inside the element. After render, `drawMarks` measures every marked element against its frame and draws the ring and its words on one layer over the whole frame. That way a mark never changes the element's size, and no `overflow-hidden` parent can clip it. Rings and words keep one size on screen at any scale, so they read in the grid and stay small when zoomed. The words sit on the ring's top edge, so they cover a thin strip and nothing beside the element.
 
-That layer has the class `ann`, as does anything else the reader can switch on and off. Marks start hidden, and the Callouts button shows them all by setting `data-marks="on"` on the body. While they're hidden, the Callouts switches carry a count, and a frame's marks flash each time it comes up enlarged, so a mark drawn by hand needs the class `ann` to be counted and flashed. One rule hides them whenever it isn't set:
+That layer has the class `ann`, as does anything else the reader can switch on and off. Marks start hidden, and the Callouts button shows them all by setting `data-marks="on"` on the body. While they're hidden, a frame's marks flash each time it comes up enlarged, so a mark drawn by hand needs the class `ann` to flash. One rule hides them whenever it isn't set:
 
 ```css
 body:not([data-marks="on"]) .ann {

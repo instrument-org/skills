@@ -1,10 +1,9 @@
 // Drives the wireframe skill's enlarged view in headless Chromium through
 // fixture pages, and prints one FAIL line per broken promise: no script
 // errors; bands that keep one height from frame to frame; a title block
-// and strip that follow the open frame; Compare showing the paired frame
-// and the open one inside the window, with nothing behind them, through a
-// resize, staying on from frame to frame, and the ways out of it; Recommended walking only the stars; and
-// a pairing that names no frame listed on the page. Each fixture is a page
+// and strip that follow the open frame; Recommended walking only the
+// stars; and a frame still carrying a `compare` field, which pages written
+// before Compare was removed have, ignored without a word. Each fixture is a page
 // new.mjs writes, so the check runs the main.html an agent would get.
 //
 // A development tool, like page-check: nothing under skills/ imports it.
@@ -25,7 +24,7 @@ const newPage = resolve(here, "../../skills/wireframe/new.mjs");
 
 // A frame: a box at its size with a title in it. `leak` puts an element in
 // it that sets its own visibility, which once showed through a second
-// frame laid over the stage. `extra` adds fields, such as pick or compare.
+// frame laid over the stage. `extra` adds fields, such as pick.
 // Notes alternate between one line and two in the caption, since a band
 // that fits its note changes height between them.
 let notes = 0;
@@ -51,21 +50,10 @@ export const FIXTURES = {
     states: [
       withGroup("now", frame("Home", 1280, 800)),
       withGroup("now", frame("Settings", 1280, 800)),
-      withGroup(
-        "A",
-        frame("Home", 1280, 800, {
-          leak: true,
-          extra: `compare: { with: "Now 1", as: "today's home" }`,
-        }),
-      ),
+      withGroup("A", frame("Home", 1280, 800, { leak: true })),
       withGroup("A", frame("Settings", 1280, 800)),
       withGroup("A", frame("Done", 1280, 800, { extra: "pick: true" })),
-      withGroup(
-        "B",
-        frame("Home", 1280, 800, {
-          extra: `compare: { with: "Done", as: "option A" }`,
-        }),
-      ),
+      withGroup("B", frame("Home", 1280, 800)),
       withGroup("B", frame("Settings", 1280, 800, { extra: "pick: true" })),
     ],
   },
@@ -85,12 +73,11 @@ export const FIXTURES = {
       withGroup("A", frame("Two", 1280, 800)),
     ],
   },
-  "bad pair": {
+  "old compare": {
     groups: "{}",
-    problems: 1,
     states: [
       frame("One", 1280, 800, {
-        extra: `compare: { with: "Nothing", as: "nothing" }`,
+        extra: `compare: { with: "Two", as: "the other" }`,
       }),
       frame("Two", 1280, 800),
     ],
@@ -123,14 +110,9 @@ const build = (dir, name, { groups, states }) => {
 // What the viewer shows right now, read in the page.
 const READ = `JSON.stringify((() => {
   const viewer = document.querySelector("#viewer");
-  const pair = document.querySelector("#pair");
-  const inside = (el) => { const r = el.getBoundingClientRect(); return r.left >= -1 && r.right <= innerWidth + 1 && r.width > 0; };
   const strip = document.querySelector("#viewer-strip");
   const shown = (b) => b.offsetWidth > 0;
   const current = [...strip.querySelectorAll("[aria-current]")].map((b) => Number(b.dataset.go));
-  const partner = [...strip.querySelectorAll(".partner")].map((b) => Number(b.dataset.go));
-  const panes = [...pair.querySelectorAll(".pane")];
-  const compare = document.querySelector("#viewer [data-compare]");
   const picks = document.querySelector("#viewer [data-picks]");
   const name = strip.querySelector(".name");
   const sr = strip.getBoundingClientRect();
@@ -143,18 +125,13 @@ const READ = `JSON.stringify((() => {
     band: document.querySelector("#viewer-bottom").offsetHeight,
     stripShown: !strip.hidden,
     nameInside: !nr || (nr.left >= sr.left - 1 && nr.right <= sr.right + 1),
-    current, partner,
+    current,
     barsShown: [...strip.querySelectorAll("[data-go]")].filter(shown).map((b) => Number(b.dataset.go)),
     stageFrames: document.querySelectorAll("#stage .frame").length,
-    pairShown: !pair.hidden,
-    panes: panes.map((p) => Number(p.dataset.index)),
-    panesInside: panes.every((p) => inside(p.querySelector(".frame"))),
-    compareShown: !compare.hidden && compare.offsetWidth > 0,
-    compareWords: compare.querySelector(".word").textContent,
-    comparePressed: compare.getAttribute("aria-pressed"),
+    compareLeft: document.querySelectorAll("#pair, #viewer [data-compare]").length,
     picksShown: !picks.hidden,
     picksPressed: picks.getAttribute("aria-pressed"),
-    problems: document.querySelectorAll("#rack [role=alert] p").length,
+    alerts: document.querySelectorAll("#rack [role=alert]").length,
     frameParam: new URLSearchParams(location.search).get("frame"),
   };
 })())`;
@@ -195,9 +172,6 @@ export async function run({ keep } = {}) {
       const fail = (msg) => fails.push(`FAIL ${name}: ${msg}`);
       const n = fixture.states.length;
       const grouped = !/^\{\s*\}$/.test(fixture.groups);
-      const paired = fixture.states.flatMap((s, i) =>
-        /compare:/.test(s) && !fixture.problems ? [i] : [],
-      );
       const picks = fixture.states.flatMap((s, i) =>
         /pick: true/.test(s) ? [i] : [],
       );
@@ -223,17 +197,13 @@ export async function run({ keep } = {}) {
           fail(`frame ${i + 1} shows the counter "${v.counter}"`);
         if (v.stageFrames !== 1)
           fail(`frame ${i + 1} has ${v.stageFrames} frames on the stage`);
-        if (v.pairShown) fail(`frame ${i + 1} compares unasked`);
+        if (v.compareLeft) fail(`frame ${i + 1} still has Compare's parts`);
         if (v.stripShown !== grouped)
           fail(`frame ${i + 1} ${grouped ? "hides" : "shows"} the strip`);
         if (grouped && (v.current.length !== 1 || v.current[0] !== i))
           fail(`frame ${i + 1} lights strip bars [${v.current}]`);
         if (!v.nameInside)
           fail(`frame ${i + 1} runs the group's name out of the strip`);
-        if (v.compareShown !== paired.includes(i))
-          fail(`frame ${i + 1} ${v.compareShown ? "shows" : "hides"} Compare`);
-        if (v.compareShown && !v.compareWords.startsWith("Compare with "))
-          fail(`frame ${i + 1} labels Compare "${v.compareWords}"`);
         if (v.picksShown !== picks.length > 0)
           fail(
             `frame ${i + 1} ${v.picksShown ? "shows" : "hides"} Recommended`,
@@ -246,104 +216,14 @@ export async function run({ keep } = {}) {
         fail(`the title block changes height: ${[...tops].join(", ")}px`);
       if (bands.size !== 1)
         fail(`the bottom band changes height: ${[...bands].join(", ")}px`);
-      if ((await read()).problems !== (fixture.problems ?? 0))
-        fail(
-          `the page lists ${(await read()).problems} pairing problems, not ${fixture.problems ?? 0}`,
-        );
+      if ((await read()).alerts)
+        fail("the page lists a problem above the frames");
 
-      // Compare, on every paired frame: the partner at the left, the open
-      // frame at the right, nothing behind them, both inside the window.
-      for (const i of paired) {
-        await go(i);
-        await key("c");
-        const v = await read();
-        if (!v.pairShown || v.panes.length !== 2)
-          fail(`compare on frame ${i + 1} shows ${v.panes.length} panes`);
-        else if (v.panes[1] !== i || v.panes[0] === i)
-          fail(`compare on frame ${i + 1} shows panes [${v.panes}]`);
-        if (v.stageFrames !== 0)
-          fail(
-            `compare on frame ${i + 1} keeps ${v.stageFrames} frame behind the panes`,
-          );
-        if (!v.panesInside)
-          fail(`compare on frame ${i + 1} runs a pane out of the window`);
-        if (v.comparePressed !== "true")
-          fail(`compare on frame ${i + 1} leaves the button unpressed`);
-        if (grouped && (v.partner.length !== 1 || v.partner[0] !== v.panes[0]))
-          fail(
-            `compare on frame ${i + 1} rings strip bars [${v.partner}] for pane ${v.panes[0]}`,
-          );
-        if (v.band !== [...bands][0] || v.top !== [...tops][0])
-          fail(`compare on frame ${i + 1} changes a band's height`);
-        await key("c");
-        const off = await read();
-        if (off.pairShown || off.stageFrames !== 1)
-          fail(`C again on frame ${i + 1} doesn't go back to one frame`);
-      }
-      if (paired.length) {
-        const i = paired[0];
-        await go(i);
-        await key("c");
-        // A resize keeps both panes inside the window, and a phone's width
-        // goes back to one frame.
-        for (const [w, h] of [
-          [960, 700],
-          [1600, 1000],
-        ]) {
-          await P.viewport(w, h);
-          await wait(250);
-          if (!(await read()).panesInside)
-            fail(`compare runs a pane out of a ${w}px window`);
-        }
-        await P.viewport(600, 900);
-        await wait(250);
-        let v = await read();
-        if (v.pairShown || v.compareShown) fail("a 600px window keeps Compare");
-        await P.viewport(1440, 900);
-        await wait(250);
-        if (!(await read()).pairShown)
-          fail("widening past a phone's width doesn't bring the pair back");
-        // Compare stays on from frame to frame: a frame with no pair shows
-        // alone, and the next paired frame shows its pair.
-        const between = [...Array(n).keys()].find(
-          (k) => k !== i && !paired.includes(k),
-        );
-        if (between !== undefined) {
-          await go(between);
-          v = await read();
-          if (v.pairShown || v.stageFrames !== 1)
-            fail(
-              `compare on, frame ${between + 1}, which has no pair, doesn't show alone`,
-            );
-          await go(paired.at(-1));
-          if (!(await read()).pairShown)
-            fail(
-              `compare on, frame ${paired.at(-1) + 1} doesn't show its pair after a frame with none`,
-            );
-          await go(i);
-        }
-        // The ways out: a zoom key and a tap on a pane.
-        await key("1");
-        v = await read();
-        if (v.pairShown || v.stageFrames !== 1)
-          fail("a zoom key in compare doesn't go back to one frame");
-        await key("0");
-        await key("c");
-        const left = (await read()).panes[0];
-        await P.evaluate(`document.querySelectorAll("#pair .pane")[0].click()`);
-        await wait(150);
-        v = await read();
-        if (v.pairShown || v.counter !== `${left + 1}/${n}`)
-          fail("a tap on the left pane doesn't open it alone");
-      }
-      // C on a frame with no pair does nothing.
-      const lone = [...Array(n).keys()].find((i) => !paired.includes(i));
-      if (lone !== undefined) {
-        await go(lone);
-        await key("c");
-        if ((await read()).pairShown)
-          fail(`C on frame ${lone + 1}, which has no pair, compares`);
-      }
+      // C does nothing now, on any frame.
+      await go(0);
+      await key("c");
+      if ((await read()).stageFrames !== 1)
+        fail("C changes what the stage shows");
 
       // Recommended: R from a frame without a star opens its group's star,
       // the arrows walk only the stars, and R again shows every frame.
@@ -375,8 +255,8 @@ export async function run({ keep } = {}) {
       await P.evaluate(`document.querySelector("#viewer").close()`);
       await wait(100);
       const v = await read();
-      if (v.open || v.pairShown || v.stageFrames !== 0 || v.frameParam !== null)
-        fail("closing leaves the viewer, its panes or ?frame= behind");
+      if (v.open || v.stageFrames !== 0 || v.frameParam !== null)
+        fail("closing leaves the viewer or ?frame= behind");
 
       for (const e of new Set(errors)) fail(`script error: ${e}`);
     }
