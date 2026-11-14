@@ -315,8 +315,8 @@
            laid over it. At the top left, which frame this is, as the page's
            own title bar says which page: its place in the page, its label,
            its title, and the note on a second line, one line long until a
-           tap opens the rest. At the top right, the switches: Recommended when the page stars any
-           frames, Marks, and Close. Every one is the same kind of button, its
+           tap opens the rest. At the top right, the switches: Marks and
+           Close. Every one is the same kind of button, its
            word and then its key, with no icon. Along the bottom, only the
            strip, with the frame's label and its group's name under its own run, and prev and
            next: small arrow keys at the lower right on a desktop, buttons
@@ -578,12 +578,6 @@
             display: grid;
           }
         }
-        /* Upright, a phone's Recommended button keeps only its star. */
-        @media (max-width: 640px) {
-          #viewer [data-picks] .word {
-            display: none;
-          }
-        }
         /* A phone on its side has little height to give the frame, so the
            note goes and the bands keep close to the edges. */
         @media (max-height: 500px) {
@@ -715,40 +709,6 @@
         #viewer-strip button:hover {
           opacity: 1;
         }
-        /* Recommended only: the strip holds just the stars, one per group,
-           the open one larger, so it reads as the list of picks. */
-        #viewer-strip[data-only] button:not(.pick),
-        #viewer-strip[data-only] .run:not(:has(.pick)) {
-          display: none;
-        }
-        #viewer-strip[data-only] .bars {
-          --run-gap: 0.75rem;
-          --gap: 0.75rem;
-        }
-        #viewer-strip[data-only] button.pick {
-          width: 14px;
-          height: 10px;
-          border-radius: 0;
-          background: none;
-          color: var(--tone);
-          opacity: 0.7;
-        }
-        #viewer-strip[data-only] button.pick::after {
-          content: "★";
-          position: absolute;
-          inset: 0;
-          display: grid;
-          place-items: center;
-          font-size: 11px;
-          line-height: 1;
-        }
-        #viewer-strip[data-only] button.pick[aria-current] {
-          opacity: 1;
-        }
-        #viewer-strip[data-only] button.pick[aria-current]::after {
-          transform: scale(1.4);
-        }
-
         /* The thumbnail: the whole frame small, with the part on screen
            boxed, at the lower right above the strip, only while the frame
            is zoomed. */
@@ -824,7 +784,6 @@
           </div>
           <div class="controls">
             <button id="viewer-zoom" hidden title="Back to fit (0)" aria-label="Back to fit" class="vbtn"><span data-chrome-text></span><kbd data-chrome-text="0"></kbd></button>
-            <button data-picks hidden aria-label="Recommended" aria-pressed="false" class="vbtn"><span class="star" data-chrome-text="★"></span><span class="word" data-chrome-text="Recommended"></span><kbd data-chrome-text="R"></kbd></button>
             <button data-marks aria-label="Callouts" aria-pressed="false" class="vbtn"><span data-chrome-text="Callouts"></span><kbd data-chrome-text="A"></kbd></button>
             <button id="viewer-close" title="Close (Esc)" aria-label="Close" class="vbtn"><span data-chrome-text="Close"></span><kbd data-chrome-text="Esc"></kbd></button>
           </div>
@@ -1109,7 +1068,6 @@
           return `<span class="tone-${g.tone}">${label(i) ? `<span class="tone-text mr-1 font-mono font-semibold">${label(i)}</span>` : ""}${starHtml(i)}</span>`;
         };
 
-        const picks = states.flatMap((s, i) => (s.pick ? [i] : []));
 
         const tileHtml = (state, i) => `
           <figure class="tile m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
@@ -1423,7 +1381,6 @@
         const viewerTitle = document.querySelector("#viewer-title");
         const viewerMap = document.querySelector("#viewer-map");
         const viewerZoom = document.querySelector("#viewer-zoom");
-        const picksButton = viewerTop.querySelector("[data-picks]");
         const coarse = matchMedia("(pointer: coarse)");
         // A phone on its side has little height to give the frame.
         const short = matchMedia("(max-height: 500px)");
@@ -1538,12 +1495,9 @@
         };
 
         // ---- the open frame ------------------------------------------------
-        // The viewer shows one frame. Two values say what: openIndex, and
-        // picksOnly, which keeps the walk to the recommended frames.
-        // showFrame() paints everything from those, so every way in (keys,
-        // buttons, the strip, a link) sets them and calls it, and nothing
-        // else on screen keeps state of its own.
-        let picksOnly = false;
+        // The viewer shows one frame, openIndex. showFrame() paints
+        // everything from it, so every way in (keys, buttons, the strip, a
+        // link) sets it, and nothing else on screen keeps state of its own.
         const viewerStrip = document.querySelector("#viewer-strip");
         const tiles = () => rack.querySelectorAll(".frame");
         const toneOf = (i) => `tone-${groupOf(i)?.tone ?? "plain"}`;
@@ -1597,9 +1551,6 @@
           viewerPick.title = recommended(openIndex);
           viewerTitle.textContent = state.title;
           viewerCaption.innerHTML = state.note;
-          picksButton.hidden = picks.length === 0;
-          picksButton.setAttribute("aria-pressed", String(picksOnly));
-          picksButton.title = picksOnly ? "Show every frame (R)" : "Show only the recommended frames (R)";
         };
 
         // ---- the strip -------------------------------------------------------
@@ -1631,7 +1582,6 @@
             const cls = [i < openIndex ? "passed" : "", states[i].pick ? "pick" : ""].filter(Boolean).join(" ");
             return `<button data-go="${i}" title="${name}" aria-label="${name}" class="${cls}"${i === openIndex ? ' aria-current="true"' : ""}></button>`;
           };
-          viewerStrip.toggleAttribute("data-only", picksOnly);
           viewerStrip.innerHTML = `<div class="bars">${runs
             .map((run) => `<span class="run ${run.tone}">${run.frames.map(bar).join("")}</span>`)
             .join("")}<span class="name ${g ? `tone-${g.tone}` : "tone-plain"}">${stripName()}</span></div>`;
@@ -1640,9 +1590,8 @@
         // Every bar the same width, the widest that keeps the strip on one row:
         // 10px when there is room, down to 3px, with the gaps tightened once
         // bars drop under 6px. The open frame's bar keeps its 14px. Then the
-        // group's name goes under the middle of its run, or of the open star
-        // when only the stars show, moved in as far as it must be to stay
-        // inside the strip.
+        // group's name goes under the middle of its run, moved in as far as it
+        // must be to stay inside the strip.
         const fitStrip = () => {
           if (viewerStrip.hidden) return;
           const n = states.length;
@@ -1657,7 +1606,7 @@
           const name = viewerStrip.querySelector(".name");
           const current = viewerStrip.querySelector("[aria-current]");
           if (!name || !current) return;
-          const under = picksOnly ? current : current.parentElement;
+          const under = current.parentElement;
           const bars = name.parentElement;
           const center = under.offsetLeft + under.offsetWidth / 2;
           const x = Math.max(-bars.offsetLeft, Math.min(viewerStrip.clientWidth - bars.offsetLeft - name.offsetWidth, center - name.offsetWidth / 2));
@@ -1665,29 +1614,7 @@
         };
 
         // ---- moving between frames -------------------------------------------
-        // With Recommended on, the arrows step from star to star.
-        const step = (delta) => {
-          if (picksOnly && picks.length) {
-            const at = picks.indexOf(openIndex);
-            const next = at >= 0 ? picks[(at + delta + picks.length) % picks.length] : (delta > 0 ? picks.find((i) => i > openIndex) ?? picks[0] : picks.findLast((i) => i < openIndex) ?? picks.at(-1));
-            return showFrame(next);
-          }
-          showFrame((openIndex + delta + states.length) % states.length);
-        };
-
-        // R, or the Recommended button, keeps the walk to the starred frames.
-        // Turned on away from a star, it opens the star of the frame's own
-        // group, else the next one.
-        const setPicks = (on) => {
-          if (picks.length === 0) return;
-          picksOnly = on;
-          if (on && !picks.includes(openIndex)) {
-            const g = groupOf(openIndex)?.k;
-            const own = picks.find((i) => g !== undefined && groupOf(i)?.k === g);
-            return showFrame(own ?? picks.find((i) => i > openIndex) ?? picks[0]);
-          }
-          showFrame(openIndex);
-        };
+        const step = (delta) => showFrame((openIndex + delta + states.length) % states.length);
 
         // ---- ways in ---------------------------------------------------------
         rack.addEventListener("click", (event) => {
@@ -1702,13 +1629,11 @@
           const button = event.target.closest("#viewer-top button, #viewer-bottom button:not([data-go])");
           if (!button) return;
           if (button.dataset.marks !== undefined) return flipMarks();
-          if (button.dataset.picks !== undefined) return setPicks(!picksOnly);
           if (button.dataset.step) return step(Number(button.dataset.step));
           if (button.id === "viewer-close") viewer.close();
         });
         viewer.addEventListener("close", () => {
           openIndex = -1;
-          picksOnly = false;
           stage.querySelector(".frame")?.remove();
           viewer.removeAttribute("data-controls");
           viewer.removeAttribute("data-zoomed");
@@ -1789,10 +1714,6 @@
             // Held down, the key repeats; only the press itself switches.
             if (event.repeat) return;
             return flipMarks();
-          }
-          if (viewer.open && (event.key === "r" || event.key === "R")) {
-            event.preventDefault();
-            return setPicks(!picksOnly);
           }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole

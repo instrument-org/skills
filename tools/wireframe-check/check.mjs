@@ -1,8 +1,7 @@
 // Drives the wireframe skill's enlarged view in headless Chromium through
 // fixture pages, and prints one FAIL line per broken promise: no script
 // errors; bands that keep one height from frame to frame; a title block
-// and strip that follow the open frame; Recommended walking only the
-// stars; and a frame still carrying a `compare` field, which pages written
+// and strip that follow the open frame; and a frame still carrying a `compare` field, which pages written
 // before Compare was removed have, ignored without a word. Each fixture is a page
 // new.mjs writes, so the check runs the main.html an agent would get.
 //
@@ -113,7 +112,6 @@ const READ = `JSON.stringify((() => {
   const strip = document.querySelector("#viewer-strip");
   const shown = (b) => b.offsetWidth > 0;
   const current = [...strip.querySelectorAll("[aria-current]")].map((b) => Number(b.dataset.go));
-  const picks = document.querySelector("#viewer [data-picks]");
   const name = strip.querySelector(".name");
   const sr = strip.getBoundingClientRect();
   const nr = name?.getBoundingClientRect();
@@ -127,10 +125,9 @@ const READ = `JSON.stringify((() => {
     nameInside: !nr || (nr.left >= sr.left - 1 && nr.right <= sr.right + 1),
     current,
     barsShown: [...strip.querySelectorAll("[data-go]")].filter(shown).map((b) => Number(b.dataset.go)),
+    pickBars: [...strip.querySelectorAll(".pick")].map((b) => Number(b.dataset.go)),
     stageFrames: document.querySelectorAll("#stage .frame").length,
     compareLeft: document.querySelectorAll("#pair, #viewer [data-compare]").length,
-    picksShown: !picks.hidden,
-    picksPressed: picks.getAttribute("aria-pressed"),
     alerts: document.querySelectorAll("#rack [role=alert]").length,
     frameParam: new URLSearchParams(location.search).get("frame"),
   };
@@ -204,9 +201,9 @@ export async function run({ keep } = {}) {
           fail(`frame ${i + 1} lights strip bars [${v.current}]`);
         if (!v.nameInside)
           fail(`frame ${i + 1} runs the group's name out of the strip`);
-        if (v.picksShown !== picks.length > 0)
+        if (grouped && v.pickBars.join() !== picks.join())
           fail(
-            `frame ${i + 1} ${v.picksShown ? "shows" : "hides"} Recommended`,
+            `frame ${i + 1} stars strip bars [${v.pickBars}], not [${picks}]`,
           );
         if (v.frameParam !== String(i + 1))
           fail(`frame ${i + 1} leaves ?frame=${v.frameParam}`);
@@ -219,38 +216,15 @@ export async function run({ keep } = {}) {
       if ((await read()).alerts)
         fail("the page lists a problem above the frames");
 
-      // C does nothing now, on any frame.
+      // C and R do nothing now, on any frame.
       await go(0);
       await key("c");
-      if ((await read()).stageFrames !== 1)
-        fail("C changes what the stage shows");
-
-      // Recommended: R from a frame without a star opens its group's star,
-      // the arrows walk only the stars, and R again shows every frame.
-      if (picks.length) {
-        await go(0);
-        await key("r");
-        let v = await read();
-        if (v.picksPressed !== "true")
-          fail("R leaves the Recommended button unpressed");
-        if (
-          !picks.includes(v.current[0] ?? Number(v.counter.split("/")[0]) - 1)
-        )
-          fail(`R opens frame ${v.counter}, which has no star`);
-        if (grouped && v.barsShown.join() !== picks.join())
-          fail(`R shows strip bars [${v.barsShown}], not the stars [${picks}]`);
-        const seen = [];
-        for (let k = 0; k < picks.length; k++) {
-          seen.push(Number((await read()).counter.split("/")[0]) - 1);
-          await key("ArrowRight");
-        }
-        if ([...seen].sort((a, b) => a - b).join() !== picks.join())
-          fail(`the arrows under R visit [${seen}], not [${picks}]`);
-        await key("r");
-        v = await read();
-        if (v.picksPressed !== "false" || (grouped && v.barsShown.length !== n))
-          fail("R again doesn't bring every frame back");
-      }
+      await key("r");
+      const still = await read();
+      if (still.stageFrames !== 1 || still.counter !== `1/${n}`)
+        fail("C or R changes what the stage shows");
+      if (grouped && still.barsShown.length !== n)
+        fail(`the strip shows ${still.barsShown.length} of ${n} bars`);
 
       await P.evaluate(`document.querySelector("#viewer").close()`);
       await wait(100);
