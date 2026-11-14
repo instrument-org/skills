@@ -5,56 +5,58 @@ description: "Use when an answer is longer than a few paragraphs, better seen th
 
 # Instrument page
 
-You write one HTML file by hand: plain elements, inline SVG, a little script where it helps the reader. A stylesheet you never read makes plain HTML look like the house; two attributes on `<html>` set its shape and feel. Your job is what no stylesheet can do: find the point, then show it. There are no page types to pick from: every page is designed for its reader, from the method below, the recipes, and a kit when the page needs one.
+You write one HTML file by hand. A stylesheet you never read makes plain HTML look right. Your job is what no stylesheet can do: decide what this reader needs first, and put it where they look. Most readers read the headline, take in the first screen, look at the pictures and scroll; few read paragraphs. Build for that reader.
 
-`<skill>` below is the full path to this skill's folder. Run commands from the task folder. Never open `lib/`: it is internals, and the commands print all you need.
+`<skill>` below is the full path to this skill's folder. Run commands from the task folder. Never open `lib/`: the commands print all you need.
 
-## 1. Analyze before you design
+## 1. The angle, before anything else
 
-Read the inputs one at a time, appending each one's facts to `analysis.md` (people, numbers, dates, rules, contradictions) before opening the next. Research what the inputs do not give, and write from what you found. Then add a line each, and write a rough `page.html` early:
+Read the inputs one at a time, noting each one's facts in `analysis.md` before opening the next. Compute every total, date, weekday and difference with a short script over the input files, never in your head. Then decide the angle and write it as the direction comment, the first line under the doctype:
 
-- **Reader and moment**: who opens it, on what, to do what next.
-- **The point**: what the inputs imply that nobody asked. Look for a later message that corrects an earlier one, a figure that does not match its own terms, a rule or date that breaks the plan, an option that only looks cheaper. The point becomes the headline.
-- **Conflicts**: two sources that disagree. Name both values, which one holds, and why.
-
-Compute every total, date, weekday and difference with a short script over the input files, never in your head. Put the analysis in the direction comment, the first line under the doctype:
+- `reader`: who opens it, on what, in what moment.
+- `after`: what they should know, feel or decide after the first screen, in one sentence. This is the page's job, and it is often not what the request literally names: a page for a teammate about a bug they reported is about what their report led to, not an invoice.
+- `point`: that sentence as the headline, 10 words or fewer. The answer or the decision, never the topic.
+- `send`: when someone else will read it, the one line you would send with the link. Thanks and warmth go there, not on the page.
+- `leave`: what you leave out. Most of the material does not belong on the page.
+- `unit`: the one thing the page repeats below the first screen: a step, a finding, an option, a case, a place.
+- `conflicts`: two sources that disagree, which one holds and why, or `none`.
 
 ```html
-<!-- direction: reader="class parents on phones, deciding by Friday" point="the cheaper bus quote leaves out the ride home" conflicts="flyer says 8:00 pickup, later email says 7:30: the email holds" shape=card feel=warm hero="both quotes as bars, the missing leg drawn in" -->
+<!-- direction: reader="Ben, an engineer, tonight on his laptop, upset about the total" after="most of the total is fixed, two choices are still ours" point="Two of the three big costs are still our call" send="Here's what the total buys, and the two calls we still get to make" leave="line items under $500, scheduling" unit="one cost: what it is, what it costs, decided or not" conflicts="quote v1 says 18 cabinets, v2 says 16: v2 holds" -->
 ```
 
-## 2. Direct it: shape, feel, hero
+## 2. The first screen holds the whole answer
 
-`data-shape` is how it is used: `card` (a link dropped in chat; the first screen is the point), `read` (top to bottom: a summary, a decision), `sheet` (worked from or printed: a schedule, a roster; prints landscape), `wall` (posted or projected).
+Someone who sees only the first screen (1280 by 800 on a desk, the first swipe on a phone) leaves with the answer. It holds, in this order:
 
-`data-feel` is how it lands: `calm` (default), `urgent` (incidents, deadlines), `warm` (family, home), `crew` (work floors, gloves-on phones), `ledger` (money, audits), `festive` (launches, thanks).
+1. A kicker line: for whom, from what, when.
+2. The `h1`: the point.
+3. At most one short sentence under it.
+4. The `.hero`: the answer itself, as compact as it can be. Usually one of these: the decision with its one-line reason; three to six summary bullets; the small table or chart that is the answer; the one picture that proves it; the demo already playing when the subject is behavior.
 
-**The hero** is the one thing a chat message could not be, and the best expression of the point. When the point is about amounts, time, places or a schedule, that is a chart or a drawing, and it wins the first screen. When it is a decision or a single figure, it may be a big number with its sentence, a ranked list with one picked, or a then-versus-now. Draw only from real data or real geometry: a sketch with guessed positions is worse than no drawing.
+If the whole page fits on that screen, stop there: a short page is a feature, not a shortfall. Sources go in the footer.
 
-## 3. Lead with the point, let the reader go deeper
+## 3. Below it, one unit, repeated
 
-1. A kicker line: from whom or for whom, when, from what.
-2. The `h1`: the point, 10 words or fewer. Not the topic.
-3. At most one short lede sentence; no more than 45 words besides the kicker before the hero starts.
-4. The hero, starting in the first screen.
-5. Two to four short sections, each with a heading that says something, each shown more than told: a chart, a table, a short list, a labeled drawing. A technical write-up may run longer; at five sections the page gets a sticky strip of their names, and `data-short="Retries"` on an `h2` shortens its label there.
-6. The evidence last: tables, sources, the arithmetic. `<details>` for one or two optional drill-ins, never to hide the point.
-7. The footer: made from which files and sources, when, and what is illustrative.
+The rest of the page is depth for the reader who wants it, built from the unit you named. Every instance has the same parts in the same order: a bold one-line claim, then the thing itself (a real screenshot, a clip, a small drawing, a short table, a quoted exchange), then at most two short sentences. The reader learns the unit once and then scrolls.
 
-No paragraph over 60 words outside the footer; most under 30. Pick one or two things only a file can do (data embedded as JSON and drawn from it, one reading interaction, a real print layout, a copy button), never a collection; the page still says its point with no clicks.
+- **Show the real thing**: real screenshots, real output, real quotes, real numbers. A drawing explains a mechanism; keep it simple, labeled, and big enough to read. No strips of little boxes joined by arrows: a sequence is numbered steps going down the page.
+- **Motion plays on open.** Behavior over time (animation, scrolling, a sequence of states) runs when the page loads, as a CSS animation, an autoplaying muted looping clip, or a canvas. The reader never clicks to see it happen; controls to try variations come after.
+- **Nothing hidden.** No tabs, toggles, steppers, carousels, accordions or `details` for anything the reader needs. Everything is visible by scrolling.
+- **Answerable items** are a numbered `ol`, each led by a short bold name the reader can say back and your recommendation, so one sentence answers them all ("yes to 2, 3 but cheaper").
+- **Before and after** sit side by side at the same size (`.pair`).
+- **Figures**: exact only where the figure is the point; round the rest; the arithmetic goes in the footer.
+- **Words**: plain. No coined names, no marketing voice, no jargon left unexplained, no em dashes. No paragraph over 60 words outside the footer; most under 30.
 
 ## 4. Write it
 
 ```html
 <!doctype html>
-<!-- direction: reader="..." point="..." conflicts="..." shape=read feel=calm hero="..." -->
-<html lang="en" data-shape="read" data-feel="calm">
+<!-- direction: reader="..." after="..." point="..." send="..." leave="..." unit="..." conflicts="none" -->
+<html lang="en" data-layout="wide" data-feel="minimal">
   <head>
     <title>The point, 10 words or fewer</title>
-    <meta
-      name="description"
-      content="One sentence for the link unfurl, with the key figure."
-    />
+    <meta name="description" content="One sentence for the link unfurl, with the key figure." />
     <style>
       /* only what this page invents, colored with tokens */
     </style>
@@ -62,40 +64,32 @@ No paragraph over 60 words outside the footer; most under 30. Pick one or two th
   <body>
     <header>
       <hgroup>
-        <p>Kicker: for whom, when, from what</p>
+        <p>Kicker: for whom, from what, when</p>
         <h1>The point</h1>
-        <p>One short lede.</p>
+        <p>One short sentence.</p>
       </hgroup>
     </header>
-    <section class="hero">the hero</section>
+    <section class="hero">the answer</section>
     <section>
-      <h2>A heading that says something</h2>
+      <h2>Unit one: its claim</h2>
       ...
     </section>
-    <footer><p>Made from ... on ...; what is illustrative.</p></footer>
-    <script type="application/json" id="data">
-      { the data the page draws from }
-    </script>
-    <script>
-      only if reading needs it
-    </script>
+    <footer><p>Made from ... on ...; what is illustrative; the arithmetic.</p></footer>
   </body>
 </html>
 ```
 
-**Plain elements are already designed**: `hgroup` (a `p` before the h1 is the kicker, after it the lede), headings, lists, `dl` (facts as two columns, term then value), `table`, `details`, `blockquote`, `aside` (tinted note), `figure`/`figcaption`, `mark`, `code`, `pre`, `footer`.
+`data-layout="wide"` keeps every block on one left edge with prose at a reading width; use `column` only for a short note that is all prose. `data-feel` is `minimal` for most pages, `dense` when tables carry it (a roster, an audit), `editorial` when prose carries it (a letter, a long read), `bold` when one fact carries it (a launch, a thank-you).
 
-**Code** is `<pre data-file="apps/api/client.ts"><code class="language-ts">`, escaped (`&lt;`, `&amp;`): it is highlighted, and every `pre` gets Copy and Wrap. `data-file` labels the block with where it came from; leave it off when nothing does. Lines wrap unless the `pre` says `data-wrap="off"`, for output whose columns line up. `language-diff` shows a change. Terminal output is a bare `<pre>` with no `<code>`, and `<span data-tone="bad">` inside it marks a line. Never color code by hand or build your own copy button.
+**Plain elements are already designed**: `hgroup` (a `p` before the h1 is the kicker, after it the lede), headings, lists, `dl`, `table`, `blockquote`, `aside` (tinted note), `figure`/`figcaption`, `mark`, `code`, `pre`, `footer`.
 
-**Layout classes**, the whole list: `.stack` `.row` (`.row.between`) `.grid` (`style="--min:14rem"`) `.split` (main plus side column, stacks on phones) `.rail` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.kicker` `.lede` `.label` `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ol.flow` (a call path or pipeline of up to six boxes with arrows, stacked on phones: `<li><b>retryOnce</b><span>waits on a 429</span></li>`, `data-tone` on the one that matters) `ul.ticks` (done or true: a check mark each, `data-tone="bad"` a cross) `ul.todo` (still to do: an empty box each) `ol.letters` (items keyed A, B, C, so the reader can answer by letter; `<span class="key">A</span>` is the same mark in a heading) `ul.bars` (a row each of label, `.bar`, value: `<li><span>Retries</span><span class="bar" style="--v:40%"></span><span>12</span></li>`) `ul.lanes` (rows on one time axis: `<li><span>Build</span><span class="lane"><i style="--at:10%;--w:35%" data-c="2"></i></span><span>71 s</span></li>`, an `li.axis` of `<b style="--at:50%">` ticks) `ul.legend` (a swatch per `data-c` or `data-tone` item) `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.frames` (a numbered contact sheet of `figure`s, each picture letterboxed in an equal cell, `style="--ratio:16/10"`) `.pair` (two or three `figure`s side by side, such as before and after, or before, the design and the build) `.pinned` (a `figure` with an `img` and numbered pins over it, `<span class="pin" style="--x:52%;--y:20%">1</span>`, keyed by an `ol.pins` beside it) `.scroll` `.bleed` (wider) `.narrow` `.full` `.sticky` `.phone-only` `.wide-only` `.print-only` `.screen-only` `.page-break`.
+**Code** is `<pre data-file="apps/api/client.ts"><code class="language-ts">`, escaped (`&lt;`, `&amp;`): it is highlighted, and every `pre` gets Copy and Wrap. Terminal output is a bare `<pre>`; `<span data-tone="bad">` inside it marks a line. Never color code by hand or build your own copy button.
 
-**Widths**: prose, headings and lists sit in a reading column; dense modules take the wide track beside it by themselves: a table of four or more columns (bare, or as the table of a `.scroll` or `figure`), `.grid`, `.rail`, `.cols` and `ol.flow`. Put `.bleed` on anything else that needs the room, such as a chart, a three-column table of long cells, or a grid of your own, and `.narrow` on a module that should stay in the column. A section of prose never goes wide.
+**Layout classes**: `.stack` `.row` `.grid` (`style="--min:14rem"`) `.split` `.cols` `.panel` `.inset` `.stat` (`<p class="stat"><b>11%</b><span>of requests failed</span></p>`) `.muted` `.mono` `.n` (tabular numbers) `.tag` `.dot` `.bar` (`style="--v:40%"`) `ol.steps` `ul.ticks` (a check mark each, `data-tone="bad"` a cross) `ul.bars` (`<li><span>Retries</span><span class="bar" style="--v:40%"></span><span>12</span></li>`) `ul.lanes` (rows on one time axis) `ul.legend` `ul.plain` `table.cards` (rows become cards on phones; give each `td` a `data-label`) `.frames` (a numbered contact sheet of `figure`s) `.pair` (two or three `figure`s side by side) `.pinned` (a picture with numbered pins, `<span class="pin" style="--x:52%;--y:20%">1</span>`, keyed by an `ol.pins`) `.scroll` `.bleed` `.full` `.phone-only` `.wide-only` `.print-only` `.page-break`. A top-level `section` is a grid: put a panel look or your own grid on a `div` or `figure` inside it.
 
-A top-level `section` is a full-width grid whose children sit in the reading column: put a panel look, a custom grid or `.hero` styling on a `div` or `figure` inside it.
+**Color by meaning**: `data-tone="good|warn|bad|accent|muted"` or `data-c="1"` to `"8"` (one per person, team, option) on any element or SVG shape; everything is neutral until you mark it, so mark only what carries the point. In SVG, `class="outline|ink|muted|paper|wash|line|faint"`. In your own CSS use only tokens: `--ink --ink-2 --muted --line --line-2 --paper --ground --accent --good --warn --bad` (each with `-wash`), `--c1`..`--c8`, `--tone`, `--radius`, `--mono`, `--serif`. Never hex: the page follows the reader's light or dark theme.
 
-**Color by meaning**: `data-tone="good|warn|bad|accent|muted"` or `data-c="1"` to `"8"` (one per person, team, option) on any element or SVG shape. In SVG, `class="outline|ink|muted|paper|wash|line|faint"`. In your own CSS use only tokens: `--ink --ink-2 --muted --line --line-2 --paper --ground --accent --good --warn --bad` (each with `-wash`), `--c1`..`--c8`, `--tone`, `--radius`, `--mono`, `--serif`. Never hex: the page follows the reader's light or dark theme.
-
-**Behaviors by attribute**: `data-who="maya"` on things plus `<button data-show-who="maya">Maya</button>` (dims the rest; the link becomes `#who=maya`); `<button data-copy="#draft">Copy</button>`; `data-date="2026-10-13"` outlines that day when it is today; in a `figure` with a `<video controls poster>`, a `.chapters` row of `<button data-at="0:07">` seeks it and marks the chapter playing. Links to other sites get their site's icon. A picture in a `figure` or on its own line that the page shows smaller than it is opens full size on click, with arrows, swipe and a count to step through the others; never build your own viewer, and `data-gallery="off"` keeps one out.
+**Behaviors by attribute**: `<button data-copy="#draft">Copy</button>`; `data-date="2026-10-13"` outlines that day when it is today; in a `figure` with a `<video autoplay muted loop playsinline poster>`, a `.chapters` row of `<button data-at="0:07">` seeks it. A picture shown smaller than it is opens full size on click, with arrows to step through the others; never build your own viewer.
 
 ## 5. Build and check
 
@@ -105,59 +99,40 @@ Save the user's request word for word as `request.md`, and each source you resea
 node <skill>/page.mjs page.html --inputs <every input file> request.md
 ```
 
-It embeds every image, video and audio clip the page names by path or URL and every font file a `@font-face` names in `url()`, adds the stylesheet, fonts and behaviors, and checks what the file itself shows: headline and title length, words before the hero, paragraph length, how much of the top is prose, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, anything shaped like an API key or private key, em dashes, code with no language named and the direction comment. It prints an `embedded` line for each image or font it put in (an image it says to resize passes, but resize it), one `FAIL rule: where: measurement -> fix` line per problem, and a closing line with the page's size. It starts nothing, writes nothing but the page, and reaches the network only to download an image the page names by URL.
+It embeds every image, clip and font the page names by path or URL, adds the stylesheet and behaviors, and checks what the file shows: headline and title length, words before the hero, paragraph length, quotes against the inputs, weekdays against dates, allowed hosts, placeholders, secrets, em dashes, code with no language, and the direction comment. It prints one `FAIL rule: where: measurement -> fix` line per problem. It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`.
 
-It rewrites the file in place: the block between `foundation:start` and `foundation:end` is regenerated on every run, so edit only your own markup. An embedded image keeps no path, so to swap one, put its path back in `src` and run again. Fix every FAIL by fixing what it names, never by hiding or shrinking, and run again until it prints `pass`.
+Then check the layout in your browser tool: open the page and evaluate `lib/probe.js` in it (`agent-browser open page.html`, then `agent-browser eval --stdin < <skill>/lib/probe.js`). It returns FAIL lines for overlaps, clipping, sideways scroll, tiny phone text, contrast in both themes, and the headline and hero missing from the first screen. Fix each, rebuild, and probe again until it returns `pass`. With no browser tool, the static check is the whole check: say the layout is unchecked.
 
-Then check the layout in your browser tool. `lib/probe.js` loads the page into hidden frames at 1280x900 in light and dark, at the 1104x590 link preview and on a 390px phone, and returns FAIL lines for overlaps, clipping, sideways scroll, phone text under 11px, contrast in both themes, the headline and hero in the first screen, text spilling out of its box, and a table or grid squeezed into the column while the wide track is free. It leaves the window as it found it.
-
-```
-agent-browser open page.html
-agent-browser eval --stdin < <skill>/lib/probe.js
-```
-
-Read the lines it returns and fix every FAIL, then run `page.mjs` again, reopen the page and run the probe again until it returns `pass`. Then `agent-browser screenshot page.png` and look at it. The page must sit in the task folder (or a folder the user granted) for the browser to open it. Pass the script on stdin as shown, not as an argument: a script given as an argument can be rewritten or cut by the shell or the tool before the page sees it. Another browser tool works the same way: open the file, evaluate `lib/probe.js` in it, and read what it returns. With no browser tool, the static check is the whole check: tell the user the layout is unchecked.
+Last, a cold read. Take a screenshot and look only at the first screen: does it say `after` on its own? Then read only the headings and bold first lines: does the page still make sense? Fix what fails. If you can start a subagent, give it the screenshot and the `reader` line, and ask for the three biggest problems for that reader.
 
 ## 6. Rules every page keeps
 
 - Every number comes from the inputs, a named source, or arithmetic over figures shown. A figure you assumed is labeled illustrative where it appears and in the footer.
-- Scores are coarse (letters, a word, a few dots) unless every input is on the page; never a decimal that implies precision the research does not have.
+- Scores are coarse (a word, a few dots) unless every input is on the page; never a decimal that implies precision the research does not have.
 - Quote only exact words, with who said it and when; otherwise paraphrase without quote marks.
-- When options end in different states (one leaves you owning something, the other nothing), never call one cheaper without saying so. A pick says what it loses on and what would flip it.
+- When options end in different states, never call one cheaper without saying so. A pick says what it loses on and what would flip it.
 - Show disagreements between sources instead of silently picking one. Where research is thin, the footer says so.
-- A named product, vendor or place links to its maker's or owner's home page, never a deep link, search result or affiliate link. A commit, pull request, issue or file the page is about links straight to it, a file at its commit.
-- Single file: name a resized image by its path or URL and `page.mjs` embeds it, or draw it as SVG, and a clip the same way, with a `poster` and `controls` ([`references/images.md`](references/images.md)); a font of your own goes in as a file named in `@font-face` `url()`, never `local()` alone; only Google Fonts and exact-version libraries from cdn.jsdelivr.net/npm, unpkg, esm.sh or cdnjs may load ([`references/loading.md`](references/loading.md)), and with the network off every fact is still in the HTML. No em dashes.
+- A named product, vendor or place links to its maker's or owner's home page, never a deep link or search result. A commit, pull request or file the page is about links straight to it.
+- Single file: name an image or clip by its path or URL and `page.mjs` embeds it, or draw it as SVG ([`references/images.md`](references/images.md)); only Google Fonts and exact-version libraries from cdn.jsdelivr.net/npm, unpkg, esm.sh or cdnjs may load ([`references/loading.md`](references/loading.md)).
 
-## 7. Options and sculpting
+## 7. When you need more
 
-When the user asks for options or the right page is unclear, make two or three takes that lead with different heroes or shapes, each its own checked file; offer them a line each and recommend one. Translate the reply before editing: "less scary" is a feel, "I just want to send it in Slack" is a shape, "lead with who drives" is a new hero.
+- Options: when the user asks for options or the right angle is unclear, make two or three takes with different `after` lines, each its own checked file; offer them a line each and recommend one.
+- [`cookbook.md`](cookbook.md) holds techniques; read only the one you need, by its heading: drawing at true size from data; a chart that carries the headline; a plan drawn to scale; a month or week grid; a timeline; a comparison matrix; a ranked pick with one chosen; steps and a checklist; screenshots and a walkthrough; figures with a chart; scores, sources and the pick; show my part; a slider that recomputes; a one-screen card; a print sheet; evidence and drill-in; dense markup from a one-off script.
+- Kits, each read from its README first: [`kits/map/README.md`](kits/map/README.md) (a real map), [`kits/playground/README.md`](kits/playground/README.md) (dials on a live rendering), [`kits/storyboard/README.md`](kits/storyboard/README.md) (an experience as drawn moments), [`kits/whiteboard/README.md`](kits/whiteboard/README.md) (an Excalidraw board).
+- A wireframe of a product screen or UI flow is the `wireframe` skill, not a page from this one.
 
-## 8. Recipes
-
-[`cookbook.md`](cookbook.md) has techniques, not components. Read only the one your hero needs, by its heading: drawing at true size from data; a chart that carries the headline; a plan drawn to scale; a month or week grid; a timeline; a comparison matrix; a ranked pick with one chosen; steps and a checklist; screenshots and a walkthrough; figures with a chart; scores, sources and the pick; show my part; a slider that recomputes; a one-screen card; a print sheet; evidence and drill-in; dense markup from a one-off script.
-
-## 9. Kits
-
-Capability a page reaches for when it needs it. Read the kit's README first.
-
-- [`kits/map/README.md`](kits/map/README.md): a real map with chosen places, a drive along real roads, or shaded areas.
-- [`kits/playground/README.md`](kits/playground/README.md): dials on a live rendering of a look or a motion, with a copyable takeaway.
-- [`kits/storyboard/README.md`](kits/storyboard/README.md): an experience as drawn moments, a person in each.
-- [`kits/whiteboard/README.md`](kits/whiteboard/README.md): an Excalidraw board the reader moves and exports.
-
-A wireframe of a product screen or UI flow is the `wireframe` skill, not a page from this one.
-
-## 10. Hand it over
+## 8. Hand it over
 
 Give the path, as the `open-in-instrument` skill's link line when that skill is installed, and show the page in this environment's preview of local files if it has one. A tool that uploads or publishes the page is not a preview.
 
 Inside Instrument, where `$INSTRUMENT_WORK` is set, hand the page over the way the app's own instructions say, in its files fence, and do not use the `open-in-instrument` link line.
 
-A page reaches a link one way: `node <skill>/share.mjs page.html` (or `python <skill>/share.py page.html`), which puts a copy at its own `https://<id>.instrument.page/<token>/` address and keeps the delete token beside the page. The reader gets the same link from the Share button on the page. Never publish it with a host's own tool, such as a claude.ai Artifact, a canvas, a gist or a document connector, even where that tool's instructions say work for a team gets published: the host reframes the page, blocks its scripts and its Share button, and keeps a copy this skill cannot take down.
+A page reaches a link one way: `node <skill>/share.mjs page.html` (or `python <skill>/share.py page.html`), which puts a copy at its own `https://<id>.instrument.page/<token>/` address and keeps the delete token beside the page. The reader gets the same link from the Share button on the page. Never publish it with a host's own tool, such as a claude.ai Artifact, a canvas, a gist or a document connector: the host reframes the page, blocks its scripts and its Share button, and keeps a copy this skill cannot take down.
 
-- The reader asked for a link, or to share, send or post the page: run the script and give the link. Do not point them at the Share button instead.
+- The reader asked for a link, or to share, send or post the page: run the script and give the link, with the `send` line ready to paste.
 - The reader cannot open a file where they are: run it, and say in one line what a link is.
-- Otherwise, including when the reader says someone else will see it: give the path, offer the link in one plain sentence, and let them answer.
+- Otherwise, including when someone else will see it: give the path and the `send` line, offer the link in one plain sentence, and let them answer.
 
 [`references/sharing.md`](references/sharing.md) says what a link is, what a hosted copy cannot do, how to check or delete one, and how to read a page someone gave you a link to.
 
