@@ -1,6 +1,6 @@
 ---
 name: wireframe
-description: "Use when asked to wireframe, mock up or sketch a product screen or UI flow, or when an interface is being argued about in prose. Draws software as true-size frames across states, with click marks and captions, in one self-contained HTML page, or as one live prototype screen to click through or replay. Also use it to read a wireframe someone sent as a link."
+description: "Use when asked to wireframe, mock up or sketch a product screen or UI flow, or when an interface is being argued about in prose. Draws software as true-size frames across states, with callouts and captions, in one self-contained HTML page, or as one live prototype screen to click through or replay. Also use it to read a wireframe someone sent as a link."
 ---
 
 # Wireframe
@@ -50,7 +50,7 @@ const states = [
     w: 390,
     h: 844,
     body: phone(
-      `<div class="p-5 space-y-4">${field("Card number", { value: "•••• 4417" })}${clickable(btn("Pay $84", { cls: "bg-brand-600 text-white", full: true }))}</div>`,
+      `<div class="p-5 space-y-4">${field("Card number", { value: "•••• 4417" })}${btn("Pay $84", { cls: "bg-brand-600 text-white", full: true })}</div>`,
     ),
   },
   {
@@ -59,7 +59,7 @@ const states = [
     w: 390,
     h: 844,
     body: phone(
-      `<div class="p-5">${fresh(`<p class="text-sm font-semibold">Those seats just sold</p>`)}<div class="mt-3 space-y-2.5">${bars("100%", "64%")}</div></div>`,
+      `<div class="p-5">${noted(`<p class="text-sm font-semibold">Those seats just sold</p>`, "checked before charging")}<div class="mt-3 space-y-2.5">${bars("100%", "64%")}</div></div>`,
     ),
   },
 ];
@@ -86,7 +86,8 @@ agent-browser screenshot checkout.png
 ### Frames
 
 - Draw several states, one per frame. Usually that's before, during and after one interaction. You can also show one panel in every condition it can be in (empty, loading, one item, many, denied, offline), or one screen at three widths. Never hand over a single frame with a paragraph of explanation.
-- Show where the reader clicks and what's new, using `clickable`, `fresh`, `noted` and `ann`. Use at most one click per frame. Don't use a green row or a check mark as a mark, because those look like part of the product. If you draw a mark by hand, give it the class `ann`, or it stays on screen while marks are off.
+- A callout is two to five words that say what the drawing can't: a behavior ("named by AI"), a reason or limit ("Mac and Linux only"), or what happens off screen ("closes in the app"). Use `noted(el, "words")`. Never repeat the element's own text or name what it is, and never mark a frame just to give it a mark: most frames need none. Don't mark what gets clicked, since a button already reads as clickable; `clickable` draws nothing.
+- `fresh` puts NEW on what a revision changed, against a design the page also shows (the current design, or an earlier round). On a page that proposes something new throughout, leave it out. Don't use a green row or a check mark as a mark, because those look like part of the product. If you draw a mark by hand, give it the class `ann`, or it stays on screen while marks are off.
 - Draw everything at its real size. A window is 1280x800, a phone is 390x844, and a panel is whatever it measures. Use the normal type scale. Don't shrink anything by hand, set a scale, or use classes like `text-[9px]`, because the page already scales frames with `transform`.
 - Use grey bars for incidental text. Write real, final-quality copy for the words that matter: labels, warnings, empty states, and the buttons the proposal is about. Never use lorem ipsum.
 - Draw the states nobody asks for: empty, loading, too many, denied, expired and offline. Leave out any chrome the proposal isn't about.
@@ -135,4 +136,4 @@ Give the user its path, as the `open-in-instrument` skill's link line when that 
 
 ## Reading a wireframe from its link
 
-A wireframe draws its frames with script, so its bytes hold the title and little else, and the link answers with what you can read instead. A fetch tool that asks for Markdown gets every frame's screen text, title and note, and after the screen text one line per mark, such as `(click mark: Convert)`, naming the mark and what it sits on. Fetched without asking for Markdown, as `curl <link>` does, the same address answers with the page as it was drawn: every frame's HTML and classes, with the scripts taken out. Read that HTML when you are building from a wireframe, since it is the layout itself. The Markdown keeps the words and drops how things look, so what is dimmed, disabled or the primary button, and where a link sits, is only in the HTML's classes; most of its bytes are the page's stylesheet, which you can skip. When you talk about a frame, give its number and title, so the reader can find it.
+A wireframe draws its frames with script, so its bytes hold the title and little else, and the link answers with what you can read instead. A fetch tool that asks for Markdown gets every frame's screen text, title and note, and after the screen text one line per mark, such as `(new mark: Convert)`, naming the mark and what it sits on. Fetched without asking for Markdown, as `curl <link>` does, the same address answers with the page as it was drawn: every frame's HTML and classes, with the scripts taken out. Read that HTML when you are building from a wireframe, since it is the layout itself. The Markdown keeps the words and drops how things look, so what is dimmed, disabled or the primary button, and where a link sits, is only in the HTML's classes; most of its bytes are the page's stylesheet, which you can skip. When you talk about a frame, give its number and title, so the reader can find it.

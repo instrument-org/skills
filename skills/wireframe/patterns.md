@@ -76,15 +76,16 @@ const states = [
 ## Marks
 
 ```js
-clickable(btn("Freeze card", { cls: "bg-error-600 text-white" })); // orange ring, no words
-fresh(chip("Frozen", "bg-error-100 text-error-700")); // violet ring with NEW
-noted(someRow, "3 of 5"); // orange ring with your few words on it
+noted(someRow, "named by AI"); // orange ring with your few words on it
+fresh(chip("Frozen", "bg-error-100 text-error-700")); // violet ring with NEW, only on a revision
 ```
+
+`clickable` and `cursor` draw nothing, and stay so older pages and kits still build.
 
 You can also put `ann` on its own inside any element to mark that element. That's how you put a ring on something the kit built:
 
 ```js
-`<div>${field("Card number", { value: "•••• 4417" })}${ann("click")}</div>`;
+`<div>${field("Card number", { value: "•••• 4417" })}${ann("saved to Keychain")}</div>`;
 ```
 
 Each helper leaves an invisible marker inside the element. After render, `drawMarks` measures every marked element against its frame and draws the ring and its words on one layer over the whole frame. That way a mark never changes the element's size, and no `overflow-hidden` parent can clip it. Rings and words keep one size on screen at any scale, so they read in the grid and stay small when zoomed. The words sit on the ring's top edge, so they cover a thin strip and nothing beside the element.

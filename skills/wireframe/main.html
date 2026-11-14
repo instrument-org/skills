@@ -954,8 +954,10 @@
         // For the reader, not the product: a thin ring round a region, in two
         // colors no interface uses for itself. Orange marks a region, with a
         // few words on its ring when you have something to say about it
-        // (`noted`); violet with NEW marks what appeared or changed (`fresh`).
-        // `clickable` rings the thing being clicked, with no words. Never a
+        // (`noted`); violet with NEW marks what a revision changed (`fresh`).
+        // `clickable` and `cursor` draw nothing: a button already reads as
+        // clickable. They stay so pages and kits that use them still build.
+        // Never a
         // green row or a check mark standing in for any of them, because those
         // look like the design.
         //
@@ -975,13 +977,13 @@
         /** Marks the element that contains it: `label` is the tag's word, `tone` its color. */
         const ann = (label, tone = "click") => `<i class="mark" data-label="${label}" data-tone="${tone}"></i>`;
 
-        /** Marks the element that contains it as the thing being clicked: a ring with no words. */
-        const cursor = `<i class="mark" data-label="click" data-tone="click" data-pointer></i>`;
+        /** Draws nothing; kept for pages and kits that mark the thing being clicked. */
+        const cursor = "";
 
         /** Wraps a block so it can be marked: a row, a card, a page section. */
         const noted = (inner, label, tone = "click", { pointer = false, cls = "" } = {}) =>
           `<div class="${cls}">${inner}${ann(label, tone)}${pointer ? cursor : ""}</div>`;
-        const clickable = (inner, cls = "") => noted(inner, "click", "click", { pointer: true, cls });
+        const clickable = (inner, cls = "") => `<div class="${cls}">${inner}</div>`;
         const fresh = (inner, cls = "") => noted(inner, "new", "new", { cls });
 
         // ---- the frames ------------------------------------------------------
