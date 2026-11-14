@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -7,13 +7,16 @@ import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
 import { findChrome, launch } from "../tools/page-check/chrome.mjs";
 
-// How the foundation breaks lines around a link's site icon and inline code,
-// measured glyph by glyph in a downloaded Chromium at every phone width from
-// 320 to 440 and at 1280. Skipped where none is downloaded, as on CI. The icon
-// service is answered with a stand-in so the check runs offline.
-const PAGE = join(import.meta.dirname, "../skills/instrument-page/page.mjs");
+// How a page's foundation, and the wireframe shell, break lines around a
+// link's site icon and inline code, measured glyph by glyph in a downloaded
+// Chromium at every third width from 320 to 440 and at 1280. Skipped where none
+// is downloaded, as on CI. The icon service is answered with a stand-in so the
+// check runs offline.
+const SKILLS = join(import.meta.dirname, "../skills");
 const link = (text: string) => `<a href="https://github.com/o/r">${text}</a>`;
-const BODY = `<header><hgroup><h1>Lines break like text</h1></hgroup></header>
+const PROSE = `<p id="case-paren">Highlights, notes, stamps and filled form values in a PDF never draw (${link("render-plugin.ts:74")}, ${link("engine.ts:9927")}) at all.</p>
+<p id="case-url">The address is ${link("https://github.com/embedpdf/embed-pdf-viewer/blob/main/packages/plugin-render/src/lib/render-plugin.ts")} today.</p>`;
+const LISTS = `<header><hgroup><h1>Lines break like text</h1></hgroup></header>
 <section class="hero"><ol class="letters">
 <li id="case-letter" data-one-line><b>Hidden.</b> Set <code>withForms</code> in ${link("plugin.ts:74")} now.</li>
 <li id="case-letter-long"><b>Studio hides existing annotations today.</b> The render plugin is registered with no config, so <code>withAnnotations</code> and <code>withForms</code> default to false and nothing draws (${link("render-plugin.ts:74")}, ${link("engine.ts:9927")}). Adding the annotation plugin draws them.</li>
@@ -22,11 +25,10 @@ const BODY = `<header><hgroup><h1>Lines break like text</h1></hgroup></header>
 <ol class="steps"><li id="case-step" data-one-line><b>Run it.</b> Call <code>check()</code> from ${link("engine.ts:9927")}.</li></ol>
 <ol class="pins"><li id="case-pin" data-one-line>Opens over <code>ChatSurface</code> and ${link("its sources")}.</li></ol>
 <details><summary id="case-summary" data-one-line>Why <code>withForms</code> is off in ${link("EmbedPDF")}</summary><p>It costs a pass.</p></details>
-<p id="case-paren">Highlights, notes, stamps and filled form values in a PDF never draw (${link("render-plugin.ts:74")}, ${link("engine.ts:9927")}) at all.</p>
-<p id="case-url">The address is ${link("https://github.com/embedpdf/embed-pdf-viewer/blob/main/packages/plugin-render/src/lib/render-plugin.ts")} today.</p>
+${PROSE}
 <p id="case-code">The engine exports <code>EPDFText_RedactInRectsWithAnnotationsAndFormsAndMetadata</code> from <code>packages/engines/src/lib/pdfium/engine.ts</code> for this.</p>
 </section>`;
-const ICON_LINKS = (BODY.match(/<a /g) ?? []).length;
+const icons = (html: string) => (html.match(/<a /g) ?? []).length;
 
 // Runs in the page: one line per problem at the current width, and how many
 // links wear an icon.
@@ -92,9 +94,55 @@ function measure() {
   return { problems, icons };
 }
 
-describe.skipIf(!findChrome().bin)("foundation line breaks in Chromium", () => {
+// Opens the page at each width and returns every problem, with the first
+// width it showed at, and how many links wore an icon at 1280.
+async function sweep(file: string) {
+  const { page, close } = await launch();
+  try {
+    // A 32px stand-in for every site icon; nothing else leaves the machine.
+    await page.send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
+    page.on("Fetch.requestPaused", ({ requestId, request }) =>
+      request.url.startsWith("https://t0.gstatic.com/faviconV2")
+        ? page.send("Fetch.fulfillRequest", {
+            requestId,
+            responseCode: 200,
+            responseHeaders: [{ name: "Content-Type", value: "image/svg+xml" }],
+            body: Buffer.from(
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32"/></svg>',
+            ).toString("base64"),
+          })
+        : request.url.startsWith("file:")
+          ? page.send("Fetch.continueRequest", { requestId })
+          : page.send("Fetch.failRequest", {
+              requestId,
+              errorReason: "BlockedByClient",
+            }),
+    );
+    await page.navigate(pathToFileURL(file).href);
+    const found = new Map<string, number>();
+    let icons = 0;
+    const widths = [1280];
+    for (let w = 320; w <= 440; w += 3) widths.push(w);
+    for (const w of widths) {
+      await page.viewport(w, 900, { mobile: w < 600 });
+      const result = await page.evaluate(
+        `new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))).then(() => (${measure})())`,
+      );
+      if (w === 1280) icons = result.icons;
+      for (const p of result.problems) if (!found.has(p)) found.set(p, w);
+    }
+    return {
+      icons,
+      problems: [...found].map(([p, w]) => `${p} (first at ${w}px)`),
+    };
+  } finally {
+    close();
+  }
+}
+
+describe.skipIf(!findChrome().bin)("line breaks in Chromium", () => {
   it(
-    "keeps icons with their links, list text in flow and nothing past the column",
+    "instrument-page keeps icons with their links, list text in flow and nothing past the column",
     { timeout: 120000 },
     async () => {
       const dir = mkdtempSync(join(tmpdir(), "foundation-lines-"));
@@ -104,54 +152,34 @@ describe.skipIf(!findChrome().bin)("foundation line breaks in Chromium", () => {
 <!-- direction: reader="a developer" point="lines break like text" shape=read feel=minimal hero="cases" -->
 <html lang="en" data-shape="read" data-feel="minimal">
 <head><title>Lines break like text</title><meta name="description" content="Line breaks around icons and code."></head>
-<body>${BODY}</body></html>`,
+<body>${LISTS}</body></html>`,
       );
-      await promisify(execFile)("node", [PAGE, "page.html"], {
-        cwd: dir,
-      }).catch(() => {});
-      const { page, close } = await launch();
-      try {
-        // A 32px stand-in for every site icon; nothing else leaves the machine.
-        await page.send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
-        page.on("Fetch.requestPaused", ({ requestId, request }) =>
-          request.url.startsWith("https://t0.gstatic.com/faviconV2")
-            ? page.send("Fetch.fulfillRequest", {
-                requestId,
-                responseCode: 200,
-                responseHeaders: [
-                  { name: "Content-Type", value: "image/svg+xml" },
-                ],
-                body: Buffer.from(
-                  '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32"/></svg>',
-                ).toString("base64"),
-              })
-            : request.url.startsWith("file:")
-              ? page.send("Fetch.continueRequest", { requestId })
-              : page.send("Fetch.failRequest", {
-                  requestId,
-                  errorReason: "BlockedByClient",
-                }),
-        );
-        await page.navigate(pathToFileURL(join(dir, "page.html")).href);
-        const found = new Map<string, number>();
-        let icons = 0;
-        const widths = [1280];
-        for (let w = 320; w <= 440; w += 3) widths.push(w);
-        for (const w of widths) {
-          await page.viewport(w, 900, { mobile: w < 600 });
-          const result = await page.evaluate(
-            `new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))).then(() => (${measure})())`,
-          );
-          if (w === 1280) icons = result.icons;
-          for (const p of result.problems) if (!found.has(p)) found.set(p, w);
-        }
-        expect(icons).toBe(ICON_LINKS);
-        expect([...found].map(([p, w]) => `${p} (first at ${w}px)`)).toEqual(
-          [],
-        );
-      } finally {
-        close();
-      }
+      await promisify(execFile)(
+        "node",
+        [join(SKILLS, "instrument-page/page.mjs"), "page.html"],
+        { cwd: dir },
+      ).catch(() => {});
+      expect(await sweep(join(dir, "page.html"))).toEqual({
+        icons: icons(LISTS),
+        problems: [],
+      });
+    },
+  );
+
+  it(
+    "the wireframe shell keeps icons with their links and nothing past the column",
+    { timeout: 120000 },
+    async () => {
+      const dir = mkdtempSync(join(tmpdir(), "shell-lines-"));
+      const shell = readFileSync(join(SKILLS, "wireframe/shell.html"), "utf8");
+      writeFileSync(
+        join(dir, "page.html"),
+        shell.replace(/(<main[^>]*>)[\s\S]*?(<\/main>)/, `$1${PROSE}$2`),
+      );
+      expect(await sweep(join(dir, "page.html"))).toEqual({
+        icons: icons(PROSE),
+        problems: [],
+      });
     },
   );
 });
