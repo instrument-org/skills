@@ -1,0 +1,84 @@
+<!doctype html>
+<!-- direction: reader="engineering and support leads, reading the morning after, deciding what ships before Friday" point="the outage was our own retries, not the payment provider" conflicts="the status page said the provider was degraded; their logs show normal latency until our retry burst: the logs hold" layout=column feel=minimal hero="the call path with the retry box marked, under three numbers" -->
+<html lang="en" data-layout="column" data-feel="minimal">
+<head>
+<title>Checkout failed for 41 minutes because our retries piled up</title>
+<meta name="description" content="On Oct 20, checkout failed from 14:02 to 14:43 because every failed payment call retried five times at once.">
+<!-- lab -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap">
+<script async data-highlight src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
+<link rel="stylesheet" href="../../../skills/instrument-page/lib/foundation.css">
+<script src="../../../skills/instrument-page/lib/foundation.js"></script>
+<script src="../lab.js"></script>
+<!-- /lab -->
+</head>
+<body>
+<header>
+  <hgroup>
+    <p>Incident review · Tuesday, Oct 20, 14:02 to 14:43</p>
+    <h1>Our own retries took checkout down for 41 minutes</h1>
+    <p>The payment provider rate-limited a few of our calls. Every failed call then retried five times at once, and the limit spread to our whole account.</p>
+  </hgroup>
+</header>
+
+<section class="hero">
+  <div class="grid" style="--min: 10rem">
+    <p class="stat" data-tone="bad"><b>41 min</b><span>of failed checkouts</span></p>
+    <p class="stat" data-tone="bad"><b>5×</b><span>retries for each failed call</span></p>
+  </div>
+  <ol class="flow">
+    <li><b>Pay button</b><span>customer taps Pay</span></li>
+    <li><b><code>checkout.ts</code></b><span>builds the order</span></li>
+    <li data-tone="bad"><b><code>retryPayment</code></b><span>retries 5 times with no wait</span></li>
+    <li><b>Payment provider</b><span>answers 429</span></li>
+    <li><b>Error screen</b><span>asks the customer to try again</span></li>
+  </ol>
+</section>
+
+<section>
+  <h2>Impact</h2>
+  <ul class="ticks">
+    <li>No customer was charged twice.</li>
+    <li>We saved every order placed during the outage.</li>
+    <li data-tone="bad">Support received 212 tickets.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Timeline</h2>
+  <table>
+    <thead><tr><th>Time</th><th>Event</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">14:02</td><td>The provider starts answering 3% of our calls with 429. That is normal during a burst.</td></tr>
+      <tr data-tone="bad"><td class="mono">14:03</td><td>Every failed call retries five times at once, and our traffic to the provider triples.</td></tr>
+      <tr><td class="mono">14:09</td><td>The provider rate-limits our whole account, and every checkout fails.</td></tr>
+      <tr><td class="mono">14:31</td><td>We turn retries off with the feature flag, and errors start to fall.</td></tr>
+      <tr data-tone="good"><td class="mono">14:43</td><td>The provider lifts the limit, and checkouts go through again.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Fix</h2>
+  <p>When the provider rate-limits a call, it answers 429 with a <code>Retry-After</code> header. We now wait that long and retry once.</p>
+<pre data-file="apps/api/payments/retry.ts"><code class="language-diff">- const RETRIES = 5;
+- const WAIT_MS = 0;
++ const RETRIES = 1;
++ const waitFor = (res: Response) =&gt; Number(res.headers.get("retry-after") ?? 1) * 1000;</code></pre>
+</section>
+
+<section>
+  <h2>Follow-ups</h2>
+  <ul class="todo">
+    <li>Ship the single retry behind the existing flag by Friday.</li>
+    <li>Alert us when 429s pass 1% of calls for two minutes.</li>
+    <li>Correct the status page, which blamed the provider.</li>
+  </ul>
+</section>
+
+<footer><p>Sample page for the design lab. The company, code and figures are made up.</p></footer>
+</body>
+</html>

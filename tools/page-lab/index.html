@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en" data-layout="column" data-feel="minimal">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Specimen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap">
+<script async data-highlight src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
+<!-- live: the repo's own stylesheet and behaviors, so an edit there shows here on reload -->
+<link rel="stylesheet" href="../../skills/instrument-page/lib/foundation.css">
+<script src="../../skills/instrument-page/lib/foundation.js"></script>
+<script src="lab.js"></script>
+<style>
+  /* Lab annotations only. Everything else on this page is foundation.css. */
+  .spec { font: 500 11px/1.4 var(--mono); color: var(--muted); margin: 0 0 0.45rem; letter-spacing: 0; text-transform: none; }
+  .spec b { color: var(--ink-2); font-weight: 600; }
+  .demo + .demo { margin-top: calc(var(--flow) * 1.6); }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.6rem; }
+  .sw { display: grid; gap: 0.15rem; font-size: 0.78rem; }
+  .sw i { display: block; height: 3rem; border-radius: calc(var(--radius) * 0.6); background: var(--x); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ink) 12%, transparent); }
+  .sw b { font: 600 0.74rem/1.2 var(--mono); }
+  .sw span { font: 0.7rem/1.2 var(--mono); color: var(--muted); }
+  .ramp { display: grid; grid-template-columns: 6rem repeat(12, minmax(0, 1fr)); gap: 2px; align-items: stretch; font: 0.66rem/1.2 var(--mono); }
+  .ramp > span:first-child { color: var(--muted); align-self: center; }
+  .ramp i { display: block; height: 2rem; background: var(--x); border-radius: 3px; }
+  .ramp + .ramp { margin-top: 4px; }
+  .typerow { display: grid; grid-template-columns: minmax(0, 1fr) 13rem; gap: 1rem; align-items: baseline; padding-block: 0.7rem; border-bottom: 1px solid var(--line); }
+  .typerow > :first-child { margin: 0; }
+  .typerow .spec { margin: 0; text-align: right; }
+  .feels { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 0.8rem; }
+  .feelcard { border-radius: 0.6rem; padding: 0.9rem; display: grid; gap: 0.5rem; min-height: 11rem; align-content: start; cursor: pointer; border: 0; text-align: left; font: inherit; }
+  .feelcard .mini { padding: 0.7rem; display: grid; gap: 0.35rem; }
+  .feelcard .k { font-size: 10px; font-weight: 600; }
+  .feelcard .h { font-size: 1.3rem; line-height: 1.05; }
+  .feelcard .p { font-size: 0.72rem; }
+  .feelcard .chip { justify-self: start; font-size: 10px; padding: 0.2em 0.6em; border-radius: 999px; }
+  .knobs td, .knobs th { font-size: 0.8rem; white-space: nowrap; }
+  .knobs td i { display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 3px; vertical-align: -0.15em; margin-right: 0.35rem; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ink) 15%, transparent); }
+  .knobs th[scope="row"] { font: 600 0.74rem var(--mono); color: var(--ink-2); }
+  .knobs .now { background: var(--wash); }
+  .track { height: 2.2rem; display: grid; place-items: center; font: 600 0.75rem var(--mono); color: var(--ink); border-radius: 4px; }
+  .track.col { background: var(--wash); }
+  .track.wide { background: color-mix(in oklab, var(--c3) 18%, var(--paper)); }
+  .track.full { background: color-mix(in oklab, var(--c2) 18%, var(--paper)); border-radius: 0; }
+  .boxes > * { background: var(--wash); padding: 0.5rem 0.7rem; border-radius: 4px; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<header>
+  <hgroup>
+    <p>Design lab · foundation.css, read live from the repo</p>
+    <h1>Specimen</h1>
+    <p>Every token, element and class a page can use, in whatever feel, layout and theme the Lab panel picks. Edit <code>skills/instrument-page/lib/foundation.css</code>, reload, and it shows here.</p>
+  </hgroup>
+</header>
+
+<section id="feels">
+  <h2 data-short="Feels">Feels</h2>
+  <p>A page sets <code>data-feel</code> on <code>&lt;html&gt;</code>, and that swaps the token values below. Every element reads these tokens, so this table is the whole of a feel. Click a card to switch the page to it.</p>
+  <div class="feels" id="feelcards"></div>
+  <div class="scroll bleed"><table class="knobs" id="knobs"><thead></thead><tbody></tbody></table></div>
+  <aside data-tone="muted"><p><b>Where to edit:</b> minimal is the <code>:root</code> block at the top of foundation.css; each other feel is a <code>[data-feel="…"]</code> block right under it that overrides only what differs from minimal. A few feels also have a rule or two near the end of the file, under "feel details".</p></aside>
+</section>
+
+<section id="layouts">
+  <h2 data-short="Layouts">Layouts</h2>
+  <p><code>data-layout="column"</code> is one reading column, for almost every page. <code>wide</code> is one wider column for a roster or a big table; its prose keeps a reading width on the same left edge, and it prints landscape. Everything sits in the column; <code>.bleed</code> and <code>.full</code> go wider only when a page asks.</p>
+  <dl id="layoutknobs"></dl>
+  <div class="demo"><p class="spec">the three tracks of the page grid, in this layout</p></div>
+  <div class="track col">col</div>
+  <div class="track wide bleed">wide (only what a page marks .bleed)</div>
+  <div class="track full full">full (.full)</div>
+</section>
+
+<section id="color">
+  <h2 data-short="Color">Color</h2>
+  <p class="spec">semantic tokens a page may use: <b>--name</b> and its resolved value in this feel and theme</p>
+  <div class="swatches" data-swatches="ground paper ink ink-2 muted line line-2 accent accent-text accent-ink wash good good-wash warn warn-wash bad bad-wash"></div>
+  <p class="spec">categorical, for people, teams, options: <b>data-c="1"…"8"</b></p>
+  <div class="swatches" data-swatches="c1 c2 c3 c4 c5 c6 c7 c8"></div>
+  <p class="spec">tones: <b>data-tone="good|warn|bad|accent|muted"</b> sets --tone and --tone-wash on any element</p>
+  <div class="row">
+    <span class="tag" data-tone="good">good</span><span class="tag" data-tone="warn">warn</span><span class="tag" data-tone="bad">bad</span><span class="tag" data-tone="accent">accent</span><span class="tag" data-tone="muted">muted</span>
+    <span class="tag" data-c="1">c1</span><span class="tag" data-c="2">c2</span><span class="tag" data-c="3">c3</span><span class="tag" data-c="4">c4</span><span class="tag" data-c="5">c5</span><span class="tag" data-c="6">c6</span><span class="tag" data-c="7">c7</span><span class="tag" data-c="8">c8</span>
+  </div>
+  <p class="spec">the raw brand scales the tokens are built from (pages never use these directly)</p>
+  <div id="ramps"></div>
+</section>
+
+<section id="type">
+  <h2 data-short="Type">Type</h2>
+  <p>Inter for text, Roboto Serif where a feel asks for it (editorial text and headings, and every <code>blockquote</code>), JetBrains Mono for code and for labels in dense.</p>
+  <div>
+    <div class="typerow"><p class="kicker" data-measure>Kicker · for whom, when, from what</p><p class="spec">hgroup &gt; p:first-child, .kicker</p></div>
+    <div class="typerow"><h1 data-measure>The point, in ten words</h1><p class="spec">h1</p></div>
+    <div class="typerow"><p class="lede" data-measure>One short lede sentence that says why it matters.</p><p class="spec">hgroup &gt; h1 + p, .lede</p></div>
+    <div class="typerow"><h2 data-measure>A section heading</h2><p class="spec">h2</p></div>
+    <div class="typerow"><h3 data-measure>A smaller heading</h3><p class="spec">h3</p></div>
+    <div class="typerow"><h4 data-measure>Label or h4</h4><p class="spec">h4, .label</p></div>
+    <div class="typerow"><p data-measure>Body text runs at the base size with a line height of 1.55, which is where most of the reading happens.</p><p class="spec">p</p></div>
+    <div class="typerow"><p><small data-measure>Small print and muted notes.</small></p><p class="spec">small, .muted</p></div>
+    <div class="typerow"><p class="stat"><b data-measure>41%</b><span>a big number with its sentence</span></p><p class="spec">.stat</p></div>
+    <div class="typerow"><p><code data-measure>retryOnce()</code> <kbd>⌘</kbd> <kbd>K</kbd></p><p class="spec">code, kbd</p></div>
+  </div>
+  <div class="demo">
+    <p class="spec">inline: a, strong, mark, mark[data-tone], code</p>
+    <p>A paragraph with <a href="#type">a link</a>, <strong>strong words</strong>, a <mark>highlighted phrase</mark>, a <mark data-tone="bad">bad one</mark>, and <code>inline code</code>.</p>
+  </div>
+  <div class="demo">
+    <p class="spec">blockquote (always the serif)</p>
+    <blockquote><p>We kept the quote short and said who said it.</p><footer>Sam, kickoff call, Oct 2</footer></blockquote>
+  </div>
+</section>
+
+<section id="elements">
+  <h2 data-short="Elements">Elements</h2>
+  <div class="demo">
+    <p class="spec">aside (tinted note; takes data-tone)</p>
+    <div class="stack">
+      <aside><p>A plain aside uses the accent.</p></aside>
+      <aside data-tone="warn"><p>A warn aside, for a caveat the reader must see.</p></aside>
+      <aside data-tone="bad"><p>A bad aside, for something broken.</p></aside>
+    </div>
+  </div>
+  <div class="demo">
+    <p class="spec">ul, ol</p>
+    <div class="split" style="--side: 1fr">
+      <ul><li>First thing</li><li>Second thing, a little longer so it wraps when the column is narrow</li><li>Third</li></ul>
+      <ol><li>Open the file</li><li>Change the token</li><li>Reload</li></ol>
+    </div>
+  </div>
+  <div class="demo">
+    <p class="spec">dl (term on the left, stacks on phones)</p>
+    <dl><dt>Pickup</dt><dd>7:30 at the north lot</dd><dt>Return</dt><dd>About 4:15, same lot</dd><dt>Bring</dt><dd>Lunch, water, a jacket</dd></dl>
+  </div>
+  <div class="demo">
+    <p class="spec">details (for an optional drill-in)</p>
+    <details><summary>How the total was worked out</summary><p>Two quotes, each with a per-seat price and a fixed fee, summed for 48 seats.</p></details>
+    <details><summary>A second drill-in</summary><p>Hidden until opened.</p></details>
+  </div>
+  <div class="demo">
+    <p class="spec">button, .button, .primary, [aria-pressed], [data-c]</p>
+    <div class="row"><button>Default</button><button class="primary">Primary</button><button aria-pressed="true">Pressed</button><button data-c="3" aria-pressed="true">data-c="3"</button><a class="button" href="#elements">A link as a button</a></div>
+  </div>
+  <div class="demo">
+    <p class="spec">input, select, textarea</p>
+    <div class="row"><input value="Text input"><select><option>Select</option></select><textarea rows="1">Textarea</textarea></div>
+  </div>
+  <div class="demo">
+    <p class="spec">hr</p>
+    <hr>
+  </div>
+</section>
+
+<section id="layout">
+  <h2 data-short="Layout">Layout classes</h2>
+  <div class="demo"><p class="spec">.panel (paper, radius, shadow) and .panel[data-tone] / [data-c] (a muted background in that color)</p></div>
+  <div class="grid">
+    <div class="panel"><h3>.panel</h3><p>Paper on the ground, with the feel's radius and shadow.</p></div>
+    <div class="panel" data-tone="good"><h3>data-tone="good"</h3><p>A muted background in its tone marks it.</p></div>
+    <div class="panel" data-c="3"><h3>data-c="3"</h3><p>One per person, team or option.</p></div>
+  </div>
+  <div class="demo"><p class="spec">.inset (a tinted block, no shadow)</p>
+    <div class="row"><div class="inset"><p>.inset</p></div><div class="inset" data-tone="warn"><p>.inset data-tone="warn"</p></div><div class="inset" data-c="6"><p>.inset data-c="6"</p></div></div>
+  </div>
+  <div class="demo"><p class="spec">.stat, .stat[data-tone]</p></div>
+  <div class="grid" style="--min: 11rem">
+    <p class="stat"><b>11%</b><span>of requests failed</span></p>
+    <p class="stat" data-tone="bad"><b>41 min</b><span>checkout was down</span></p>
+    <p class="stat" data-tone="good"><b>0</b><span>orders lost</span></p>
+    <p class="stat" data-c="3"><b>3,200</b><span>teams on the new plan</span></p>
+  </div>
+  <div class="demo"><p class="spec">.split (main plus a side column; stacks on phones), .split.flip</p>
+    <div class="split"><div class="panel"><p>Main column</p></div><div class="inset"><p>Side column, 19rem by default (<code>--side</code>)</p></div></div>
+  </div>
+  <div class="demo"><p class="spec">.row, .row.between, .stack</p>
+    <div class="row boxes"><span>.row</span><span>wraps</span><span>and centers</span></div>
+    <div class="row between boxes" style="margin-top: 0.5rem"><span>.row.between</span><span>pushes apart</span></div>
+    <div class="stack boxes" style="margin-top: 0.5rem"><span>.stack</span><span>one under another, with --gap</span></div>
+  </div>
+  <div class="demo"><p class="spec">.rail (cards in a row; a swipe strip on phones)</p></div>
+  <div class="rail">
+    <div class="panel" data-c="1"><h3>Maya</h3><p>Drives Friday</p></div>
+    <div class="panel" data-c="2"><h3>Jon</h3><p>Brings snacks</p></div>
+    <div class="panel" data-c="3"><h3>Priya</h3><p>Books the room</p></div>
+    <div class="panel" data-c="4"><h3>Theo</h3><p>Sends the recap</p></div>
+  </div>
+  <div class="demo"><p class="spec">.cols (newspaper columns)</p></div>
+  <div class="cols"><p>The first paragraph flows into columns at the wide track. It is useful for a long list of short things, such as a packing list or a glossary.</p><p>Each child avoids breaking across columns, so a paragraph stays whole.</p><p>A third paragraph to show the flow continuing.</p></div>
+  <div class="demo"><p class="spec">.tag, .dot, .bar (--v)</p>
+    <div class="stack">
+      <div class="row"><span class="tag">.tag</span><span class="tag" data-tone="good">on track</span><span class="tag" data-tone="warn">at risk</span><span class="dot" data-tone="bad">.dot bad</span><span class="dot" data-c="3">.dot c3</span></div>
+      <span class="bar" style="--v: 30%"></span>
+      <span class="bar" data-tone="accent" style="--v: 72%"></span>
+      <span class="bar" data-tone="bad" style="--v: 45%"></span>
+    </div>
+  </div>
+</section>
+
+<section id="lists">
+  <h2 data-short="Lists">Steps, flows and checklists</h2>
+  <div class="demo"><p class="spec">ol.steps (each item's content in one span)</p>
+    <ol class="steps"><li><span><b>Open the quote.</b> Find the line for the return trip.</span></li><li><span><b>Ask for the missing leg.</b> Send the vendor one sentence.</span></li><li><span><b>Compare totals.</b> Both quotes now cover both legs.</span></li></ol>
+  </div>
+  <div class="demo"><p class="spec">ol.flow (boxes joined by drawn arrows; they wrap to a new row and the line loops down; &lt;code&gt; for identifiers, data-tone on the one that matters)</p></div>
+  <ol class="flow">
+    <li><b>click</b><span>the user taps Pay</span></li>
+    <li><b><code>checkout.ts</code></b><span>builds the order</span></li>
+    <li data-tone="bad"><b><code>retryOnce</code></b><span>waits on a 429</span></li>
+    <li><b>payments API</b><span>charges the card</span></li>
+    <li><b>receipt</b><span>back on screen</span></li>
+  </ol>
+  <div class="demo"><p class="spec">a longer flow, wrapping onto a second row</p></div>
+  <ol class="flow">
+    <li><b>Request</b><span>the reader asks for a page</span></li>
+    <li><b>Analyze</b><span>facts from each input</span></li>
+    <li><b>Direct</b><span>layout, feel, hero</span></li>
+    <li data-tone="accent"><b>Write</b><span>one HTML file</span></li>
+    <li><b><code>page.mjs</code></b><span>embeds and checks</span></li>
+    <li><b><code>probe.js</code></b><span>measures the layout</span></li>
+    <li><b>Hand over</b><span>a path or a link</span></li>
+  </ol>
+  <div class="demo"><p class="spec">ul.ticks (li[data-tone="bad"] draws a cross), ul.todo, ul.plain</p>
+    <div class="grid" style="--min: 12rem">
+      <ul class="ticks"><li>Both legs quoted</li><li>Insurance included</li><li data-tone="bad">No wheelchair lift</li></ul>
+      <ul class="todo"><li>Ask for the ride home</li><li>Confirm the date</li><li>Collect permission slips</li></ul>
+      <ul class="plain"><li>ul.plain</li><li>no markers</li><li>at all</li></ul>
+    </div>
+  </div>
+</section>
+
+<section id="tables">
+  <h2 data-short="Tables">Tables</h2>
+  <div class="demo"><p class="spec">table with thead, .n numbers, a toned row and a toned cell</p></div>
+  <table>
+    <thead><tr><th>Plan</th><th class="n">Per seat</th><th class="n">Seats</th><th class="n">Year one</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Starter</td><td class="n">$12</td><td class="n">20</td><td class="n">$2,880</td><td>Current</td></tr>
+      <tr data-tone="accent"><td>Team</td><td class="n">$18</td><td class="n">20</td><td class="n">$4,320</td><td>Picked</td></tr>
+      <tr><td>Business</td><td class="n">$30</td><td class="n">20</td><td class="n">$7,200</td><td data-tone="bad">Over budget</td></tr>
+    </tbody>
+  </table>
+  <div class="demo"><p class="spec">table.cards (rows become cards under 40rem; each td has data-label) and caption</p></div>
+  <table class="cards">
+    <caption>Resize to phone width to see the rows become cards.</caption>
+    <thead><tr><th>Who</th><th>Shift</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Who">Maya</td><td data-label="Shift">Mon, Wed</td><td data-label="Role">Lead</td></tr>
+      <tr><td data-label="Who">Jon</td><td data-label="Shift">Tue, Thu</td><td data-label="Role">Floor</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="code">
+  <h2 data-short="Code">Code and terminal output</h2>
+  <p>Code sits on one dark ground in both themes, so its colors are fixed in the stylesheet rather than tokens.</p>
+  <div class="demo"><p class="spec">pre[data-file] &gt; code.language-ts (Copy and Wrap come from foundation.js)</p>
+<pre data-file="apps/api/client.ts"><code class="language-ts">export async function retryOnce(call: () =&gt; Promise&lt;Response&gt;) {
+  const res = await call();
+  // A 429 means slow down: wait once, then try again.
+  if (res.status === 429) {
+    await sleep(Number(res.headers.get("retry-after") ?? 1) * 1000);
+    return call();
+  }
+  return res;
+}</code></pre>
+  </div>
+  <div class="demo"><p class="spec">code.language-diff</p>
+<pre><code class="language-diff">- const RETRIES = 5;
++ const RETRIES = 1;</code></pre>
+  </div>
+  <div class="demo"><p class="spec">bare pre (terminal) with span[data-tone]</p>
+<pre data-wrap="off">$ pnpm test
+ <span data-tone="good">✓</span> client.test.ts (12)
+ <span data-tone="bad">✗</span> retry.test.ts (1 failed)
+<span data-tone="muted">  expected 1 call, received 5</span></pre>
+  </div>
+</section>
+
+<section id="pictures">
+  <h2 data-short="Pictures">Pictures and drawings</h2>
+  <div class="demo"><p class="spec">.frames (numbered contact sheet, --ratio), figure &gt; figcaption</p></div>
+  <div class="frames" style="--ratio: 16/10">
+    <figure><img src="img/before.svg" width="640" height="400" alt="Before"><figcaption>The old layout</figcaption></figure>
+    <figure><img src="img/after.svg" width="640" height="400" alt="After"><figcaption>The new layout</figcaption></figure>
+    <figure><img src="img/tall.svg" width="390" height="720" alt="Phone"><figcaption>A tall picture, letterboxed</figcaption></figure>
+  </div>
+  <div class="demo"><p class="spec">.pair (two or three at their own shapes)</p></div>
+  <div class="pair">
+    <figure><img src="img/before.svg" width="640" height="400" alt="Before"><figcaption>Before</figcaption></figure>
+    <figure><img src="img/after.svg" width="640" height="400" alt="After"><figcaption>After</figcaption></figure>
+  </div>
+  <div class="demo"><p class="spec">inline SVG: [data-c] and [data-tone] fill; class outline | ink | muted | paper | wash | line | faint</p>
+    <figure>
+      <svg viewBox="0 0 640 170" role="img" aria-label="SVG classes">
+        <g font-size="12">
+          <rect x="0" y="10" width="70" height="70" rx="6" data-c="1"/><text x="0" y="100" class="muted">data-c="1"</text>
+          <rect x="90" y="10" width="70" height="70" rx="6" data-tone="bad"/><text x="90" y="100" class="muted">data-tone</text>
+          <rect x="180" y="10" width="70" height="70" rx="6" class="outline" stroke-width="2"/><text x="180" y="100" class="muted">.outline</text>
+          <rect x="270" y="10" width="70" height="70" rx="6" class="wash" data-c="3"/><text x="270" y="100" class="muted">.wash c3</text>
+          <rect x="360" y="10" width="70" height="70" rx="6" class="paper"/><rect x="360" y="10" width="70" height="70" rx="6" class="line"/><text x="360" y="100" class="muted">.paper .line</text>
+          <rect x="450" y="10" width="70" height="70" rx="6" class="faint" stroke-dasharray="4 3"/><text x="450" y="100" class="muted">.faint</text>
+          <rect x="540" y="10" width="70" height="70" rx="6" class="ink"/><text x="540" y="100" class="muted">.ink</text>
+          <line x1="0" y1="140" x2="610" y2="140" class="line"/><text x="0" y="162" class="muted">text in svg is the body font; .line is a hairline</text>
+        </g>
+      </svg>
+      <figcaption>A figure caption under a drawing.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="behaviors">
+  <h2 data-short="Behaviors">Behaviors</h2>
+  <div class="demo"><p class="spec">button[data-show-who] dims everything not marked data-who</p>
+    <div class="row"><button data-show-who="maya">Maya</button><button data-show-who="jon">Jon</button></div>
+    <ul class="plain" style="margin-top: 0.6rem"><li data-who="maya"><span class="dot" data-c="1">Maya drives Friday</span></li><li data-who="jon"><span class="dot" data-c="2">Jon brings snacks</span></li><li data-who="maya jon"><span class="dot" data-c="3">Both set up chairs</span></li></ul>
+  </div>
+  <div class="demo"><p class="spec">button[data-copy="#id"]</p>
+    <div class="inset"><p id="draft">Hi! Could you add the ride home to the quote? Thanks.</p></div>
+    <p><button data-copy="#draft">Copy</button></p>
+  </div>
+  <div class="demo"><p class="spec">[data-date] outlines today (set to today by the lab so you can see it)</p>
+    <div class="row"><span class="tag" id="todaytag">today</span><span class="tag" data-date="2020-01-01">another day</span></div>
+  </div>
+</section>
+
+<footer><p>Lab page, not a real page: it links foundation.css and foundation.js from the repo instead of embedding them, and the Lab panel is not part of the system.</p></footer>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const FEELS = ["minimal", "editorial", "bold", "dense"];
+  const LAYOUTS = ["column", "wide"];
+  const probe = document.createElement("span");
+  probe.style.cssText = "position:absolute;visibility:hidden;pointer-events:none";
+  document.body.append(probe);
+  const raw = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+  const color = (name) => { probe.style.color = `var(${name})`; return getComputedStyle(probe).color; };
+  const hex = (rgb) => {
+    const m = rgb.match(/[\d.]+/g);
+    if (!m) return rgb;
+    const h = m.slice(0, 3).map((n) => Math.round(+n).toString(16).padStart(2, "0")).join("");
+    return "#" + h + (m[3] && +m[3] < 1 ? ` ${Math.round(m[3] * 100)}%` : "");
+  };
+  const first = (fam) => fam.split(",")[0].replace(/["']/g, "").trim();
+  const COLOR_KNOBS = ["--ground", "--paper", "--ink", "--ink-2", "--muted", "--line", "--line-2", "--accent", "--accent-text", "--wash"];
+  const OTHER_KNOBS = ["--head-font", "--head-weight", "--head-track", "--head-case", "--head-style", "--label-font", "--label-case", "--label-track", "--radius", "--rule", "--size", "--flow", "--gap", "--pad"];
+
+  function capture(attr, value) {
+    const was = root.getAttribute(attr);
+    root.setAttribute(attr, value);
+    const out = { shadow: raw("--shadow"), headFamily: raw("--head-font"), bodyFamily: raw("--body-font") };
+    for (const k of COLOR_KNOBS) out[k] = color(k);
+    for (const k of OTHER_KNOBS) out[k] = raw(k);
+    for (const k of ["--col", "--wide"]) out[k] = raw(k);
+    root.setAttribute(attr, was);
+    return out;
+  }
+
+  function feels() {
+    const current = root.dataset.feel || "minimal";
+    const all = Object.fromEntries(FEELS.map((f) => [f, capture("data-feel", f)]));
+    // cards: each drawn with its own feel's literal values
+    const cards = document.getElementById("feelcards");
+    cards.innerHTML = "";
+    for (const f of FEELS) {
+      const v = all[f];
+      const b = document.createElement("button");
+      b.className = "feelcard";
+      b.title = `Switch this page to ${f}`;
+      b.style.cssText = `background:${v["--ground"]};color:${v["--ink"]};box-shadow:0 0 0 ${f === current ? 2 : 1}px ${f === current ? v["--accent"] : v["--line"]};`;
+      b.innerHTML = `<span style="font:600 10px/1 ${v.bodyFamily};color:${v["--muted"]};letter-spacing:0.06em;text-transform:uppercase">${f}${f === current ? " · this page" : ""}</span>
+        <span class="mini" style="background:${v["--paper"]};border-radius:${v["--radius"]};box-shadow:${v.shadow}">
+          <span class="k" style="font-family:${v["--label-font"]};text-transform:${v["--label-case"]};letter-spacing:${v["--label-track"]};color:${v["--accent-text"]}">Kicker line</span>
+          <span class="h" style="font-family:${v.headFamily};font-weight:${v["--head-weight"]};letter-spacing:${v["--head-track"]};text-transform:${v["--head-case"]};font-style:${v["--head-style"]}">The point</span>
+          <span class="p" style="color:${v["--ink-2"]};font-family:${v.bodyFamily}">A lede in ${v["--ink-2"] ? "ink-2" : ""}.</span>
+          <span class="chip" style="background:${v["--accent"]};color:${color("--accent-ink")}">accent</span>
+        </span>`;
+      b.onclick = () => { root.dataset.feel = f; history.replaceState(null, "", f === "minimal" ? location.pathname : `?feel=${f}`); document.dispatchEvent(new CustomEvent("lab:change")); };
+      cards.append(b);
+    }
+    // table: every knob in every feel
+    const t = document.getElementById("knobs");
+    t.tHead.innerHTML = `<tr><th scope="col">token</th>${FEELS.map((f) => `<th scope="col"${f === current ? ' class="now"' : ""}>${f}</th>`).join("")}</tr>`;
+    const rows = [...COLOR_KNOBS, ...OTHER_KNOBS, "--shadow"].map((k) => {
+      const cells = FEELS.map((f) => {
+        const v = k === "--shadow" ? all[f].shadow : all[f][k];
+        const cls = f === current ? ' class="now"' : "";
+        if (COLOR_KNOBS.includes(k)) return `<td${cls}><i style="background:${v}"></i>${hex(v)}</td>`;
+        if (k === "--shadow") return `<td${cls}><i style="background:${all[f]["--paper"]};box-shadow:${v};width:2.2rem;height:1.2rem;border-radius:${all[f]["--radius"]}"></i></td>`;
+        if (k.endsWith("font")) return `<td${cls}>${first(v)}</td>`;
+        const differs = v !== all.minimal[k] && f !== "minimal";
+        return `<td${cls}>${differs ? `<b>${v}</b>` : v}</td>`;
+      });
+      return `<tr><th scope="row">${k}</th>${cells.join("")}</tr>`;
+    });
+    t.tBodies[0].innerHTML = rows.join("");
+  }
+
+  function layouts() {
+    const current = root.dataset.layout || "column";
+    const dl = document.getElementById("layoutknobs");
+    dl.innerHTML = LAYOUTS.map((s) => {
+      const v = capture("data-layout", s);
+      return `<dt>${s}${s === current ? " (this page)" : ""}</dt><dd><code>--col: ${v["--col"]}</code> · <code>--wide: ${v["--wide"]}</code> · <code>--size: ${v["--size"]}</code> · <code>--flow: ${v["--flow"]}</code></dd>`;
+    }).join("");
+  }
+
+  function swatches() {
+    for (const box of document.querySelectorAll("[data-swatches]")) {
+      box.innerHTML = box.dataset.swatches.split(" ").map((n) => `<div class="sw"><i style="--x: var(--${n})"></i><b>--${n}</b><span>${hex(color("--" + n))}</span></div>`).join("");
+    }
+  }
+
+  function ramps() {
+    const scales = {
+      gray: [25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
+      brand: [25, 50, 100, 200, 400, 500, 600, 700, 800],
+      error: [50, 100, 500, 700], warning: [50, 100, 500, 700], success: [50, 500, 700],
+      yellow: [50, 500, 700], brown: [100, 300, 700],
+    };
+    document.getElementById("ramps").innerHTML = Object.entries(scales).map(([name, steps]) =>
+      `<div class="ramp"><span>${name}</span>${steps.map((s) => `<span title="--${name}-${s} ${hex(color(`--${name}-${s}`))}"><i style="--x: var(--${name}-${s})"></i>${s}</span>`).join("")}</div>`).join("");
+  }
+
+  function measure() {
+    for (const el of document.querySelectorAll("[data-measure]")) {
+      const cs = getComputedStyle(el);
+      const spec = el.closest(".typerow")?.querySelector(".spec");
+      if (!spec) continue;
+      spec.dataset.sel ??= spec.textContent;
+      spec.innerHTML = `<b>${spec.dataset.sel.replace(/</g, "&lt;")}</b><br>${first(cs.fontFamily)} ${cs.fontWeight}${cs.fontStyle === "italic" ? " italic" : ""} · ${parseFloat(cs.fontSize).toFixed(1)}px / ${(parseFloat(cs.lineHeight) / parseFloat(cs.fontSize) || 0).toFixed(2)}${cs.textTransform !== "none" ? " · " + cs.textTransform : ""}`;
+    }
+  }
+
+  document.getElementById("todaytag").dataset.date = new Date().toLocaleDateString("en-CA");
+  const all = () => { feels(); layouts(); swatches(); ramps(); measure(); };
+  all();
+  document.addEventListener("lab:change", () => requestAnimationFrame(all));
+  document.addEventListener("instrument:theme", () => requestAnimationFrame(all));
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => requestAnimationFrame(all));
+  addEventListener("resize", () => requestAnimationFrame(measure));
+  document.fonts?.ready.then(measure);
+})();
+</script>
+</body>
+</html>

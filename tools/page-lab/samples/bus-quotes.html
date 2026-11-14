@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- direction: reader="class parents on phones, deciding by Friday which bus to book" point="the cheaper bus quote leaves out the ride home" conflicts="flyer says 8:00 pickup, later email says 7:30: the email holds" layout=column feel=editorial hero="both quotes as bars, the missing leg drawn in" -->
+<html lang="en" data-layout="column" data-feel="editorial">
+<head>
+<title>The cheaper bus quote leaves out the ride home</title>
+<meta name="description" content="Bluebird's $890 covers only the ride there. With the ride home it comes to $1,410, and Lakeside's round trip is $1,180.">
+<!-- lab -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;600&family=Roboto+Serif:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="../../../skills/instrument-page/lib/foundation.css">
+<script src="../../../skills/instrument-page/lib/foundation.js"></script>
+<script src="../lab.js"></script>
+<!-- /lab -->
+<style>
+  .quotes { display: grid; gap: var(--flow); }
+  .quotes .q { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 0.8rem; row-gap: 0.35rem; align-items: center; }
+  .quotes .q > span { grid-column: 1 / -1; }
+  .quotes .segs { display: flex; height: calc(var(--bar) * 4.4); }
+  .quotes .seg { background: var(--tone); border-radius: var(--radius); }
+  .quotes .seg + .seg { border-radius: 0 var(--radius) var(--radius) 0; }
+  .quotes .seg:has(+ .seg) { border-radius: var(--radius) 0 0 var(--radius); }
+  .quotes .missing { background: var(--tone-wash); border: 2px dashed var(--tone); display: grid; place-items: center; font-size: 0.85rem; color: var(--ink); }
+  .quotes b { font: var(--head-weight) 1.5rem/1 var(--head-font); font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<header>
+  <hgroup>
+    <p>For Room 4 parents · from the two bus quotes, Oct 14</p>
+    <h1>The cheaper bus quote leaves out the ride home</h1>
+    <p>Bluebird's $890 covers only the ride there. With the ride home it comes to $1,410, and Lakeside's round trip is $1,180.</p>
+  </hgroup>
+</header>
+
+<section class="hero">
+  <figure>
+    <div class="quotes" role="img" aria-label="Lakeside $1,180 round trip; Bluebird $890 one way, $1,410 with the ride home">
+      <div class="q" data-c="1"><span>Lakeside Coaches · round trip</span><div class="segs"><i class="seg" style="width: 83.7%"></i></div><b>$1,180</b></div>
+      <div class="q" data-c="2"><span>Bluebird Charter · $890 there, plus the ride home</span><div class="segs"><i class="seg" style="width: 63.1%"></i><i class="seg missing" style="width: 36.9%">+$520</i></div><b>$1,410</b></div>
+    </div>
+    <figcaption>Both quotes on the same scale.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>What's included</h2>
+  <table class="cards">
+    <thead><tr><th>Company</th><th>Covers</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Company">Lakeside Coaches</td><td data-label="Covers">Both legs, driver waits</td><td data-label="Total">$1,180</td></tr>
+      <tr><td data-label="Company">Bluebird Charter</td><td data-label="Covers">There only; home is a second booking</td><td data-label="Total">$1,410</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Trip details</h2>
+  <dl>
+    <dt>Pickup</dt><dd>7:30 at the north lot</dd>
+    <dt>Back</dt><dd>About 3:45, same lot</dd>
+    <dt>Bring</dt><dd>Lunch, water, a jacket</dd>
+  </dl>
+  <aside data-tone="warn"><p>The flyer says 8:00, but Ms. Ortiz's later email moved pickup to 7:30.</p></aside>
+</section>
+
+<section>
+  <h2>Message for the class chat</h2>
+  <div class="inset"><p id="note">Hi all, the Bluebird quote only covers the ride there. With the ride home it comes to $1,410, so Lakeside at $1,180 is the better deal. Could we book Lakeside by Friday?</p></div>
+  <p><button data-copy="#note">Copy message</button></p>
+</section>
+
+<footer><p>Sample page for the design lab. The school, companies and prices are made up.</p></footer>
+</body>
+</html>
