@@ -37,6 +37,15 @@
     )
       .replace(/\s+/g, " ")
       .trim();
+  /** Its words with a space between each element's, as the margin quotes them. */
+  const spaced = (el) => {
+    const label = el.getAttribute("aria-label") || el.getAttribute("alt");
+    const words = [];
+    const walker = el.ownerDocument.createTreeWalker(el, 4);
+    for (let n = walker.nextNode(); n; n = walker.nextNode())
+      words.push(n.nodeValue);
+    return (label || words.join(" ")).replace(/\s+/g, " ").trim();
+  };
   const describe = (el) => {
     const name = nameOf(el);
     return `${el.getAttribute("role") || el.tagName.toLowerCase()} "${name.length > 60 ? `${name.slice(0, 60)}…` : name}"`;
@@ -172,7 +181,7 @@
         el: host,
         label,
         tone: label === "new" ? "new" : "click",
-        words: nameOf(host).slice(0, 60),
+        words: spaced(host).slice(0, 60),
       });
       host.setAttribute(
         "data-snap-mark",

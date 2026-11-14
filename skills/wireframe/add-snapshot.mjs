@@ -125,7 +125,16 @@ const main = () => {
       );
       process.exit(2);
     }
-    added[name] = readSnapshot(readFileSync(file, "utf8"));
+    let text;
+    try {
+      text = readFileSync(file, "utf8");
+    } catch {
+      console.log(
+        `${file}: no such file. Pass each snapshot's file, and nothing else: its name is the file's (pricing.json is snap("pricing")).`,
+      );
+      process.exit(2);
+    }
+    added[name] = readSnapshot(text);
   }
   let store = addSnapshots(readStore(page), added);
   for (const name of remove) delete store.pages[name];

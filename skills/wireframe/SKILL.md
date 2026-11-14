@@ -87,8 +87,8 @@ agent-browser open https://tryinstrument.com/pricing
 agent-browser eval --stdin < <skill>/snapshot.js > pricing.json
 ```
 
-2. Make the page with `new.mjs`, then `node <skill>/add-snapshot.mjs page.html pricing.json pricing-menu.json`. It prints each snapshot's size and what it couldn't keep. A name added again replaces its snapshot, and `--remove <name>` drops one.
-3. Draw the current design unedited as its own frame, then edit copies of it, so every NEW reads against something the page shows:
+2. Make the page with `new.mjs` and write its frames, then add the snapshots last, as a page holding them is too large for most edit tools: `node <skill>/add-snapshot.mjs page.html pricing.json menu.json`. It prints what each couldn't keep, and `--remove <name>` drops one.
+3. Draw the current design unedited, then edit copies of it, so every NEW reads against something shown:
 
 ```js
 const states = [
