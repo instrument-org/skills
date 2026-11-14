@@ -9,12 +9,11 @@ This skill draws a flow through a piece of software as a grid of frames. We draw
 
 ## When to use it
 
-Use it when someone asks for a wireframe, a mockup, a layout sketch, or "what would that look like". Also use it when you catch yourself describing an interface in prose. If you've written three paragraphs about where a button goes, draw it instead.
+Use it when someone asks for a wireframe, a mockup, a layout sketch, or "what would that look like". Also use it when you catch yourself describing an interface in prose. If you've written three paragraphs about where a button goes, draw it instead. When the screen already exists and your browser tool can open it, start from a snapshot of it instead of redrawing it (see "Frames from a snapshot" below).
 
 Don't use it for:
 
 - something the reader types into or gets a number out of (build a small tool instead)
-- an interface that already exists and can be screenshotted
 - boxes and arrows (draw a diagram instead)
 - a whole design system. One wireframe page covers one flow and makes one case.
 
@@ -28,7 +27,8 @@ Don't use it for:
 - `share.mjs` and `share.py` publish a finished page to a link (see "Hand it over" below).
 - `prototype.html` holds the other kind of page: one live screen instead of a grid (see "A prototype instead of frames" below).
 - `main.html` holds the title bar, the frame grid, the marks, the enlarged view, the `groups` and `states` you fill in, and a neutral kit of software pieces: `win`, `web`, `phone`, `panel`, `shell`, `navItem`, `group`, `btn`, `field`, `toggle`, `chip`, `grid`, `empty` and `bars`.
-- `patterns.md` explains how a frame is built from two elements, lists common screen sizes, and covers the four ways a set of frames can vary (moments, conditions, widths and options), how marks work, grey bars, and printing.
+- `snapshot.js` captures the page open in your browser tool as one self-contained snapshot, `add-snapshot.mjs` puts snapshots into a wireframe page, and `snapshot-frames.js` is the script it adds there, which draws `snap()` frames (see "Frames from a snapshot" below).
+- `patterns.md` explains how a frame is built from two elements, lists common screen sizes, and covers the four ways a set of frames can vary (moments, conditions, widths and options), how marks work, every target and edit `snap()` takes, grey bars, and printing.
 
 ## Worked example
 
@@ -74,6 +74,51 @@ agent-browser screenshot checkout.png
 ```
 
 `errors` must come back empty, so fix the script until it does. Then look at the screenshot and make sure every frame is drawn, each one has its caption, and nothing is cut off. Marks start hidden, so press `A` and take a second screenshot to check that each ring sits on the element it names. The browser can only open the page if it's in the task folder or a folder the user granted. If you have no browser tool, tell the user you couldn't check the page.
+
+## Frames from a snapshot
+
+A snapshot is a page as your browser tool drew it, kept whole, and a frame drawn from one is the real screen, edited by the words a person reads on it. Use one whenever the screen exists and your browser can reach it, and draw from scratch only screens that don't exist yet, mixing the two frame by frame.
+
+1. At the frame's size, click into the state you'll draw (a menu open, a tab chosen) and capture it. Repeat per state: one you never clicked into isn't in the snapshot.
+
+```
+agent-browser set viewport 1280 800
+agent-browser open https://tryinstrument.com/pricing
+agent-browser eval --stdin < <skill>/snapshot.js > pricing.json
+```
+
+2. Make the page with `new.mjs`, then `node <skill>/add-snapshot.mjs page.html pricing.json pricing-menu.json`. It prints each snapshot's size and what it couldn't keep. A name added again replaces its snapshot, and `--remove <name>` drops one.
+3. Draw the current design unedited as its own frame, then edit copies of it, so every NEW reads against something the page shows:
+
+```js
+const states = [
+  {
+    title: "Pricing (Current design)",
+    note: "…",
+    ...snap.size("pricing"),
+    body: snap("pricing"),
+  },
+  {
+    title: "Pricing",
+    note: "We show Pro's yearly price under its monthly one, so the saving is plain.",
+    ...snap.size("pricing"),
+    body: snap("pricing", ($) => {
+      $({ role: "heading", text: "Pricing" }).text("Plans");
+      $({ contains: "/ month", nth: 2 }).after(
+        `<span style="display:block;font-size:13px">or $96 a year</span>`,
+      );
+      $("Choose Pro").note("starts a 14-day trial");
+    }),
+  },
+];
+```
+
+- `$(target)` finds exactly one element by its words, a role, a label or a selector (every target and edit is in "Frames from a snapshot" in `patterns.md`). A target that matches nothing or several stops the page with an error naming the close matches, which `agent-browser errors` shows.
+- Every edit marks what it changed NEW, unless it ends with `{ quiet: true }`, and `.note("words")` adds a callout. `.click()` draws nothing, like `clickable`.
+- The snapshot keeps only the style rules its page used, so style what you add with `.look(target)`, a `.clone()` of a neighbor, or inline `style`.
+- Frames draw as they come near the screen, so before a full-page screenshot run `agent-browser eval 'dispatchEvent(new Event("beforeprint"))'`.
+
+A snapshot holds whatever the page showed, names and figures included. Capture from a test account where you can, edit the rest out with `{ quiet: true }`, and never share the user's own screens without asking. Password fields are never kept. It can't capture a native app, and `add-snapshot.mjs` prints what it drew without, such as another site's embedded page.
 
 ## Rules
 

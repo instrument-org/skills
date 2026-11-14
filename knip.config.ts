@@ -19,6 +19,10 @@ const config: KnipConfig = {
     "skills/instrument-page/lib/foundation.*",
     "skills/instrument-page/lib/probe.js",
     "skills/wireframe/*.mjs",
+    // The capture an agent's browser tool evaluates, and the frames' script
+    // add-snapshot.mjs reads as a file and writes into a page.
+    "skills/wireframe/snapshot.js",
+    "skills/wireframe/snapshot-frames.js",
   ],
   ignoreBinaries: [
     "actionlint", // Used by scripts/check-actions.ts

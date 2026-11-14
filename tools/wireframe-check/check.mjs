@@ -3,8 +3,10 @@
 // errors; bands that keep one height from frame to frame; a title block
 // and strip that follow the open frame; callouts in the margin and a
 // spotlight that fades, held by A and hidden by Cmd+.; and a frame still carrying a `compare` field, which pages written
-// before Compare was removed have, ignored without a word. Each fixture is a page
-// new.mjs writes, so the check runs the main.html an agent would get.
+// before Compare was removed have, ignored without a word; and frames drawn
+// from a snapshot, edited by name, with their callouts in the margin and a
+// missed target that names what came close. Each fixture is a page new.mjs
+// writes, so the check runs the main.html an agent would get.
 //
 // A development tool, like page-check: nothing under skills/ imports it.
 //
@@ -21,6 +23,20 @@ import { ChromeError, launch } from "../page-check/chrome.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const newPage = resolve(here, "../../skills/wireframe/new.mjs");
+const addSnapshot = resolve(here, "../../skills/wireframe/add-snapshot.mjs");
+
+// A snapshot as snapshot.js writes one, small enough to read: a pricing page
+// with two plans.
+const PRICING = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="wireframe-snapshot" content="1280x800" data-url="https://example.com/pricing"><title>Pricing</title>
+<style>body{margin:0;padding:48px;font:16px/1.5 system-ui,sans-serif;color:#18181b}.card{display:inline-block;width:320px;margin-right:24px;padding:24px;border:1px solid #e4e4e7;border-radius:12px;vertical-align:top}.btn{display:inline-block;padding:8px 16px;border-radius:8px;background:#064e3b;color:#fff;text-decoration:none}</style>
+</head><body><h1>Pricing</h1><div class="card"><h2>Basic</h2><p><b>$10</b> / month</p><a class="btn" href="#">Choose Basic</a></div><div class="card"><h2>Pro</h2><p><b>$40</b> / month</p><a class="btn" href="#">Choose Pro</a></div></body></html>`;
+const SNAP_EDITS = `($) => {
+  $({ role: "heading", text: "Pricing" }).text("Plans");
+  $({ contains: "/ month", nth: 2 }).after("<p>or $384 a year</p>");
+  $("Choose Pro").note("starts a trial");
+}`;
+const SNAP_WORDS = ["New Plans", "New or $384 a year", "starts a trial"];
 
 // A frame: a box at its size with a title in it. `leak` puts an element in
 // it that sets its own visibility, which once showed through a second
@@ -100,6 +116,15 @@ export const FIXTURES = {
       withGroup("B", frame("Pricing", 1280, 1600)),
     ],
   },
+  snapshots: {
+    groups: "{}",
+    snapshots: { pricing: PRICING },
+    states: [
+      `{ title: "Pricing", note: ${JSON.stringify(SHORT)}, ...snap.size("pricing"), body: snap("pricing") }`,
+      `{ title: "Plans", note: ${JSON.stringify(LONG)}, ...snap.size("pricing"), body: snap("pricing", ${SNAP_EDITS}) }`,
+      frame("Drawn", 1280, 800),
+    ],
+  },
   callouts: {
     groups: "{}",
     states: [
@@ -111,7 +136,7 @@ export const FIXTURES = {
   },
 };
 
-const build = (dir, name, { groups, states }) => {
+const build = (dir, name, { groups, states, snapshots = {} }) => {
   const path = join(dir, `${name.replace(/\W+/g, "-")}.html`);
   execFileSync("node", [newPage, path, `Check: ${name}`], {
     cwd: dir,
@@ -122,6 +147,13 @@ const build = (dir, name, { groups, states }) => {
   const b = page.indexOf("        // ---- render");
   const frames = `        // ---- the frames\n        const groups = ${groups};\n        const states = [\n${states.map((s) => `          ${s},`).join("\n")}\n        ];\n\n`;
   writeFileSync(path, page.slice(0, a) + frames + page.slice(b));
+  const files = Object.entries(snapshots).map(([snap, html]) => {
+    const file = join(dir, `${snap}.html`);
+    writeFileSync(file, html);
+    return file;
+  });
+  if (files.length)
+    execFileSync("node", [addSnapshot, path, ...files], { stdio: "ignore" });
   return path;
 };
 
@@ -223,7 +255,8 @@ export async function run({ keep } = {}) {
       errors.length = 0;
       await P.viewport(1440, 900);
       await P.navigate(pathToFileURL(path).href);
-      await wait(400);
+      // A snapshot frame lays out in its own document after the page.
+      await wait(fixture.snapshots ? 1200 : 400);
       // Dark, so the frames' own scheme shows: light unless they ask.
       await P.evaluate(`document.documentElement.dataset.theme = "dark"`);
       // One per row, the setting under which a copied tile is widest.
@@ -276,6 +309,41 @@ export async function run({ keep } = {}) {
         fail("C or R changes what the stage shows");
       if (still.barsShown.length !== n)
         fail(`the strip shows ${still.barsShown.length} of ${n} bars`);
+
+      if (name === "snapshots") {
+        // The edits' callouts in the margin, measured inside the frame's
+        // own document, and none on the unedited frame.
+        await go(1);
+        await wait(600);
+        const edited = await callouts();
+        if (edited.words.sort().join("|") !== [...SNAP_WORDS].sort().join("|"))
+          fail(
+            `the edited snapshot's margin reads [${edited.words.join(" | ")}]`,
+          );
+        if (edited.holes !== 3)
+          fail(
+            `the edited snapshot's spotlight has ${edited.holes} holes, not 3`,
+          );
+        await go(0);
+        await wait(300);
+        if ((await callouts()).words.length)
+          fail("the unedited snapshot has callouts");
+        const drawn = await P.evaluate(
+          `[...document.querySelectorAll("#rack .snap > iframe")].map((f) => f.contentDocument?.querySelector("h1")?.textContent ?? "").join()`,
+        );
+        if (drawn !== "Pricing,Plans")
+          fail(`the grid's snapshot frames read [${drawn}]`);
+        const missed = await P.evaluate(
+          `(() => { try { snap("pricing", ($) => $("Choose Plus")); return "no error"; } catch (e) { return e.message; } })()`,
+        );
+        if (!/nothing matches.*Close: .*Choose Pro/.test(missed))
+          fail(`a missed target says "${missed}"`);
+        const several = await P.evaluate(
+          `(() => { try { snap("pricing", ($) => $({ contains: "/ month" })); return "no error"; } catch (e) { return e.message; } })()`,
+        );
+        if (!/matches 2 elements.*nth/.test(several))
+          fail(`a target matching two says "${several}"`);
+      }
 
       if (name === "callouts") {
         // The words beside the frame on every frame that has callouts, and

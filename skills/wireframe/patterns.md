@@ -100,6 +100,62 @@ body:not([data-marks="on"]) .ann {
 
 The rule sits on the body, so it covers both the grid and the enlarged view, which is a copy of the frame placed inside the same body. If you draw a mark by hand instead of through the kit, give it the `ann` class. Otherwise it stays visible while marks are off, which is worse than having no button at all. A mark drawn by hand shows only with the switch on: it has no words in the margin and no place in the spotlight, so put `ann("words")` inside the element where you can. If the reader should never lose a callout, it isn't an annotation. Draw it inside the frame as real interface.
 
+## Frames from a snapshot
+
+`SKILL.md` covers capturing a page and adding it. This is everything `snap()` takes.
+
+```js
+snap("pricing"); // the snapshot as captured
+snap("pricing", ($) => { … }); // a copy, edited
+snap.size("pricing"); // { w, h }, the viewport it was captured at
+snap.url("pricing"); // the address it was captured at
+```
+
+A frame is the snapshot in its own document, so its styles reach only that frame and its width is its viewport: a page's breakpoints work. It shows the first screen, at the scroll positions the page had.
+
+### Targets
+
+`$(target)` returns exactly one element, or stops the page with an error naming what came close.
+
+| Target                                   | Finds                                                                                                                 |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `"Choose Pro"`                           | the innermost element whose words, label, placeholder or alt are exactly that                                         |
+| `{ contains: "/ month" }`                | the innermost element whose words include that                                                                        |
+| `{ role: "button", text: "Choose Pro" }` | the outermost of a role: button, link, textbox, heading, listitem, navigation, dialog, image, or any `role` attribute |
+| `{ label: "Close" }`                     | by `aria-label`                                                                                                       |
+| `{ selector: "header nav" }`             | by CSS selector, for what has no words                                                                                |
+| `{ within: "Pro", text: "Choose" }`      | inside another target                                                                                                 |
+| `{ contains: "/ month", nth: 2 }`        | the second of several                                                                                                 |
+
+`.find(target)` looks inside an element, and `.up("li")` or `.up("button")` climbs to the nearest selector or role around it. `$.root` is the page's body.
+
+### Edits
+
+Each returns the element, so edits chain. Each marks what it changed NEW, unless its last argument is `{ quiet: true }`.
+
+- `.text("Plans")` sets an element's one piece of words, and `.text("Pricing", "Plans")` replaces those words where an element holds several.
+- `.html("…")` replaces the insides, and `.replace("…")` the element itself.
+- `.before("…")`, `.after("…")`, `.append("…")` and `.prepend("…")` add HTML, or a clone, beside or inside it.
+- `.clone()` copies an element to change and then place: `$("Basic").up("li").clone().find("Basic").text("Team")` and then `$("Pro").up("li").after(copy)`. A clone is marked once placed.
+- `.remove()` takes it out, and `.hide()` keeps its room and draws nothing.
+- `.attr(name, value)` sets an attribute, and `null` removes it. `.addClass("…")` and `.removeClass("…")` change classes.
+- `.look(target)` takes another element's classes, so a link can take a button's look.
+- `.css("width: 320px")` adds inline style.
+- `.note("words")` puts a callout on it, like `noted`, and `.fresh()` NEW, like `fresh`, for a change no edit marked. `.click()` draws nothing, like `clickable`.
+
+What you add is styled by the snapshot's own stylesheets, which keep only the rules its page used, so reach for `.look()`, `.clone()` or inline `style` before a class the page never had.
+
+To show the page in a browser window, wrap it: `body: web(snap.url("pricing"), snap("pricing"))` with `w: 1280, h: snap.size("pricing").h + 77`, since the window's bars take 77 pixels.
+
+### When a snapshot is wrong
+
+- What it can't keep, `add-snapshot.mjs` prints: another site's embedded page comes out a gray box carrying `data-snapshot-embed`, a shadow root comes out empty, and another site's stylesheet that refuses reads stays a link, so it draws only online.
+
+- A frame that comes up blank or unstyled: the page drew with a stylesheet it couldn't read, and `add-snapshot.mjs` printed which. Capture again from a page that serves it, or draw that frame from scratch.
+- A state the frame needs that the snapshot lacks, such as a menu open or a hover: capture it again with the state clicked into. Hover can't be captured; draw its look with `.look()` or `.css()`.
+- Each snapshot is 0.3 to 1 MB, stored once however many frames draw it, and a shared page takes up to 8 MB.
+- Any browser tool that evaluates a script and returns its value can capture, as long as what it returns is saved to a file unshortened. `add-snapshot.mjs` also takes the snapshot's `html` on its own, saved as an `.html` file.
+
 ## Grey bars
 
 ```js

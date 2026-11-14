@@ -1303,6 +1303,9 @@
           },
           true,
         );
+        // A frame drawn from a snapshot lays out in its own document after
+        // this one, and names the frames whose marked elements have their places.
+        document.addEventListener("wireframe:remark", (e) => drawMarks(e.detail));
 
         // ---- density ---------------------------------------------------------
         // Fit as many tiles per row as the width allows, then derive each frame's
