@@ -381,8 +381,8 @@
            laid over it. At the top left, which frame this is, as the page's
            own title bar says which page: its place in the page, its label,
            its title, and the note on a second line, one line long until a
-           tap opens the rest. At the top right, the switches: Marks and
-           Close. Every one is the same kind of button, its
+           tap opens the rest. At the top right, the switches: Callouts and
+           Close, and while zoomed the scale in the corner. Every one is the same kind of button, its
            word and then its key, with no icon. Along the bottom, only the
            strip, with the frame's label and its group's name under its own run, and prev and
            next: small arrow keys at the lower right on a desktop, buttons
@@ -824,7 +824,9 @@
           pointer-events: none;
         }
         /* Zoomed, everything but the scale and the thumbnail fades, so the
-           drawing has the screen. Under a mouse, pointing at a control brings
+           drawing has the screen. The scale is the last of the switches, so
+           it keeps the top right corner rather than hanging where the faded
+           ones were. Under a mouse, pointing at a control brings
            it back; on a touch screen, a tap on the ground brings them all. */
         #viewer-top .ident,
         #viewer-strip {
@@ -861,9 +863,9 @@
             <p id="viewer-caption"></p>
           </div>
           <div class="controls">
-            <button id="viewer-zoom" hidden title="Back to fit (0)" aria-label="Back to fit" class="vbtn"><span data-chrome-text></span><kbd data-chrome-text="0"></kbd></button>
             <button data-marks aria-label="Callouts" aria-pressed="false" class="vbtn"><span data-chrome-text="Callouts"></span><kbd data-chrome-text="A"></kbd></button>
             <button id="viewer-close" title="Close (Esc)" aria-label="Close" class="vbtn"><span data-chrome-text="Close"></span><kbd data-chrome-text="Esc"></kbd></button>
+            <button id="viewer-zoom" hidden title="Back to fit (0)" aria-label="Back to fit" class="vbtn"><span data-chrome-text></span><kbd data-chrome-text="0"></kbd></button>
           </div>
         </div>
         <div id="viewer-bottom">
