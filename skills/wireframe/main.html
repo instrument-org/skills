@@ -387,7 +387,10 @@
            strip, with the frame's label and its group's name under its own run, and prev and
            next: small arrow keys at the lower right on a desktop, buttons
            under the thumbs on a touch screen. The frame fits between the two
-           and never sits under them until the reader zooms, when everything
+           and never sits under them; a frame far taller than the screen,
+           such as a whole web page, fits by its width instead and scrolls
+           between them, with the thumbnail showing where. When the reader
+           zooms, everything
            but the scale fades so the drawing has the screen. Zoom has no
            control of its own: a pinch, a wheel with Cmd or Ctrl held, a
            double tap or the keys take the frame in, and then the lower right
@@ -410,6 +413,13 @@
           --vw-faint: rgb(255 255 255 / 0.42);
         }
         html:has(#viewer[open]) {
+          background: #000;
+        }
+        /* While a tall frame scrolls at fit, the bands take the ground's
+           color, so the drawing scrolls between them rather than under the
+           title and the strip. They still take no taps, so a wheel over
+           them scrolls too. */
+        #viewer[data-scrolls] :is(#viewer-top, #viewer-bottom) {
           background: #000;
         }
         #stage {
@@ -777,7 +787,7 @@
         }
         /* The thumbnail: the whole frame small, with the part on screen
            boxed, at the lower right above the strip, only while the frame
-           is zoomed. */
+           is zoomed or scrolls. */
         #viewer-map {
           position: absolute;
           right: max(0.75rem, env(safe-area-inset-right, 0px));
@@ -1512,11 +1522,26 @@
         // Room round the frame at fit: none on a phone, where every pixel of
         // width is the drawing's.
         const pad = () => (innerWidth < 640 || short.matches ? 0 : 16);
-        const fitScale = (frame = frameOf()) => {
+        // The scale that shows the whole frame between the bands.
+        const wholeScale = (frame = frameOf()) => {
           const { w, h } = sizeOf(frame);
           const p = pad();
           return Math.max(0.05, Math.min((stage.clientWidth - p * 2) / w, (stage.clientHeight - topH - bottomH - p * 2) / h));
         };
+        // The scale a frame rests at, which 0 and a double tap come back to.
+        // Most frames rest whole. A frame far taller than the screen, such as
+        // a whole web page, would rest as a sliver too narrow to read, so it
+        // rests as wide as the stage allows, up to its true size, from its
+        // top, and scrolls between the bands. Zooming out still reaches the
+        // whole of it.
+        const TALL = 1.5;
+        const fitScale = (frame = frameOf()) => {
+          const whole = wholeScale(frame);
+          const wide = Math.min(1, (stage.clientWidth - pad() * 2) / sizeOf(frame).w);
+          return wide > whole * TALL ? wide : whole;
+        };
+        const minScale = () => Math.min(fitScale(), wholeScale());
+        const atFit = (s) => Math.abs(s - fitScale()) <= fitScale() * 0.001;
 
         // ---- the note and the thumbnail --------------------------------------
         // The note keeps to one line, and a tap on it opens the whole note
@@ -1533,23 +1558,27 @@
         // The thumbnail is a third copy of the frame, drawn at the width the
         // map has, with the part on screen boxed. `window` is the visible
         // part in the frame's own pixels.
-        const paintMap = (zoomed, window) => {
+        // A frame far taller than wide draws it no wider than half the
+        // clear height allows, so a whole web page is a slim column.
+        const paintMap = (shown, window) => {
           const frame = frameOf();
-          if (!frame || !zoomed) {
+          if (!frame || !shown) {
             viewerMap.hidden = true;
             return;
           }
           const { w, h } = sizeOf(frame);
           const mw = coarse.matches ? 88 : 120;
-          const ms = mw / w;
+          const mh = Math.max(96, (stage.clientHeight - topH - bottomH) / 2);
+          const ms = Math.min(mw / w, mh / h);
           viewerMap.hidden = false;
-          if (viewerMap.dataset.for !== String(openIndex)) {
-            viewerMap.dataset.for = String(openIndex);
+          const key = `${openIndex}:${ms}`;
+          if (viewerMap.dataset.for !== key) {
+            viewerMap.dataset.for = key;
             const copy = frame.cloneNode(true);
             copy.style.setProperty("--s", ms);
             copy.style.transform = "";
             viewerMap.querySelector(".map-frame").replaceChildren(copy);
-            viewerMap.style.width = `${mw}px`;
+            viewerMap.style.width = `${w * ms}px`;
             viewerMap.style.height = `${h * ms}px`;
           }
           const box = viewerMap.querySelector(".map-view");
@@ -1615,7 +1644,7 @@
           // them. Any other size opens at fit.
           const same = before && before.w === Number(copy.dataset.w) && before.h === Number(copy.dataset.h);
           if (same) relayout();
-          else toFit(false);
+          else toFit(false, true);
           drawMarks(stage.querySelectorAll(".frame > *"));
           paintCallouts(index);
           liftSpot(index);
@@ -1733,6 +1762,7 @@
           paintTags();
           viewer.removeAttribute("data-controls");
           viewer.removeAttribute("data-zoomed");
+          viewer.removeAttribute("data-scrolls");
           setFrameParam(null);
           keepFrame(null);
           describe(null);
@@ -1810,6 +1840,18 @@
             // Held down, the key repeats; only the press itself switches.
             if (event.repeat) return;
             return flipMarks();
+          }
+          // A frame taller than the clear part of the screen scrolls by the
+          // page's own keys: up and down, Page Up and Page Down, Space with
+          // or without Shift, Home and End. Space on a focused button is the
+          // button's.
+          if (viewer.open && frameOf() && movable() && !(event.key === " " && event.target?.closest?.("button"))) {
+            const page = (stage.clientHeight - topH - bottomH) * 0.9;
+            const by = { ArrowDown: 80, ArrowUp: -80, PageDown: page, PageUp: -page, " ": event.shiftKey ? -page : page, Home: -Infinity, End: Infinity }[event.key];
+            if (by !== undefined) {
+              event.preventDefault();
+              return glide(clamp({ ...view, y: view.y - by }), !event.repeat);
+            }
           }
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           // From the rack, right opens the set at its first frame, so the whole
@@ -2202,7 +2244,7 @@
             };
             layTags(tagsEl, frame, list, { fx, fy, s, clear, wrap: 240 });
           };
-          if (!isZoomed || redrawn) return lay();
+          if ((!isZoomed && !movable()) || redrawn) return lay();
           tagsEl.replaceChildren();
           tagsWait = setTimeout(lay, 150);
         };
@@ -2233,8 +2275,8 @@
 
         // ---- the view: pinch, wheel, drag, double tap and keys ---------------
         // The frame's scale and where its top-left corner sits on the stage.
-        // The view never goes below fit, and above it the frame can reach
-        // four times its true size. A pinch scales the frame about the
+        // The view never goes below the whole frame, and above fit the frame
+        // can reach four times its true size. A pinch scales the frame about the
         // fingers and a wheel with Cmd or Ctrl held about the pointer, a
         // drag moves it and keeps going for a moment when let go, a double
         // tap zooms in at that spot and back, and the zoom keys step the
@@ -2245,10 +2287,16 @@
         // for every frame of a pinch; at rest the content is drawn again at
         // the view's scale, so it is sharp.
         let raster = 1;
-        // Whether the view is above fit. Set by the gestures and by the moves
-        // to fit, never read off the view while it moves, so a glide through
-        // fit cannot show and hide the thumbnail on the way.
+        // Whether the view is off fit, in or out. Set by the gestures and by
+        // the moves to fit, never read off the view while it moves, so a
+        // glide through fit cannot show and hide the thumbnail on the way.
         let isZoomed = false;
+        // Whether the frame runs past the clear part of the screen at the
+        // view's scale, so there is somewhere to scroll to.
+        const movable = () => {
+          const { w, h } = sizeOf();
+          return h * view.s > stage.clientHeight - topH - bottomH + 1 || w * view.s > stage.clientWidth + 1;
+        };
         const maxScale = () => Math.max(4, fitScale());
         // Zoomed, the controls fade; a zoom that starts after a tap brought
         // them back fades them again.
@@ -2289,7 +2337,12 @@
           paintReadout(isZoomed);
           paintTags();
           const { top, bottom } = bands();
-          paintMap(isZoomed, {
+          // A frame that scrolls at fit scrolls between the bands, so the
+          // title and the strip never sit over the drawing. Zoomed, the
+          // controls fade and the drawing has the whole screen.
+          const scrolls = movable();
+          viewer.toggleAttribute("data-scrolls", !isZoomed && scrolls);
+          paintMap(isZoomed || scrolls, {
             x0: -view.x / view.s,
             y0: (top - view.y) / view.s,
             x1: (stage.clientWidth - view.x) / view.s,
@@ -2314,12 +2367,11 @@
           rasterTimer = setTimeout(reraster, 150);
         };
 
-        // After a gesture moved the scale: above fit the view is zoomed; at
+        // After a gesture moved the scale: off fit the view is zoomed; at
         // fit it is fit exactly, with the caption open.
         const settle = () => {
-          const fit = fitScale();
-          setZoomed(view.s > fit * 1.001);
-          if (!isZoomed) view.s = fit;
+          setZoomed(!atFit(view.s));
+          if (!isZoomed) view.s = fitScale();
           place();
         };
 
@@ -2368,8 +2420,16 @@
           glideId = requestAnimationFrame(tick);
         };
 
-        // Back to fit. The thumbnail goes once the frame has landed.
-        const toFit = (animate) => glide(clamp({ s: fitScale(), x: 0, y: 0 }), animate, () => setZoomed(false));
+        // Back to fit. A frame that scrolls at fit keeps the part in the
+        // middle of the screen there, or with `fromTop` starts at its top.
+        // The thumbnail goes once the frame has landed.
+        const toFit = (animate, fromTop = false) => {
+          const s = fitScale();
+          const c = clearCenter();
+          const f = pointAt(c);
+          const target = fromTop ? { s, x: 0, y: bands().top } : { s, x: c.x - f.fx * s, y: c.y - f.fy * s };
+          glide(clamp(target), animate, () => setZoomed(false));
+        };
         // The middle of the clear part of the screen, between the bands.
         const clearCenter = () => {
           const { top, bottom } = bands();
@@ -2394,16 +2454,21 @@
         // The frame point under a stage point.
         const pointAt = (p) => ({ fx: (p.x - view.x) / view.s, fy: (p.y - view.y) / view.s });
         // Scales about a stage point, keeping the frame point under it there.
-        // A scale at or under fit is fit.
+        // A scale at fit is fit.
         const zoomTo = (s, p, animate) => {
-          s = Math.min(maxScale(), Math.max(fitScale(), s));
-          if (s <= fitScale() * 1.001) return toFit(animate);
+          s = Math.min(maxScale(), Math.max(minScale(), s));
+          if (atFit(s)) return toFit(animate);
           setZoomed(true);
           const k = s / view.s;
           glide(clamp({ s, x: p.x - (p.x - view.x) * k, y: p.y - (p.y - view.y) * k }), animate);
         };
-        // One step of the zoom keys, about the middle of the clear part.
-        const zoomBy = (k) => zoomTo(view.s * k, clearCenter(), true);
+        // One step of the zoom keys, about the middle of the clear part. A
+        // step across fit stops at fit.
+        const zoomBy = (k) => {
+          const fit = fitScale();
+          const s = view.s * k;
+          zoomTo(!atFit(view.s) && (view.s - fit) * (s - fit) < 0 ? fit : s, clearCenter(), true);
+        };
         // A double tap or click: back to fit from above it; else in, to true
         // size, or to twice fit where true size is no larger, about the spot.
         const doubleTap = (p) => (isZoomed ? toFit(true) : zoomTo(Math.max(1, fitScale() * 2), p, true));
@@ -2420,7 +2485,7 @@
           const [a, b] = [...pointers.values()];
           return { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
         };
-        const startPan = (p, type, moved) => ({ kind: "pan", type, x0: p.x, y0: p.y, x: p.x, y: p.y, t: performance.now(), vx: 0, vy: 0, moved, slide: 0 });
+        const startPan = (p, type, moved) => ({ kind: "pan", type, x0: p.x, y0: p.y, x: p.x, y: p.y, t: performance.now(), vx: 0, vy: 0, moved, axis: moved ? "y" : null, slide: 0 });
 
         stage.addEventListener("pointerdown", (event) => {
           if (event.button !== 0) return;
@@ -2445,7 +2510,7 @@
             if (pointers.size !== 2) return;
             const m = pinchOf();
             // The frame point that was between the fingers stays between them.
-            view.s = Math.min(maxScale(), Math.max(fitScale(), (gesture.s0 * m.d) / gesture.d0));
+            view.s = Math.min(maxScale(), Math.max(minScale(), (gesture.s0 * m.d) / gesture.d0));
             view.x = m.x - gesture.fx * view.s;
             view.y = m.y - gesture.fy * view.s;
             return settle();
@@ -2460,12 +2525,20 @@
           gesture.y = p.y;
           gesture.t = now;
           if (!gesture.moved && Math.hypot(p.x - gesture.x0, p.y - gesture.y0) < 6) return;
+          // At fit, the drag's first direction decides it: sideways is a swipe,
+          // up or down scrolls a frame that scrolls.
+          if (!gesture.moved) gesture.axis = Math.abs(p.x - gesture.x0) > Math.abs(p.y - gesture.y0) ? "x" : "y";
           gesture.moved = true;
           if (!isZoomed) {
-            // At fit there is nowhere to go, so a sideways drag slides the frame
-            // with the finger, as the start of a swipe to the next one.
+            if (gesture.axis === "y") {
+              if (!movable()) return;
+              view.y += dy;
+              return place();
+            }
+            // At fit there is nowhere to go sideways, so the drag slides the
+            // frame with the finger, as the start of a swipe to the next one.
             gesture.slide += dx;
-            frameOf().style.transform = `translate(${view.x + gesture.slide / 2}px, ${view.y}px)`;
+            frameOf().style.transform = `translate(${view.x + gesture.slide / 2}px, ${view.y}px) scale(${view.s / raster})`;
             return;
           }
           view.x += dx;
@@ -2490,10 +2563,11 @@
           gesture = null;
           if (event.type === "pointercancel") return place();
           if (!g.moved) return tapped(g.type, { x: g.x0, y: g.y0 });
-          if (!isZoomed) {
+          if (!isZoomed && g.axis === "x") {
             if (states.length > 1 && Math.abs(g.slide) >= 48 && Math.abs(g.slide) > Math.abs(g.y - g.y0) * 1.5) return step(g.slide < 0 ? 1 : -1);
             return place();
           }
+          if (!isZoomed && !movable()) return place();
           // A finger lifted while moving keeps the frame going for a moment.
           if (performance.now() - g.t < 80 && Math.hypot(g.vx, g.vy) > 0.08) fling(g.vx, g.vy);
         };
@@ -2523,7 +2597,8 @@
 
         // ---- wheel -----------------------------------------------------------
         // A wheel with Cmd or Ctrl held zooms about the pointer, which is also
-        // how a trackpad pinch arrives; a plain wheel moves a zoomed frame.
+        // how a trackpad pinch arrives; a plain wheel moves a zoomed frame, or
+        // scrolls one that scrolls at fit.
         // Neither reaches the page. A pinch tracks the fingers as they are. A
         // mouse wheel's notches can be large, so with Cmd held, or past the
         // size a pinch sends, the view eases toward where the wheel has sent
@@ -2545,7 +2620,7 @@
           view.y = p.y - (p.y - view.y) * k;
           view.s = next;
           if (next !== s) {
-            setZoomed(view.s > fitScale() * 1.001);
+            setZoomed(!atFit(view.s));
             place();
             wheelId = requestAnimationFrame(() => wheelStep(rate));
             return;
@@ -2555,7 +2630,7 @@
           rerasterSoon();
         };
         const wheelZoom = (factor, p, eased) => {
-          const s = Math.min(maxScale(), Math.max(fitScale(), (wheelTarget?.s ?? view.s) * factor));
+          const s = Math.min(maxScale(), Math.max(minScale(), (wheelTarget?.s ?? view.s) * factor));
           wheelTarget = { s, p };
           if (!eased) return wheelStep(1);
           if (!wheelId) wheelId = requestAnimationFrame(() => wheelStep(0.35));
@@ -2569,7 +2644,7 @@
               const factor = Math.exp(-Math.max(-30, Math.min(30, d)) * 0.01);
               return wheelZoom(factor, local(event), event.metaKey || Math.abs(d) >= 30);
             }
-            if (!isZoomed) return;
+            if (!isZoomed && !movable()) return;
             stopWheel();
             view.x -= event.deltaX;
             view.y -= event.deltaY;

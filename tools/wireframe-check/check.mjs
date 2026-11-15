@@ -290,6 +290,77 @@ export async function run({ keep } = {}) {
       if ((await read()).alerts)
         fail("the page lists a problem above the frames");
 
+      if (name === "tall") {
+        // A frame far taller than the screen opens at its true width, from
+        // its top, between the bands, and scrolls; zooming out reaches the
+        // whole of it, and 0 brings it back to its width.
+        const at = async () =>
+          JSON.parse(
+            await P.evaluate(`JSON.stringify((() => {
+              const v = document.querySelector("#viewer");
+              const f = document.querySelector("#stage .frame").getBoundingClientRect();
+              return {
+                w: Math.round(f.width), h: Math.round(f.height), top: Math.round(f.top), bottom: Math.round(f.bottom),
+                bandTop: document.querySelector("#viewer-top").offsetHeight,
+                bandBottom: innerHeight - document.querySelector("#viewer-bottom").offsetHeight,
+                scrolls: v.hasAttribute("data-scrolls"), zoomed: v.hasAttribute("data-zoomed"),
+                map: !document.querySelector("#viewer-map").hidden,
+              };
+            })())`),
+          );
+        const settle = () => wait(400);
+        await go(0);
+        await settle();
+        let t = await at();
+        if (t.w !== 1280 || t.top !== t.bandTop)
+          fail(
+            `a tall frame opens ${t.w}px wide at y=${t.top}, not 1280px at the top band (${t.bandTop})`,
+          );
+        if (!t.scrolls || t.zoomed || !t.map)
+          fail(
+            `a tall frame at fit reads scrolls=${t.scrolls} zoomed=${t.zoomed} map=${t.map}`,
+          );
+        await P.evaluate(
+          `document.querySelector("#stage").dispatchEvent(new WheelEvent("wheel", { deltaY: 500, bubbles: true, cancelable: true }))`,
+        );
+        await settle();
+        const wheeled = await at();
+        if (wheeled.top !== t.top - 500)
+          fail(
+            `a wheel of 500 moves a tall frame from y=${t.top} to y=${wheeled.top}`,
+          );
+        await key("End");
+        await settle();
+        t = await at();
+        if (Math.abs(t.bottom - t.bandBottom) > 1)
+          fail(
+            `End leaves a tall frame's foot at y=${t.bottom}, not the bottom band (${t.bandBottom})`,
+          );
+        await key("Home");
+        await settle();
+        t = await at();
+        if (t.top !== t.bandTop) fail(`Home leaves a tall frame at y=${t.top}`);
+        for (let k = 0; k < 12; k++) await key("-");
+        await settle();
+        t = await at();
+        if (t.h > t.bandBottom - t.bandTop || !t.zoomed)
+          fail(
+            `zoomed all the way out, a tall frame is ${t.h}px tall in ${t.bandBottom - t.bandTop}px (zoomed=${t.zoomed})`,
+          );
+        await key("0");
+        await settle();
+        t = await at();
+        if (t.w !== 1280 || t.zoomed || !t.scrolls)
+          fail(`0 brings a tall frame back ${t.w}px wide, zoomed=${t.zoomed}`);
+        await go(1);
+        await settle();
+        t = await at();
+        if (t.top !== t.bandTop)
+          fail(
+            `the next tall frame of another size opens at y=${t.top}, not its top`,
+          );
+      }
+
       if (name === "snapshots") {
         // The edits' callouts as tags, measured inside the frame's own
         // document, and none on the unedited frame.

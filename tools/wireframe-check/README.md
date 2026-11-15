@@ -17,6 +17,7 @@ It writes a handful of fixture pages with the skill's own `new.mjs` (no groups, 
 - the spotlight is up as a frame arrives and gone 2s later; `A` holds it, draws leaders in place of the ticks and keeps the rings off
 - Cmd+. hides the margin's words, ticks and leaders and the spotlight, with `A` off and on
 - frames from a snapshot draw in the grid, an edited one shows its edits' callouts in the margin and the spotlight, an unedited one shows none, and a target that matches nothing throws an error naming the close matches
+- a frame far taller than the screen opens at its true width from its top, with the thumbnail; a wheel, End and Home scroll it; zooming out reaches the whole frame, 0 brings back its width, and the next frame of another size opens at its top
 - closing leaves nothing behind
 
 `--keep <dir>` writes the fixture pages there to open by hand. Exit 0 pass, 1 FAIL, 3 Chromium could not run. It finds Chromium the way `tools/page-check` does, and `scripts/wireframe-check.test.ts` runs it in the suite wherever one is downloaded.
