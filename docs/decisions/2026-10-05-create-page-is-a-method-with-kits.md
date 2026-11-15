@@ -1,6 +1,6 @@
 # instrument-page is a method with kits, not a router over templates
 
-Status: accepted, 2026-10-05. Supersedes [`2026-09-09-one-page-skill-many-templates.md`](2026-09-09-one-page-skill-many-templates.md) and [`2026-09-10-the-starter-owns-what-every-page-shares.md`](2026-09-10-the-starter-owns-what-every-page-shares.md). Its Chrome check, and wireframe's copied Chrome scripts, are superseded by [`2026-10-06-page-skills-launch-nothing.md`](2026-10-06-page-skills-launch-nothing.md).
+Status: accepted, 2026-10-05. Supersedes [`2026-09-09-one-page-skill-many-templates.md`](2026-09-09-one-page-skill-many-templates.md) and [`2026-09-10-the-starter-owns-what-every-page-shares.md`](2026-09-10-the-starter-owns-what-every-page-shares.md). Its Chrome check, and wireframe's copied Chrome scripts, are superseded by [`2026-10-06-page-skills-launch-nothing.md`](2026-10-06-page-skills-launch-nothing.md). Its method is superseded by [`2026-11-14-instrument-page-leads-with-the-readers-answer.md`](2026-11-14-instrument-page-leads-with-the-readers-answer.md).
 
 ## Context
 

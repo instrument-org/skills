@@ -1,6 +1,6 @@
 # Pages are neutral, with four feels and two layouts
 
-Status: accepted, 2026-10-24; the writing and later details added 2026-10-26. Updates [`2026-10-05-create-page-is-a-method-with-kits.md`](2026-10-05-create-page-is-a-method-with-kits.md): the method, the stylesheet, the check, the recipes and the kits stand; what the stylesheet looks like and what the agent picks on `<html>` change.
+Status: accepted, 2026-10-24; the writing and later details added 2026-10-26. Updates [`2026-10-05-create-page-is-a-method-with-kits.md`](2026-10-05-create-page-is-a-method-with-kits.md): the method, the stylesheet, the check, the recipes and the kits stand; what the stylesheet looks like and what the agent picks on `<html>` change. Its default layout is changed to `wide` by [`2026-11-14-instrument-page-leads-with-the-readers-answer.md`](2026-11-14-instrument-page-leads-with-the-readers-answer.md).
 
 ## Context
 
