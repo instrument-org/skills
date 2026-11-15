@@ -1405,31 +1405,36 @@
         );
         const paintCallouts = (i) => viewerMarks.toggleAttribute("data-none", !callouts[i]);
 
-        // Each time a frame with callouts comes up enlarged, the spotlight
-        // (paintSpot) comes up with it at once, holds 600ms and fades over
-        // 800ms, so the reader sees what is named on every frame without
-        // having the callouts on. A step before it is gone starts it over,
-        // so fast arrowing keeps it up until the reader stops. Redrawing the
-        // same frame doesn't start it again, a frame with none lets it go
-        // with its holes, A holds it, and reduced motion never fades it.
+        // Each time a frame with callouts comes up enlarged and the reader
+        // rests on it for 280ms, the spotlight (paintSpot) fades in over
+        // 180ms, holds 900ms and fades over 700ms, so the reader sees what
+        // is named on every frame without having the callouts on. A step
+        // takes it away at once and starts the wait over, so fast arrowing
+        // shows none of it, and its holes have finished moving before it
+        // shows. Redrawing the same frame doesn't start it again, A holds
+        // it, and reduced motion never fades it.
         let liftedOn = -1;
         const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
         const spotEl = document.querySelector("#spot");
         let spotFade = null;
+        let spotWait = 0;
         const stopSpotFade = () => {
+          clearTimeout(spotWait);
           spotFade?.cancel();
           spotFade = null;
         };
         const liftSpot = (i) => {
           if (i === liftedOn) return;
           liftedOn = i;
-          if (!callouts[i]) return;
           stopSpotFade();
+          if (!callouts[i]) return;
           if (reducedMotion.matches || document.body.dataset.marks === "on") return;
-          spotFade = spotEl.animate(
-            [{ opacity: 1 }, { opacity: 1, offset: 600 / 1400, easing: "cubic-bezier(0.45, 0, 0.55, 1)" }, { opacity: 0 }],
-            { duration: 1400, fill: "forwards" },
-          );
+          spotWait = setTimeout(() => {
+            spotFade = spotEl.animate(
+              [{ opacity: 0, easing: "ease-out" }, { opacity: 1, offset: 180 / 1780 }, { opacity: 1, offset: 1080 / 1780, easing: "cubic-bezier(0.45, 0, 0.55, 1)" }, { opacity: 0 }],
+              { duration: 1780, fill: "forwards" },
+            );
+          }, 280);
         };
 
         // ---- chrome ----------------------------------------------------------

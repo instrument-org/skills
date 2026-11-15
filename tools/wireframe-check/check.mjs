@@ -430,9 +430,16 @@ export async function run({ keep } = {}) {
           fail(
             `with A off a frame shows ${first.words.length} tags, ${first.outlines} outlines and ${first.leads} leaders`,
           );
-        if (first.spot < 0.9 || first.holes !== 3)
+        // The spotlight waits until the reader rests on the frame.
+        if (first.spot > 0.05)
           fail(
-            `a frame arrives with the spotlight at ${first.spot.toFixed(2)} and ${first.holes} holes`,
+            `a frame arrives with the spotlight already at ${first.spot.toFixed(2)}`,
+          );
+        await wait(400);
+        const rested = await callouts();
+        if (rested.spot < 0.9 || rested.holes !== 3)
+          fail(
+            `a frame rested on shows the spotlight at ${rested.spot.toFixed(2)} and ${rested.holes} holes`,
           );
         for (const i of [1, 2]) {
           await go(i);
@@ -442,10 +449,10 @@ export async function run({ keep } = {}) {
         }
         // The spotlight fades once the reader stops.
         await go(0);
-        await wait(2000);
+        await wait(2400);
         const faded = await callouts();
         if (faded.spot > 0.05)
-          fail(`the spotlight is still at ${faded.spot.toFixed(2)} after 2s`);
+          fail(`the spotlight is still at ${faded.spot.toFixed(2)} after 2.4s`);
         // Cmd+. takes the tags and the spotlight with the controls, with
         // A off and on.
         const bare = async (when) => {
