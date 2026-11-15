@@ -47,7 +47,7 @@ Base64 is a third larger than the bytes it encodes, so a 150 KB photo becomes a 
 
 ## Video and audio
 
-A clip goes in the same way. Name it in a `<video src>`, `<audio src>` or `<source src>`, and `page.mjs` embeds it, up to 10 MB. It takes an MP4, WebM, QuickTime, M4A, MP3, Ogg or WAV file, and tells which by the file's bytes. The check fails a video with no `poster`, because it shows a blank or black frame until it plays. It also fails a video with no `controls`, because the reader can't pause or scrub it; only a short silent loop may use `autoplay muted loop playsinline` instead. Use the browser's own player and never build one, since it plays, scrubs and goes full screen everywhere the page opens.
+A clip goes in the same way. Name it in a `<video src>`, `<audio src>` or `<source src>`, and `page.mjs` embeds it, up to 10 MB. It takes an MP4, WebM, QuickTime, M4A, MP3, Ogg or WAV file, and tells which by the file's bytes. A video plays as the page opens, so give it `autoplay muted loop playsinline`, and add `controls` when it runs long enough that the reader will want to pause or scrub it. The check fails a video with no `poster`, because it shows a blank or black frame until it plays, and one with neither `controls` nor `autoplay muted loop`, because the reader then has no way to play it. Use the browser's own player and never build one, since it plays, scrubs and goes full screen everywhere the page opens.
 
 Encode a screen recording small before you name it, and save a poster from the moment that shows the point:
 

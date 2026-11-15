@@ -1,6 +1,6 @@
 # Storyboard patterns
 
-These are the techniques only a storyboard needs. The page is plain HTML on the stylesheet, with a header, a `.grid` of `<figure>`s marked `hero`, and a footer saying what the beats are based on. The work is in the panels, which you compose from the kit below.
+These are the techniques only a storyboard needs. The page is plain HTML on the stylesheet, with a header whose kicker says what the beats are based on, and a `.grid` of `<figure>`s marked `hero`. The work is in the panels, which you compose from the kit below.
 
 ## The kit
 

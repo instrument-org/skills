@@ -118,7 +118,7 @@ $("#reset").hidden = false;
 $("#reset").addEventListener("click", () => kit.resetValues());
 ```
 
-Say in the last line where the reader's settings are kept. A reader who has found a setting they like wants to know whether it's safe to close the tab.
+Say beside Reset where the reader's settings are kept, and show that line with it. A reader who has found a setting they like wants to know whether it's safe to close the tab.
 
 ## Rendering
 

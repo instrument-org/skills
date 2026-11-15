@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- direction: reader="WHO opens it, on what, to go where" point="WHAT the places' positions say that a list would not" conflicts="none" layout=column feel=minimal hero="the map, framed on the places, with the list in a card over it" -->
-<html lang="en" data-layout="column" data-feel="minimal">
+<!-- direction: reader="WHO opens it, on what, to go where" after="WHAT the places' positions tell them that a list would not" point="THAT, as the headline, 10 words or fewer" send="THE LINE to send with the link, when someone else will read it" leave="WHAT you left off the map" unit="a place: its pin, and its entry in the card" conflicts="none" -->
+<html lang="en" data-layout="wide" data-feel="minimal">
 <head>
 <title>NAME OF THE MAP, 10 words or fewer</title>
 <meta name="description" content="ONE SENTENCE for the link unfurl: how many places, where, and why these.">
@@ -33,9 +33,6 @@
   #places .out { display: flex; flex-wrap: wrap; gap: 0 .75rem; font-size: .78rem; margin-top: .35rem; }
   /* A place's picture. */
   #places img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; margin-top: .5rem; }
-  #source { margin: 0; padding: .5rem 1rem; border-top: 1px solid var(--line); border-bottom: 0; font-size: .75rem; line-height: 1.4; color: var(--muted); }
-  #source summary { font-weight: 500; }
-  #source ul { padding-left: 1rem; margin-top: .4rem; }
   /* The map's own furniture, on the page's card. */
   .maplibregl-map { font-family: var(--sans); }
   .maplibregl-canvas:focus { outline: none; }
@@ -90,7 +87,7 @@
       <hgroup>
         <p>Map · HOW MANY places</p>
         <h1>NAME OF THE MAP</h1>
-        <p>ONE LINE: what these places are, who picked them, what to do with the map.</p>
+        <p>ONE LINE: what these places are, who picked them, what to do with the map, and anything no source gave (hours, prices).</p>
       </hgroup>
       <!-- Only when the pins mean more than one thing. -->
       <p class="legend"><span><i></i>WHAT ACCENT MEANS</span><span><i class="other"></i>WHAT GRAY MEANS</span></p>
@@ -128,15 +125,6 @@
         </div>
       </li>
     </ol>
-
-    <details id="source">
-      <summary>Sources and credits</summary>
-      <ul>
-        <li>Positions from <a href="https://nominatim.openstreetmap.org/">Nominatim</a> over OpenStreetMap, read DATE, rounded to four decimals.</li>
-        <li>Hours and prices are not stated; check each place before going.</li>
-        <li>Map by <a href="https://maplibre.org/">MapLibre</a> over <a href="https://openfreemap.org/">OpenFreeMap</a>, © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. With the network off the pins draw to scale and this list is unchanged.</li>
-      </ul>
-    </details>
   </div>
 </main>
 

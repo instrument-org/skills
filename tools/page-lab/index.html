@@ -65,7 +65,7 @@
 
 <section id="layouts">
   <h2 data-short="Layouts">Layouts</h2>
-  <p><code>data-layout="column"</code> is one reading column, for almost every page. <code>wide</code> is one wider column for a roster or a big table; its prose keeps a reading width on the same left edge, and it prints landscape. Everything sits in the column; <code>.bleed</code> and <code>.full</code> go wider only when a page asks.</p>
+  <p><code>data-layout="wide"</code>, the one SKILL.md starts every page with, is one wide column whose prose keeps a reading width on the same left edge, and it prints landscape. <code>column</code> is one reading column, for a short note that is all prose. Everything sits in the column; <code>.bleed</code> and <code>.full</code> go wider only when a page asks.</p>
   <dl id="layoutknobs"></dl>
   <div class="demo"><p class="spec">the three tracks of the page grid, in this layout</p></div>
   <div class="track col">col</div>
@@ -215,7 +215,7 @@
   <ol class="flow">
     <li><b>Request</b><span>the reader asks for a page</span></li>
     <li><b>Analyze</b><span>facts from each input</span></li>
-    <li><b>Direct</b><span>layout, feel, hero</span></li>
+    <li><b>Decide</b><span>the angle and the unit</span></li>
     <li data-tone="accent"><b>Write</b><span>one HTML file</span></li>
     <li><b><code>page.mjs</code></b><span>embeds and checks</span></li>
     <li><b><code>probe.js</code></b><span>measures the layout</span></li>

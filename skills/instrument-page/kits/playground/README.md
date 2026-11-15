@@ -12,7 +12,7 @@ Don't use it when the answer is a number. A calculator with a control panel is s
 
 ## Files
 
-- `skeleton.html` is a complete working page on the foundation. It has the header with a Reset button, the stage marked `class="hero"`, the dials column with the opening settings written out as a list, the takeaway with a copy button, the source line, and the module script (`CONFIG`, `resolve`, `render`, and dialkit mounted inline). Copy it into the task folder as `page.html` and replace everything in capitals.
+- `skeleton.html` is a complete working page on the foundation. It has the header with a Reset button and a line saying where the reader's settings are kept, the stage marked `class="hero"`, the dials column with the opening settings written out as a list, the takeaway with a copy button, and the module script (`CONFIG`, `resolve`, `render`, and dialkit mounted inline). Copy it into the task folder as `page.html` and replace everything in capitals.
 - `patterns.md` covers dialkit's notation, reading defaults out of the config, mounting the panel in the page's theme, persistence and Reset, rendering on pause, replaying motion, a spring as Motion resolves it, figures beside the stage, and Tweakpane for controls dialkit doesn't have.
 
 ## How it sits on the foundation

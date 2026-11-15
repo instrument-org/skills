@@ -117,4 +117,4 @@ Then paste each SVG into a figure, with its number and time over the drawing and
 
 ## Saying where it comes from
 
-Say in the footer what the beats are based on: interviews, a visit, a brief, or the prompt alone. A storyboard drawn from interviews is evidence of how something is, and one drawn from a brief is a proposal, yet the two look the same. Wherever you invented a time, a name, a price or a line of dialogue to fill a panel, say so there too.
+Say in the kicker what the beats are based on: interviews, a visit, a brief, or the prompt alone. A storyboard drawn from interviews is evidence of how something is, and one drawn from a brief is a proposal, yet the two look the same. Wherever you invented a time, a name, a price or a line of dialogue to fill a panel, say so in that panel's caption.

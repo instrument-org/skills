@@ -289,10 +289,10 @@ Put the options across the top and the attributes down the side, or the other wa
 ```
 
 - `table.cards` turns each row into a card on a phone, with each `td`'s `data-label` as its label and the row header (`th scope="row"`) as the card's name.
-- Give a judged cell a word on a coarse scale (`Low / Some / High`, a letter, or two or three dots), toned by what it means, with the evidence a click away in a footnote or a `details` row. Never use a decimal.
+- Give a judged cell a word on a coarse scale (`Low / Some / High`, a letter, or two or three dots), toned by what it means, with its evidence in a `<small>` line under the word or a link to the source. Never use a decimal.
 - When nobody could fill a cell, write "not published" in it. A dash reads as zero.
 - Highlight the row or column that decides the comparison, and the pick if there is one, with a single tone. Mark a pick or a recommendation with `data-tone="good"`. Leave everything else plain, so the eye goes to the difference.
-- With more than about seven options or ten attributes, you have a data table rather than a matrix. Sort it by the attribute that matters, put the shortlist in the hero, and put the full table in the evidence.
+- With more than about seven options or ten attributes, you have a data table rather than a matrix. Sort it by the attribute that matters, put the shortlist in the hero, and put the full table below it.
 
 ## A ranked pick with one chosen
 
@@ -348,7 +348,7 @@ Use `ol.steps` for things to do in order, and `ul.todo` for things to have or ch
 - When there are more than about eight steps, group them by phase, with an `h2` for each phase and its time if the inputs give one.
 - A checklist the reader will tick on screen gets real checkboxes (`<label><input type="checkbox"> Item</label>`). Remembering the ticks in `localStorage` is a convenience, so wrap it in try/catch. A checklist that will be printed stays `ul.todo`, which prints as empty boxes.
 - Use `ul.ticks` for what is already done, proven or settled, with a check mark for each item. `data-tone="bad"` on an item draws a cross instead, for a drawback listed beside the strengths or a check that failed. Never draw a finished item as an empty box.
-- Put what to have before starting at the top, and put what to do if something goes wrong in one `details` at the step it applies to.
+- Put what to have before starting at the top, and put what to do if something goes wrong on the step it applies to, where the reader sees it before they need it.
 
 ## Screenshots and a walkthrough
 
@@ -415,15 +415,16 @@ When the evidence is what a screen looked like (a change you shipped, a bug you 
 </div>
 ```
 
-**A recording** fits when the point is motion or a sequence, such as a feature walked through, a bug reproduced or a release. Use a `video` with `controls` and a `poster` taken at the moment that shows the point, and add chapters under it when it runs past twenty seconds. Name each chapter for what happens in it rather than for its time. [`references/images.md`](references/images.md), under Video and audio, covers encoding and size.
+**A recording** fits when the point is motion or a sequence, such as a feature walked through, a bug reproduced or a release. It plays as the page opens: use a `video` with `autoplay muted loop playsinline` and a `poster` taken at the moment that shows the point. When it runs past twenty seconds, add `controls` and chapters under it, so the reader can pause it or jump to a moment. Name each chapter for what happens in it rather than for its time. [`references/images.md`](references/images.md), under Video and audio, covers encoding and size.
 
 ```html
 <figure>
   <video
-    controls
+    autoplay
     muted
+    loop
     playsinline
-    preload="metadata"
+    controls
     poster="shots/poster.jpg"
     src="shots/walk.mp4"
   ></video>
@@ -458,7 +459,7 @@ Use this for "how did it go" and "what do the numbers say". Lead with one or two
 - A figure means little without its comparison (the last period, the target, the other option), so name the period and the source next to it.
 - A few named things measured on one number (the arms of an eval, pages per category) work better as `ul.bars` than as a chart. It needs no script, puts the label beside each bar and the value at its end, and reads on a phone. Set `--v` from a script over the data, as a percent of the largest, and tone the one bar the headline is about.
 - Set two figures big at most, and put the rest in the chart or a table. Nobody reads a row of six big numbers.
-- Draw the chart from the page's JSON, and put the same data in a table under it or in a `details`, so the page says everything with scripts turned off. The chart recipe above shows how.
+- Draw the chart from the page's JSON, and put the same data in a table under it, so the page says everything with scripts turned off. The chart recipe above shows how.
 - Round only as far as the source supports, and say "about" when you round. Show a change as the change itself ("up 4 points") along with its base, never as a percent of a percent.
 
 ## Scores, sources and the pick
@@ -481,8 +482,6 @@ Mark everything that belongs to someone with `data-who`. Separate names with spa
   <button data-show-who="leo" data-c="5">Leo</button>
 </nav>
 ```
-
-To do more than dim, use `.only-leo { display: none } [data-showing="leo"] .only-leo { display: block }`.
 
 ## A slider that recomputes
 
@@ -514,7 +513,7 @@ When the answer depends on one number the reader knows better than you do (hours
 
 ## A one-screen card
 
-For a link you'll drop in chat, use the `column` layout with a kicker, a short `h1`, the hero, and at most three short lines under it. Put nothing else above the fold, and let the page end there if that's all it needs. Don't center it vertically. The hero can be one chart, one big figure with its sentence, or a short ranked list with the pick marked.
+For a link you'll drop in chat, write a kicker, a short `h1`, the hero, and at most three short lines under it. Put nothing else above the fold, and let the page end there if that's all it needs. Don't center it vertically. The hero can be one chart, one big figure with its sentence, or a short ranked list with the pick marked.
 
 ## A print sheet
 
@@ -522,7 +521,7 @@ The `wide` layout prints landscape. When one table or drawing in a `column` page
 
 ## Evidence and drill-in
 
-Put the evidence at the bottom. That's the table every figure came from, sorted by the number that matters, with its IDs and owners kept, wrapped as `table.cards` or in `.scroll` for phones. Put the arithmetic in one `<details>` whose summary says what's inside ("How we got to $632"). Use `<details>` for one or two optional layers of depth, and never for the point.
+Put each piece of evidence in the unit whose claim it backs, where the reader checks it. When they'll check the math, that's a table whose rows add up to the total, sorted by the number that matters, with its IDs and owners kept, wrapped as `table.cards` or in `.scroll` for phones. A source they may want to open is a link on the fact it backs. The units below the first screen are the drill-in, and they stay visible as the reader scrolls: never put evidence or arithmetic in a `<details>`, and never gather it in a section at the bottom.
 
 ## Dense markup from a one-off script
 

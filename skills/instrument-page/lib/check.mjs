@@ -181,7 +181,7 @@ function fileChecks(own, push, inputText, reported = new Set()) {
       "no-html",
       "the file",
       "no <html> tag",
-      'start from the skeleton in SKILL.md: <html lang="en" data-layout="column" data-feel="minimal">',
+      'start from the skeleton in SKILL.md: <html lang="en" data-layout="wide" data-feel="minimal">',
     );
   else if (
     layout === undefined
@@ -211,14 +211,14 @@ function fileChecks(own, push, inputText, reported = new Set()) {
       "direction",
       "under <!doctype html>",
       "no <!-- direction: ... --> comment",
-      "write it first: reader, point (the buried point in one line), conflicts, layout, feel, hero",
+      "write it first: reader, after, point, send, leave, unit, conflicts (SKILL.md, step 1)",
     );
   else if (!/\bpoint\s*=/.test(direction))
     push(
       "direction",
       "<!-- direction -->",
       'it has no point="..."',
-      'add point="what the inputs imply that nobody asked, in one line"; the headline comes from it',
+      'add point="the answer or the decision, in 10 words or fewer"; the headline comes from it',
     );
 
   const title = decode(
@@ -840,7 +840,7 @@ function pageRules(page, push) {
       "prose-heavy",
       "the first two screens",
       `prose (blocks of 15+ words) is about ${pct}% of what comes first, counting words, with a drawing as 150`,
-      `bring it under ${LIMITS.prose}%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below or into one <details>`,
+      `bring it under ${LIMITS.prose}%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below`,
     );
   for (const f of page.dvFails)
     push(

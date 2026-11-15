@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- direction: reader="WHO turns the dials, and what they paste the result into" point="WHAT the opening setting already shows, in one line" conflicts="none" layout=column feel=minimal hero="the thing on a stage at the opening setting, the dials beside it" -->
-<html lang="en" data-layout="column" data-feel="minimal">
+<!-- direction: reader="WHO turns the dials, and what they paste the result into" after="WHAT the opening setting already shows" point="THAT, as the headline, 10 words or fewer" send="THE LINE to send with the link, when someone else will read it" leave="WHAT you left off the dials" unit="none: the stage, its dials and the takeaway are the page" conflicts="none" -->
+<html lang="en" data-layout="wide" data-feel="minimal">
 <head>
 <title>NAME OF THE THING, 10 words or fewer</title>
 <meta name="description" content="One sentence for the link unfurl: what is on the stage and what the dials settle.">
@@ -25,13 +25,14 @@
 <body>
   <header>
     <hgroup>
-      <p>KICKER: for whom, from what</p>
+      <p>KICKER: for whom, and where the opening values came from</p>
       <h1>NAME OF THE THING</h1>
       <p>ONE LINE: what is on the stage and what to do with the dials.</p>
     </hgroup>
     <p class="row">
       <!-- Reset is the page's, since the panel has none; it shows once there are dials. -->
       <button id="reset" hidden>Reset</button>
+      <small id="kept" class="muted" hidden>What you set stays in this browser, and Reset puts it back.</small>
       <!-- A stage that moves adds <button id="replay">Replay</button> here (patterns.md, "Replaying motion"). -->
     </p>
   </header>
@@ -68,10 +69,6 @@
 }</pre>
     </section>
   </main>
-
-  <footer>
-    <p>The opening values are WHERE THEY CAME FROM. The dials are <a href="https://github.com/joshpuckett/dialkit">dialkit</a>, which needs the network; the stage and the CSS do not. What you set stays in this browser and nowhere else, and Reset puts it back.</p>
-  </footer>
 
   <script type="module">
     const $ = (s) => document.querySelector(s);
@@ -119,6 +116,7 @@
       const kit = createDialKit("PANEL NAME", CONFIG, { id: "playground-SLUG", persist: true });
       $("#settings").remove();
       $("#reset").hidden = false;
+      $("#kept").hidden = false;
       $("#reset").addEventListener("click", () => kit.resetValues());
       kit.subscribe((next) => {
         values = next;

@@ -10,12 +10,12 @@ Don't use it for a dataset of thousands of rows (that's a table with a filter, p
 
 ## Files
 
-- `skeleton.html` is a working map page on the foundation. Copy it, keep its style and script, and replace the direction comment, title, description, card header, places and sources. It frames the map on the places, links each entry to its pin and back, switches the streets with the page's theme, turns the card into a sheet on a phone, and draws the pins to scale on plain ground when MapLibre or WebGL is missing.
+- `skeleton.html` is a working map page on the foundation. Copy it, keep its style and script, and replace the direction comment, title, description, card header and places. It frames the map on the places, links each entry to its pin and back, switches the streets with the page's theme, turns the card into a sheet on a phone, and draws the pins to scale on plain ground when MapLibre or WebGL is missing.
 - `patterns.md` holds the recipes to run while you write: geocoding with Nominatim, Google Maps links, Commons photos and how to inline them, resolving tokens for MapLibre (`tone`), a drive drawn from a router's polyline, shaded areas, an anchor pin, framing, a map inside a longer scrolling page, and units.
 
 ## How it sits on the foundation
 
-A map page is an ordinary page. It has the direction comment, `<html data-layout="column" data-feel="...">`, a `<title>` and description, one `h1` (in the card), and the map element marked `class="hero"`. You build and check it like any other page:
+A map page is an ordinary page. It has the direction comment, `<html data-layout="wide" data-feel="...">`, a `<title>` and description, one `h1` (in the card), and the map element marked `class="hero"`. You build and check it like any other page:
 
 ```
 node <skill>/page.mjs page.html --inputs request.md <input files>
@@ -51,7 +51,7 @@ This example maps five cheap places to eat in Manhattan, measured from a hotel a
 ```
 
 4. When the pins mean two things (walkable or not), give the others `data-kind="far"`, keep the legend, and add `.pin.far span, #places .num.far { background: var(--gray-500); color: var(--paper); }`, with the pin's class set from `p.el.dataset.kind`. When all the pins mean the same thing, delete the legend.
-5. Write the sources as a short list: the geocoder and the date, how you worked out the minutes, what the sources don't state (hours, prices), and the map credit.
+5. Say each caveat where it applies. The line under the `h1` says how you worked out the minutes ("walking minutes at 80 m a minute") and what no source gave, such as hours or prices. An entry the geocoder couldn't place says so itself. The map's credit stays behind its (i).
 6. Build and check the page as SKILL.md step 5 describes (`page.mjs`, then `lib/probe.js` in your browser), fix every FAIL, and look at the page. To see the offline drawing, make a copy of the page with the MapLibre script URL broken, and check that copy too.
 
 ## Rules that make it work
@@ -69,4 +69,4 @@ This example maps five cheap places to eat in Manhattan, measured from a hotel a
 
 ## What not to draw, and what to say
 
-Don't make a map with no list, a pin placed from memory, a straight line called a route, a hand-drawn shape presented as a boundary, a place whose name links to its website, a rainbow of categories, turn-by-turn directions, or a price, opening time, rating or rent that no source gave. Say which geocoder placed the pins and when, which router drew the road and when, which journey planner gave the minutes and for what departure, and what you drew by hand.
+Don't make a map with no list, a pin placed from memory, a straight line called a route, a hand-drawn shape presented as a boundary, a place whose name links to its website, a rainbow of categories, turn-by-turn directions, or a price, opening time, rating or rent that no source gave. Say which router drew the road, which journey planner gave the minutes and for what departure, and what you drew by hand, in the line under the `h1` or on the entry or legend line it's about.
