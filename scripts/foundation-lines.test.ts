@@ -101,22 +101,32 @@ async function sweep(file: string) {
   try {
     // A 32px stand-in for every site icon; nothing else leaves the machine.
     await page.send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
-    page.on("Fetch.requestPaused", ({ requestId, request }) =>
-      request.url.startsWith("https://t0.gstatic.com/faviconV2")
-        ? page.send("Fetch.fulfillRequest", {
-            requestId,
-            responseCode: 200,
-            responseHeaders: [{ name: "Content-Type", value: "image/svg+xml" }],
-            body: Buffer.from(
-              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32"/></svg>',
-            ).toString("base64"),
-          })
-        : request.url.startsWith("file:")
-          ? page.send("Fetch.continueRequest", { requestId })
-          : page.send("Fetch.failRequest", {
+    page.on(
+      "Fetch.requestPaused",
+      ({
+        requestId,
+        request,
+      }: {
+        requestId: string;
+        request: { url: string };
+      }) =>
+        request.url.startsWith("https://t0.gstatic.com/faviconV2")
+          ? page.send("Fetch.fulfillRequest", {
               requestId,
-              errorReason: "BlockedByClient",
-            }),
+              responseCode: 200,
+              responseHeaders: [
+                { name: "Content-Type", value: "image/svg+xml" },
+              ],
+              body: Buffer.from(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32"/></svg>',
+              ).toString("base64"),
+            })
+          : request.url.startsWith("file:")
+            ? page.send("Fetch.continueRequest", { requestId })
+            : page.send("Fetch.failRequest", {
+                requestId,
+                errorReason: "BlockedByClient",
+              }),
     );
     await page.navigate(pathToFileURL(file).href);
     const found = new Map<string, number>();
