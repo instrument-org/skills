@@ -97,39 +97,61 @@
         });
       })();
     </script>
-    <!-- shell:note A page whose own script fails while it loads says so at the
-         top of its main element, with the error and its line. A script that fails
+    <!-- shell:note A page whose own script fails while it loads says so in a
+         one-line chip at the bottom left, with the first error's line and message;
+         a click lists them all. It is small because the page usually still
+         draws, and fixed so any screenshot carries it: a script that fails
          before it draws anything leaves an empty grid, which the reader and a
          screenshot both take for a quiet page. Only this document's own
-         scripts count, and only up to load: an error after that, from a key
-         or a click, stays in the console. -->
+         scripts count, and only an event carrying a thrown value: the
+         browser's own notices, such as a ResizeObserver loop, carry none and
+         break nothing. Only up to load: an error after that, from a key or a
+         click, stays in the console. -->
     <script>
       (function () {
         const own = location.href.split("#")[0];
         const failures = [];
         const note = (event) => {
-          if (!(event instanceof ErrorEvent) || event.filename.split("#")[0] !== own) return;
-          failures.push(`${event.message}${event.lineno ? ` (line ${event.lineno})` : ""}`);
+          if (!(event instanceof ErrorEvent) || event.error == null) return;
+          if (event.filename.split("#")[0] !== own) return;
+          failures.push(`${event.lineno ? `line ${event.lineno}: ` : ""}${event.message.replace(/^Uncaught /, "")}`);
         };
         addEventListener("error", note);
         addEventListener("load", () => {
           removeEventListener("error", note);
-          if (!failures.length) return;
+          const all = [...new Set(failures)];
+          if (!all.length) return;
+          const font = "font:12px/1.4 var(--font-mono,ui-monospace,monospace)";
           const box = document.createElement("div");
           box.setAttribute("role", "alert");
-          box.style.cssText =
-            "margin:16px 0;padding:12px 16px;border:1px solid var(--color-error-300,#e197a6);border-radius:8px;background:var(--color-error-50,#fbeef0);color:var(--color-error-700,#7a1f30);font:13px/1.5 system-ui,sans-serif";
-          const head = document.createElement("p");
-          head.style.cssText = "margin:0 0 4px;font-weight:600";
-          head.textContent = "This page's script failed as it loaded, so what it draws is missing.";
-          box.append(head);
-          for (const failure of new Set(failures)) {
+          box.style.cssText = `position:fixed;left:12px;bottom:12px;z-index:2147483000;max-width:min(560px,calc(100vw - 24px));border:1px solid var(--color-error-300,#e197a6);border-radius:8px;background:var(--color-error-50,#fbeef0);color:var(--color-error-700,#7a1f30);box-shadow:0 1px 3px rgb(0 0 0 / 0.08);${font}`;
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.setAttribute("aria-expanded", "false");
+          chip.style.cssText = `display:flex;gap:6px;align-items:baseline;width:100%;padding:4px 10px;border:0;background:none;color:inherit;cursor:pointer;text-align:left;${font}`;
+          const label = document.createElement("b");
+          label.style.cssText = "flex:none;font-weight:600";
+          label.textContent = all.length > 1 ? `${all.length} script errors` : "Script error";
+          const first = document.createElement("span");
+          first.style.cssText = "overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
+          first.textContent = all[0];
+          chip.append(label, first);
+          const list = document.createElement("div");
+          list.hidden = true;
+          list.style.cssText = "padding:2px 10px 8px;overflow-wrap:anywhere";
+          for (const failure of all) {
             const line = document.createElement("p");
-            line.style.cssText = "margin:0;font-family:var(--font-mono,ui-monospace,monospace);font-size:12px";
+            line.style.cssText = "margin:4px 0 0";
             line.textContent = failure;
-            box.append(line);
+            list.append(line);
           }
-          (document.querySelector("main") ?? document.body).prepend(box);
+          chip.addEventListener("click", () => {
+            list.hidden = !list.hidden;
+            first.hidden = !list.hidden;
+            chip.setAttribute("aria-expanded", String(!list.hidden));
+          });
+          box.append(chip, list);
+          document.body.append(box);
         });
       })();
     </script>

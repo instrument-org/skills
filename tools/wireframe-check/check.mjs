@@ -128,8 +128,11 @@ export const FIXTURES = {
   },
   // A page that declares its own W and H, which once redeclared the
   // viewer's and blanked the page; a frame with no size takes the page's.
+  // It also raises the kind of error event a ResizeObserver loop does, with
+  // the page's own address and no thrown value, which must draw no notice.
   "own-size": {
-    prelude: "const W = 1280, H = 300;",
+    prelude:
+      'const W = 1280, H = 300; dispatchEvent(new ErrorEvent("error", { message: "ResizeObserver loop completed with undelivered notifications.", filename: location.href }));',
     groups: "{}",
     states: [
       frame("Strip", "W", "H"),
@@ -181,7 +184,7 @@ const READ = `JSON.stringify((() => {
     pickBars: [...strip.querySelectorAll(".pick")].map((b) => Number(b.dataset.go)),
     stageFrames: document.querySelectorAll("#stage .frame").length,
     scheme: getComputedStyle(document.querySelector("#stage .frame") ?? document.body).colorScheme,
-    alerts: document.querySelectorAll("#rack [role=alert]").length,
+    alerts: document.querySelectorAll("body > [role=alert]").length,
     frameParam: new URLSearchParams(location.search).get("frame"),
   };
 })())`;
@@ -531,8 +534,8 @@ export async function run({ keep } = {}) {
       for (const e of new Set(errors)) fail(`script error: ${e}`);
     }
 
-    // A page that redeclares a kit helper fails to parse, and says so above
-    // the empty grid rather than showing a quiet page.
+    // A page that redeclares a kit helper fails to parse, and says so in a
+    // chip over the empty grid rather than showing a quiet page.
     const broken = build(dir, "broken", {
       prelude: "const win = 1;",
       groups: "{}",
@@ -541,9 +544,11 @@ export async function run({ keep } = {}) {
     await P.navigate(pathToFileURL(broken).href);
     await wait(400);
     const notice = await P.evaluate(
-      `document.querySelector("main > [role=alert]")?.textContent ?? ""`,
+      `document.querySelector("body > [role=alert]")?.textContent ?? ""`,
     );
-    if (!/'win' has already been declared \(line \d+\)/.test(notice))
+    if (
+      !/line \d+: SyntaxError: .*'win' has already been declared/.test(notice)
+    )
       fails.push(
         `FAIL broken: a page that fails to parse shows "${notice}", not the error and its line`,
       );

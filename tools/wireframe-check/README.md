@@ -20,6 +20,6 @@ It writes a handful of fixture pages with the skill's own `new.mjs` (no groups, 
 - a frame far taller than the screen opens at its true width from its top, with the thumbnail; a wheel, End and Home scroll it; zooming out reaches the whole frame, 0 brings back its width, and the next frame of another size opens at its top
 - closing leaves nothing behind
 - a page that declares its own `W` and `H` loads, and its frames take that size
-- a page whose script fails to parse names the error and its line at the top of the page
+- a page whose script fails to parse names the error and its line in a chip at the bottom left, and a browser notice with no thrown value, such as a ResizeObserver loop, draws none
 
 `--keep <dir>` writes the fixture pages there to open by hand. Exit 0 pass, 1 FAIL, 3 Chromium could not run. It finds Chromium the way `tools/page-check` does, and `scripts/wireframe-check.test.ts` runs it in the suite wherever one is downloaded.
