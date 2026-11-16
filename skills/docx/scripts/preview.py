@@ -11,8 +11,6 @@ import json
 import sys
 from pathlib import Path
 
-from lib.stored_pages import without_stored_page_count
-
 # Printed in place of the pages when the preview is printed before they are
 # laid out, and refused by render-pages.py, so an early print cannot pass as
 # the document.
@@ -24,7 +22,7 @@ OVERFLOW = "FAIL overflow:"
 
 # The renderer and the version Instrument itself ships, so the preview lays
 # out what the person will see when they open the document there.
-RENDERER = "@extend-ai/react-docx@0.8.4"
+RENDERER = "@extend-ai/react-docx@0.15.0"
 REACT = "19.2.0"
 EMU_PER_PIXEL = 9525
 
@@ -169,7 +167,7 @@ def main():
         .replace("__W__", str(width))
         .replace("__H__", str(height))
         .replace("__NAME__", json.dumps(source.name))
-        .replace("__DOC__", base64.b64encode(without_stored_page_count(source.read_bytes())).decode("ascii"))
+        .replace("__DOC__", base64.b64encode(source.read_bytes()).decode("ascii"))
     )
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(page, encoding="utf-8")

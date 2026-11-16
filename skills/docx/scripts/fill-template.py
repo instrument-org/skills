@@ -19,8 +19,6 @@ import re
 import sys
 import zipfile
 
-from lib.stored_pages import drop_stored_page_count
-
 
 def list_placeholders(docx_path: str):
     with zipfile.ZipFile(docx_path) as zf:
@@ -83,7 +81,6 @@ def main():
         jinja_env=ImmutableSandboxedEnvironment(autoescape=True),
         autoescape=True,
     )
-    drop_stored_page_count(tpl.docx)
     tpl.save(args.output)
     print(f"Rendered {len(context)} variable(s) -> {args.output}")
 

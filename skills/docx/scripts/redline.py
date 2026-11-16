@@ -35,8 +35,6 @@ import sys
 from copy import deepcopy
 from datetime import datetime, timezone
 
-from lib.stored_pages import drop_stored_page_count
-
 try:
     from docx.oxml import OxmlElement
     from docx.oxml.ns import qn
@@ -391,7 +389,6 @@ def main():
     if problems:
         print("\n".join(f"FAIL {p}" for p in problems))
         sys.exit("Nothing was saved.")
-    drop_stored_page_count(doc)
     doc.save(args.output)
     print(f"Saved: {args.output}")
 

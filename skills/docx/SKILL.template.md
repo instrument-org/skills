@@ -28,15 +28,11 @@ The app installs the locked `python-docx`, `docxtpl`, Pillow, and PyMuPDF depend
 Build task-specific structure directly instead of forcing content through the limited Markdown convenience script:
 
 ```python
-import sys
 from pathlib import Path
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt, RGBColor
-
-sys.path.insert(0, "<docx-skill-path>/scripts")
-from lib.stored_pages import drop_stored_page_count
 
 doc = Document()
 section = doc.sections[0]
@@ -80,8 +76,6 @@ doc.core_properties.title = "Quarterly Review"
 doc.sections[0].footer.paragraphs[0].text = "Confidential"
 output = Path("quarterly-review.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
-# A stale page count makes Instrument's viewer run text off the page instead of starting a new one.
-drop_stored_page_count(doc)
 doc.save(output)
 ```
 
@@ -106,20 +100,15 @@ Load the original file and make the smallest structural change possible:
 
 ```python
 import os
-import sys
 from pathlib import Path
 
 from docx import Document
-
-sys.path.insert(0, "<docx-skill-path>/scripts")
-from lib.stored_pages import drop_stored_page_count
 
 doc = Document(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "input.docx"))
 doc.add_heading("Appendix", level=1)
 doc.add_paragraph("Additional findings go here.")
 output = Path("edited.docx")
 output.parent.mkdir(parents=True, exist_ok=True)
-drop_stored_page_count(doc)
 doc.save(output)
 ```
 
@@ -137,7 +126,6 @@ from pathlib import Path
 from docx import Document
 
 sys.path.insert(0, "<docx-skill-path>/scripts")
-from lib.stored_pages import drop_stored_page_count
 from redline import Redline, resolve, view_text
 
 doc = Document(os.path.join(os.environ["INSTRUMENT_ATTACHMENTS"], "contract.docx"))
@@ -148,7 +136,6 @@ for paragraph in doc.paragraphs:
         rl.delete_paragraph(paragraph)
 rl.insert_paragraph_after(doc.paragraphs[-1], "Either party may end this agreement with 60 days' notice.")
 output = Path("contract-redlined.docx")
-drop_stored_page_count(doc)
 doc.save(output)
 
 reopened = Document(output)

@@ -310,41 +310,6 @@ class TestEdit:
         assert "must be supplied together" in result.stderr
 
 
-class TestStoredPageCount:
-    """Instrument's Word viewer paginates to docProps/app.xml's page count, so a saved document carries none."""
-
-    @staticmethod
-    def stored_app(path):
-        import zipfile
-
-        return zipfile.ZipFile(path).read("docProps/app.xml")
-
-    def test_create_saves_no_page_count(self, tmp_path):
-        pytest.importorskip("docx")
-        out = tmp_path / "created.docx"
-        assert run("create.py", "--content", "# Title", "--output", str(out)).returncode == 0
-        assert b"<Pages>" not in self.stored_app(out)
-
-    def test_edit_saves_no_page_count(self, sample_docx, tmp_path):
-        out = tmp_path / "edited.docx"
-        assert b"<Pages>1</Pages>" in self.stored_app(sample_docx)
-        assert run("edit.py", str(sample_docx), "--append", "More.", "--output", str(out)).returncode == 0
-        assert b"<Pages>" not in self.stored_app(out)
-
-    def test_fill_template_saves_no_page_count(self, tmp_path):
-        pytest.importorskip("docxtpl")
-        from docx import Document
-
-        source = tmp_path / "template.docx"
-        doc = Document()
-        doc.add_paragraph("Dear {{ name }},")
-        doc.save(str(source))
-        out = tmp_path / "filled.docx"
-        result = run("fill-template.py", str(source), str(out), "--values", '{"name": "Ada"}')
-        assert result.returncode == 0, result.stderr
-        assert b"<Pages>" not in self.stored_app(out)
-
-
 class TestPreview:
     def test_writes_a_page_holding_the_document_at_its_page_size(self, tmp_path):
         pytest.importorskip("docx")
@@ -361,28 +326,7 @@ class TestPreview:
         assert json.loads(result.stdout) == {"preview": str(out), "pageSize": [816, 1056]}
         page = out.read_text()
         assert "@page { size: 816px 1056px; margin: 0; }" in page
-        assert "@extend-ai/react-docx@0.8.4" in page
-
-    def test_lays_out_without_the_page_count_word_last_saved(self, tmp_path):
-        pytest.importorskip("docx")
-        import base64
-        import io
-        import re
-        import zipfile
-
-        from docx import Document
-
-        source = tmp_path / "report.docx"
-        Document().save(str(source))
-        # python-docx's template says the document has one page, whatever it holds.
-        assert b"<Pages>1</Pages>" in zipfile.ZipFile(source).read("docProps/app.xml")
-        result = run("preview.py", str(source))
-        assert result.returncode == 0, result.stderr
-        page = (tmp_path / "report.preview.html").read_text()
-        embedded = re.search(r'<script type="application/octet-stream" id="doc">(.*?)</script>', page, re.S).group(1)
-        app = zipfile.ZipFile(io.BytesIO(base64.b64decode(embedded))).read("docProps/app.xml")
-        assert b"<Pages>" not in app
-        assert b"<Pages>1</Pages>" in zipfile.ZipFile(source).read("docProps/app.xml")
+        assert "@extend-ai/react-docx@0.15.0" in page
 
 
 class TestRenderPages:
