@@ -156,7 +156,13 @@ output.parent.mkdir(parents=True, exist_ok=True)
 wb.save(output)
 ```
 
-Load with `data_only=False` to inspect or preserve formulas. With `data_only=True`, formula cells expose only their last cached result, which may be missing. Neither `openpyxl` nor pandas calculates formulas; Excel or LibreOffice must recalculate the workbook.
+### Formulas and cached values
+
+A formula cell stores its formula and, when Excel or LibreOffice last saved the file, a cached result. Neither `openpyxl` nor pandas calculates formulas, so:
+
+- `load_workbook()` gives formula strings and `load_workbook(data_only=True)` gives cached results with the formulas gone. Reading both takes two loads.
+- Never save a workbook loaded with `data_only=True`. It has no formulas left, so the save replaces every formula with its cached value, or with nothing where there was none.
+- `openpyxl` writes no cached values. Reading back a workbook it just wrote with `data_only=True` gives `None` for every formula cell, and pandas reads them as empty. Check new formulas by reading their text with the default load; `read.py` shows a formula's text where it has no cached value and says so. `office recalc` (see Quality gate) computes them and writes the results in.
 
 ### Reset inherited sheet views before freezing panes
 
@@ -179,14 +185,56 @@ A workbook built from scratch carries a single selection, so this applies only t
 - `read_only=True` reduces memory for large workbooks but limits editing.
 - `write_only=True` supports large exports but gives up random cell access.
 - Sheet names, named ranges, tables, validation, hidden sheets, and merged cells are part of the workbook contract. Inspect them before broad edits.
+- `openpyxl` writes a formula into the file exactly as given. Functions added after Excel 2007 are stored with an `_xlfn.` prefix that Excel's formula bar hides, so write `=_xlfn.TEXTJOIN(", ",TRUE,A2:A9)`, `_xlfn.IFS`, `_xlfn.MAXIFS`, `_xlfn.CONCAT`, or `_xlfn.XLOOKUP`; written bare, Excel shows `#NAME?`. Prefer `SUMIFS`, `INDEX`/`MATCH`, and `IFERROR`, which need no prefix.
+- Quote a sheet name in a cross-sheet reference whenever it has a space or punctuation: `='Assumptions Inputs'!$B$5`. `openpyxl.utils.quote_sheetname(name)` builds the quoted form.
+- Every new formula cell starts with the General number format; nothing infers one from its inputs. Set `number_format` on it, or a date shows as `46023` and 30% as `0.3`.
+- Saving a loaded workbook drops the text boxes, shapes, and slicers `openpyxl` does not model; charts and images survive. Before editing an upload, look for `sp` elements in `xl/drawings/*.xml` and for an `xl/slicers/` folder inside the file, and if there are any, tell the user what the save would lose before writing it.
+- Text that is partly bold or italic in one cell is flattened to plain text on load, and stays flattened when saved. Load with `load_workbook(path, rich_text=True)` to keep it; such a cell's `.value` is then a `CellRichText`, not a `str`.
 - The TypeScript bridge remains appropriate for `.numbers` and legacy `.xls` because its codec support is not available in the managed Python libraries.
 - `read.py`, `query.py`, and `convert.py` route by file extension: they point `.numbers` and `.xls` at the bridge, and refuse an extension they do not recognize rather than guessing CSV. Read an unusual delimited file with pandas directly.
+
+## Charts that render as intended
+
+`openpyxl` leaves several chart settings unwritten, and Excel's defaults for them round the chart frame, let the legend and titles overlap the plot, and can hide the axes. Set them on every new chart. A `DateAxis` replaces the category axis but the value axis still points at the old one's id, a dangling reference Excel may offer to repair, so point it at the date axis:
+
+```python
+from openpyxl.chart import LineChart, Reference
+from openpyxl.chart.axis import DateAxis
+
+chart = LineChart()
+chart.title = "Revenue"
+chart.add_data(Reference(ws, min_col=3, min_row=1, max_row=ws.max_row), titles_from_data=True)
+chart.set_categories(Reference(ws, min_col=1, min_row=2, max_row=ws.max_row))
+chart.x_axis = DateAxis()
+chart.x_axis.number_format = "mmm yyyy"
+chart.x_axis.majorTimeUnit = "months"
+chart.y_axis.crossAx = chart.x_axis.axId
+
+chart.roundedCorners = False
+chart.legend.overlay = False
+chart.title.overlay = False  # and on each axis title you set
+chart.x_axis.delete = False  # charts with axes only, not pie or doughnut
+chart.y_axis.delete = False
+ws.add_chart(chart, "G2")
+```
+
+## Financial models
+
+Follow these conventions unless the user or the existing workbook does otherwise; an existing file's conventions always win, and its input cells are the only ones to write.
+
+- Put every assumption in its own labeled cell and reference it (`=B5*(1+$B$6)`, never `=B5*1.05`). Write formulas, not results computed in Python, so the model recalculates when an input changes.
+- Color text by what the cell is: blue (`0000FF`) for typed inputs, black for formulas, green (`008000`) for links to another sheet. A yellow fill marks key assumptions the reader may change.
+- Currency as `$#,##0;($#,##0);"-"`, with the unit in the header (`Revenue ($mm)`), so negatives show in parentheses and zeros as a dash. Percentages as `0.0%`, stored as fractions (`0.15`, not `15`). Multiples as `0.0"x"`. Years as text or the `0` format, never `#,##0`.
+- Keep each row's formula the same across every period, and guard any denominator that can be zero.
+- Say where each typed number came from, in a note cell or a cell comment.
 
 ## Quality gate
 
 Run `validate.py` on every workbook you deliver. Reopening a file with `openpyxl` proves only that `openpyxl` can read it back: it accepts markup that Excel rejects, so a workbook that round-trips cleanly in Python can still open with a repair prompt. `validate.py` checks the saved XML against the ECMA-376 schema and checks the sheet views for pane and selection combinations Excel refuses, and `--fix` repairs the sheet views in place.
 
-Then reopen the workbook and verify sheet names, dimensions, representative values and types, formulas, number formats, styles, table ranges, frozen panes, and any hidden or macro-bearing content. Inspect representative sheets in the app viewer when presentation quality matters. Never claim formula results were recalculated unless Excel or LibreOffice actually recalculated them.
+Then reopen the workbook and verify sheet names, dimensions, representative values and types, formulas, number formats, styles, table ranges, frozen panes, and any hidden or macro-bearing content. Inspect representative sheets in the app viewer when presentation quality matters. Before delivering a workbook with formulas, run `office recalc <job>/model.xlsx`. It computes every formula in LibreOffice, writes the results into the file as cached values (nothing else in the file changes), and lists each error cell with its formula, exiting 1 when there is one. Fix every listed error and run it again; `--check` reports without writing. A cell it reports as a function LibreOffice does not compute is not an error: Excel computes it when the file opens. Its first use downloads LibreOffice, about 300 MB. If that fails, say plainly that the workbook was not recalculated; never claim formula results were recalculated unless Excel or LibreOffice actually recalculated them.
+
+`office render <job>/model.xlsx` draws the sheets to a PDF and page images, as a print or PDF export would lay them out, and lists each sheet's used range. A legacy `.xls` converts with `office convert old.xls --to xlsx`, and `--to csv` writes one file per sheet with computed values.
 
 ## Script reference
 

@@ -55,7 +55,13 @@ def read_parquet(path: str, limit: int | None) -> tuple[list[list], int]:
     return [names, *rows], parquet_file.metadata.num_rows + 1
 
 
-def read_excel(path: str, sheet: str | None = None) -> dict[str, list[list]]:
+def read_excel(path: str, sheet: str | None = None) -> tuple[dict[str, list[list]], int]:
+    """Return each sheet's rows and how many formula cells had no cached value.
+
+    A cell shows its cached result where the file has one. A formula cell without
+    one, as in any workbook openpyxl or pandas wrote, shows its formula text, since
+    neither library calculates formulas.
+    """
     try:
         import openpyxl
     except ImportError:
@@ -63,13 +69,26 @@ def read_excel(path: str, sheet: str | None = None) -> dict[str, list[list]]:
             "openpyxl is unavailable. Reload this skill to retry dependency setup."
         )
 
-    wb = openpyxl.load_workbook(path, data_only=True)
-    names = [sheet] if sheet else wb.sheetnames
+    formulas = openpyxl.load_workbook(path, data_only=False)
+    values = openpyxl.load_workbook(path, data_only=True)
+    names = [sheet] if sheet else formulas.sheetnames
     result = {}
+    uncalculated = 0
     for name in names:
-        ws = wb[name]
-        result[name] = [[cell.value for cell in row] for row in ws.iter_rows()]
-    return result
+        rows = []
+        for formula_row, value_row in zip(formulas[name].iter_rows(), values[name].iter_rows()):
+            row = []
+            for formula_cell, value_cell in zip(formula_row, value_row):
+                value = value_cell.value
+                if value is None and formula_cell.data_type == "f":
+                    formula = formula_cell.value
+                    # Array and data-table formulas are objects carrying their text.
+                    value = getattr(formula, "text", formula)
+                    uncalculated += 1
+                row.append(value)
+            rows.append(row)
+        result[name] = rows
+    return result, uncalculated
 
 
 def main():
@@ -82,6 +101,7 @@ def main():
 
     ext = Path(args.input).suffix.lower()
     total = None
+    uncalculated = 0
 
     if ext in (".csv",):
         rows = read_csv(args.input)
@@ -94,7 +114,7 @@ def main():
         rows, total = read_parquet(args.input, None if args.as_json else args.limit)
         data = {"Sheet1": rows}
     elif ext in (".xlsx", ".xlsm"):
-        data = read_excel(args.input, args.sheet)
+        data, uncalculated = read_excel(args.input, args.sheet)
     else:
         sys.exit(unsupported(ext))
 
@@ -109,6 +129,14 @@ def main():
             remaining = (len(rows) if total is None else total) - args.limit
             if remaining > 0:
                 print(f"... ({remaining} more rows)")
+
+    if uncalculated:
+        print(
+            f"{uncalculated} formula cell(s) have no cached value, so they show their "
+            "formula. Their values appear only after Excel or LibreOffice recalculates "
+            "the workbook.",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":

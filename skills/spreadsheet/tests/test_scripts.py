@@ -83,6 +83,40 @@ class TestRead:
         assert "Data" in data
         assert data["Data"][0] == ["Name", "Age", "Score"]
 
+    def test_shows_formulas_that_have_no_cached_value(self, tmp_path):
+        path = tmp_path / "formulas.xlsx"
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Data"
+        ws.append([2, 3, "=A1+B1"])
+        wb.save(path)
+
+        result = run("read.py", str(path), "--json")
+
+        assert result.returncode == 0
+        assert json.loads(result.stdout) == {"Data": [[2, 3, "=A1+B1"]]}
+        assert "recalculates" in result.stderr
+
+    def test_prefers_a_cached_formula_value(self, tmp_path):
+        source = tmp_path / "formulas.xlsx"
+        wb = openpyxl.Workbook()
+        wb.active.append([2, 3, "=A1+B1"])
+        wb.save(source)
+        # Stand in for a workbook Excel saved, which stores each formula's result.
+        cached = tmp_path / "cached.xlsx"
+        with zipfile.ZipFile(source) as src, zipfile.ZipFile(cached, "w") as out:
+            for item in src.infolist():
+                data = src.read(item.filename)
+                if item.filename == "xl/worksheets/sheet1.xml":
+                    data = data.replace(b"<f>A1+B1</f><v></v>", b"<f>A1+B1</f><v>5</v>")
+                out.writestr(item, data)
+
+        result = run("read.py", str(cached), "--json")
+
+        assert result.returncode == 0
+        assert json.loads(result.stdout) == {"Sheet": [[2, 3, 5]]}
+        assert result.stderr == ""
+
     def test_reads_csv(self, sample_csv):
         result = run("read.py", str(sample_csv))
         assert result.returncode == 0
