@@ -19,6 +19,8 @@ import argparse
 import json
 import sys
 
+from lib.stored_pages import drop_stored_page_count
+
 
 def replace_text(paragraph, find: str, replacement: str):
     """Replace text in a paragraph, including matches spanning formatting runs."""
@@ -123,6 +125,7 @@ def main():
                     table.cell(r_idx, c_idx).text = str(value)
 
     out = args.output or args.input
+    drop_stored_page_count(doc)
     doc.save(out)
     print(f"Saved: {out}")
 

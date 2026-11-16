@@ -17,6 +17,8 @@ import json
 import re
 import sys
 
+from lib.stored_pages import drop_stored_page_count
+
 
 def add_inline(paragraph, text: str):
     """Add Markdown bold and italic spans without flattening the paragraph."""
@@ -125,6 +127,7 @@ def main():
     if args.author:
         doc.core_properties.author = args.author
 
+    drop_stored_page_count(doc)
     doc.save(args.output)
     print(f"Created: {args.output}")
 

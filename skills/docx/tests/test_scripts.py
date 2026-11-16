@@ -310,6 +310,41 @@ class TestEdit:
         assert "must be supplied together" in result.stderr
 
 
+class TestStoredPageCount:
+    """Instrument's Word viewer paginates to docProps/app.xml's page count, so a saved document carries none."""
+
+    @staticmethod
+    def stored_app(path):
+        import zipfile
+
+        return zipfile.ZipFile(path).read("docProps/app.xml")
+
+    def test_create_saves_no_page_count(self, tmp_path):
+        pytest.importorskip("docx")
+        out = tmp_path / "created.docx"
+        assert run("create.py", "--content", "# Title", "--output", str(out)).returncode == 0
+        assert b"<Pages>" not in self.stored_app(out)
+
+    def test_edit_saves_no_page_count(self, sample_docx, tmp_path):
+        out = tmp_path / "edited.docx"
+        assert b"<Pages>1</Pages>" in self.stored_app(sample_docx)
+        assert run("edit.py", str(sample_docx), "--append", "More.", "--output", str(out)).returncode == 0
+        assert b"<Pages>" not in self.stored_app(out)
+
+    def test_fill_template_saves_no_page_count(self, tmp_path):
+        pytest.importorskip("docxtpl")
+        from docx import Document
+
+        source = tmp_path / "template.docx"
+        doc = Document()
+        doc.add_paragraph("Dear {{ name }},")
+        doc.save(str(source))
+        out = tmp_path / "filled.docx"
+        result = run("fill-template.py", str(source), str(out), "--values", '{"name": "Ada"}')
+        assert result.returncode == 0, result.stderr
+        assert b"<Pages>" not in self.stored_app(out)
+
+
 class TestPreview:
     def test_writes_a_page_holding_the_document_at_its_page_size(self, tmp_path):
         pytest.importorskip("docx")
@@ -327,6 +362,27 @@ class TestPreview:
         page = out.read_text()
         assert "@page { size: 816px 1056px; margin: 0; }" in page
         assert "@extend-ai/react-docx@0.8.4" in page
+
+    def test_lays_out_without_the_page_count_word_last_saved(self, tmp_path):
+        pytest.importorskip("docx")
+        import base64
+        import io
+        import re
+        import zipfile
+
+        from docx import Document
+
+        source = tmp_path / "report.docx"
+        Document().save(str(source))
+        # python-docx's template says the document has one page, whatever it holds.
+        assert b"<Pages>1</Pages>" in zipfile.ZipFile(source).read("docProps/app.xml")
+        result = run("preview.py", str(source))
+        assert result.returncode == 0, result.stderr
+        page = (tmp_path / "report.preview.html").read_text()
+        embedded = re.search(r'<script type="application/octet-stream" id="doc">(.*?)</script>', page, re.S).group(1)
+        app = zipfile.ZipFile(io.BytesIO(base64.b64decode(embedded))).read("docProps/app.xml")
+        assert b"<Pages>" not in app
+        assert b"<Pages>1</Pages>" in zipfile.ZipFile(source).read("docProps/app.xml")
 
 
 class TestRenderPages:
@@ -351,3 +407,191 @@ class TestRenderPages:
         assert result.returncode == 1
         assert "printed before its pages were laid out" in result.stderr
         assert not (tmp_path / "pages").exists()
+
+    def test_fails_on_a_page_whose_text_runs_past_its_bottom_margin(self, tmp_path):
+        pymupdf = pytest.importorskip("pymupdf")
+        pdf = tmp_path / "overflow.pdf"
+        message = "FAIL overflow: page 2: body text runs 0.98 in past the bottom margin, and Word moves it to the next page"
+        with pymupdf.open() as doc:
+            doc.new_page(width=612, height=792)
+            doc.new_page(width=612, height=792).insert_text((8, 780), message, fontsize=8)
+            doc.save(str(pdf))
+        result = run("render-pages.py", str(pdf), "--output", str(tmp_path / "pages"))
+        assert result.returncode == 1
+        assert sorted(p.name for p in (tmp_path / "pages").iterdir()) == ["page-001.png", "page-002.png"]
+        assert result.stdout.splitlines()[-1].startswith(message + " -> ")
+
+
+def load_script(name: str):
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(name, SCRIPTS / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    sys.path.insert(0, str(SCRIPTS))
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture
+def contract_docx(tmp_path) -> Path:
+    pytest.importorskip("docx")
+    from docx import Document
+
+    path = tmp_path / "contract.docx"
+    doc = Document()
+    p = doc.add_paragraph()
+    p.add_run("Payment is due within ")
+    p.add_run("thirty (30)").bold = True
+    p.add_run(" days, Net 30.")
+    doc.add_paragraph("The term is one year.")
+    doc.add_paragraph("Fees are capped at 1,000 USD in total.")
+    doc.add_paragraph("Governing law is Delaware.")
+    doc.save(str(path))
+    return path
+
+
+class TestRedline:
+    def test_accepted_and_rejected_views_read_right_after_reopening(self, contract_docx, tmp_path):
+        from docx import Document
+
+        redline = load_script("redline")
+        doc = Document(str(contract_docx))
+        rl = redline.Redline(doc, author="Reviewer")
+        paragraphs = doc.paragraphs
+        assert rl.replace(paragraphs[0], "thirty (30) days", "forty-five (45) days") == 1
+        assert rl.replace(paragraphs[0], "Net 30.", "Net 30, in USD.") == 1
+        rl.delete_paragraph(paragraphs[1])
+        assert rl.replace(paragraphs[2], " in total", "") == 1
+        rl.insert_paragraph_after(paragraphs[3], "Disputes go to arbitration.")
+        out = tmp_path / "redlined.docx"
+        doc.save(str(out))
+
+        reopened = Document(str(out))
+        assert redline.view_text(reopened, "accept") == (
+            "Payment is due within forty-five (45) days, Net 30, in USD.\n"
+            "Fees are capped at 1,000 USD.\n"
+            "Governing law is Delaware.\n"
+            "Disputes go to arbitration."
+        )
+        assert redline.view_text(reopened, "reject") == (
+            "Payment is due within thirty (30) days, Net 30.\n"
+            "The term is one year.\n"
+            "Fees are capped at 1,000 USD in total.\n"
+            "Governing law is Delaware."
+        )
+
+    def test_marks_only_the_changed_words_with_revision_markup_word_reads(self, contract_docx, tmp_path):
+        from docx import Document
+        from docx.oxml.ns import qn
+
+        redline = load_script("redline")
+        doc = Document(str(contract_docx))
+        rl = redline.Redline(doc, author="Reviewer")
+        rl.replace(doc.paragraphs[2], "1,000 USD", "5,000 USD")
+        rl.delete_paragraph(doc.paragraphs[1])
+        body = doc.element.body
+        deleted = [t.text for d in body.iter(qn("w:del")) for t in d.iter(qn("w:delText"))]
+        inserted = [t.text for i in body.iter(qn("w:ins")) for t in i.iter(qn("w:t"))]
+        assert deleted == ["The term is one year.", "1,000"]
+        assert inserted == ["5,000"]
+        assert not [t for d in body.iter(qn("w:del")) for t in d.iter(qn("w:t"))]
+        revisions = [el for el in body.iter() if el.tag in redline.REVISION_TAGS]
+        assert all(el.get(qn("w:author")) == "Reviewer" and el.get(qn("w:date")) for el in revisions)
+        assert len({el.get(qn("w:id")) for el in revisions}) == len(revisions)
+        mark = doc.paragraphs[1]._p.pPr.find(qn("w:rPr"))
+        assert mark[0].tag == qn("w:del")
+
+    def test_cli_saves_nothing_when_an_edit_matches_nothing(self, contract_docx, tmp_path):
+        edits = tmp_path / "edits.json"
+        edits.write_text(json.dumps([{"find": "one year", "replace": "two years"}, {"find": "no such clause", "replace": "x"}]))
+        out = tmp_path / "out.docx"
+        result = run("redline.py", str(contract_docx), "--author", "Reviewer", "--edits", str(edits), "--output", str(out))
+        assert result.returncode == 1
+        assert 'FAIL edit 2: no match for {"find": "no such clause", "replace": "x"}' in result.stdout
+        assert not out.exists()
+
+    def test_comment_anchors_to_exactly_the_isolated_phrase(self, contract_docx, tmp_path):
+        from docx import Document
+        from docx.oxml.ns import qn
+
+        redline = load_script("redline")
+        doc = Document(str(contract_docx))
+        runs = redline.Redline(doc, author="Reviewer").isolate(doc.paragraphs[2], "1,000 USD")
+        doc.add_comment(runs, text="This cap is too low.", author="Reviewer", initials="RV")
+        out = tmp_path / "commented.docx"
+        doc.save(str(out))
+
+        reopened = Document(str(out))
+        (comment,) = list(reopened.comments)
+        assert (comment.author, comment.initials, comment.text) == ("Reviewer", "RV", "This cap is too low.")
+        p = reopened.paragraphs[2]._p
+        start = p.find(qn("w:commentRangeStart"))
+        end = p.find(qn("w:commentRangeEnd"))
+        inside = p[p.index(start) + 1 : p.index(end)]
+        assert "".join(t.text for r in inside for t in r.iter(qn("w:t"))) == "1,000 USD"
+        assert reopened.paragraphs[2].text == "Fees are capped at 1,000 USD in total."
+
+
+class TestValidate:
+    def test_passes_a_new_redlined_and_commented_document(self, contract_docx, tmp_path):
+        from docx import Document
+
+        redline = load_script("redline")
+        doc = Document(str(contract_docx))
+        rl = redline.Redline(doc, author="Reviewer")
+        rl.replace(doc.paragraphs[0], "thirty (30)", "sixty (60)")
+        rl.delete_paragraph(doc.paragraphs[1])
+        rl.insert_paragraph_after(doc.paragraphs[3], "New clause.")
+        doc.add_comment(rl.isolate(doc.paragraphs[2], "Fees"), text="Why?", author="Reviewer", initials="RV")
+        out = tmp_path / "redlined.docx"
+        doc.save(str(out))
+        assert run("validate.py", str(contract_docx)).returncode == 0
+        result = run("validate.py", str(out), "--original", str(contract_docx), "--author", "Reviewer")
+        assert result.returncode == 0, result.stdout
+        assert result.stdout.startswith("OK ")
+
+    def test_flags_an_edit_made_without_tracking(self, contract_docx, tmp_path):
+        from docx import Document
+
+        redline = load_script("redline")
+        doc = Document(str(contract_docx))
+        redline.Redline(doc, author="Reviewer").replace(doc.paragraphs[0], "thirty (30)", "sixty (60)")
+        doc.paragraphs[3].runs[0].text = "Governing law is New York."
+        out = tmp_path / "sneaky.docx"
+        doc.save(str(out))
+        result = run("validate.py", str(out), "--original", str(contract_docx), "--author", "Reviewer")
+        assert result.returncode == 1
+        assert result.stdout.splitlines() == [
+            "FAIL word/document.xml: text differs from the original once this edit's tracked changes are rejected:",
+            "  -Governing law is Delaware.",
+            "  +Governing law is New York.",
+        ]
+
+    def test_flags_bad_markup_but_not_errors_the_original_already_had(self, contract_docx, tmp_path):
+        import zipfile
+
+        def rewrite(src, dst, change):
+            with zipfile.ZipFile(src) as zin, zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zout:
+                for item in zin.infolist():
+                    data = zin.read(item.filename)
+                    if item.filename == "word/document.xml":
+                        data = change(data.decode()).encode()
+                    zout.writestr(item, data)
+
+        original = tmp_path / "original.docx"
+        rewrite(contract_docx, original, lambda x: x.replace("<w:body>", "<w:body><w:bogus/>", 1))
+        edited = tmp_path / "edited.docx"
+        rewrite(
+            original,
+            edited,
+            lambda x: x.replace(
+                "<w:r><w:t>The term is one year.</w:t></w:r>",
+                '<w:del w:id="9" w:author="A" w:date="2026-01-01T00:00:00Z"><w:r><w:t>The term is one year.</w:t></w:r></w:del>',
+            ),
+        )
+        alone = run("validate.py", str(original))
+        assert alone.returncode == 1 and "bogus" in alone.stdout
+        result = run("validate.py", str(edited), "--original", str(original))
+        assert result.returncode == 1
+        assert "bogus" not in result.stdout
+        assert "<w:t> inside <w:del>; deleted text must be <w:delText>: 'The term is one year.'" in result.stdout

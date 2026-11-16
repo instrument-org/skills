@@ -99,7 +99,29 @@ options:
                    the document)
 ```
 
-## `render-pages.py` Render the pages of a printed preview.py page to PNG images, refusing a print taken before the document was laid out.
+## `redline.py` Make tracked changes (redlines) in an existing Word document: replace, delete, or insert text as revisions Word shows and can accept or reject.
+
+```text
+usage: redline.py [-h] [--author AUTHOR] [--edits EDITS] [--output OUTPUT]
+                  [--show {accept,reject}]
+                  input
+
+Make tracked changes in a Word document
+
+positional arguments:
+  input                 Input .docx file
+
+options:
+  -h, --help            show this help message and exit
+  --author AUTHOR       Name the revisions are recorded under
+  --edits EDITS         JSON file with a list of edits
+  --output OUTPUT       Output .docx path (required with --edits)
+  --show {accept,reject}
+                        Print the body text with all tracked changes accepted
+                        or rejected, and exit
+```
+
+## `render-pages.py` Render the pages of a printed preview.py page to PNG images, refusing a print taken before the document was laid out, and failing when a page's body text runs past its bottom margin.
 
 ```text
 usage: render-pages.py [-h] [--output OUTPUT] [--dpi DPI] input
@@ -113,4 +135,23 @@ options:
   -h, --help       show this help message and exit
   --output OUTPUT  Output directory (default: .)
   --dpi DPI        Resolution (default: 110)
+```
+
+## `validate.py` Validate a Word document's XML before delivering it, and with --author check that every edit against the original is tracked.
+
+```text
+usage: validate.py [-h] [--original ORIGINAL] [--author AUTHOR] [--json] input
+
+Validate a Word document's XML
+
+positional arguments:
+  input                .docx file to check
+
+options:
+  -h, --help           show this help message and exit
+  --original ORIGINAL  The document it was edited from; its own errors are not
+                       reported
+  --author AUTHOR      The name you redlined under; turns on the check that
+                       every edit against --original is tracked
+  --json               Print problems as JSON
 ```

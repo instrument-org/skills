@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Render the pages of a printed preview.py page to PNG images, refusing a print taken before the document was laid out."""
+"""Render the pages of a printed preview.py page to PNG images, refusing a print taken before the document was laid out, and failing when a page's body text runs past its bottom margin."""
 
 import argparse
 import os
 import sys
+
+OVERFLOW = "FAIL overflow:"
 
 
 def main():
@@ -22,10 +24,16 @@ def main():
     if len(doc) and "printed before its pages were laid out" in doc[0].get_text():
         sys.exit(doc[0].get_text().strip())
     os.makedirs(args.output, exist_ok=True)
+    fails = []
     for index, page in enumerate(doc):
         path = os.path.join(args.output, f"page-{index + 1:03d}.png")
         page.get_pixmap(dpi=args.dpi).save(path)
         print(path)
+        fails += [line.strip() for line in page.get_text().splitlines() if line.strip().startswith(OVERFLOW)]
+    for line in fails:
+        print(f"{line} -> tighten spacing or content to keep it on this page, or let it break")
+    if fails:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

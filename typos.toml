@@ -65,6 +65,8 @@ extend-exclude = [
   ".git/",
   # Generated or vendored, and not ours to spell.
   "pnpm-lock.yaml",
-  # OOXML schemas, published by Microsoft and read by the spreadsheet scripts.
+  # OOXML schemas, published by Microsoft and read by the skills' validate.py.
+  "skills/docx/schemas/",
+  "skills/powerpoint/schemas/",
   "skills/spreadsheet/schemas/",
 ]
