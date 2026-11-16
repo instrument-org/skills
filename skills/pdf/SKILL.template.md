@@ -86,13 +86,13 @@ CSS gives you a grid, real tables, a type scale, running headers and page breaks
 - A chart is inline SVG drawn from the data, computed by a short script, never a screenshot.
 - The system font stack above is always there. A web font from Google Fonts works when the computer is online; confirm in the rendered pages that it printed.
 
-**Print, check, render and look.** Pass `--pages` only when the request named a page count. After editing the HTML, run `agent-browser open` again before printing, or you print the old page.
+**Print, check, render and look.** Add `--pages <count>` to `check-pdf.py` only when the request named a page count, such as `--pages 1` for a one-pager. After editing the HTML, run `agent-browser open` again before printing, or you print the old page.
 
 ```bash
 agent-browser open <job>/<name>.html
 agent-browser pdf <job>/<name>.pdf
-python <pdf-skill-path>/scripts/check-pdf.py <job>/<name>.pdf --pages 1
-python <pdf-skill-path>/scripts/render-pages.py <job>/<name>.pdf --output pdf-preview --dpi 110
+python <pdf-skill-path>/scripts/check-pdf.py <job>/<name>.pdf
+python <pdf-skill-path>/scripts/render-pages.py <job>/<name>.pdf --output <job>/pdf-preview --dpi 110
 ```
 
 **Review it as a designer would, then revise.** Is exactly one thing loudest? Do labels, dates and footers recede? Do columns and numbers line up down the page? Are figures in a table, right-aligned, with any total set apart? If a revision still reads like a word processor's defaults, change the structure, not the numbers. Keep the HTML beside the PDF in the job's folder, so a later change is an edit to the page and a reprint.
@@ -246,9 +246,22 @@ PDF cannot preserve SVG or CSS animation. The renderer produces a static represe
 
 Some SVG renderers also do not fully honor stylesheets or class selectors. Render and inspect the PDF after conversion. If critical colors, strokes, or text styling are lost, make a PDF-specific copy of the SVG, inline the required presentation attributes on it, and regenerate the PDF. Do not modify an already delivered SVG just to make its PDF rendering work.
 
+## Recipe: fill an interactive form
+
+Run `fill-form.py --list-fields` first. It prints one JSON line per field: its `type`, current `value`, `page`, `rect` (`[x, top, width, height]` from the page's top-left), a `tooltip` when the form has one, a checkbox's `on` values, and the `options` a radio group or choice field accepts. Field names are often codes such as `f1_04[0]`, so render the blank form and match each field's `rect` and `tooltip` to the label printed beside it before deciding what goes where.
+
+```bash
+python <pdf-skill-path>/scripts/fill-form.py "$INSTRUMENT_ATTACHMENTS/form.pdf" --list-fields
+python <pdf-skill-path>/scripts/fill-form.py "$INSTRUMENT_ATTACHMENTS/form.pdf" filled-form.pdf --fields '{"Name": "Alice Example", "Agree": true, "State": "CA"}'
+```
+
+Give a checkbox `true` or `false`; the script maps it to that box's own on-value, which differs between forms (`/Yes`, `/On`, `/1`). A box with several `on` values takes one of them by name. A radio group or choice field takes one of its `options`, or the matching display text in `labels`. Pass `--fields` a path to a `.json` file when the values are long.
+
+The script checks every name and value before writing anything. An unknown field, a value outside a field's options, text over its `maxLength`, or a read-only field stops it with exit 1, naming what is valid, and nothing is written; fix every error it lists and run again. After writing, it reads the file back, lists what each field was set to, and names required fields still empty. Then render the filled pages and look. The fields stay editable, and a form that also carries an XFA layer loses it, so every viewer shows the filled values.
+
 ## Recipe: fill a non-interactive form
 
-Run `fill-form.py --list-fields` first. If the PDF has no AcroForm fields, render the blank form and measure each entry area in PDF points. Coordinates for `overlay-form.py` start at the page's top-left; each box is `[x, top, width, height]`.
+If `fill-form.py --list-fields` finds no AcroForm fields, render the blank form and measure each entry area in PDF points. Coordinates for `overlay-form.py` start at the page's top-left; each box is `[x, top, width, height]`.
 
 ```json
 {
@@ -317,5 +330,5 @@ Then read every rendered PNG with the file-reading tool and compare it with the 
 
 - Scanned PDFs may not have an embedded text layer. OCR is not included in the base dependencies.
 - Use `pdfplumber` for layout-aware text and table extraction, PyMuPDF for page rendering and image extraction, and `pypdf` for structural operations.
-- `fill-form.py` supports AcroForm fields. It does not support XFA forms.
+- `fill-form.py` supports AcroForm fields. A pure XFA form has none; fill it with `overlay-form.py`.
 - `overlay-form.py` is appropriate when visual placement is the intended deliverable. It does not create interactive fields or implement XFA.

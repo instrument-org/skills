@@ -128,12 +128,12 @@ options:
   --json         Output structured JSON with per-page text and page count
 ```
 
-## `fill-form.py` Fill PDF form fields.
+## `fill-form.py` Fill interactive (AcroForm) PDF form fields, checking every name and value.
 
 ```text
 usage: fill-form.py [-h] [--fields FIELDS] [--list-fields] input [output]
 
-Fill PDF form fields
+Fill interactive PDF form fields, checking every name and value
 
 positional arguments:
   input            Input PDF file
@@ -141,9 +141,13 @@ positional arguments:
 
 options:
   -h, --help       show this help message and exit
-  --fields FIELDS  JSON object of field name -> value, e.g. '{"Name":
-                   "Alice"}'
-  --list-fields    List available form fields and exit
+  --fields FIELDS  JSON object of field name -> value, or a path to a .json
+                   file holding one, e.g. '{"Name": "Alice", "Agree": true,
+                   "State": "CA"}'. Checkboxes take true/false, "Yes"/"No" or
+                   an on-value from --list-fields.
+  --list-fields    Print every field as JSON (type, value, page, rect [x, top,
+                   width, height] from the top-left, tooltip, checkbox on-
+                   values, radio and choice options) and exit
 ```
 
 ## `get-meta.py` Read PDF metadata.

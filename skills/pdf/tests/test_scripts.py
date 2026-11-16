@@ -538,6 +538,73 @@ class TestExtractLinks:
         assert isinstance(data, list)
 
 
+class TestFillForm:
+    @pytest.fixture
+    def form(self, tmp_path):
+        pytest.importorskip("reportlab")
+        from reportlab.pdfgen import canvas
+
+        path = tmp_path / "form.pdf"
+        document = canvas.Canvas(str(path), pagesize=(400, 300))
+        fields = document.acroForm
+        fields.textfield(name="Name", x=80, y=250, width=200, height=20)
+        fields.checkbox(name="Agree", x=80, y=215, size=15)
+        fields.radio(name="Color", value="Red", x=80, y=175, size=15)
+        fields.radio(name="Color", value="Blue", x=110, y=175, size=15)
+        fields.choice(
+            name="State",
+            options=[("California", "CA"), ("New York", "NY")],
+            value="CA",
+            x=80,
+            y=130,
+            width=120,
+            height=20,
+        )
+        document.showPage()
+        document.save()
+        return path
+
+    def test_list_fields_shows_on_values_and_options(self, form):
+        result = run("fill-form.py", str(form), "--list-fields")
+        assert result.returncode == 0, result.stderr
+        fields = json.loads(result.stdout)
+        assert fields["Agree"]["type"] == "checkbox"
+        assert fields["Agree"]["on"] == ["/Yes"]
+        assert fields["Color"]["options"] == ["Red", "Blue"]
+        assert fields["State"]["options"] == ["CA", "NY"]
+        assert fields["Name"]["page"] == 1
+
+    def test_friendly_checkbox_value_checks_the_box(self, form, tmp_path):
+        from pypdf import PdfReader
+
+        output = tmp_path / "filled.pdf"
+        values = {"Name": "Alice", "Agree": "Yes", "Color": "blue", "State": "New York"}
+        result = run("fill-form.py", str(form), str(output), "--fields", json.dumps(values))
+        assert result.returncode == 0, result.stderr
+        assert "Agree: checked (/Yes)" in result.stdout
+        fields = PdfReader(output).get_fields()
+        assert fields["Name"]["/V"] == "Alice"
+        assert fields["Agree"]["/V"] == "/Yes"
+        assert fields["Color"]["/V"] == "/Blue"
+        assert fields["State"]["/V"] == "NY"
+
+    def test_misspelled_field_fails_naming_it(self, form, tmp_path):
+        output = tmp_path / "filled.pdf"
+        result = run("fill-form.py", str(form), str(output), "--fields", '{"Nme": "Alice"}')
+        assert result.returncode == 1
+        assert '"Nme" is not a field' in result.stderr
+        assert "Name" in result.stderr
+        assert not output.exists()
+
+    def test_invalid_choice_fails_listing_options(self, form, tmp_path):
+        output = tmp_path / "filled.pdf"
+        result = run("fill-form.py", str(form), str(output), "--fields", '{"State": "TX"}')
+        assert result.returncode == 1
+        assert "\"TX\"" in result.stderr
+        assert "['CA', 'NY']" in result.stderr
+        assert not output.exists()
+
+
 class TestOverlayForm:
     @pytest.fixture
     def blank_form(self, tmp_path):
