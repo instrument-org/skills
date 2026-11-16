@@ -598,7 +598,8 @@
     background: #44403c;
     color: #faf8f6;
   }
-  .code-tools svg {
+  /* Two classes, so it outranks the later svg:not([fill]) that fills drawn figures with ink. */
+  .code .code-tools svg {
     width: 0.95em;
     height: 0.95em;
     fill: none;
