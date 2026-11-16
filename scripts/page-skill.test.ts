@@ -13,6 +13,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, relative } from "node:path";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
+import { check } from "../skills/wireframe/check.mjs";
 import { repoName, tagRepo } from "../skills/wireframe/repo.mjs";
 
 const SKILLS = join(import.meta.dirname, "../skills");
@@ -471,5 +472,85 @@ describe("wireframe's repo meta", () => {
     `);
     expect(tagRepo(tagged, "other")).toBe(tagged);
     expect(tagRepo(page, undefined)).toBe(page);
+  });
+});
+
+describe("wireframe's check.mjs", () => {
+  const run = promisify(execFile);
+  const fresh = async (...args: string[]) => {
+    const out = join(mkdtempSync(join(tmpdir(), "wf-check-")), "page.html");
+    await run("node", [
+      join(SKILLS, "wireframe", "new.mjs"),
+      out,
+      "Check",
+      ...args,
+    ]);
+    return readFileSync(out, "utf-8");
+  };
+  // Code put just above the render line, where a page's own frames end.
+  const plant = (page: string, code: string) =>
+    page.replace(
+      "        // ---- render",
+      () => `        ${code}\n        // ---- render`,
+    );
+  const said = (page: string) => {
+    const r = check(page);
+    return r.fails.length
+      ? r.fails.map((f) => f.replace(/\d+/g, "N"))
+      : r.skip || `ok ${r.checked}/${r.total}`;
+  };
+
+  it.each<[string, string, string | string[]]>([
+    ["a fresh page", "", "ok 1/1"],
+    [
+      "a page declaring its own frame size",
+      "const W = 1280, H = 300;",
+      "ok 1/1",
+    ],
+    [
+      "a name declared twice",
+      "const win = 1;",
+      ["SyntaxError: Identifier 'win' has already been declared (line N)"],
+    ],
+    [
+      "a template left open",
+      "const x = `<div>;",
+      ["SyntaxError: Unexpected identifier 'stage' (line N)"],
+    ],
+    [
+      "a helper nothing defines",
+      'states.push({ title: "x", body: button("Go") });',
+      [
+        "ReferenceError while drawing the frames: button is not defined (line N)",
+      ],
+    ],
+    [
+      "a frame that draws a missing value",
+      'states.push({ title: "x", body: `<p>${({}).label}</p>` });',
+      ['frame N ("x") draws the text "undefined"'],
+    ],
+    [
+      "a frame with no body",
+      'states.push({ title: "x" });',
+      ['frame N ("x") has no body'],
+    ],
+    [
+      "frames that reach for the page",
+      "const wide = window.innerWidth;",
+      "its frames use `window`, which needs a browser",
+    ],
+  ])("%s", async (_name, code, expected) => {
+    expect(said(plant(await fresh(), code))).toEqual(expected);
+  });
+
+  it("a fresh prototype", async () => {
+    expect(said(await fresh("--prototype"))).toBe("ok 1/1");
+  });
+
+  it("names the page's own line", async () => {
+    const page = plant(await fresh(), "const win = 1;");
+    const line =
+      page.split("\n").findIndex((l) => l.includes("const win = 1;")) + 1;
+    expect(check(page).fails[0]).toContain(`(line ${line})`);
   });
 });

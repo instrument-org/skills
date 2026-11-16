@@ -22,6 +22,7 @@ Don't use it for:
 `<skill>` is the full path to this skill's folder. Run commands from the task folder.
 
 - `new.mjs` writes a new wireframe page from the two files below. Inside a git repository, it adds an `instrument:repo` meta tag naming the repository, which the index app files the page under.
+- `check.mjs` checks a page without a browser: every script parses, and every frame draws (see "Worked example" below).
 - `repo.mjs` provides that name and tag, for a project's own kit to call when it builds pages itself.
 - `shell.html` is the page shell. It holds Studio's theme as Tailwind tokens, the compiled stylesheet, the pinned Tailwind browser build, the icon set, and the share widget with its Share button. We draw frames with Tailwind classes, and projects' own wireframe kits do too. Don't edit anything between `shell:start` and `shell:end`.
 - `share.mjs` and `share.py` publish a finished page to a link (see "Hand it over" below).
@@ -65,7 +66,9 @@ const states = [
 ];
 ```
 
-Check the page in your browser tool before you hand it over. If the module script throws an error, the grid comes up blank.
+Check the page each time you finish an edit, before you open it anywhere: `node <skill>/check.mjs 2026-10-05-checkout-sold-out-mid-payment.html`. It parses every script the way the browser does, then draws the frames in Node, and prints a FAIL line with the page's line number for a script that can't load, a name nothing defines, or a frame that draws `undefined`. Any of those leaves the grid blank or a frame wrong, so fix each one. A page whose frames use `document` or `window` it parses but can't draw, and it says so.
+
+Then check the page in your browser tool before you hand it over, since only a browser shows how it looks.
 
 ```
 agent-browser open 2026-10-05-checkout-sold-out-mid-payment.html
@@ -73,7 +76,7 @@ agent-browser errors
 agent-browser screenshot checkout.png
 ```
 
-`errors` must come back empty, so fix the script until it does. Then look at the screenshot and make sure every frame is drawn, each one has its caption, and nothing is cut off. Marks start hidden, so press `A` and take a second screenshot to check that each callout sits on the element it names. The browser can only open the page if it's in the task folder or a folder the user granted. If you have no browser tool, tell the user you couldn't check the page.
+`errors` must come back empty, so fix the script until it does. Then look at the screenshot and make sure every frame is drawn, each one has its caption, and nothing is cut off. Marks start hidden, so press `A` and take a second screenshot to check that each callout sits on the element it names. The browser can only open the page if it's in the task folder or a folder the user granted. If you have no browser tool, tell the user that `check.mjs` passed but you couldn't look at the page.
 
 ## Frames from a snapshot
 

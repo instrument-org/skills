@@ -45,8 +45,8 @@ const repo = repoName(process.cwd());
 writeFileSync(out, tagRepo(page, repo));
 console.log(
   prototype
-    ? `${out}: written. Draw the screen in its \`SCREEN\`, then open it in your browser tool and check its errors and a screenshot.`
-    : `${out}: written. Draw the frames in its \`states\` array, then open it in your browser tool and check its errors and a screenshot.`,
+    ? `${out}: written. Draw the screen in its \`SCREEN\`, then run \`node ${join(here, "check.mjs")} ${out}\`, and open it in your browser tool for its errors and a screenshot.`
+    : `${out}: written. Draw the frames in its \`states\` array, then run \`node ${join(here, "check.mjs")} ${out}\`, and open it in your browser tool for its errors and a screenshot.`,
 );
 if (!repo)
   console.warn("No repository found here, so this page has no repo tag.");
