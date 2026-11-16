@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Render a deck's slides as a thumbnail grid image.
 
-Takes the PDF the browser printed from a preview.py page, one slide per page, or a .pptx when LibreOffice (soffice) is installed to convert it. The skill supplies PyMuPDF and Pillow for image rendering.
+Takes the PDF the browser printed from a preview.py page, one slide per page, or a .pptx when LibreOffice (soffice) is installed to convert it, which soffice.py does from a copy with outside links blanked. The skill supplies PyMuPDF and Pillow for image rendering.
 """
 
 import argparse
 import shutil
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -22,14 +21,13 @@ FONT_SIZE = 11
 
 
 def convert_to_pdf(pptx_path: Path, temp_dir: Path) -> Path:
-    pdf_path = temp_dir / (pptx_path.stem + ".pdf")
-    result = subprocess.run(
-        ["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(temp_dir), str(pptx_path)],
-        capture_output=True, text=True,
-    )
-    if result.returncode != 0 or not pdf_path.exists():
-        sys.exit(f"LibreOffice conversion failed:\n{result.stderr}")
-    return pdf_path
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from soffice import convert
+
+    try:
+        return convert(pptx_path, "pdf", temp_dir)
+    except RuntimeError as error:
+        sys.exit(f"LibreOffice conversion failed:\n{error}")
 
 
 def convert_to_images(pdf_path: Path, dpi: int, temp_dir: Path) -> list[Path]:

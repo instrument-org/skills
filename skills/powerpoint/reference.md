@@ -87,6 +87,44 @@ options:
                         Replacement text (simple mode)
 ```
 
+## `slides.py` Duplicate, delete and reorder a deck's slides, which python-pptx cannot do.
+
+```text
+usage: slides.py [-h] --order ORDER [--prune-layouts] input output
+
+Duplicate, delete and reorder a deck's slides
+
+positional arguments:
+  input            Input .pptx or .potx
+  output           Output file; must differ from the input
+
+options:
+  -h, --help       show this help message and exit
+  --order ORDER    Final order as 1-based slide numbers, such as 1,3,3,2:
+                   repeat a number to duplicate that slide, leave one out to
+                   delete it
+  --prune-layouts  Also drop layouts no remaining slide uses
+```
+
+## `soffice.py` Convert a deck with LibreOffice (soffice) without letting it touch the original or reach outside the file.
+
+```text
+usage: soffice.py [-h] [--to TO] [--outdir OUTDIR] [--timeout TIMEOUT] input
+
+Convert a deck with LibreOffice, from a copy with outside links blanked and a
+throwaway profile
+
+positional arguments:
+  input              Deck to convert (.pptx, .ppt, .potx, .odp)
+
+options:
+  -h, --help         show this help message and exit
+  --to TO            Target format, as soffice --convert-to takes it (default:
+                     pdf; pptx converts a legacy .ppt)
+  --outdir OUTDIR    Folder for the converted file (default: current folder)
+  --timeout TIMEOUT  Seconds before giving up (default: 180)
+```
+
 ## `thumbnail.py` Render a deck's slides as a thumbnail grid image.
 
 ```text
@@ -105,4 +143,21 @@ options:
   --cols COLS
   --dpi DPI
   --width WIDTH  Width of each slide in pixels (default: 280)
+```
+
+## `validate.py` Check a saved .pptx for the package faults PowerPoint refuses or offers to repair.
+
+```text
+usage: validate.py [-h] [--original ORIGINAL] [--json] input
+
+Check a .pptx for package faults PowerPoint repairs or refuses
+
+positional arguments:
+  input                The .pptx or .potx to check
+
+options:
+  -h, --help           show this help message and exit
+  --original ORIGINAL  The template or source deck it was built from; its own
+                       schema errors are not reported
+  --json               Emit JSON
 ```

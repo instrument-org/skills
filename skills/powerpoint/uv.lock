@@ -286,6 +286,7 @@ name = "skill-powerpoint"
 version = "0.0.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "lxml" },
     { name = "pillow" },
     { name = "pymupdf" },
     { name = "python-pptx" },
@@ -298,6 +299,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
+    { name = "lxml" },
     { name = "pillow" },
     { name = "pymupdf" },
     { name = "pytest", marker = "extra == 'test'" },
