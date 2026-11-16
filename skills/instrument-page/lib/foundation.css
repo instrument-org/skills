@@ -514,6 +514,10 @@
     padding: 0.1em 0.35em;
     border-radius: 4px;
   }
+  /* An identifier in a table cell breaks anywhere, so one long name cannot hold its column wider than a phone. */
+  :is(td, th) code {
+    overflow-wrap: anywhere;
+  }
   kbd {
     border: 1px solid var(--line-2);
     border-bottom-width: 2px;
@@ -560,7 +564,7 @@
     background: #2a2522;
     color: #b5aca5;
     font: 0.76rem/1.3 var(--mono);
-    padding: 0.5rem 7.5rem 0.5rem 1.1rem;
+    padding: 0.5rem 9rem 0.5rem 1.1rem;
     border-radius: var(--radius) var(--radius) 0 0;
     overflow-wrap: anywhere;
   }
