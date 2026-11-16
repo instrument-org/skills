@@ -598,8 +598,7 @@
     background: #44403c;
     color: #faf8f6;
   }
-  /* Two classes, so it outranks the later svg:not([fill]) that fills drawn figures with ink. */
-  .code .code-tools svg {
+  .code-tools svg {
     width: 0.95em;
     height: 0.95em;
     fill: none;
@@ -699,10 +698,9 @@
     color: var(--muted);
     margin-top: 0.5rem;
   }
-  img,
-  svg,
-  video,
-  canvas {
+  /* Element defaults sit in :where(), weightless, so any rule naming a class outranks them
+     wherever it falls in this file. */
+  :where(img, svg, video, canvas) {
     max-width: 100%;
     height: auto;
   }
@@ -710,7 +708,7 @@
     display: block;
     border-radius: calc(var(--radius) * 0.6);
   }
-  svg {
+  :where(svg) {
     overflow: visible;
   }
   /* dt/dd pairs may be grouped in a <div> (valid HTML); the group must not become one grid cell. */
@@ -1406,10 +1404,10 @@
   /* SVG drawn by hand: data-c / data-tone fill a shape; .outline strokes it. */
   /* Colors set on the svg, not on its shapes, so a fill= or font-size= written
    on a shape still wins: CSS rules outrank SVG presentation attributes. */
-  svg:not([fill]) {
+  :where(svg:not([fill])) {
     fill: var(--ink);
   }
-  svg {
+  :where(svg) {
     font-family: var(--body-font);
   }
   svg [data-c],
