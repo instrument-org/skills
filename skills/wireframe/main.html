@@ -892,11 +892,12 @@
 
         // Default frame size. A whole desktop window is 1280x800; a phone is
         // 390x844; a panel is whatever it actually measures. States override
-        // with their own `w` and `h`.
-        const W = 1280;
-        const H = 800;
-        // Narrowest a tile may be before the grid drops a column.
-        const TILE_MIN = 330;
+        // with their own `w` and `h`. W and H sit on the window rather than in
+        // this script, so a frame may say `w: W`, and a page that declares its
+        // own W or H below shadows the default instead of blanking itself with
+        // a SyntaxError.
+        globalThis.W = 1280;
+        globalThis.H = 800;
 
         // ---- the kit -------------------------------------------------------
         // Neutral pieces of software, so a frame is the thing being proposed
@@ -1099,6 +1100,8 @@
         // may name a helper `stage` or `layout` without redeclaring one of these
         // and blanking the page with a SyntaxError.
         {
+        // Narrowest a tile may be before the grid drops a column.
+        const TILE_MIN = 330;
         const rack = document.querySelector("#rack");
 
         // ---- groups ----------------------------------------------------------

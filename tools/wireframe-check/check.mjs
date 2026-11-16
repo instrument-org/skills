@@ -126,9 +126,19 @@ export const FIXTURES = {
       frame("Phone", 390, 844, { marked: true }),
     ],
   },
+  // A page that declares its own W and H, which once redeclared the
+  // viewer's and blanked the page; a frame with no size takes the page's.
+  "own-size": {
+    prelude: "const W = 1280, H = 300;",
+    groups: "{}",
+    states: [
+      frame("Strip", "W", "H"),
+      `{ title: "Unsized", note: ${JSON.stringify(SHORT)}, body: \`<div class="h-full bg-card p-8">Unsized</div>\` }`,
+    ],
+  },
 };
 
-const build = (dir, name, { groups, states, snapshots = {} }) => {
+const build = (dir, name, { prelude = "", groups, states, snapshots = {} }) => {
   const path = join(dir, `${name.replace(/\W+/g, "-")}.html`);
   execFileSync("node", [newPage, path, `Check: ${name}`], {
     cwd: dir,
@@ -137,7 +147,7 @@ const build = (dir, name, { groups, states, snapshots = {} }) => {
   const page = readFileSync(path, "utf8");
   const a = page.indexOf("        // ---- the frames");
   const b = page.indexOf("        // ---- render");
-  const frames = `        // ---- the frames\n        const groups = ${groups};\n        const states = [\n${states.map((s) => `          ${s},`).join("\n")}\n        ];\n\n`;
+  const frames = `        // ---- the frames\n${prelude ? `        ${prelude}\n` : ""}        const groups = ${groups};\n        const states = [\n${states.map((s) => `          ${s},`).join("\n")}\n        ];\n\n`;
   writeFileSync(path, page.slice(0, a) + frames + page.slice(b));
   const files = Object.entries(snapshots).map(([snap, html]) => {
     const file = join(dir, `${snap}.html`);
@@ -289,6 +299,14 @@ export async function run({ keep } = {}) {
         fail(`the bottom band changes height: ${[...bands].join(", ")}px`);
       if ((await read()).alerts)
         fail("the page lists a problem above the frames");
+
+      if (name === "own-size") {
+        const sizes = await P.evaluate(
+          `[...document.querySelectorAll("#rack .frame")].map((f) => f.dataset.w + "x" + f.dataset.h).join()`,
+        );
+        if (sizes !== "1280x300,1280x300")
+          fail(`frames take sizes ${sizes}, not the page's own W and H`);
+      }
 
       if (name === "tall") {
         // A frame far taller than the screen opens at its true width, from
@@ -512,6 +530,23 @@ export async function run({ keep } = {}) {
 
       for (const e of new Set(errors)) fail(`script error: ${e}`);
     }
+
+    // A page that redeclares a kit helper fails to parse, and says so above
+    // the empty grid rather than showing a quiet page.
+    const broken = build(dir, "broken", {
+      prelude: "const win = 1;",
+      groups: "{}",
+      states: [frame("Window", 1280, 800)],
+    });
+    await P.navigate(pathToFileURL(broken).href);
+    await wait(400);
+    const notice = await P.evaluate(
+      `document.querySelector("main > [role=alert]")?.textContent ?? ""`,
+    );
+    if (!/'win' has already been declared \(line \d+\)/.test(notice))
+      fails.push(
+        `FAIL broken: a page that fails to parse shows "${notice}", not the error and its line`,
+      );
   } finally {
     chrome.close?.();
   }

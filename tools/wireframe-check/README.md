@@ -6,7 +6,7 @@ Drives the wireframe skill's enlarged view in headless Chromium and prints one F
 pnpm wireframe-check [--keep <dir>]
 ```
 
-It writes a handful of fixture pages with the skill's own `new.mjs` (no groups, groups with a current design and stars, an ungrouped lead-in, a single group, a frame still carrying a `compare` field, tall frames at one per row, frames with callouts, and frames drawn from a snapshot with `add-snapshot.mjs`), opens each at 1440x900, and walks it:
+It writes a handful of fixture pages with the skill's own `new.mjs` (no groups, groups with a current design and stars, a page declaring its own frame size, an ungrouped lead-in, a single group, a frame still carrying a `compare` field, tall frames at one per row, frames with callouts, and frames drawn from a snapshot with `add-snapshot.mjs`), opens each at 1440x900, and walks it:
 
 - no script errors
 - the title block and the bottom band keep one height across every frame, with notes of one line and of two
@@ -19,5 +19,7 @@ It writes a handful of fixture pages with the skill's own `new.mjs` (no groups, 
 - frames from a snapshot draw in the grid, an edited one shows its edits' callouts in the margin and the spotlight, an unedited one shows none, and a target that matches nothing throws an error naming the close matches
 - a frame far taller than the screen opens at its true width from its top, with the thumbnail; a wheel, End and Home scroll it; zooming out reaches the whole frame, 0 brings back its width, and the next frame of another size opens at its top
 - closing leaves nothing behind
+- a page that declares its own `W` and `H` loads, and its frames take that size
+- a page whose script fails to parse names the error and its line at the top of the page
 
 `--keep <dir>` writes the fixture pages there to open by hand. Exit 0 pass, 1 FAIL, 3 Chromium could not run. It finds Chromium the way `tools/page-check` does, and `scripts/wireframe-check.test.ts` runs it in the suite wherever one is downloaded.

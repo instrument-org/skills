@@ -97,6 +97,42 @@
         });
       })();
     </script>
+    <!-- shell:note A page whose own script fails while it loads says so at the
+         top of its main element, with the error and its line. A script that fails
+         before it draws anything leaves an empty grid, which the reader and a
+         screenshot both take for a quiet page. Only this document's own
+         scripts count, and only up to load: an error after that, from a key
+         or a click, stays in the console. -->
+    <script>
+      (function () {
+        const own = location.href.split("#")[0];
+        const failures = [];
+        const note = (event) => {
+          if (!(event instanceof ErrorEvent) || event.filename.split("#")[0] !== own) return;
+          failures.push(`${event.message}${event.lineno ? ` (line ${event.lineno})` : ""}`);
+        };
+        addEventListener("error", note);
+        addEventListener("load", () => {
+          removeEventListener("error", note);
+          if (!failures.length) return;
+          const box = document.createElement("div");
+          box.setAttribute("role", "alert");
+          box.style.cssText =
+            "margin:16px 0;padding:12px 16px;border:1px solid var(--color-error-300,#e197a6);border-radius:8px;background:var(--color-error-50,#fbeef0);color:var(--color-error-700,#7a1f30);font:13px/1.5 system-ui,sans-serif";
+          const head = document.createElement("p");
+          head.style.cssText = "margin:0 0 4px;font-weight:600";
+          head.textContent = "This page's script failed as it loaded, so what it draws is missing.";
+          box.append(head);
+          for (const failure of new Set(failures)) {
+            const line = document.createElement("p");
+            line.style.cssText = "margin:0;font-family:var(--font-mono,ui-monospace,monospace);font-size:12px";
+            line.textContent = failure;
+            box.append(line);
+          }
+          (document.querySelector("main") ?? document.body).prepend(box);
+        });
+      })();
+    </script>
     <!-- shell:note The theme contract, in the head so a remembered choice is on
          the root before anything paints. `data-theme` on <html> is the whole
          switch. `window.__instrumentTheme` is the one way to write it, so the
