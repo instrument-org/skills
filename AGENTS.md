@@ -50,11 +50,14 @@ A commit that makes a choice ends with decision trailers, so the reasoning outli
 
 ## Problem reports
 
-Feedback, crashes, hangs and errors people send from the app are problem reports, each with a fingerprint (`feedback:<id>`), read with the reports CLI in the `internal` reference (`agent-reference get internal`). A skill fix for one is tied to it in both places, so the report says what fixed it and the fix says what it was for:
+Feedback, crashes, hangs and errors people send from the app are problem reports, each with a fingerprint (`feedback:<id>`), read with the reports CLI in the `internal` reference (`agent-reference get internal`). `reports show <fingerprint>` lists the issue's reports, the commits made for it and its history.
 
-- The commit carries `Report: <fingerprint>`, one line per report it fixes.
-- Once the commit is pushed, resolve the report with the pushed commit's URL: `pnpm --filter @instrument/reports reports resolve <fingerprint> --in <next app version> --note "<what changed, in a line> <commit URL>"`. Its Slack card updates itself. Run it from a checkout at the internal repo's `origin/main`, and check that `reports show <fingerprint>` lists the note, since an older CLI ignores `--note`.
-- A report with several complaints names in the note the ones the fix leaves open.
+A skill fix is tied to its report by the commit alone:
+
+- The commit carries `Report: <fingerprint>`, one line per report it fixes; `Report: <fingerprint> (partly)` when it leaves part of the report open, and `Related-report: <fingerprint>` for a change that fixes nothing.
+- Once the commit is on `main`, the reports worker ties it to the issue within seconds of the push (within ten minutes when GitHub's webhook delivery fails), resolves it, tells its Slack card, and records it as shipped, since a skill ships when it is pushed. Nothing is resolved by hand for a fix.
+- What you learned that no commit records goes into the issue's history with `reports note <fingerprint> "<text>" --finding`: a cause, a report artifact that is not a bug, a complaint the fix leaves open. A commit that went out without its line is tied with `reports link <fingerprint> skills <sha>`.
+- A commit made for an ask in Slack (a teammate's thread, not a report) carries `Slack: <link to the thread's first message>` instead, and needs no issue: once it is on `main`, the reports worker replies once in that thread linking the commit. A commit can carry both kinds of line. One that went out without it is tied with `reports link-thread <link> skills <sha>`. Never post to the thread yourself, and never file a Slack ask as a report to get the reply.
 
 ## Repository knowledge base
 

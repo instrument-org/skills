@@ -34,7 +34,8 @@ The final paragraph, one `Key: value` per line. Never wrap a value onto a second
 | `Related: <sha>`                      | A commit this one reverses or extends.                                                                                                                                                                      |
 | `Tested:`                             | Only a check beyond the unit suites: a real agent run, a rendered example, the skill installed in the consumer app. Never test counts.                                                                      |
 | `Review: <file> <letter>` | A `docs/reviews/` finding this commit fixes, as `2026-10-21-last-day A`. The same commit sets that finding's `Status:` to fixed. |
-| `Report: <fingerprint>` | A problem report or feedback this commit fixes, as `feedback:hr7mi75dukkl`. Once it is pushed, resolve the report with the commit's URL (`AGENTS.md`, Problem reports). |
+| `Report: <fingerprint>` | A problem report or feedback this commit fixes, as `feedback:hr7mi75dukkl`; `Report: <fingerprint> (partly)` for one it fixes in part, and `Related-report: <fingerprint>` for one it only touches. The reports worker reads it from `main` and resolves the report itself (`AGENTS.md`, Problem reports). |
+| `Slack: <link>` | The Slack thread this commit was made for, when a teammate asked in Slack rather than in a report: the link to the thread's first message, as `https://<workspace>.slack.com/archives/C0123ABCD/p1730000000123456`. No issue needed. The reports worker replies once in that thread when the commit reaches `main`; never post there yourself (`AGENTS.md`, Problem reports). |
 
 Every reason stands without the session. `Rejected: a second PDF engine | user dropped it` is chat history; `Rejected: a second PDF engine | pdfium already renders every page type the skill accepts` is a reason.
 
