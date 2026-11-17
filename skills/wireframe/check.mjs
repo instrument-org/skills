@@ -8,7 +8,8 @@
 //    twice, runs none of itself, and the page draws nothing.
 // 2. Draw: the frames (everything above "// ---- render") run in Node, and
 //    each frame's drawing must come out as HTML, without the text
-//    `undefined`, `NaN` or `[object Object]` where a value went missing. A
+//    `undefined`, `NaN` or `[object Object]` where a value went missing, and
+//    every callout must sit on an element that draws something. A
 //    page whose frames reach for the browser (document, window) or for a name
 //    another script on the page defines is skipped here with a line saying
 //    so: open that page in a browser tool instead.
@@ -51,6 +52,55 @@ const MISSING = [
     (m) => `"${m[2]}" in a ${m[1]} attribute`,
   ],
 ];
+
+// A callout on an element that draws nothing: an empty box placed by hand
+// over the drawing, which the spotlight then lights as blank space. Walks a
+// frame's HTML as tags and text; an element draws something when it holds
+// text, an icon, an image or a drawn child, or paints a background, border,
+// ring or shadow itself.
+const TAG =
+  /<!--[\s\S]*?-->|<(\/?)([a-zA-Z][\w:-]*)((?:[^>"']|"[^"]*"|'[^']*')*?)(\/?)>|([^<]+)/g;
+const VOID = /^(area|br|col|embed|hr|img|input|meta|source|track|wbr|link)$/i;
+const SHOWN =
+  /^(img|svg|canvas|video|picture|iframe|input|textarea|select|i)$/i;
+const PAINTS = /\b(bg|border|ring|shadow|outline|divide)\b|background/;
+function emptyMarks(html) {
+  const empty = [];
+  const stack = [];
+  const close = (el) => {
+    if (el.mark) return;
+    const drawn = el.drawn || SHOWN.test(el.tag) || PAINTS.test(el.attrs);
+    if (!drawn) for (const label of el.marks) empty.push(label);
+    const parent = stack.at(-1);
+    if (drawn && parent) parent.drawn = true;
+  };
+  for (const m of html.matchAll(TAG)) {
+    const [, end, tag, attrs = "", selfClose, text] = m;
+    if (text !== undefined) {
+      if (text.trim() && stack.length) stack.at(-1).drawn = true;
+      continue;
+    }
+    if (!tag) continue;
+    if (end) {
+      const at = stack.findLastIndex((el) => el.tag === tag.toLowerCase());
+      if (at < 0) continue;
+      while (stack.length > at) close(stack.pop());
+      continue;
+    }
+    const mark = tag.toLowerCase() === "i" && /\bclass="mark"/.test(attrs);
+    const el = { tag: tag.toLowerCase(), attrs, mark, marks: [], drawn: false };
+    if (mark) {
+      const label = attrs.match(/\bdata-label="([^"]*)"/)?.[1] ?? "";
+      stack.at(-1)?.marks.push(label);
+    }
+    if (selfClose || VOID.test(tag)) {
+      stack.push(el);
+      close(stack.pop());
+    } else stack.push(el);
+  }
+  while (stack.length) close(stack.pop());
+  return empty;
+}
 
 const lineAt = (text, index) => text.slice(0, index).split("\n").length;
 
@@ -208,6 +258,10 @@ function draw(scripts) {
       const m = body.match(re);
       if (m) fails.push(`${label} draws ${say(m)}`);
     }
+    for (const words of emptyMarks(body))
+      fails.push(
+        `${label} puts the callout "${words}" on an element that draws nothing: mark something the frame draws, or put the words in the frame's note`,
+      );
   }
   return { fails, checked, total: drawings.length };
 }

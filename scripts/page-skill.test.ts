@@ -535,6 +535,18 @@ describe("wireframe's check.mjs", () => {
       ['frame N ("x") has no body'],
     ],
     [
+      "a callout on an empty box placed over the drawing",
+      'states.push({ title: "x", body: `<div class="absolute" style="left:9px;top:9px">${noted(`<div class="h-8"></div>`, "a claim")}</div>` });',
+      [
+        'frame N ("x") puts the callout "a claim" on an element that draws nothing: mark something the frame draws, or put the words in the frame\'s note',
+      ],
+    ],
+    [
+      "a callout on text, an icon or a painted bar",
+      'states.push({ title: "x", body: noted("<p>Go</p>", "a") + noted(`<i class="ph ph-x"></i>`, "b") + noted(`<div class="h-2 bg-muted"></div>`, "c") + noted(`<span style="background:#000"></span>`, "d") });',
+      "ok 2/2",
+    ],
+    [
       "frames that reach for the page",
       "const wide = window.innerWidth;",
       "its frames use `window`, which needs a browser",

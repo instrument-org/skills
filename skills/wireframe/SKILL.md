@@ -66,7 +66,7 @@ const states = [
 ];
 ```
 
-Check the page each time you finish an edit, before you open it anywhere: `node <skill>/check.mjs 2026-10-05-checkout-sold-out-mid-payment.html`. It parses every script the way the browser does, then draws the frames in Node, and prints a FAIL line with the page's line number for a script that can't load, a name nothing defines, or a frame that draws `undefined`. Any of those leaves the grid blank or a frame wrong, so fix each one. A page whose frames use `document` or `window` it parses but can't draw, and it says so.
+Check the page each time you finish an edit, before you open it anywhere: `node <skill>/check.mjs 2026-10-05-checkout-sold-out-mid-payment.html`. It parses every script the way the browser does, then draws the frames in Node, and prints a FAIL line with the page's line number for a script that can't load, a name nothing defines, a frame that draws `undefined`, or a callout on an element that draws nothing, such as an empty box placed over the drawing by coordinates. Any of those leaves the grid blank, a frame wrong or a spotlight on blank space, so fix each one. A page whose frames use `document` or `window` it parses but can't draw, and it says so.
 
 Then check the page in your browser tool before you hand it over, since only a browser shows how it looks.
 
