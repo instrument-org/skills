@@ -259,7 +259,7 @@ Put the options across the top and the attributes down the side, or the other wa
       <tr>
         <th scope="col">Desk</th>
         <th scope="col">Height range</th>
-        <th scope="col">Wobble at full height</th>
+        <th scope="col" data-label="Wobble">Wobble at full height</th>
         <th scope="col">Price</th>
       </tr>
     </thead>
@@ -269,26 +269,26 @@ Put the options across the top and the attributes down the side, or the other wa
           <a href="https://www.upliftdesk.com/">Uplift V2</a>
           <span class="tag" data-tone="good">Pick</span>
         </th>
-        <td data-label="Height range">25.3 to 50.8 in</td>
-        <td data-label="Wobble">
+        <td>25.3 to 50.8 in</td>
+        <td>
           <span class="tag" data-tone="good">Low</span>
         </td>
-        <td data-label="Price" class="n">$599</td>
+        <td class="n">$599</td>
       </tr>
       <tr>
         <th scope="row"><a href="https://www.ikea.com/">IKEA Bekant</a></th>
-        <td data-label="Height range">25 to 49 in</td>
-        <td data-label="Wobble">
+        <td>25 to 49 in</td>
+        <td>
           <span class="tag" data-tone="warn">Some</span>
         </td>
-        <td data-label="Price" class="n">$449</td>
+        <td class="n">$449</td>
       </tr>
     </tbody>
   </table>
 </div>
 ```
 
-- `table.cards` turns each row into a card on a phone, with each `td`'s `data-label` as its label and the row header (`th scope="row"`) as the card's name.
+- `table.cards` turns each row into a card on a phone, with the row header (`th scope="row"`) as the card's name and each cell labeled with its column's header, or that header's `data-label` when it is set.
 - Give a judged cell a word on a coarse scale (`Low / Some / High`, a letter, or two or three dots), toned by what it means, with its evidence in a `<small>` line under the word or a link to the source. Never use a decimal.
 - When nobody could fill a cell, write "not published" in it. A dash reads as zero.
 - Highlight the row or column that decides the comparison, and the pick if there is one, with a single tone. Mark a pick or a recommendation with `data-tone="good"`. Leave everything else plain, so the eye goes to the difference.

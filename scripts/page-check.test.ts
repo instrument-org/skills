@@ -220,3 +220,55 @@ describe.skipIf(!browser.bin)("the share copy in Chromium", () => {
     },
   );
 });
+
+describe.skipIf(!browser.bin)("card tables in Chromium", () => {
+  const PAGE = join(import.meta.dirname, "../skills/instrument-page/page.mjs");
+
+  it(
+    "labels each cell with its column's header",
+    { timeout: 120000 },
+    async () => {
+      const dir = mkdtempSync(join(tmpdir(), "page-cards-"));
+      writeFileSync(
+        join(dir, "page.html"),
+        `<!doctype html>
+<html lang="en"><head><title>Desks compared</title></head>
+<body><header><h1>Desks compared</h1></header>
+<table class="cards hero">
+<thead><tr><th scope="col">Desk</th><th scope="col">Height range</th><th scope="col" data-label="Wobble">Wobble at full height</th><th scope="col">Price</th></tr></thead>
+<tbody>
+<tr><th scope="row">Uplift V2</th><td>25.3 to 50.8 in</td><td>Low</td><td data-label="Sale price">$599</td></tr>
+<tr><th scope="row">IKEA Bekant</th><td colspan="2">Not published</td><td>$449</td></tr>
+</tbody></table>
+</body></html>`,
+      );
+      await promisify(execFile)("node", [PAGE, "page.html"], {
+        cwd: dir,
+      }).catch(() => {});
+      const chrome = await launch();
+      try {
+        await chrome.page.navigate(pathToFileURL(join(dir, "page.html")).href);
+        const labels = await chrome.page.evaluate(
+          `[...document.querySelectorAll("tbody tr")].map((tr) => [...tr.cells].map((c) => (c.dataset.label ?? "-") + ": " + c.textContent))`,
+        );
+        expect(labels).toMatchInlineSnapshot(`
+          [
+            [
+              "-: Uplift V2",
+              "Height range: 25.3 to 50.8 in",
+              "Wobble: Low",
+              "Sale price: $599",
+            ],
+            [
+              "-: IKEA Bekant",
+              "Height range: Not published",
+              "Price: $449",
+            ],
+          ]
+        `);
+      } finally {
+        chrome.close();
+      }
+    },
+  );
+});

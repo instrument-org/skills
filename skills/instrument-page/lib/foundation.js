@@ -96,6 +96,36 @@
       ? document.addEventListener("DOMContentLoaded", fn)
       : fn();
   ready(() => {
+    // Card tables: on a phone each cell shows its column's label, read from
+    // the header row (a th's own data-label is a shorter form). A cell that
+    // names its own keeps it.
+    for (const table of document.querySelectorAll("table.cards")) {
+      const first = table.rows[0];
+      const head =
+        table.tHead?.rows[0] ??
+        ([...(first?.cells ?? [])].every((c) => c.tagName === "TH")
+          ? first
+          : null);
+      if (!head) continue;
+      const labels = [];
+      for (const th of head.cells)
+        for (let k = 0; k < th.colSpan; k++)
+          labels.push((th.dataset.label ?? th.textContent).trim());
+      for (const body of table.tBodies)
+        for (const row of body.rows) {
+          let col = 0;
+          for (const cell of row.cells) {
+            if (
+              cell.tagName === "TD" &&
+              !cell.hasAttribute("data-label") &&
+              labels[col]
+            )
+              cell.dataset.label = labels[col];
+            col += cell.colSpan;
+          }
+        }
+    }
+
     // Show me my part.
     const whoButtons = [...document.querySelectorAll("[data-show-who]")];
     const show = (who) => {
