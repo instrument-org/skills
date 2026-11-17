@@ -99,21 +99,31 @@ function assemble(own, styles, css, js) {
       /<html[^>]*>\n?/i,
       (m) => m + "<head>\n" + block + "\n</head>\n",
     );
-  // The share widget publishes the page as written: snapshot it before the page's first script runs.
+  return snapMarks(html);
+}
+
+// The share widget publishes the page as written: before each of the page's
+// scripts runs, and at the end of the body, a one-line script copies what was
+// parsed since the last one (foundation.js, __instrumentSnap).
+function snapMarks(html) {
+  const SNAP =
+    "<script data-snap>__instrumentSnap(document.currentScript)</script>\n";
   const bodyAt = html.search(/<body[\s>]/i);
-  if (bodyAt > -1) {
-    const m = html
-      .slice(bodyAt)
-      .match(
-        /<script(?![^>]*type=["'](?!module|text\/javascript)[^"']*["'])[\s>]/i,
-      );
-    const at = m ? bodyAt + m.index : html.search(/<\/body>/i);
-    if (at > -1)
-      html =
-        html.slice(0, at) +
-        "<script data-snap>__instrumentSnap(document.currentScript)</script>\n" +
-        html.slice(at);
+  if (bodyAt < 0) return html;
+  const at = [];
+  const tag = /<!--[\s\S]*?-->|<script\b([^>]*)>/gi;
+  tag.lastIndex = bodyAt;
+  for (let m; (m = tag.exec(html));) {
+    if (m[1] === undefined) continue;
+    if (!/type=["'](?!module|text\/javascript)[^"']*["']/i.test(m[1]))
+      at.push(m.index);
+    const close = html.slice(tag.lastIndex).search(/<\/script\s*>/i);
+    if (close < 0) break;
+    tag.lastIndex += close;
   }
+  const end = [...html.matchAll(/<\/body\s*>/gi)].pop();
+  if (end && end.index > (at.at(-1) ?? bodyAt)) at.push(end.index);
+  for (const i of at.reverse()) html = html.slice(0, i) + SNAP + html.slice(i);
   return html;
 }
 

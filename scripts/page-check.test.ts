@@ -1,5 +1,10 @@
 import { execFile } from "node:child_process";
-import { mkdtempSync, type PathLike, writeFileSync } from "node:fs";
+import {
+  mkdtempSync,
+  type PathLike,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -177,7 +182,7 @@ describe.skipIf(!browser.bin)("the share copy in Chromium", () => {
   const PAGE = join(import.meta.dirname, "../skills/instrument-page/page.mjs");
 
   it(
-    "keeps every section when the first script sits inside one",
+    "is the built file, with scripts inside sections and beside what they draw",
     { timeout: 120000 },
     async () => {
       const dir = mkdtempSync(join(tmpdir(), "page-snap-"));
@@ -186,8 +191,10 @@ describe.skipIf(!browser.bin)("the share copy in Chromium", () => {
         `<!doctype html>
 <html lang="en"><head><title>Every section survives sharing</title></head>
 <body><header><h1>Every section survives sharing</h1></header>
-<section class="hero"><div id="demo"><p id="first">As written.</p><script>document.getElementById("first").textContent = "Changed.";</script><p id="second">After the script.</p></div><p id="third">After its box.</p></section>
-<section id="fourth"><h2>Later</h2></section>
+<section class="hero"><div id="demo"><p id="first">As written.</p><script>document.getElementById("first").textContent = "Changed.";</script><p>After the script.</p></div><p>After its box.</p></section>
+<section><h2>Chart</h2><svg id="chart"></svg></section>
+<script>document.getElementById("chart").innerHTML = "<rect width='10' height='10'></rect>";</script>
+<section><h2>Code</h2><pre>npm test</pre></section>
 </body></html>`,
       );
       await promisify(execFile)("node", [PAGE, "page.html"], {
@@ -196,19 +203,17 @@ describe.skipIf(!browser.bin)("the share copy in Chromium", () => {
       const chrome = await launch();
       try {
         await chrome.page.navigate(pathToFileURL(join(dir, "page.html")).href);
-        const kept = await chrome.page.evaluate(`(() => {
-          const doc = new DOMParser().parseFromString(window.__instrumentSource, "text/html");
-          return [...doc.querySelectorAll("[id]")].map((el) => el.id + " in " + (el.parentElement.id || el.parentElement.localName) + ": " + el.firstChild.textContent);
+        const built = readFileSync(join(dir, "page.html"), "utf8");
+        // Both parsed the same way, so only what the scripts changed can differ.
+        const copy = await chrome.page.evaluate(`(() => {
+          const parse = (s) => {
+            const d = new DOMParser().parseFromString(s, "text/html");
+            d.documentElement.removeAttribute("data-theme");
+            return d.documentElement.outerHTML;
+          };
+          return parse(window.__instrumentSource) === parse(${JSON.stringify(built)}) || window.__instrumentSource;
         })()`);
-        expect(kept).toMatchInlineSnapshot(`
-          [
-            "demo in section: As written.",
-            "first in demo: As written.",
-            "second in demo: After the script.",
-            "third in section: After its box.",
-            "fourth in body: Later",
-          ]
-        `);
+        expect(copy).toBe(true);
       } finally {
         chrome.close();
       }

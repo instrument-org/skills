@@ -129,7 +129,7 @@ describe("page.mjs", () => {
     expect(result.built).toContain("<!-- foundation:start");
     expect(result.built).toContain("__instrumentSnap(document.currentScript)");
     expect(result.stdout).toMatchInlineSnapshot(
-      `"page.html: pass, as far as the file shows. It is 71 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
+      `"page.html: pass, as far as the file shows. It is 72 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."`,
     );
     expect(existsSync(join(SKILLS, "instrument-page", "lib", "probe.js"))).toBe(
       true,
@@ -151,7 +151,7 @@ describe("page.mjs", () => {
       FAIL long-paragraph: section > p "bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bus bu": 64 words -> split it, cut it to 60 words or fewer, or turn it into something seen: a list, a table, a labeled drawing
       FAIL prose-heavy: the first two screens: prose (blocks of 15+ words) is about 81% of what comes first, counting words, with a drawing as 150 -> bring it under 40%: turn sentences into the hero, a chart, a short list, a table or labels, and move explanation below
       FAIL quote: section > blockquote "“We ship on Friday”": these words are not in any input, word for word -> copy the exact words from the input (an ellipsis may join two exact pieces), or say it as your own summary without quote marks; if it is not a quote at all, use <aside> or <p>, not <blockquote>
-      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 72 KB."
+      page.html: 7 FAIL. Fix each by fixing what it names, then run again. It is 73 KB."
     `);
   });
   it("fails a key-shaped string at its line in the built file, masked", async () => {
@@ -308,7 +308,7 @@ describe("page.mjs embeds images", () => {
     expect(result.stdout.replace(/:\d+\//, ":PORT/")).toMatchInlineSnapshot(`
       "embedded shots/bike.png: PNG 480x320, 1 KB in the page
       embedded http://127.0.0.1:PORT/a.png?x=1&amp;y=2: PNG 300x200, 1 KB in the page
-      page.html: pass, as far as the file shows. It is 72 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
+      page.html: pass, as far as the file shows. It is 73 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
     `);
     expect(result.built).not.toContain("shots/bike.png");
     expect(result.built).not.toContain("127.0.0.1");
@@ -357,7 +357,7 @@ describe("page.mjs embeds images", () => {
       "embedded fonts/brand.woff2: WOFF2 font, 3 KB in the page
       FAIL font-missing: CSS url() "fonts/gone.otf": no file at fonts/gone.otf -> name the font file itself (an installed font is in the system's font folders, references/loading.md), or use a Google Font
       FAIL font-local: @font-face "Trial Face": names only local() fonts, which readers who lack them never see -> add url() naming the font file beside local() and page.mjs embeds it (references/loading.md, A font of its own), or use a Google Font
-      page.html: 2 FAIL. Fix each by fixing what it names, then run again. It is 74 KB."
+      page.html: 2 FAIL. Fix each by fixing what it names, then run again. It is 75 KB."
     `);
   });
 

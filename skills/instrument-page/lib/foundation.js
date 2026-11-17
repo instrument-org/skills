@@ -46,24 +46,49 @@
     if (!root.dataset.theme) announce();
   });
 
-  // Called from a one-line script page.mjs places just before the page's own
-  // scripts: the markup so far, plus whatever follows it, as the file had it.
-  // The script may sit inside a section, so what follows it is taken at every
-  // level up to the body, each into its own place in the copy.
+  // The page as its file has it, for the share widget. page.mjs places a
+  // one-line script calling this before each of the page's own scripts and
+  // before </body>. Each call copies what was parsed since the last one, each
+  // node into its place, before any script can change it.
+  let copy, live, held;
+  // Clones a node whose subtree holds `to` as an open shell, copying its
+  // children up to `to`. Returns the clone of `to`.
+  const into = (n, parent, to) => {
+    if (n === to) return parent.appendChild(n.cloneNode(true));
+    const shell = parent.appendChild(n.cloneNode(false));
+    for (const c of n.childNodes) {
+      if (c === to || c.contains(to)) return into(c, shell, to);
+      shell.append(c.cloneNode(true));
+    }
+  };
+  // Copies what follows the last call in document order, up to `to` (or to
+  // the end of the body when `to` is null).
+  const take = (to) => {
+    for (
+      let from = live, at = held;
+      from && at && from !== document.body;
+      from = from.parentNode, at = at.parentNode
+    )
+      for (let n = from.nextSibling; n; n = n.nextSibling) {
+        if (to && (n === to || n.contains(to)))
+          return into(n, at.parentNode, to);
+        at.parentNode.append(n.cloneNode(true));
+      }
+  };
   window.__instrumentSnap = (here) => {
-    const copy = root.cloneNode(true);
-    delete copy.dataset.theme;
-    const mark = copy.querySelector("script[data-snap]");
-    document.addEventListener("DOMContentLoaded", () => {
-      for (
-        let live = here, held = mark;
-        live && held && live !== document.body;
-        live = live.parentNode, held = held.parentNode
-      )
-        for (let n = live.nextSibling; n; n = n.nextSibling)
-          held.parentNode.append(n.cloneNode(true));
-      window.__instrumentSource = "<!doctype html>\n" + copy.outerHTML;
-    });
+    // An SVG script has no currentScript.
+    if (!here) return;
+    if (copy) held = take(here);
+    else {
+      copy = root.cloneNode(true);
+      delete copy.dataset.theme;
+      held = copy.querySelector("script[data-snap]");
+      document.addEventListener("DOMContentLoaded", () => {
+        take(null);
+        window.__instrumentSource = "<!doctype html>\n" + copy.outerHTML;
+      });
+    }
+    live = here;
   };
 
   const ready = (fn) =>
