@@ -84,6 +84,14 @@ export function writeInto(page, store, runtime) {
   const json = JSON.stringify(store).replace(/</g, "\\u003c");
   const blocks = `<script type="application/json" id="wireframe-snapshots">${json}</script>\n<script id="wireframe-snapshot-frames">${runtime}</script>\n`;
   const rest = page.replace(DATA, "").replace(RUNTIME, "");
+  // A page built from a part of frames draws them while it is read, so they go before
+  // its runtime, which counts the part's lines from where it starts in the page.
+  const frames = rest.indexOf('<script id="wf-runtime">');
+  if (frames >= 0) {
+    const out = rest.slice(0, frames) + blocks + rest.slice(frames);
+    const partLine = out.slice(0, out.indexOf("<!-- the part -->\n")).split("\n").length + 1;
+    return out.replace(/partLine: \d+/, `partLine: ${partLine}`);
+  }
   const end = rest.lastIndexOf("</body>");
   const at = rest.lastIndexOf("<!-- shell:start -->", end);
   if (end < 0 || at < rest.indexOf("<body"))

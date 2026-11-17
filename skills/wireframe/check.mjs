@@ -14,12 +14,18 @@
 //    another script on the page defines is skipped here with a line saying
 //    so: open that page in a browser tool instead.
 //
+// A page built from a part of frames is checked the way its build checks the
+// part: each script on its own, so one that fails is named and the rest still
+// run, with the part's own line numbers.
+//
 // Neither step sees layout, styles or how a frame looks; a screenshot does.
 // Exit 0 when nothing failed, 1 when something did, 2 for a bad command.
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
+
+import { checkFramesPage, isFramesPage } from "./frames.mjs";
 
 // Names a browser defines and Node's bare context does not. A frame that
 // reaches one is drawing with the page, which only a browser can run.
@@ -64,7 +70,7 @@ const VOID = /^(area|br|col|embed|hr|img|input|meta|source|track|wbr|link)$/i;
 const SHOWN =
   /^(img|svg|canvas|video|picture|iframe|input|textarea|select|i)$/i;
 const PAINTS = /\b(bg|border|ring|shadow|outline|divide)\b|background/;
-function emptyMarks(html) {
+export function emptyMarks(html) {
   const empty = [];
   const stack = [];
   const close = (el) => {
@@ -273,6 +279,15 @@ function draw(scripts) {
  * @returns {{ fails: string[], skip: string, checked: number, total: number }}
  */
 export function check(html) {
+  if (isFramesPage(html)) {
+    const r = checkFramesPage(html);
+    return {
+      fails: r.fails.map((f) => `part ${f}`),
+      skip: r.notes.length ? r.notes.join("; ") : "",
+      checked: r.frames,
+      total: r.total,
+    };
+  }
   const scripts = scriptsOf(html);
   const fails = scripts.flatMap((s) => parse(s) ?? []);
   if (fails.length) return { fails, skip: "", checked: 0, total: 0 };
