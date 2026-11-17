@@ -53,6 +53,8 @@ The rest of the page is depth for the reader who wants it, built from the unit y
 
 ## 4. Write it
 
+Write the file in the order the reader sees it, so it reads right from its first lines: the header first, each `<style>` just before the first part it styles, and each `<script>` just after the markup it draws or acts on. Write the hero's words, lists and tables as markup, so only a drawing waits for its script.
+
 ```html
 <!doctype html>
 <!-- direction: reader="..." after="..." point="..." send="..." leave="..." unit="..." conflicts="none" -->
@@ -63,9 +65,6 @@ The rest of the page is depth for the reader who wants it, built from the unit y
       name="description"
       content="One sentence for the link unfurl, with the key figure."
     />
-    <style>
-      /* only what this page invents, colored with tokens */
-    </style>
   </head>
   <body>
     <header>
@@ -75,7 +74,13 @@ The rest of the page is depth for the reader who wants it, built from the unit y
         <p>One short sentence.</p>
       </hgroup>
     </header>
+    <style>
+      /* only what this page invents, colored with tokens */
+    </style>
     <section class="hero">the answer</section>
+    <script>
+      /* only when the part above needs one */
+    </script>
     <section>
       <h2>Unit one: its claim</h2>
       ...
