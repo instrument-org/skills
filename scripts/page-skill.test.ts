@@ -168,9 +168,9 @@ describe("page.mjs", () => {
     const line = result.built.split("\n").findIndex((l) => l.includes(key)) + 1;
     expect(result.stdout.replace(`line ${line} `, "line N "))
       .toMatchInlineSnapshot(`
-      "FAIL secret: line N "sk_live_...4797": looks like a Stripe live key, which a shared link would make public -> replace it with a placeholder or masked text such as sk_live_...4797
-      page.html: 1 FAIL. Fix each by fixing what it names, then run again. It is 71 KB."
-    `);
+        "FAIL secret: line N "sk_live_...4797": looks like a Stripe live key, which a shared link would make public -> replace it with a placeholder or masked text such as sk_live_...4797
+        page.html: 1 FAIL. Fix each by fixing what it names, then run again. It is 72 KB."
+      `);
   });
   it.each([
     ['data-layout="wide" data-feel="dense"', []],
@@ -308,7 +308,7 @@ describe("page.mjs embeds images", () => {
     expect(result.stdout.replace(/:\d+\//, ":PORT/")).toMatchInlineSnapshot(`
       "embedded shots/bike.png: PNG 480x320, 1 KB in the page
       embedded http://127.0.0.1:PORT/a.png?x=1&amp;y=2: PNG 300x200, 1 KB in the page
-      page.html: pass, as far as the file shows. It is 71 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
+      page.html: pass, as far as the file shows. It is 72 KB. Layout is not checked yet: run lib/probe.js on it in a browser (SKILL.md, step 5)."
     `);
     expect(result.built).not.toContain("shots/bike.png");
     expect(result.built).not.toContain("127.0.0.1");
@@ -329,7 +329,7 @@ describe("page.mjs embeds images", () => {
       "FAIL image-oversize: <img> "big.png": 600 KB (PNG 2400x1600), over 500 KB -> save it again beside the page as JPEG quality 78 (a screenshot may stay PNG if that is smaller), at most 1600 pixels on the long edge for a screenshot and 720 for a photo, and name that file (references/images.md)
       FAIL image-missing: <img> "gone.png": no file at gone.png -> name a file that exists, relative to the page, or draw a stand-in as inline SVG
       FAIL image-not-image: <img> "note.png": these bytes are not a PNG, JPEG, GIF, WebP, AVIF or SVG -> name the image itself, not a page that shows it
-      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 71 KB."
+      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 72 KB."
     `);
   });
 
@@ -385,7 +385,7 @@ describe("page.mjs embeds images", () => {
       FAIL media-not-media: <audio> "note.txt": these bytes are not an MP4, WebM, QuickTime, M4A, MP3, Ogg or WAV clip -> name the clip itself, not a page that plays it
       FAIL video-poster: <video> bare: has no poster, so it shows a blank or black first frame until played -> save a frame that shows what the clip is about (ffmpeg -ss 2 -i clip.mp4 -frames:v 1 poster.jpg) and name it in poster=
       FAIL video-controls: <video> bare: has no controls, so the reader cannot play, pause or scrub it -> add controls (a short silent loop may instead be autoplay muted loop playsinline); never build a player of your own
-      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 79 KB."
+      page.html: 3 FAIL. Fix each by fixing what it names, then run again. It is 80 KB."
     `);
   });
 });

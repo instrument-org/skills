@@ -48,13 +48,20 @@
 
   // Called from a one-line script page.mjs places just before the page's own
   // scripts: the markup so far, plus whatever follows it, as the file had it.
+  // The script may sit inside a section, so what follows it is taken at every
+  // level up to the body, each into its own place in the copy.
   window.__instrumentSnap = (here) => {
     const copy = root.cloneNode(true);
     delete copy.dataset.theme;
+    const mark = copy.querySelector("script[data-snap]");
     document.addEventListener("DOMContentLoaded", () => {
-      const body = copy.querySelector("body");
-      for (let n = here.nextSibling; n; n = n.nextSibling)
-        body.append(n.cloneNode(true));
+      for (
+        let live = here, held = mark;
+        live && held && live !== document.body;
+        live = live.parentNode, held = held.parentNode
+      )
+        for (let n = live.nextSibling; n; n = n.nextSibling)
+          held.parentNode.append(n.cloneNode(true));
       window.__instrumentSource = "<!doctype html>\n" + copy.outerHTML;
     });
   };

@@ -2,9 +2,10 @@ import { execFile } from "node:child_process";
 import { mkdtempSync, type PathLike, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
-import { findChrome } from "../tools/page-check/chrome.mjs";
+import { findChrome, launch } from "../tools/page-check/chrome.mjs";
 
 // A fake disk holding exactly these files, for findChrome's exists and read.
 function disk(...files: string[]) {
@@ -168,4 +169,49 @@ ${extra}
       ]
     `);
   });
+});
+
+// The share widget publishes window.__instrumentSource, the page as its file
+// had it before any of its scripts ran.
+describe.skipIf(!browser.bin)("the share copy in Chromium", () => {
+  const PAGE = join(import.meta.dirname, "../skills/instrument-page/page.mjs");
+
+  it(
+    "keeps every section when the first script sits inside one",
+    { timeout: 120000 },
+    async () => {
+      const dir = mkdtempSync(join(tmpdir(), "page-snap-"));
+      writeFileSync(
+        join(dir, "page.html"),
+        `<!doctype html>
+<html lang="en"><head><title>Every section survives sharing</title></head>
+<body><header><h1>Every section survives sharing</h1></header>
+<section class="hero"><div id="demo"><p id="first">As written.</p><script>document.getElementById("first").textContent = "Changed.";</script><p id="second">After the script.</p></div><p id="third">After its box.</p></section>
+<section id="fourth"><h2>Later</h2></section>
+</body></html>`,
+      );
+      await promisify(execFile)("node", [PAGE, "page.html"], {
+        cwd: dir,
+      }).catch(() => {});
+      const chrome = await launch();
+      try {
+        await chrome.page.navigate(pathToFileURL(join(dir, "page.html")).href);
+        const kept = await chrome.page.evaluate(`(() => {
+          const doc = new DOMParser().parseFromString(window.__instrumentSource, "text/html");
+          return [...doc.querySelectorAll("[id]")].map((el) => el.id + " in " + (el.parentElement.id || el.parentElement.localName) + ": " + el.firstChild.textContent);
+        })()`);
+        expect(kept).toMatchInlineSnapshot(`
+          [
+            "demo in section: As written.",
+            "first in demo: As written.",
+            "second in demo: After the script.",
+            "third in section: After its box.",
+            "fourth in body: Later",
+          ]
+        `);
+      } finally {
+        chrome.close();
+      }
+    },
+  );
 });
