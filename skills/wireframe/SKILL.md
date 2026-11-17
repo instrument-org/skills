@@ -88,19 +88,27 @@ When the frames fall into sets the reader will name back to you (options, the cu
 
 Each returns HTML. Most take what goes inside first and options second: pass your own HTML in rather than editing a piece's output.
 
+On every page:
+
 | Piece | Draws |
 | --- | --- |
 | `win(children, { title, side, top, over })` | A desktop window: title bar, then `children`, with a `side` column, a `top` bar and an `over` layer. `win("Mail", inner)` works too |
-| `web(url, inner)`, `phone(inner)`, `panel(inner)` | A browser window, a phone (390x844), one piece of UI floated on the ground |
-| `shell(rail, body, aside)`, `navItem(label, { active, icon })`, `group(text)` | An app with a side rail, its items and its section labels |
 | `bar(children, { end, h, rule })` | A row of controls, `end` against the right edge |
 | `card(children, { title, line, icon, end, foot, w })` | A bordered panel with a head and a foot |
-| `btn(label, { cls, icon, full })`, `field(label, { value, placeholder, hint, error })`, `toggle(label, { on })` | Form controls |
 | `chip(label, { cls, icon, on })`, `pill(label, { icon, on, end })` | A status label; a rounded label a person presses |
 | `composer({ text, ph, chips, start, end, focus, w })` | A box a person types into |
-| `grid(headers, rows)`, `empty(icon, title, note)` | A table; an empty state |
-| `box(cls, children)`, `bars(...widths)` | A grey block standing in for a picture; grey bars for incidental text, `bars("100%", "78%", "62%")` |
+| `box(cls, children)` | A grey block standing in for a picture |
 | `crop(html, { x, y, w, h })` | A `w` by `h` window onto a true-size drawing, for a frame about one control |
+
+Only on a page drawn without a project's kit, which brings its own in their place:
+
+| Piece | Draws |
+| --- | --- |
+| `web(url, inner)`, `phone(inner)`, `panel(inner)` | A browser window, a phone (390x844), one piece of UI floated on the ground |
+| `shell(rail, body, aside)`, `navItem(label, { active, icon })`, `group(text)` | An app with a side rail, its items and its section labels |
+| `btn(label, { cls, icon, full })`, `field(label, { value, placeholder, hint, error })`, `toggle(label, { on })` | Form controls |
+| `grid(headers, rows)`, `empty(icon, title, note)` | A table; an empty state |
+| `bars(...widths)` | Grey bars for incidental text, `bars("100%", "78%", "62%")` |
 
 Icons are Phosphor regular, `ph ph-<name>`. Write class names out whole: one built by interpolation (`bg-${tone}-500`) draws nothing. When frames repeat something no piece covers, write a small helper, and leave none that no frame calls.
 
