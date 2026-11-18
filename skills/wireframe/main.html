@@ -97,9 +97,13 @@
         /* A frame draws a product, not this page, so it keeps the light
            scheme when the reader turns the page dark, and a drawing that
            fixes some colors and takes others from the theme still reads. A
-           frame with `dark: true` draws in the dark scheme instead. */
+           frame with `dark: true` draws in the dark scheme instead. The ink
+           is set again here because `color` inherits as a resolved color:
+           without it, text that sets no color of its own keeps the page's
+           dark-theme ink on the frame's light ground. */
         .frame {
           color-scheme: light;
+          color: var(--color-foreground);
         }
         .frame[data-scheme="dark"] {
           color-scheme: dark;
