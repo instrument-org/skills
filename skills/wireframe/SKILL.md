@@ -76,6 +76,7 @@ When the frames fall into sets the reader will name back to you (options, the cu
 - `note` says in one line what the whole set tries, so frame notes only say what each screen does.
 - `tone` is one of `gray`, `sky`, `emerald`, `amber`, `rose` or `indigo`. Left out, sets take colors in order. Gray suits the current design.
 - Keep a group's frames together: the current design first, then the options in the order you'd recommend them, all on one page. Use groups only for two or more sets; one walk through one design needs none.
+- Keep the current design short: the one or two screens that show the problem, so the reader reaches the options in a press or two. Where an option redraws a screen the current design leaves out, its note says in a clause what that screen does today. Draw more of today only when comparing a screen's old and new is the point.
 
 ### Marks
 
