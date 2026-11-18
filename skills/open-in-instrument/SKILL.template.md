@@ -70,10 +70,12 @@ The command links straight into Instrument, as `instrument://`, when the app is 
 
 ## Write the link by hand only if the command can't run
 
-The command needs Node 22.18 or later. Without it, build the same line yourself:
+The command needs Node 22.18 or later. Without it, build the same line yourself. Use the website form, which works whether or not the app is installed:
 
 - One output: `https://tryinstrument.com/open#` and then the absolute path with forward slashes, each segment encoded with `encodeURIComponent`, plus `(` `)` `'` `!` `*` as `%28` `%29` `%27` `%21` `%2A` so the Markdown link holds. A space is `%20`, `#` is `%23`, `+` is `%2B`, `%` is `%25`. On Windows the drive leads: `/C:/Users/Sam/report.pdf`. A folder ends with `/`.
 - Several: `https://tryinstrument.com/open#title=<work>&from=<you>&f=<path>&f=<path>`, each value encoded whole the same way (so `/` is `%2F`), the paths in the order you list them.
+
+Never put the website form's `open`, `title`, `from` or `f` on `instrument://`: the app has no `open` link and opens nothing from one.
 
 ## Only in replies to the person
 
