@@ -66,7 +66,7 @@ The build lists the frames by label, then prints a FAIL line with the part's lin
 | Call | Fields |
 | --- | --- |
 | `meta({ title, line, source, groups })` | `title` names the page, `line` is the one line under it and the page's description, `source` says what you drew from and what you made up. `groups` below. `slotH` and `tileMin` set the grid's tile height and narrowest tile, in pixels |
-| `frame({ title, note, body, w, h, group, pick, dark })` | `title`, `note` and `body` are required. `w` and `h` are its true size, 1280 by 800 when left out. `group` is a key of `meta`'s `groups`. `pick: true` stars the option you'd choose, once per group. `dark: true` draws it in the dark scheme |
+| `frame({ title, note, body, w, h, group, pick, verdict, dark })` | `title`, `note` and `body` are required. `w` and `h` are its true size, 1280 by 800 when left out. `group` is a key of `meta`'s `groups`. `pick: true` stars the option you'd choose, once per group. `verdict: "skip"` marks an option you'd drop and `verdict: "later"` one to build later; a frame takes a pick or a verdict, not both. `dark: true` draws it in the dark scheme |
 
 ### Groups
 
@@ -142,7 +142,8 @@ Write them the way a designer talks to a teammate in a design review.
 - A note is one sentence under about 160 characters, in the first person and the active voice, leading with the decision: "We check the seat is still free before we charge the card, so nobody pays for a seat they didn't get." Add a second only when you need it.
 - Assume the reader saw no earlier version: no "unchanged", "from last round" or "New:". If something has to be built, say so in a sentence.
 - Read each aloud and rewrite passive voice, a label and a colon before the point, a sentence opening on a participle, objects that talk ("the row says"), piled-up nouns, and clauses chained with semicolons.
-- Star a pick only where you'd choose it, and never write "recommended": the star says it.
+- Star a pick only where you'd choose it, and never write "recommended": the star says it. Picks go on the frames you'd choose, in whichever sets they fall.
+- Give an option you'd drop `verdict: "skip"` and one you'd leave for later `verdict: "later"`, rather than saying so in a set's name or a note: the reader reads the strip and the title, not the notes. The note still gives the reason in a clause.
 
 ## Revising a page
 

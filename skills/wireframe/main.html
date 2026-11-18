@@ -725,55 +725,179 @@
         #viewer-strip .name .pos:not(:last-child) {
           margin-right: 0.375rem;
         }
+
+        /* Verdicts. A frame the agent would skip stays where the agent put
+           it, faded and gray, its label struck in its set's color. */
+        #rack .tile.v-skip .frame {
+          opacity: 0.42;
+          filter: grayscale(1);
+        }
+        .v-glyph {
+          display: inline-flex;
+          vertical-align: -0.1em;
+        }
+        .v-glyph svg {
+          width: 0.95em;
+          height: 0.95em;
+          fill: currentColor;
+        }
+        .v-struck {
+          text-decoration: line-through;
+          text-decoration-thickness: 1.5px;
+        }
+
+        /* In the title block the label becomes a pill: filled in the set's
+           color with a star for the pick, tinted and struck for a skip, ringed
+           in the set's color with a stopwatch for later. */
+        #viewer-top .head:is(.v-pick, .v-skip, .v-later) #viewer-pick {
+          display: none;
+        }
+        #viewer-label.v-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          padding: 0.15rem 0.5rem;
+          border-radius: 9999px;
+        }
+        #viewer-label.v-chip:is(.v-pick, .v-later) {
+          padding-left: 0.4rem;
+        }
+        #viewer-label.v-chip svg {
+          width: 14px;
+          height: 14px;
+        }
+        #viewer-label.v-chip.v-pick {
+          background: var(--tone);
+          color: light-dark(#fff, #1c1917);
+        }
+        #viewer-label.v-chip.v-skip {
+          background: color-mix(in oklab, var(--tone) 16%, transparent);
+          color: color-mix(in oklab, var(--tone) 60%, transparent);
+        }
+        #viewer-label.v-chip.v-later {
+          box-shadow: inset 0 0 0 1.5px var(--tone);
+          color: var(--tone);
+        }
+        #viewer-label.v-chip.v-skip .t,
+        #viewer-top .head.v-skip #viewer-title {
+          text-decoration: line-through;
+          text-decoration-thickness: 1.5px;
+        }
+        #viewer-top .head.v-skip #viewer-title {
+          color: var(--vw-dim);
+        }
+        /* The strip: every frame owns a slot of one width, open or not, and
+           draws its mark centered in the slot, so arrowing never moves a
+           neighbor and every bar and glyph shares one centerline. A bar is a
+           pill; a pick is a star, always lit and larger open; a skip a small
+           cross in its set's color, quieter; a frame for later a small stopwatch in its set's color. */
         #viewer-strip .run {
           display: flex;
           align-items: center;
-          gap: var(--gap, 3px);
         }
         #viewer-strip button {
           position: relative;
-          width: var(--bar, 10px);
-          height: 4px;
           padding: 0;
-          border-radius: 9999px;
-          background: var(--tone);
-          opacity: 0.3;
-        }
-        #viewer-strip button.passed {
-          opacity: 0.7;
-        }
-        #viewer-strip button[aria-current] {
-          width: 14px;
-          height: 6px;
-          opacity: 1;
-        }
-        #viewer-strip button.pick {
+          flex: none;
+          width: var(--slot, 14px);
           height: 10px;
           border-radius: 0;
           background: none;
-          color: var(--tone);
+          opacity: 1;
+        }
+        /* Frames already passed sit a little brighter than those to come,
+           and a star not open a little quieter than when open. */
+        #viewer-strip button.passed {
+          opacity: 0.7;
+        }
+        #viewer-strip button.pick {
           opacity: 0.75;
-        }
-        #viewer-strip button.pick::after {
-          content: "★";
-          position: absolute;
-          inset: 0;
-          display: grid;
-          place-items: center;
-          font-size: 9px;
-          line-height: 1;
-        }
-        /* Open, a recommended frame keeps its star, larger and fully lit.
-           The star grows by transform, so its button stays 10px tall like
-           every other and the row does not move. */
-        #viewer-strip button.pick::after {
-          transition: transform 120ms ease-out;
         }
         #viewer-strip button.pick[aria-current] {
           opacity: 1;
         }
+        #viewer-strip button::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: var(--bar, 10px);
+          height: 4px;
+          border-radius: 9999px;
+          background: var(--tone);
+          opacity: 0.3;
+          transform: translate(-50%, -50%);
+          transition: transform 120ms ease-out;
+        }
+        #viewer-strip button.passed::after {
+          opacity: 0.7;
+        }
+        #viewer-strip button[aria-current]::after {
+          width: var(--slot, 14px);
+          height: 6px;
+          opacity: 1;
+        }
+        #viewer-strip button:hover::after {
+          opacity: 1;
+        }
+        #viewer-strip button:is(.pick, .v-skip, .v-later)::after {
+          content: "";
+          display: block;
+          inset: auto;
+          left: 50%;
+          top: 50%;
+          border-radius: 0;
+          mask: var(--glyph) center / contain no-repeat;
+        }
+        #viewer-strip button.pick::after {
+          --glyph: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20d%3D'M12%203l2.94%206.1%206.56.8-4.84%204.56%201.24%206.54L12%2017.8l-5.9%203.2%201.24-6.54L2.5%209.9l6.56-.8z'%2F%3E%3C%2Fsvg%3E");
+          width: 11px;
+          height: 11px;
+          opacity: 1;
+        }
+        #viewer-strip button.v-skip::after {
+          --glyph: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20d%3D'M6%206l12%2012M18%206L6%2018'%20fill%3D'none'%20stroke%3D'%23000'%20stroke-width%3D'3.4'%20stroke-linecap%3D'round'%2F%3E%3C%2Fsvg%3E");
+          width: 8px;
+          height: 8px;
+          opacity: 0.5;
+        }
+        #viewer-strip button.v-later::after {
+          --glyph: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2024%2024'%3E%3Ccircle%20cx%3D'12'%20cy%3D'12.8'%20r%3D'7.4'%20fill%3D'none'%20stroke%3D'%23000'%20stroke-width%3D'2.4'%2F%3E%3Cpath%20d%3D'M12%2012.8V8.8M9.6%202h4.8M12%202v3.4M18%206.4l1.4-1.4'%20fill%3D'none'%20stroke%3D'%23000'%20stroke-width%3D'2.4'%20stroke-linecap%3D'round'%2F%3E%3C%2Fsvg%3E");
+          width: 10px;
+          height: 10px;
+          opacity: 0.8;
+        }
         #viewer-strip button.pick[aria-current]::after {
-          transform: scale(1.6);
+          transform: translate(-50%, -50%) scale(1.6);
+        }
+        #viewer-strip button:is(.v-skip, .v-later)[aria-current]::after {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.5);
+        }
+        #viewer-strip button.v-skip[aria-current]::after {
+          opacity: 0.75;
+        }
+        /* A skip is quieter in its set's color, never gray. */
+        .v-quiet {
+          opacity: 0.55;
+        }
+        /* The line under the strip keeps one height, and its glyph hangs to
+           the left of the label, so the label sits where it would without one. */
+        #viewer-strip .name {
+          display: flex;
+          align-items: center;
+          height: 12px;
+        }
+        #viewer-strip .name .pos {
+          position: relative;
+        }
+        #viewer-strip .name .pos svg {
+          position: absolute;
+          right: calc(100% + 3px);
+          top: 50%;
+          width: 12px;
+          height: 12px;
+          transform: translateY(-50%);
         }
         /* A bar is a few pixels; what takes the tap is a band 20px tall
            reaching halfway across the gaps either side, so the strip has
@@ -1147,16 +1271,26 @@
         // place in its color, or "3. " for a frame outside any group, and a
         // star after it on the frame the agent recommends.
         const recommended = (i) => (groupOf(i)?.called ? `Recommended for ${groupOf(i).called}` : "Recommended");
-        const starHtml = (i) => (states[i].pick ? `<span class="tone-text mr-1" title="${recommended(i)}">★</span>` : "");
+        const verdictOf = (i) => (states[i].pick ? "pick" : states[i].verdict ?? "");
+        const VERDICT_WORD = { skip: "We'd skip this", later: "For later" };
+        const starHtml = (i) =>
+          states[i].pick
+            ? `<span class="tone-text mr-1" title="${recommended(i)}">★</span>`
+            : states[i].verdict === "skip"
+              ? `<span class="tone-text v-quiet mr-1 font-bold" title="${VERDICT_WORD.skip}">✕</span>`
+              : states[i].verdict === "later"
+                ? `<span class="tone-text v-glyph mr-1" title="${VERDICT_WORD.later}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12.8" r="7.4" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 12.8V8.8M9.6 2h4.8M12 2v3.4M18 6.4l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>`
+                : "";
         const labelHtml = (i) => {
           const g = groupOf(i);
           if (!g) return `${label(i)}. ${starHtml(i)}`;
-          return `<span class="tone-${g.tone}">${label(i) ? `<span class="tone-text mr-1 font-mono font-semibold">${label(i)}</span>` : ""}${starHtml(i)}</span>`;
+          const lab = label(i) ? `<span class="${states[i].verdict === "skip" ? "tone-text v-quiet v-struck" : "tone-text"} mr-1 font-mono font-semibold">${label(i)}</span>` : "";
+          return `<span class="tone-${g.tone}">${starHtml(i) + lab}</span>`;
         };
 
 
         const tileHtml = (state, i) => `
-          <figure class="tile m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
+          <figure class="tile${verdictOf(i) ? ` v-${verdictOf(i)}` : ""} m-0 flex flex-col overflow-hidden border-[0.5px] border-border bg-card p-3 break-inside-avoid">
             <div class="slot flex h-[var(--slot-h)] items-center justify-center">
               <div
                 class="frame w-[calc(var(--w)*var(--s))] cursor-zoom-in overflow-hidden rounded-sm ring-[0.5px] ring-border h-[calc(var(--h)*var(--s))]"
@@ -1168,7 +1302,7 @@
               </div>
             </div>
             <figcaption class="mt-3 text-xs leading-5 text-muted-foreground/80">
-              <span class="font-medium text-foreground/70">${labelHtml(i)}${state.title}.</span> ${state.note}
+              <span class="font-medium text-foreground/70">${labelHtml(i)}<span class="${state.verdict === "skip" ? "v-struck" : ""}">${state.title}</span>.</span> ${state.note}
             </figcaption>
           </figure>`;
 
@@ -1679,12 +1813,16 @@
           const state = states[openIndex];
           const g = groupOf(openIndex);
           viewerCounter.innerHTML = `${openIndex + 1}<span>/${states.length}</span>`;
-          viewerLabel.className = toneOf(openIndex);
-          viewerLabel.textContent = g ? label(openIndex) : "";
-          viewerPick.className = toneOf(openIndex);
-          viewerPick.hidden = !state.pick;
-          viewerPick.innerHTML = state.pick ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.94 6.1 6.56.8-4.84 4.56 1.24 6.54L12 17.3l-5.9 3.2 1.24-6.54L2.5 9.4l6.56-.8z"/></svg>` : "";
-          viewerPick.title = recommended(openIndex);
+          const v = verdictOf(openIndex);
+          viewerLabel.closest(".head").className = `head ${toneOf(openIndex)}${v ? ` v-${v}` : ""}`;
+          viewerLabel.className = `${toneOf(openIndex)}${v ? ` v-chip v-${v}` : ""}`;
+          const glyph = { pick: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.94 6.1 6.56.8-4.84 4.56 1.24 6.54L12 17.8l-5.9 3.2 1.24-6.54L2.5 9.9l6.56-.8z" fill="currentColor"/></svg>`, later: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12.8" r="7.4" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 12.8V8.8M9.6 2h4.8M12 2v3.4M18 6.4l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>` }[v] ?? "";
+          viewerLabel.innerHTML = g && label(openIndex) ? `${glyph}<span class="t">${label(openIndex)}</span>` : v ? glyph : "";
+          viewerLabel.title = v === "pick" ? recommended(openIndex) : VERDICT_WORD[v] ?? "";
+          viewerPick.className = `${toneOf(openIndex)}${v ? ` v-${v}` : ""}`;
+          viewerPick.hidden = !v;
+          viewerPick.innerHTML = { pick: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.94 6.1 6.56.8-4.84 4.56 1.24 6.54L12 17.3l-5.9 3.2 1.24-6.54L2.5 9.4l6.56-.8z"/></svg>`, skip: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>`, later: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>` }[v] ?? "";
+          viewerPick.title = v === "pick" ? recommended(openIndex) : VERDICT_WORD[v] ?? "";
           viewerTitle.textContent = state.title;
           viewerCaption.innerHTML = state.note;
         };
@@ -1704,7 +1842,9 @@
         const stripName = () => {
           if (groupKeys.length === 0) return "";
           const g = groupOf(openIndex);
-          const tag = label(openIndex) ? `<span class="pos">${label(openIndex)}</span>` : "";
+          const v = verdictOf(openIndex);
+          const mark = { pick: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.94 6.1 6.56.8-4.84 4.56 1.24 6.54L12 17.8l-5.9 3.2 1.24-6.54L2.5 9.9l6.56-.8z" fill="currentColor"/></svg>`, skip: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>`, later: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12.8" r="7.4" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 12.8V8.8M9.6 2h4.8M12 2v3.4M18 6.4l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>` }[v] ?? "";
+          const tag = label(openIndex) ? `<span class="pos${v === "skip" ? " v-quiet" : ""}">${mark}<span class="${v === "skip" ? "v-struck" : ""}">${label(openIndex)}</span></span>` : "";
           return g && g.mark.length <= 1 && g.name ? `${tag}<span>${g.name}</span>` : tag;
         };
         const paintStrip = () => {
@@ -1718,8 +1858,8 @@
           });
           const g = groupOf(openIndex);
           const bar = (i) => {
-            const name = `${lead(i)}${states[i].title}${states[i].pick ? ` · ${recommended(i)}` : ""}`;
-            const cls = [i < openIndex ? "passed" : "", states[i].pick ? "pick" : ""].filter(Boolean).join(" ");
+            const name = `${lead(i)}${states[i].title}${states[i].pick ? ` · ${recommended(i)}` : states[i].verdict ? ` · ${VERDICT_WORD[states[i].verdict]}` : ""}`;
+            const cls = [i < openIndex ? "passed" : "", states[i].pick ? "pick" : "", states[i].verdict ? `v-${states[i].verdict}` : ""].filter(Boolean).join(" ");
             return `<button data-go="${i}" title="${name}" aria-label="${name}" class="${cls}"${i === openIndex ? ' aria-current="true"' : ""}></button>`;
           };
           viewerStrip.innerHTML = `<div class="bars">${runs
@@ -1736,12 +1876,14 @@
           if (viewerStrip.hidden) return;
           const n = states.length;
           const runs = viewerStrip.querySelectorAll(".run").length;
-          const room = viewerStrip.clientWidth - 14;
-          const widest = (gap, runGap) => Math.floor((room - (runs - 1) * runGap - (n - runs) * gap) / Math.max(1, n - 1));
-          let [gap, runGap] = [3, 8];
-          if (widest(gap, runGap) < 6) [gap, runGap] = [2, 6];
-          viewerStrip.style.setProperty("--bar", `${Math.max(3, Math.min(10, widest(gap, runGap)))}px`);
-          viewerStrip.style.setProperty("--gap", `${gap}px`);
+          const room = viewerStrip.clientWidth;
+          const widest = (pad, runGap) => Math.floor((room - (runs - 1) * runGap) / Math.max(1, n)) - pad;
+          let [pad, runGap] = [4, 2];
+          if (widest(pad, runGap) < 6) [pad, runGap] = [3, 2];
+          const bar = Math.max(3, Math.min(10, widest(pad, runGap)));
+          viewerStrip.style.setProperty("--bar", `${bar}px`);
+          viewerStrip.style.setProperty("--slot", `${bar + pad}px`);
+          viewerStrip.style.setProperty("--gap", "0px");
           viewerStrip.style.setProperty("--run-gap", `${runGap}px`);
           const name = viewerStrip.querySelector(".name");
           const current = viewerStrip.querySelector("[aria-current]");

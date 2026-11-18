@@ -79,8 +79,9 @@ export const FIXTURES = {
       withGroup("A", frame("Home", 1280, 800, { leak: true })),
       withGroup("A", frame("Settings", 1280, 800)),
       withGroup("A", frame("Done", 1280, 800, { extra: "pick: true" })),
-      withGroup("B", frame("Home", 1280, 800)),
+      withGroup("B", frame("Home", 1280, 800, { extra: 'verdict: "skip"' })),
       withGroup("B", frame("Settings", 1280, 800, { extra: "pick: true" })),
+      withGroup("B", frame("Export", 1280, 800, { extra: 'verdict: "later"' })),
     ],
   },
   "lead-in": {
@@ -182,6 +183,9 @@ const READ = `JSON.stringify((() => {
     current,
     barsShown: [...strip.querySelectorAll("[data-go]")].filter(shown).map((b) => Number(b.dataset.go)),
     pickBars: [...strip.querySelectorAll(".pick")].map((b) => Number(b.dataset.go)),
+    skipBars: [...strip.querySelectorAll(".v-skip")].map((b) => Number(b.dataset.go)),
+    laterBars: [...strip.querySelectorAll(".v-later")].map((b) => Number(b.dataset.go)),
+    slots: [...strip.querySelectorAll("[data-go]")].map((b) => Math.round(b.getBoundingClientRect().left)).join(),
     stageFrames: document.querySelectorAll("#stage .frame").length,
     scheme: getComputedStyle(document.querySelector("#stage .frame") ?? document.body).colorScheme,
     alerts: document.querySelectorAll("body > [role=alert]").length,
@@ -255,6 +259,12 @@ export async function run({ keep } = {}) {
       const picks = fixture.states.flatMap((s, i) =>
         /pick: true/.test(s) ? [i] : [],
       );
+      const skips = fixture.states.flatMap((s, i) =>
+        /verdict: "skip"/.test(s) ? [i] : [],
+      );
+      const laters = fixture.states.flatMap((s, i) =>
+        /verdict: "later"/.test(s) ? [i] : [],
+      );
       const path = build(dir, name, fixture);
       errors.length = 0;
       await P.viewport(1440, 900);
@@ -272,10 +282,12 @@ export async function run({ keep } = {}) {
       // One frame at a time, all the way round.
       const tops = new Set();
       const bands = new Set();
+      const slots = new Set();
       for (let i = 0; i < n; i++) {
         const v = await read();
         tops.add(v.top);
         bands.add(v.band);
+        slots.add(v.slots);
         if (v.counter !== `${i + 1}/${n}`)
           fail(`frame ${i + 1} shows the counter "${v.counter}"`);
         if (v.stageFrames !== 1)
@@ -289,6 +301,10 @@ export async function run({ keep } = {}) {
           fail(
             `frame ${i + 1} stars strip bars [${v.pickBars}], not [${picks}]`,
           );
+        if (v.skipBars.join() !== skips.join() || v.laterBars.join() !== laters.join())
+          fail(
+            `frame ${i + 1} marks skips [${v.skipBars}] and later [${v.laterBars}], not [${skips}] and [${laters}]`,
+          );
         if (v.frameParam !== String(i + 1))
           fail(`frame ${i + 1} leaves ?frame=${v.frameParam}`);
         const dark = /dark: true/.test(fixture.states[i]);
@@ -296,6 +312,8 @@ export async function run({ keep } = {}) {
           fail(`frame ${i + 1} draws in the ${v.scheme} scheme on a dark page`);
         await key("ArrowRight");
       }
+      if (slots.size !== 1)
+        fail(`the strip's bars move while arrowing: ${[...slots].join(" | ")}`);
       if (tops.size !== 1)
         fail(`the title block changes height: ${[...tops].join(", ")}px`);
       if (bands.size !== 1)

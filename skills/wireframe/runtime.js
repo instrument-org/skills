@@ -5,7 +5,7 @@
 // itself: an error tile stands in its place and the frames around it still draw.
 (() => {
   const TONES = ["gray", "sky", "emerald", "amber", "rose", "indigo"];
-  const FRAME_FIELDS = ["title", "note", "body", "w", "h", "group", "pick", "dark", "measure"];
+  const FRAME_FIELDS = ["title", "note", "body", "w", "h", "group", "pick", "verdict", "dark", "measure"];
   const META_FIELDS = ["title", "line", "source", "groups", "slotH", "tileMin"];
   const GROUP_FIELDS = ["mark", "name", "note", "tone"];
   const wf = (globalThis.__wf ??= { meta: null, groups: {}, states: [], errors: [], partLine: 1, line: 0 });
@@ -68,6 +68,8 @@
     if (typeof s.body !== "string") why.push(`its \`body\` is ${kind(s.body)}, not HTML`);
     if (!size(s.w) || !size(s.h)) why.push("`w` and `h` are pixel counts, or left out for 1280 by 800");
     for (const k of ["pick", "dark"]) if (s[k] !== undefined && typeof s[k] !== "boolean") why.push(`\`${k}\` is true or left out`);
+    if (s.verdict !== undefined && !["skip", "later"].includes(s.verdict)) why.push("`verdict` is \"skip\" or \"later\", or left out");
+    if (s.verdict && s.pick) why.push("a frame is the pick or has a verdict, not both");
     if (s.group !== undefined && !Object.hasOwn(wf.groups, s.group))
       why.push(`its group \`${s.group}\` isn't declared; meta({ groups }) declares ${Object.keys(wf.groups).join(", ") || "none"}`);
     if (s.pick && wf.states.some((t) => t.pick && t.group === s.group)) why.push(`another frame${s.group ? ` in group \`${s.group}\`` : ""} is already the pick; star one per group`);
