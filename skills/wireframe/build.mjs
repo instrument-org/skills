@@ -11,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { addSnapshots, readSnapshot, readStore } from "./add-snapshot.mjs";
-import { SKILL, assemble, evaluate, neutralKits, runtimeSource, snapStub } from "./frames.mjs";
+import { SKILL, assemble, evaluate, frameList, neutralKits, runtimeSource, snapStub } from "./frames.mjs";
 
 const [partPath, outPath, ...snapFiles] = process.argv.slice(2);
 if (!partPath || !outPath) {
@@ -33,6 +33,8 @@ if (Object.keys(store.pages).length) {
   head = `<script type="application/json" id="wireframe-snapshots">${json}</script>\n<script id="wireframe-snapshot-frames">${fs.readFileSync(path.join(SKILL, "snapshot-frames.js"), "utf8")}</script>\n`;
 }
 fs.writeFileSync(outPath, assemble({ part, runtime, meta: result.meta, head, repoDir: process.cwd() }));
+// The frames by label, so a frame the reader names is a block to go to.
+for (const line of frameList(result.index)) console.log(line);
 for (const f of result.fails) console.log(`FAIL ${partPath}: ${f}`);
 for (const n of result.notes) console.log(`${partPath}: ${n}`);
 for (const [name, s] of Object.entries(added)) for (const note of s.notes) console.log(`snap("${name}"): ${note}`);

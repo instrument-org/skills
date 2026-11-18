@@ -124,6 +124,8 @@ export function evaluate(part, { runtime, file = "part", lend = {} }) {
   const fails = [];
   const notes = [];
   const { blocks, loose } = blocksOf(part);
+  /** The lines of the block that drew each frame. */
+  const spans = new Map();
   if (loose) fails.push(`line ${loose}: the part has HTML outside its <script> blocks, which would show on the page; put it in a frame's body`);
   const where = (/** @type {any} */ e, /** @type {number} */ fallback) => Number(new RegExp(`${file.replace(/\W/g, "\\$&")}:(\\d+)`).exec(String(e?.stack))?.[1] ?? fallback);
   for (const b of blocks) {
@@ -151,6 +153,7 @@ export function evaluate(part, { runtime, file = "part", lend = {} }) {
       fails.push(`line ${line}: ${hint(e)}`);
       wf.fail("Script error", `${e?.name}: ${e?.message}`, { line });
     }
+    for (const s of wf.states.slice(before)) spans.set(s, [b.line, b.line + b.code.split("\n").length - 1]);
     for (const s of wf.states.slice(before)) {
       const n = wf.states.indexOf(s) + 1;
       if (s.error) continue;
@@ -167,7 +170,34 @@ export function evaluate(part, { runtime, file = "part", lend = {} }) {
   fails.sort((a, b) => Number(/^line (\d+)/.exec(a)?.[1] ?? 0) - Number(/^line (\d+)/.exec(b)?.[1] ?? 0));
   if (!wf.meta) fails.push("the part never calls meta({ title, line, source }), so the page has no name");
   if (!wf.states.some((s) => !s.error)) fails.push("no frame drew");
-  return { meta: wf.meta ?? {}, groups: wf.groups, states: wf.states, fails, notes };
+  const index = labels(wf.states, wf.groups).map((label, i) => ({ label, title: wf.states[i].title, lines: spans.get(wf.states[i]) }));
+  return { meta: wf.meta ?? {}, groups: wf.groups, states: wf.states, fails, notes, index };
+}
+
+/** The frames as a build lists them, one line each: `A2  Payment  lines 47-55`. */
+export function frameList(/** @type {{ label: string, title: string, lines?: number[] }[]} */ index) {
+  const width = Math.max(0, ...index.map((f) => f.label.length));
+  return index.map((f) => `${f.label.padEnd(width)}  ${f.title}${!f.lines ? "" : f.lines[0] === f.lines[1] ? `  line ${f.lines[0]}` : `  lines ${f.lines[0]}-${f.lines[1]}`}`);
+}
+
+/**
+ * Each frame's label as the page shows it: its group's mark and place, A2 or "Now 2",
+ * a plain number outside any group, and nothing in a group whose mark is "". Keep in
+ * step with `label` in main.html.
+ * @param {{ group?: string }[]} states
+ * @param {Record<string, { mark?: string }>} groups
+ */
+export function labels(states, groups) {
+  const seen = new Map();
+  return states.map((s) => {
+    const key = s.group !== undefined && Object.hasOwn(groups, s.group) ? s.group : undefined;
+    const n = (seen.get(key) ?? 0) + 1;
+    seen.set(key, n);
+    if (key === undefined) return String(n);
+    const mark = groups[key].mark ?? "";
+    if (!mark) return "";
+    return mark.length === 1 ? `${mark}${n}` : `${mark} ${n}`;
+  });
 }
 
 /** The error's message, with what to do about the usual ones. */

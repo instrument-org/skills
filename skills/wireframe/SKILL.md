@@ -59,7 +59,7 @@ const held = (min) => chip(`Held for ${min} min`, { icon: "ph-clock" });
 - Declare a name once: a second `const held` is a SyntaxError in its block. A piece's name (`card`, `win`) is yours to take for a helper of your own; `meta` and `frame` aren't.
 - A frame's body is a string of HTML styled with Tailwind classes, and it can't use `document` or `window`: the build runs every block in Node first.
 
-The build prints a FAIL line with the part's line number for each block that fails, a frame that draws `undefined` or `NaN`, a field `meta()` or `frame()` doesn't read, and a callout on an element that draws nothing. It writes the page either way, so fix each FAIL and build again. Then look at the page in your browser tool, since only a browser shows how it looks: `agent-browser open <page>`, `agent-browser errors` (fix the part until it's empty), `agent-browser screenshot <png>`, and once more after pressing `A`, to see each callout on what it names. The browser opens only pages in the task folder or a folder the user granted. With no browser tool, say the build passed but you couldn't look.
+The build lists the frames by label, then prints a FAIL line with the part's line number for each block that fails, a frame that draws `undefined` or `NaN`, a field `meta()` or `frame()` doesn't read, and a callout on an element that draws nothing. It writes the page either way, so fix each FAIL and build again. Then look at the page in your browser tool, since only a browser shows how it looks: `agent-browser open <page>`, `agent-browser errors` (fix the part until it's empty), `agent-browser screenshot <png>`, and once more after pressing `A`, to see each callout on what it names. The browser opens only pages in the task folder or a folder the user granted. With no browser tool, say the build passed but you couldn't look.
 
 ## meta() and frame()
 
@@ -143,6 +143,12 @@ Write them the way a designer talks to a teammate in a design review.
 - Assume the reader saw no earlier version: no "unchanged", "from last round" or "New:". If something has to be built, say so in a sentence.
 - Read each aloud and rewrite passive voice, a label and a colon before the point, a sentence opening on a participle, objects that talk ("the row says"), piled-up nouns, and clauses chained with semicolons.
 - Star a pick only where you'd choose it, and never write "recommended": the star says it.
+
+## Revising a page
+
+- A fix to the page you just made changes its part in place. A new round the reader will compare with the last starts as a copy of the last round's part under the new name, so only the frames that change get written.
+- The build lists every frame by its label and the lines of its block (`A2  Payment  lines 47-55`), so a frame the reader names is a block you can go to. Change those blocks; never write a part out again to change a frame or two.
+- Edit with your edit tool, or a script that stops when a text it replaces doesn't match exactly once. Not `sed -i`: macOS sed reads no `\b`, `\s` or `\d` and changes nothing without saying so.
 
 ## Hand it over
 
