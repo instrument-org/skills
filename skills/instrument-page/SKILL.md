@@ -114,7 +114,7 @@ It embeds every image, clip and font the page names by path or URL, adds the sty
 
 Then check the layout in your browser tool: open the page and evaluate `lib/probe.js` in it (`agent-browser open page.html`, then `agent-browser eval --stdin < <skill>/lib/probe.js`). It returns FAIL lines for overlaps, clipping, sideways scroll, tiny phone text, contrast in both themes, and the headline and hero missing from the first screen. Fix each, rebuild, and probe again until it returns `pass`. With no browser tool, the static check is the whole check: say the layout is unchecked.
 
-Last, a cold read. Take a screenshot and look only at the first screen: does it say `after` on its own? Then read only the headings and bold first lines: does the page still make sense? Fix what fails. If you can start a subagent, give it the screenshot and the `reader` line, and ask for the three biggest problems for that reader.
+Last, a cold read. Take a screenshot and look only at the first screen: does it say `after` on its own? Then read only the headings and bold first lines: does the page still make sense? Then hold the page to its direction comment: every section below the hero is the named `unit` or is cut, a count the hero promises is the count the page delivers, and the `h1` claims nothing its own hero contradicts. Fix what fails. If you can start a subagent, give it the screenshot and the `reader` line, and ask for the three biggest problems for that reader.
 
 ## 6. Rules every page keeps
 
