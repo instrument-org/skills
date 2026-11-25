@@ -4159,17 +4159,16 @@
          its line, such as an address, breaks inside rather than running past
          the column. */
       .site-icon {
-        padding-left: calc(1.1em + 1px);
+        padding-left: calc(0.8em + min(0.3em, 10px));
         overflow-wrap: break-word;
-        background: var(--site-icon) left 1px center / 0.8em no-repeat;
+        background: var(--site-icon) left center / 0.8em no-repeat;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-      /* At the front of a link with no text, there is no word to hold it. */
-      .site-icon:empty {
-        display: inline-block;
-        height: 1em;
-        vertical-align: -0.15em;
+      @media print {
+        .site-icon {
+          background-image: var(--site-icon-print, var(--site-icon));
+        }
       }
 
       @media print {
@@ -4220,48 +4219,76 @@
       // Waits for the page's module scripts, so a link one of them draws gets
       // its icon like any other.
       const decorate = () => {
-        // Its icon as made for the theme shown.
-        const addressOf = (site) =>
-          `https://icons.tryinstrument.com/v1/${site}?theme=${window.__instrumentTheme()}`;
-        const PRIVATE = /^(?:[^.]*|[\d.]+|.*\.(?:localhost|local|internal|lan|home\.arpa))$/;
+        // A link wears the icon of the site it goes to, painted beside its first
+        // word by a span around that word (.site-icon), as it is made for the
+        // theme shown. Only a public site's name is sent. A link that is a button
+        // (a background of its own) or has a mark of its own wears none.
+        const PRIVATE =
+          /^(?:[^.]*|[\d.]+|.*\.(?:localhost|local|internal|lan|home\.arpa))$/;
         const icons = [];
-        document.addEventListener("instrument:theme", () => {
-          for (const { host, site } of icons)
-            host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
-        });
-        for (const link of document.querySelectorAll('a[href^="https://"]')) {
-          const site = new URL(link.href).hostname;
-          if (PRIVATE.test(site)) continue;
-          const src = addressOf(site);
-
-          // The icon goes in a span around the link's first word (.site-icon).
-          // A short word, such as a file name, stays whole; a long one, such as
-          // an address, may still break so it never runs past the column. A
-          // link with no text of its own takes the icon at its front.
-          const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+        const addressOf = (site, shown = window.__instrumentTheme()) =>
+          `https://icons.tryinstrument.com/v1/${site}?theme=${shown}`;
+        const paint = ({ host, site }) => {
+          host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
+          host.style.setProperty(
+            "--site-icon-print",
+            `url("${addressOf(site, "light")}")`,
+          );
+          // Fetched ahead, since a page printed from dark has no time to.
+          if (window.__instrumentTheme() === "dark") new Image().src = addressOf(site, "light");
+        };
+        document.addEventListener("instrument:theme", () => icons.forEach(paint));
+        const textIn = (el) => {
+          const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
           let text = walker.nextNode();
           while (text && !text.data.trim()) text = walker.nextNode();
+          return text;
+        };
+        for (const a of document.querySelectorAll('a[href^="https://"]:not(.no-icon)')) {
+          // A link in an SVG is another kind of element, whose text holds no span.
+          if (!(a instanceof HTMLAnchorElement) || a.querySelector("img, svg"))
+            continue;
+          const site = a.hostname;
+          if (PRIVATE.test(site)) continue;
+          const style = getComputedStyle(a);
+          const before = getComputedStyle(a, "::before").content;
+          if (
+            !/^(?:transparent|rgba\(.*, 0\))$/.test(style.backgroundColor) ||
+            style.backgroundImage !== "none" ||
+            !/^(?:none|normal|"")$/.test(before)
+          )
+            continue;
+          // A card wears it on its title, whatever comes first.
+          const first = textIn(a);
+          const title =
+            first?.parentElement !== a &&
+            a.querySelector("h1, h2, h3, h4, h5, h6, strong, b");
+          const text = (title && textIn(title)) || first;
+          if (!text) continue;
+          const src = addressOf(site);
+          const at = text.data.search(/\S/);
+          const word = at > 0 ? text.splitText(at) : text;
+          const space = word.data.search(/\s/);
+          // In a flex or grid box each piece of text is an item, so it stays whole.
+          const isItem = /flex|grid/.test(
+            getComputedStyle(text.parentElement).display,
+          );
+          if (space > 0 && !isItem) word.splitText(space);
           const host = document.createElement("span");
           host.className = "site-icon";
           host.style.setProperty("--site-icon", `url("${src}")`);
-          if (text) {
-            const at = text.data.search(/\S/);
-            const word = at > 0 ? text.splitText(at) : text;
-            const space = word.data.search(/\s/);
-            if (space > 0) word.splitText(space); // The rest of the text stays put.
-            if (word.data.length <= 20) host.style.whiteSpace = "nowrap";
-            word.replaceWith(host);
-            host.append(word);
-          } else link.prepend(host);
-
-          const drop = () => host.replaceWith(...host.childNodes);
-          const icon = new Image();
-          icon.onerror = drop;
-          icon.onload = () => {
+          // A short word, such as a file name, stays whole; a long one, such as
+          // an address, may still break so it never runs past the column.
+          if (word.data.length <= 20) host.style.whiteSpace = "nowrap";
+          word.replaceWith(host);
+          host.append(word);
+          const i = new Image();
+          i.onload = () => {
             icons.push({ host, site });
-            host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
+            paint({ host, site });
           };
-          icon.src = src;
+          i.onerror = () => host.replaceWith(...host.childNodes);
+          i.src = src;
         }
       };
       if (document.readyState === "loading") {

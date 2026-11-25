@@ -28,6 +28,15 @@ const LISTS = `<header><hgroup><h1>Lines break like text</h1></hgroup></header>
 ${PROSE}
 <p id="case-code">The engine exports <code>EPDFText_RedactInRectsWithAnnotationsAndFormsAndMetadata</code> from <code>packages/engines/src/lib/pdfium/engine.ts</code> for this.</p>
 </section>`;
+// Each link by where the icon's span starts, or the text alone where it wears none.
+const ODD = `<style>.flex{display:inline-flex;gap:1rem}.button{background:#111}.arrow::before{content:"→"}</style>
+<svg width="90" height="30"><a href="https://github.com/o/r"><text y="20">Drawing</text></a></svg>
+<p>${link("Bold <b>words</b> inside")}</p>
+<p><a class="flex" href="https://github.com/o/r">A pill with words</a></p>
+<p><a class="button" href="https://github.com/o/r">A button</a></p>
+<p><a class="arrow" href="https://github.com/o/r">An arrow</a></p>
+<a href="https://github.com/o/r"><span>New</span><h3>Card title</h3><p>Body</p></a>
+<p><a href="https://wiki.corp.internal/x">A private wiki</a></p>`;
 const icons = (html: string) => (html.match(/<a /g) ?? []).length;
 
 // Runs in the page: one line per problem at the current width, and how many
@@ -94,41 +103,47 @@ function measure() {
   return { problems, icons };
 }
 
+// Opens the page, answering the icon service with a 32px stand-in; nothing
+// else leaves the machine.
+async function open(
+  page: Awaited<ReturnType<typeof launch>>["page"],
+  file: string,
+) {
+  await page.send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
+  page.on(
+    "Fetch.requestPaused",
+    ({
+      requestId,
+      request,
+    }: {
+      requestId: string;
+      request: { url: string };
+    }) =>
+      request.url.startsWith("https://icons.tryinstrument.com/v1/")
+        ? page.send("Fetch.fulfillRequest", {
+            requestId,
+            responseCode: 200,
+            responseHeaders: [{ name: "Content-Type", value: "image/svg+xml" }],
+            body: Buffer.from(
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32"/></svg>',
+            ).toString("base64"),
+          })
+        : request.url.startsWith("file:")
+          ? page.send("Fetch.continueRequest", { requestId })
+          : page.send("Fetch.failRequest", {
+              requestId,
+              errorReason: "BlockedByClient",
+            }),
+  );
+  await page.navigate(pathToFileURL(file).href);
+}
+
 // Opens the page at each width and returns every problem, with the first
 // width it showed at, and how many links wore an icon at 1280.
 async function sweep(file: string) {
   const { page, close } = await launch();
   try {
-    // A 32px stand-in for every site icon; nothing else leaves the machine.
-    await page.send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
-    page.on(
-      "Fetch.requestPaused",
-      ({
-        requestId,
-        request,
-      }: {
-        requestId: string;
-        request: { url: string };
-      }) =>
-        request.url.startsWith("https://icons.tryinstrument.com/v1/")
-          ? page.send("Fetch.fulfillRequest", {
-              requestId,
-              responseCode: 200,
-              responseHeaders: [
-                { name: "Content-Type", value: "image/svg+xml" },
-              ],
-              body: Buffer.from(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32"/></svg>',
-              ).toString("base64"),
-            })
-          : request.url.startsWith("file:")
-            ? page.send("Fetch.continueRequest", { requestId })
-            : page.send("Fetch.failRequest", {
-                requestId,
-                errorReason: "BlockedByClient",
-              }),
-    );
-    await page.navigate(pathToFileURL(file).href);
+    await open(page, file);
     const found = new Map<string, number>();
     let icons = 0;
     const widths = [1280];
@@ -173,6 +188,57 @@ describe.skipIf(!findChrome().bin)("line breaks in Chromium", () => {
         icons: icons(LISTS),
         problems: [],
       });
+    },
+  );
+
+  it.each(["instrument-page", "wireframe"])(
+    "%s puts an icon on a link's own words, and none on a button, an SVG or a private name",
+    { timeout: 60000 },
+    async (skill) => {
+      const dir = mkdtempSync(join(tmpdir(), "foundation-links-"));
+      const file = join(dir, "page.html");
+      if (skill === "wireframe") {
+        const shell = readFileSync(
+          join(SKILLS, "wireframe/shell.html"),
+          "utf8",
+        );
+        writeFileSync(
+          file,
+          shell.replace(/(<main[^>]*>)[\s\S]*?(<\/main>)/, `$1${ODD}$2`),
+        );
+      } else {
+        writeFileSync(
+          file,
+          `<!doctype html>
+<!-- direction: reader="a developer" point="links wear icons" shape=read feel=minimal hero="cases" -->
+<html lang="en" data-shape="read" data-feel="minimal">
+<head><title>Links wear icons</title><meta name="description" content="Links of every kind and their icons."></head>
+<body><header><hgroup><h1>Links wear icons</h1></hgroup></header><section class="hero">${ODD}</section></body></html>`,
+        );
+        await promisify(execFile)(
+          "node",
+          [join(SKILLS, "instrument-page/page.mjs"), "page.html"],
+          { cwd: dir },
+        ).catch(() => {});
+      }
+      const { page, close } = await launch();
+      try {
+        await open(page, file);
+        const links = await page.evaluate(
+          `[...document.querySelectorAll('a[href^="https://"]')].filter((a) => a.closest("p, svg, section, main") && /Drawing|Bold|pill|button|arrow|Card|wiki/.test(a.textContent)).map((a) => { const s = a.querySelector(".site-icon"); return a.textContent.replace(/\\s+/g, " ") + " > " + (s ? s.textContent : "none"); })`,
+        );
+        expect(links).toEqual([
+          "Drawing > none",
+          "Bold words inside > Bold",
+          "A pill with words > A pill with words",
+          "A button > none",
+          "An arrow > none",
+          "NewCard titleBody > Card",
+          "A private wiki > none",
+        ]);
+      } finally {
+        close();
+      }
     },
   );
 

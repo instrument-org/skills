@@ -574,31 +574,61 @@
 
     // A link wears the icon of the site it goes to, painted beside its first
     // word by a span around that word (.site-icon), as it is made for the
-    // theme shown. Only a public site's name is sent.
+    // theme shown. Only a public site's name is sent. A link that is a button
+    // (a background of its own) or has a mark of its own wears none.
     const PRIVATE =
       /^(?:[^.]*|[\d.]+|.*\.(?:localhost|local|internal|lan|home\.arpa))$/;
     const icons = [];
-    const addressOf = (site) =>
-      `https://icons.tryinstrument.com/v1/${site}?theme=${theme()}`;
-    document.addEventListener("instrument:theme", () => {
-      for (const { host, site } of icons)
-        host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
-    });
+    const addressOf = (site, shown = theme()) =>
+      `https://icons.tryinstrument.com/v1/${site}?theme=${shown}`;
+    const paint = ({ host, site }) => {
+      host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
+      host.style.setProperty(
+        "--site-icon-print",
+        `url("${addressOf(site, "light")}")`,
+      );
+      // Fetched ahead, since a page printed from dark has no time to.
+      if (theme() === "dark") new Image().src = addressOf(site, "light");
+    };
+    document.addEventListener("instrument:theme", () => icons.forEach(paint));
+    const textIn = (el) => {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let text = walker.nextNode();
+      while (text && !text.data.trim()) text = walker.nextNode();
+      return text;
+    };
     for (const a of document.querySelectorAll(
       'a[href^="https://"]:not(.no-icon)',
     )) {
-      if (a.querySelector("img, svg")) continue;
-      const walker = document.createTreeWalker(a, NodeFilter.SHOW_TEXT);
-      let text = walker.nextNode();
-      while (text && !text.data.trim()) text = walker.nextNode();
-      if (!text) continue;
-      const site = new URL(a.href).hostname;
+      // A link in an SVG is another kind of element, whose text holds no span.
+      if (!(a instanceof HTMLAnchorElement) || a.querySelector("img, svg"))
+        continue;
+      const site = a.hostname;
       if (PRIVATE.test(site)) continue;
+      const style = getComputedStyle(a);
+      const before = getComputedStyle(a, "::before").content;
+      if (
+        !/^(?:transparent|rgba\(.*, 0\))$/.test(style.backgroundColor) ||
+        style.backgroundImage !== "none" ||
+        !/^(?:none|normal|"")$/.test(before)
+      )
+        continue;
+      // A card wears it on its title, whatever comes first.
+      const first = textIn(a);
+      const title =
+        first?.parentElement !== a &&
+        a.querySelector("h1, h2, h3, h4, h5, h6, strong, b");
+      const text = (title && textIn(title)) || first;
+      if (!text) continue;
       const src = addressOf(site);
       const at = text.data.search(/\S/);
       const word = at > 0 ? text.splitText(at) : text;
       const space = word.data.search(/\s/);
-      if (space > 0) word.splitText(space);
+      // In a flex or grid box each piece of text is an item, so it stays whole.
+      const isItem = /flex|grid/.test(
+        getComputedStyle(text.parentElement).display,
+      );
+      if (space > 0 && !isItem) word.splitText(space);
       const host = document.createElement("span");
       host.className = "site-icon";
       host.style.setProperty("--site-icon", `url("${src}")`);
@@ -607,13 +637,12 @@
       if (word.data.length <= 20) host.style.whiteSpace = "nowrap";
       word.replaceWith(host);
       host.append(word);
-      const drop = () => host.replaceWith(...host.childNodes);
       const i = new Image();
       i.onload = () => {
         icons.push({ host, site });
-        host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
+        paint({ host, site });
       };
-      i.onerror = drop;
+      i.onerror = () => host.replaceWith(...host.childNodes);
       i.src = src;
     }
   });

@@ -1477,10 +1477,15 @@
      it. A line may break before or after an image, but never at the edge of
      padding, so the icon stays with the word and with a "(" in front. */
   .site-icon {
-    padding-left: 1.1em;
+    padding-left: calc(0.8em + min(0.3em, 10px));
     background: var(--site-icon) left center / 0.8em no-repeat;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+  @media print {
+    .site-icon {
+      background-image: var(--site-icon-print, var(--site-icon));
+    }
   }
 
   /* Pictures side by side. .frames: a numbered contact sheet whose cells are
