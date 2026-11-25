@@ -110,10 +110,10 @@
       }
       return false;
     };
-    // The share widget, the section strip and any page-level chrome injected by a host stay out of the measurements.
+    // The share widget and any page-level chrome injected by a host stay out of the measurements.
     const foreign = (el) =>
       !!el.closest(
-        "[data-instrument-widget], instrument-share, #instrument-share, nav.strip",
+        "[data-instrument-widget], instrument-share, #instrument-share",
       );
 
     // ---- color -------------------------------------------------------------

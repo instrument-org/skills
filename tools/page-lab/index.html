@@ -56,7 +56,7 @@
 </header>
 
 <section id="feels">
-  <h2 data-short="Feels">Feels</h2>
+  <h2>Feels</h2>
   <p>A page sets <code>data-feel</code> on <code>&lt;html&gt;</code>, and that swaps the token values below. Every element reads these tokens, so this table is the whole of a feel. Click a card to switch the page to it.</p>
   <div class="feels" id="feelcards"></div>
   <div class="scroll bleed"><table class="knobs" id="knobs"><thead></thead><tbody></tbody></table></div>
@@ -64,7 +64,7 @@
 </section>
 
 <section id="layouts">
-  <h2 data-short="Layouts">Layouts</h2>
+  <h2>Layouts</h2>
   <p><code>data-layout="wide"</code>, the one SKILL.md starts every page with, is one wide column whose prose keeps a reading width on the same left edge, and it prints landscape. <code>column</code> is one reading column, for a short note that is all prose. Everything sits in the column; <code>.bleed</code> and <code>.full</code> go wider only when a page asks.</p>
   <dl id="layoutknobs"></dl>
   <div class="demo"><p class="spec">the three tracks of the page grid, in this layout</p></div>
@@ -74,7 +74,7 @@
 </section>
 
 <section id="color">
-  <h2 data-short="Color">Color</h2>
+  <h2>Color</h2>
   <p class="spec">semantic tokens a page may use: <b>--name</b> and its resolved value in this feel and theme</p>
   <div class="swatches" data-swatches="ground paper ink ink-2 muted line line-2 accent accent-text accent-ink wash good good-wash warn warn-wash bad bad-wash"></div>
   <p class="spec">categorical, for people, teams, options: <b>data-c="1"…"8"</b></p>
@@ -89,7 +89,7 @@
 </section>
 
 <section id="type">
-  <h2 data-short="Type">Type</h2>
+  <h2>Type</h2>
   <p>Inter for text, Roboto Serif where a feel asks for it (editorial text and headings, and every <code>blockquote</code>), JetBrains Mono for code and for labels in dense.</p>
   <div>
     <div class="typerow"><p class="kicker" data-measure>Kicker · for whom, when, from what</p><p class="spec">hgroup &gt; p:first-child, .kicker</p></div>
@@ -114,7 +114,7 @@
 </section>
 
 <section id="elements">
-  <h2 data-short="Elements">Elements</h2>
+  <h2>Elements</h2>
   <div class="demo">
     <p class="spec">aside (tinted note; takes data-tone)</p>
     <div class="stack">
@@ -154,7 +154,7 @@
 </section>
 
 <section id="layout">
-  <h2 data-short="Layout">Layout classes</h2>
+  <h2>Layout classes</h2>
   <div class="demo"><p class="spec">.panel (paper, radius, shadow) and .panel[data-tone] / [data-c] (a muted background in that color)</p></div>
   <div class="grid">
     <div class="panel"><h3>.panel</h3><p>Paper on the ground, with the feel's radius and shadow.</p></div>
@@ -199,7 +199,7 @@
 </section>
 
 <section id="lists">
-  <h2 data-short="Lists">Steps, flows and checklists</h2>
+  <h2>Steps, flows and checklists</h2>
   <div class="demo"><p class="spec">ol.steps (each item's content in one span)</p>
     <ol class="steps"><li><span><b>Open the quote.</b> Find the line for the return trip.</span></li><li><span><b>Ask for the missing leg.</b> Send the vendor one sentence.</span></li><li><span><b>Compare totals.</b> Both quotes now cover both legs.</span></li></ol>
   </div>
@@ -231,7 +231,7 @@
 </section>
 
 <section id="tables">
-  <h2 data-short="Tables">Tables</h2>
+  <h2>Tables</h2>
   <div class="demo"><p class="spec">table with thead, .n numbers, a toned row and a toned cell</p></div>
   <table>
     <thead><tr><th>Plan</th><th class="n">Per seat</th><th class="n">Seats</th><th class="n">Year one</th><th>Status</th></tr></thead>
@@ -253,9 +253,9 @@
 </section>
 
 <section id="code">
-  <h2 data-short="Code">Code and terminal output</h2>
+  <h2>Code and terminal output</h2>
   <p>Code sits on one dark ground in both themes, so its colors are fixed in the stylesheet rather than tokens.</p>
-  <div class="demo"><p class="spec">pre[data-file] &gt; code.language-ts (Copy and Wrap come from foundation.js)</p>
+  <div class="demo"><p class="spec">pre[data-file] &gt; code.language-ts</p>
 <pre data-file="apps/api/client.ts"><code class="language-ts">export async function retryOnce(call: () =&gt; Promise&lt;Response&gt;) {
   const res = await call();
   // A 429 means slow down: wait once, then try again.
@@ -279,7 +279,7 @@
 </section>
 
 <section id="pictures">
-  <h2 data-short="Pictures">Pictures and drawings</h2>
+  <h2>Pictures and drawings</h2>
   <div class="demo"><p class="spec">.frames (numbered contact sheet, --ratio), figure &gt; figcaption</p></div>
   <div class="frames" style="--ratio: 16/10">
     <figure><img src="img/before.svg" width="640" height="400" alt="Before"><figcaption>The old layout</figcaption></figure>
@@ -311,7 +311,7 @@
 </section>
 
 <section id="behaviors">
-  <h2 data-short="Behaviors">Behaviors</h2>
+  <h2>Behaviors</h2>
   <div class="demo"><p class="spec">button[data-show-who] dims everything not marked data-who</p>
     <div class="row"><button data-show-who="maya">Maya</button><button data-show-who="jon">Jon</button></div>
     <ul class="plain" style="margin-top: 0.6rem"><li data-who="maya"><span class="dot" data-c="1">Maya drives Friday</span></li><li data-who="jon"><span class="dot" data-c="2">Jon brings snacks</span></li><li data-who="maya jon"><span class="dot" data-c="3">Both set up chairs</span></li></ul>

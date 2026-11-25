@@ -77,11 +77,11 @@
     --accent-text: light-dark(#2549a8, #a6bdf5);
     --wash: light-dark(#eef2fc, #1b2238);
     --good: var(--success-700);
-    --good-wash: var(--success-50);
+    --good-wash: light-dark(var(--success-50), #143520);
     --warn: var(--warning-700);
-    --warn-wash: light-dark(#fef3d2, #2a1c06);
+    --warn-wash: light-dark(#fef3d2, #3b2a0a);
     --bad: light-dark(#b4324f, #ef8ba3);
-    --bad-wash: var(--error-50);
+    --bad-wash: light-dark(var(--error-50), #3a1824);
     --body-font: var(--sans);
     --head-font: var(--sans);
     --label-font: var(--sans);
@@ -374,8 +374,32 @@
     margin-block: 0;
   }
   :is(body > :is(main, section, article), body > main > :is(section, article))
-    > h2:not(:first-child) {
-    margin-top: calc(var(--flow) * 0.6);
+    > :is(h2, h3):not(:first-child) {
+    margin-top: calc(var(--flow) * 0.9);
+  }
+  /* A faint rule above each section that opens with its heading, inside the
+     column, so a long page scans as parts. */
+  :is(body, body > main)
+    > :is(section, article):not(
+      .hero,
+      .split,
+      .grid,
+      .rail,
+      .row,
+      .stack,
+      .cols
+    ):has(> h2)::before {
+    content: "";
+    grid-column: col;
+    height: 1px;
+    margin-bottom: calc(var(--flow) * 0.8);
+    background: color-mix(in oklab, var(--ink) 10%, transparent);
+  }
+  /* A heading sits nearer what it heads than what came before it. */
+  :is(body > :is(main, section, article), body > main > :is(section, article))
+    > :is(h2, h3, hgroup)
+    + * {
+    margin-top: calc(var(--flow) * -0.35);
   }
 
   /* ---------- plain elements, made good ---------- */
@@ -394,12 +418,12 @@
     margin: 0;
   }
   h1 {
-    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.3rem);
-    line-height: 1.08;
+    font-size: clamp(1.9rem, 1.25rem + 2.6vw, 2.85rem);
+    line-height: 1.1;
   }
   h2 {
-    font-size: clamp(1.3rem, 1.05rem + 0.9vw, 1.65rem);
-    line-height: 1.15;
+    font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.5rem);
+    line-height: 1.2;
     margin-top: calc(var(--flow) * 0.75);
   }
   h3 {
@@ -525,17 +549,22 @@
     border-radius: 4px;
     background: var(--paper);
   }
-  /* Code and terminal output sit on one dark ground in both themes, so their
-     colors are fixed here rather than tokens. Lines wrap unless the block says
-     data-wrap="off"; foundation.js wraps each pre in .code with Copy and Wrap,
-     and highlight.js colors a <code class="language-x"> inside one. */
-  pre {
-    --code-ground: light-dark(#1c1917, #0c0b0a);
+  /* Code and terminal output sit on a quiet surface that follows the theme
+     and the feel. Lines wrap unless the block says data-wrap="off".
+     foundation.js puts each pre in a .code frame: data-file="path" becomes
+     the file's bar above it, and a copy icon shows while the pointer is over
+     the block. highlight.js colors a <code class="language-x"> inside one. */
+  pre,
+  .code {
+    --code-ground: color-mix(in oklab, var(--fill) 50%, var(--ground));
     background: var(--code-ground);
-    color: #e4ded9;
-    padding: 1rem 1.1rem;
-    border-radius: var(--radius);
-    font: 0.84rem/1.6 var(--mono);
+    border: 1px solid var(--line);
+    border-radius: calc(var(--radius) * 0.8);
+  }
+  pre {
+    color: var(--ink);
+    padding: 0.85rem 1rem;
+    font: 0.82rem/1.65 var(--mono);
     font-variant-ligatures: none;
     tab-size: 2;
     white-space: pre-wrap;
@@ -544,104 +573,123 @@
     /* Never vertically: a horizontal scrollbar would leave the block
        scrollable down by its own height, and the wheel would stop here. */
     overflow-y: hidden;
-    scrollbar-color: #57534e transparent;
+    scrollbar-color: var(--line-2) transparent;
   }
-  pre[data-wrap="off"],
-  .code[data-wrap="off"] > pre {
+  pre[data-wrap="off"] {
     white-space: pre;
     overflow-wrap: normal;
   }
+  /* As wide as its longest line needs, from the reading width up to the room
+     there is, so a short block does not run the width of a wide page. */
   .code {
     position: relative;
+    overflow: hidden;
+    width: fit-content;
+    min-width: min(100%, 44rem);
+    max-width: 100%;
+    justify-self: start;
   }
   * + .code {
     margin-top: calc(var(--flow) * 0.7);
   }
   .code > pre {
     margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
   }
+  /* The file's bar: a document glyph, the folders in gray, the name in ink. */
   .code-file {
-    background: #2a2522;
-    color: #b5aca5;
-    font: 0.76rem/1.3 var(--mono);
-    padding: 0.5rem 9rem 0.5rem 1.1rem;
-    border-radius: var(--radius) var(--radius) 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 2.6rem 0.45rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--fill) 85%, var(--ground));
+    color: var(--muted);
+    font: 0.76rem/1.4 var(--mono);
+    font-variant-ligatures: none;
+  }
+  .code-file::before {
+    content: "";
+    flex: none;
+    width: 0.85rem;
+    height: 0.85rem;
+    background: currentColor;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.25 1.75h-4.5c-.83 0-1.5.67-1.5 1.5v9.5c0 .83.67 1.5 1.5 1.5h6.5c.83 0 1.5-.67 1.5-1.5v-7.5z'/%3E%3Cpath d='M9.25 1.75v3.5h3.5'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
+  .code-file > span {
+    min-width: 0;
     overflow-wrap: anywhere;
   }
-  .code-file + pre {
-    border-radius: 0 0 var(--radius) var(--radius);
+  .code-file b {
+    font-weight: 500;
+    color: var(--ink);
   }
-  .code-tools {
+  .code-copy {
     position: absolute;
-    top: 0.4rem;
-    right: 0.4rem;
-    display: flex;
-    gap: 0.25rem;
+    top: 0.3rem;
+    right: 0.3rem;
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--radius) * 0.5);
+    background: none;
+    color: var(--muted);
     opacity: 0;
     transition: opacity 120ms ease;
   }
-  .code:is(:hover, :focus-within) > .code-tools,
-  .code:has(> .code-file) > .code-tools {
+  .code:hover > .code-copy,
+  .code-copy:focus-visible {
     opacity: 1;
   }
-  .code-tools button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3em;
-    padding: 0.25rem 0.45rem;
-    border: 1px solid rgb(255 255 255 / 0.14);
-    border-radius: 6px;
-    background: rgb(40 36 33 / 0.85);
-    color: #d0c8c1;
-    font: 500 0.72rem/1.3 var(--body-font);
-    cursor: pointer;
-    backdrop-filter: blur(4px);
+  .code-copy:hover {
+    background: color-mix(in oklab, var(--ink) 9%, transparent);
+    color: var(--ink);
   }
-  .code-tools button:hover,
-  .code-tools button[aria-pressed="true"] {
-    background: #44403c;
-    color: #faf8f6;
-  }
-  .code-tools svg {
-    width: 0.95em;
-    height: 0.95em;
+  .code-copy svg {
+    width: 0.95rem;
+    height: 0.95rem;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.6;
+    stroke-width: 1.5;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-  /* Touch screens have no hover, so the tools stay up and the first line moves clear of them. */
+  /* A touch screen has no hover to show it on. */
   @media (hover: none) {
-    .code-tools {
-      opacity: 1;
-    }
-    .code:not(:has(> .code-file)) > pre {
-      padding-top: 2.4rem;
+    .code-copy {
+      display: none;
     }
   }
-  /* highlight.js tokens, read on the dark ground in both themes. */
+  /* highlight.js tokens, a pair per theme. */
   .hljs-comment,
   .hljs-quote {
-    color: #9a918a;
+    color: var(--muted);
     font-style: italic;
   }
   .hljs-keyword,
   .hljs-selector-tag,
   .hljs-selector-pseudo,
   .hljs-doctag {
-    color: #a5a6f8;
+    color: light-dark(#4f46e5, #a5a6f8);
   }
   .hljs-built_in,
   .hljs-type,
   .hljs-literal {
-    color: #c99bfc;
+    color: light-dark(#7e22ce, #c99bfc);
   }
   .hljs-string,
   .hljs-regexp,
   .hljs-addition,
   .hljs-template-tag {
-    color: #a8d45e;
+    color: light-dark(#4d7c0f, #a8d45e);
   }
   .hljs-number,
   .hljs-attr,
@@ -649,33 +697,21 @@
   .hljs-symbol,
   .hljs-meta,
   .hljs-variable.language_ {
-    color: #e6b95a;
+    color: light-dark(#a16207, #e6b95a);
   }
   .hljs-title,
   .hljs-name,
   .hljs-section,
   .hljs-selector-id,
   .hljs-selector-class {
-    color: #6cbdea;
+    color: light-dark(#0369a1, #6cbdea);
   }
   .hljs-deletion {
-    color: #ef8ba3;
+    color: light-dark(#b4324f, #ef8ba3);
   }
-  /* Terminal output marked by hand: <span data-tone="bad">, on the same dark ground. */
-  pre [data-tone="good"] {
-    color: #a8d45e;
-  }
-  pre [data-tone="warn"] {
-    color: #e6b95a;
-  }
-  pre [data-tone="bad"] {
-    color: #ef8ba3;
-  }
-  pre [data-tone="accent"] {
-    color: #6cbdea;
-  }
-  pre [data-tone="muted"] {
-    color: #9a918a;
+  /* Terminal output marked by hand: <span data-tone="bad">. */
+  pre :is([data-tone], [data-c]) {
+    color: var(--tone);
   }
   .hljs-emphasis {
     font-style: italic;
@@ -784,8 +820,11 @@
     padding-top: calc(var(--flow) * 1.5);
     border-top: 1px solid var(--line);
   }
+  /* As wide as its columns need and no wider, so two short columns do not
+     sit a screen apart on a wide page. */
   table {
-    width: 100%;
+    width: auto;
+    justify-self: start;
     border-collapse: collapse;
     font-variant-numeric: tabular-nums;
     font-size: 0.94rem;
@@ -805,7 +844,7 @@
   }
   th,
   td {
-    padding: 0.5rem 0.65rem;
+    padding: 0.5rem 0.9rem;
     border-bottom: 1px solid var(--line);
   }
   td {
@@ -1358,53 +1397,6 @@
     color: var(--muted);
   }
 
-  /* The section strip foundation.js builds on a page of five or more sections. */
-  nav.strip {
-    grid-column: full;
-    display: grid;
-    grid-template-columns: subgrid;
-    align-self: start;
-    position: sticky;
-    top: 0;
-    z-index: 6;
-    margin-top: calc(-1 * var(--page-top));
-    margin-bottom: calc(var(--flow) * -0.8);
-    background: color-mix(in oklab, var(--ground) 92%, transparent);
-    backdrop-filter: blur(6px);
-    border-bottom: 1px solid var(--line);
-  }
-  nav.strip > div {
-    grid-column: wide;
-    display: flex;
-    gap: 1.3rem;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    font: 500 0.8rem/1 var(--body-font);
-  }
-  nav.strip a {
-    flex: none;
-    max-width: 18rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding: 0.8rem 0 0.7rem;
-    color: var(--muted);
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    scroll-snap-align: start;
-  }
-  nav.strip a:hover {
-    color: var(--ink);
-  }
-  nav.strip a[aria-current="true"] {
-    color: var(--ink);
-    border-bottom-color: var(--ink);
-  }
-  :root:has(nav.strip) :is(section, article, h2, h3, h4, figure)[id] {
-    scroll-margin-top: 3.5rem;
-  }
-
   /* SVG drawn by hand: data-c / data-tone fill a shape; .outline strokes it. */
   /* Colors set on the svg, not on its shapes, so a fill= or font-size= written
    on a shape still wins: CSS rules outrank SVG presentation attributes. */
@@ -1799,6 +1791,10 @@
     .wide-only {
       display: none !important;
     }
+    th,
+    td {
+      padding-inline: 0.65rem;
+    }
     .split,
     .split.flip {
       grid-template-columns: 1fr;
@@ -1891,8 +1887,6 @@
     .screen-only,
     button:not(.keep),
     .sticky:empty,
-    nav.strip,
-    .code-tools,
     ol.flow > svg.flow-lines {
       display: none !important;
     }
@@ -1905,46 +1899,7 @@
       color: var(--muted);
     }
     pre {
-      --code-ground: #f5f5f4;
-      color: #1c1917;
       white-space: pre-wrap !important;
-    }
-    .code-file {
-      background: #e7e5e4;
-      color: #44403c;
-    }
-    .hljs-comment,
-    .hljs-quote {
-      color: #6d655f;
-    }
-    :is(
-      .hljs-keyword,
-      .hljs-selector-tag,
-      .hljs-selector-pseudo,
-      .hljs-doctag
-    ) {
-      color: #4f46e5;
-    }
-    :is(.hljs-built_in, .hljs-type, .hljs-literal) {
-      color: #7e22ce;
-    }
-    :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-template-tag) {
-      color: #4d7c0f;
-    }
-    :is(.hljs-number, .hljs-attr, .hljs-attribute, .hljs-symbol, .hljs-meta) {
-      color: #a16207;
-    }
-    :is(
-      .hljs-title,
-      .hljs-name,
-      .hljs-section,
-      .hljs-selector-id,
-      .hljs-selector-class
-    ) {
-      color: #0369a1;
-    }
-    .hljs-deletion {
-      color: #b4324f;
     }
     .sticky {
       position: static;
