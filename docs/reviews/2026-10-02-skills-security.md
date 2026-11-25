@@ -55,10 +55,10 @@ A security review of every tracked skill script and `SKILL.md`, read against the
 
 ### H. Every local page sends the origin of each external link to Google
 
-- Status: open
+- Status: fixed
 - Where: [starter.html:4226-4235](/skills/create-page/starter.html#L4226-L4235)
 - What: the link-icon decoration requests `t0.gstatic.com/faviconV2?url=<origin>` for every `https://` link on open, so a private page linking an internal tracker or a client's staging host discloses that host. Only the origin is sent. Fix: skip hosts that are not public (no dot, `.local`, `.internal`, private address literals), or make it opt-in.
-- Note: now [foundation.js:411-421](/skills/instrument-page/lib/foundation.js#L411-L421), unchanged apart from a `.no-icon` opt-out per link.
+- Note: now [foundation.js:411-421](/skills/instrument-page/lib/foundation.js#L411-L421), asking the icon service by host, for public names alone, with a `.no-icon` opt-out per link.
 
 ### I. The loading guide admits any package name with no check that it is real
 

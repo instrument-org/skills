@@ -12,7 +12,7 @@ A page from `starter.html` as it was, loading its framework and icon set from `e
 - The framework does not. Tailwind is compiled in the browser by `@tailwindcss/browser`, and esm.sh is not on the list. The blocked script fires `error` on its element, the starter's guard shows the page at once rather than waiting out its floor, and the reader gets a fully unstyled document: the skin is inside a `<style type="text/tailwindcss">` block that only the compiler reads.
 - The icons do not. Phosphor's stylesheet would be refused from any CDN there, since stylesheets are allowed from Google Fonts alone. Every `<i class="ph ...">` renders as nothing, which breaks no layout.
 - The share widget does not. `tryinstrument.com` is not on the list. Nothing is lost; the frame has its own way to share.
-- Site icons on links do not. `t0.gstatic.com` is an image, and images are refused; the starter's `onerror` drops each one and the line does not move.
+- Site icons on links do not. An icon is an image from another host, and images are refused; the starter's `onerror` drops each one and the line does not move.
 - Libraries do not, from esm.sh, and any library's runtime fetch (sql.js's wasm, map tiles) is refused from every host. The offline branch the rule already requires is what the reader sees.
 
 The one that matters is the framework. Everything else degrades the way it does offline; the framework failing is the difference between the page and a wall of unstyled text.

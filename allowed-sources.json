@@ -43,8 +43,8 @@
   ],
   "built": [
     {
-      "prefix": "https://t0.gstatic.com",
-      "why": "A link wears the icon of the site it points at, and no CSS can read a host out of an href, so the URL is built from the link."
+      "prefix": "https://icons.tryinstrument.com/v1/",
+      "why": "A link wears the icon of the site it points at, and no CSS can read a host out of an href, so the URL is built from the link and the theme shown."
     },
     {
       "prefix": "https://tiles.openfreemap.org/",

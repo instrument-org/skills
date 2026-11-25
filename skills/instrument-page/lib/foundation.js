@@ -573,7 +573,17 @@
       el.classList.add("today");
 
     // A link wears the icon of the site it goes to, painted beside its first
-    // word by a span around that word (.site-icon). Only the origin is sent.
+    // word by a span around that word (.site-icon), as it is made for the
+    // theme shown. Only a public site's name is sent.
+    const PRIVATE =
+      /^(?:[^.]*|[\d.]+|.*\.(?:localhost|local|internal|lan|home\.arpa))$/;
+    const icons = [];
+    const addressOf = (site) =>
+      `https://icons.tryinstrument.com/v1/${site}?theme=${theme()}`;
+    document.addEventListener("instrument:theme", () => {
+      for (const { host, site } of icons)
+        host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
+    });
     for (const a of document.querySelectorAll(
       'a[href^="https://"]:not(.no-icon)',
     )) {
@@ -582,9 +592,9 @@
       let text = walker.nextNode();
       while (text && !text.data.trim()) text = walker.nextNode();
       if (!text) continue;
-      const src =
-        "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
-        encodeURIComponent(new URL(a.href).origin);
+      const site = new URL(a.href).hostname;
+      if (PRIVATE.test(site)) continue;
+      const src = addressOf(site);
       const at = text.data.search(/\S/);
       const word = at > 0 ? text.splitText(at) : text;
       const space = word.data.search(/\s/);
@@ -599,11 +609,11 @@
       host.append(word);
       const drop = () => host.replaceWith(...host.childNodes);
       const i = new Image();
-      i.onerror = drop;
-      // The service answers an unknown host with its own 16px globe.
       i.onload = () => {
-        if (i.naturalWidth <= 16) drop();
+        icons.push({ host, site });
+        host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
       };
+      i.onerror = drop;
       i.src = src;
     }
   });

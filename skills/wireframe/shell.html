@@ -4161,12 +4161,7 @@
       .site-icon {
         padding-left: calc(1.1em + 1px);
         overflow-wrap: break-word;
-        background:
-          var(--site-icon) left 1px center / 0.8em no-repeat,
-          linear-gradient(var(--color-gray-100) 0 0) left 1px center / 0.8em
-            0.8em no-repeat,
-          linear-gradient(var(--color-gray-200) 0 0) left center /
-            calc(0.8em + 2px) calc(0.8em + 2px) no-repeat;
+        background: var(--site-icon) left 1px center / 0.8em no-repeat;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
@@ -4220,16 +4215,24 @@
       }
 
       // Progressive: with scripts off, or offline, every link reads exactly as
-      // it does now and nothing shifts. Only the origin is ever sent, never the
-      // path, so a link's query string is not handed over to draw an icon.
+      // it does now and nothing shifts. Only a public site's name is ever sent, never
+      // the path, so a link's query string is not handed over to draw an icon.
       // Waits for the page's module scripts, so a link one of them draws gets
       // its icon like any other.
       const decorate = () => {
-        const ABSENT = 16; // The service answers an unknown host with its own 16px globe.
+        // Its icon as made for the theme shown.
+        const addressOf = (site) =>
+          `https://icons.tryinstrument.com/v1/${site}?theme=${window.__instrumentTheme()}`;
+        const PRIVATE = /^(?:[^.]*|[\d.]+|.*\.(?:localhost|local|internal|lan|home\.arpa))$/;
+        const icons = [];
+        document.addEventListener("instrument:theme", () => {
+          for (const { host, site } of icons)
+            host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
+        });
         for (const link of document.querySelectorAll('a[href^="https://"]')) {
-          const src =
-            "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=" +
-            encodeURIComponent(new URL(link.href).origin);
+          const site = new URL(link.href).hostname;
+          if (PRIVATE.test(site)) continue;
+          const src = addressOf(site);
 
           // The icon goes in a span around the link's first word (.site-icon).
           // A short word, such as a file name, stays whole; a long one, such as
@@ -4255,7 +4258,8 @@
           const icon = new Image();
           icon.onerror = drop;
           icon.onload = () => {
-            if (icon.naturalWidth <= ABSENT) drop();
+            icons.push({ host, site });
+            host.style.setProperty("--site-icon", `url("${addressOf(site)}")`);
           };
           icon.src = src;
         }

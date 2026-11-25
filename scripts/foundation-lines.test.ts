@@ -110,7 +110,7 @@ async function sweep(file: string) {
         requestId: string;
         request: { url: string };
       }) =>
-        request.url.startsWith("https://t0.gstatic.com/faviconV2")
+        request.url.startsWith("https://icons.tryinstrument.com/v1/")
           ? page.send("Fetch.fulfillRequest", {
               requestId,
               responseCode: 200,
