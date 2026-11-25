@@ -11,6 +11,8 @@ Use it when someone asks for a wireframe, a mockup or "what would that look like
 
 If the folder you work in, or one above it, has `.agents/wireframe-kit/KIT.md`, read that next, in a call of its own: the project draws with its own kit and build, in the same format.
 
+This file, and a kit's `KIT.md` when there is one, is all the reading a first page needs, plus `snapshots.md` when a frame needs a real screen. Don't study older pages, a kit's source or the product's source before drawing; look one thing up when a frame turns out to need it.
+
 ## A page
 
 `<skill>` is this skill's folder. Write a **part**, `<name>.frames.html`, then build the page from it:
@@ -119,8 +121,8 @@ Icons are Phosphor regular, `ph ph-<name>`. Write class names out whole: one bui
 
 - Draw the states the request asks about, and no others. When it's about one panel, its edge states (empty, loading, too many, denied, offline) count as asked: nobody remembers to ask for them.
 - Draw several frames, one state each, usually before, during and after one interaction (`patterns.md` has the four ways a set can vary). Never one frame with a paragraph.
-- Before drawing a screen that exists, read its current component, or snapshot it when your browser can reach it (`snapshots.md`), so the frame starts from what ships rather than from memory.
-- Leave out chrome the proposal isn't about, unless a project's kit says otherwise.
+- Detail goes to what the proposal is about. Leave out the rest of the screen, or draw it as gray boxes (`box`) about where its parts sit; a page about structure or flow can be gray boxes throughout.
+- When a frame needs a real screen, snapshot it and edit that (`snapshots.md`), never redraw it by reading its source. When you can't snapshot it, gray boxes do. Outside the proposal, leave out any control or panel you aren't sure the product has.
 
 ### The page
 
@@ -130,7 +132,7 @@ Icons are Phosphor regular, `ph ph-<name>`. Write class names out whole: one bui
 
 ### Drawing
 
-- Everything at its real size: a window is 1280x800, a phone 390x844, a panel what it measures (`patterns.md` lists sizes). Use the normal type scale; never shrink by hand or write `text-[9px]`, since the page scales frames.
+- Everything at its real size: a window is 1280x800, a phone 390x844, a panel about its size (`patterns.md` lists common ones). Use the normal type scale; never shrink by hand or write `text-[9px]`, since the page scales frames.
 - Frames stay light when the reader turns the page dark. A dark frame takes `dark: true` and the theme's colors (`bg-background`, `text-foreground`), not fixed ones like `bg-white`.
 - Grey bars for incidental text, and real, final copy for the words that matter: labels, warnings, empty states, the buttons the proposal is about. Never lorem ipsum.
 - Write that copy by the project's UI copy rules; in the Instrument repo, the "UI copy" section of its `CLAUDE.md`.
@@ -159,7 +161,7 @@ Give the page's path as the `open-in-instrument` skill's link line when that ski
 ## When you need more
 
 - `patterns.md`: common sizes, the four ways a set of frames can vary, how marks are drawn, grey bars.
-- `snapshots.md`: frames from a snapshot of a live page, edited by name.
+- `snapshots.md`: frames from a snapshot of a live page, edited by name, the short way to a real screen. Its first half is enough to start.
 - `prototype.md`: one live screen to click through or replay, instead of frames.
 - `handover.md`: publishing a link, and reading a wireframe from one.
 - `check.mjs <page>` checks a built page again without a browser. A page made with `new.mjs`, with its frames in a `states` array, still opens and checks as before.

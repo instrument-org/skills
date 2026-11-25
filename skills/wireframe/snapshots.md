@@ -1,6 +1,8 @@
 # Frames from a snapshot
 
-A snapshot is a page as your browser tool drew it, kept whole, and a frame drawn from one is the real screen, edited by the words a person reads on it. Use one whenever the screen exists and your browser can reach it, and draw from scratch only screens that don't exist yet, mixing the two frame by frame. A project's kit may keep a library of its own (its `KIT.md` says).
+A snapshot is a page as your browser tool drew it, kept whole, and a frame drawn from one is the real screen, edited by the words a person reads on it. Use one for any frame that needs a real screen your browser can reach: it's quicker than redrawing the screen and can't be wrong about it. Other frames can be gray boxes or pieces, on the same page. A project's kit may keep a library of its own (its `KIT.md` says).
+
+Read down to "What snap() takes" and start; the rest is reference for an edit or a problem the example doesn't cover.
 
 1. At the frame's size, click into the state you'll draw (a menu open, a tab chosen) and capture it. Repeat per state: one you never clicked into isn't in the snapshot.
 
@@ -11,7 +13,7 @@ agent-browser eval --stdin < <skill>/snapshot.js > pricing.json
 ```
 
 2. Name the snapshot files after the page when you build: `node <skill>/build.mjs part.frames.html page.html pricing.json menu.json`. Each file's name is its snapshot's (`pricing.json` is `snap("pricing")`), the build prints what each couldn't keep, and a rebuild keeps the snapshots the page already has. `node <skill>/add-snapshot.mjs page.html --remove <name>` drops one.
-3. Draw the current design unedited, then edit copies of it, so every NEW reads against something shown:
+3. A frame of the current design is the snapshot as captured, and a proposal is an edited copy of it:
 
 ```html
 <script>frame({
