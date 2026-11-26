@@ -23,6 +23,10 @@ const config: KnipConfig = {
     // add-snapshot.mjs reads as a file and writes into a page.
     "skills/wireframe/snapshot.js",
     "skills/wireframe/snapshot-frames.js",
+    // What a part's scripts call and the pieces they draw with, which
+    // frames.mjs reads as files and writes into a page.
+    "skills/wireframe/runtime.js",
+    "skills/wireframe/pieces.js",
     // The page lab's panel, which its HTML pages load by a script tag.
     "tools/page-lab/lab.js",
   ],
