@@ -7,7 +7,7 @@ Complete command-line usage for the scripts indexed in `SKILL.md`.
 Exports:
 
 - `appInstalled({ platform, home, env, exists, listDir, readFile, }: { platform: NodeJS.Platform; home: string; env: Readonly<Record<string, string | undefined>>; exists: (file: string) => boolean; listDir: (dir: string) => string[]; readFile: (file: string) => string; }): boolean`
-- `buildReply({ paths, title, from, links, insideInstrument, cwd, home, platform, stat, tempRoots, }: { paths: readonly string[]; title?: string; from?: string; links?: Links; insideInstrument?: boolean; cwd?: string; home?: string; platform?: NodeJS.Platform; stat?: (absolutePath: string) => Kind; tempRoots?: readonly string[]; }): { markdown: string; warnings: string[]; }`
+- `buildReply({ paths, title, from, group, links, insideInstrument, cwd, home, platform, stat, tempRoots, }: { paths: readonly string[]; title?: string; from?: string; group?: string; links?: Links; insideInstrument?: boolean; cwd?: string; home?: string; platform?: NodeJS.Platform; stat?: (absolutePath: string) => Kind; tempRoots?: readonly string[]; }): { markdown: string; warnings: string[]; }`
 - `installPaths({ platform, home, env, }: { platform: NodeJS.Platform; home: string; env: Readonly<Record<string, string | undefined>>; }): string[]`
 - `resolveLinks({ flag, env, platform, home, exists, listDir, readFile, }: { flag?: string; env?: Readonly<Record<string, string | undefined>>; platform?: NodeJS.Platform; home?: string; exists?: (file: string) => boolean; listDir?: (dir: string) => string[]; readFile?: (file: string) => string; }): { links: Links; warning?: string; }`
 
@@ -15,8 +15,8 @@ Exports:
 open-in-instrument-link
 
 Usage:
-  $ node open-in-instrument-link.ts <path> [--title <title>]
-  $ node open-in-instrument-link.ts <path> <path>... --title <work> [--from <agent>]
+  $ node open-in-instrument-link.ts <path> [--title <title>] [--group <work>]
+  $ node open-in-instrument-link.ts <path> <path>... --title <work> [--from <agent>] [--group <work>]
 
 Prints the Markdown to paste into your reply. One path prints one line; several
 paths print one link that opens them together, then each path on its own line.
@@ -27,6 +27,8 @@ path, one per line, with no link: the person is already in the app.
 Options:
   --title <title>  Names the output, or for several the piece of work (default: the file name)
   --from <agent>   Names you as you would introduce yourself; used with several paths
+  --group <work>   A short name for the piece of work, the same on every link
+                   about it: Instrument opens them all in one tab group
   --links <where>  Where the link goes: app (instrument://) or web
                    (tryinstrument.com/open). Without it, app when Instrument is
                    installed on this machine, else web. Pass web only when the

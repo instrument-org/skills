@@ -157,6 +157,7 @@ export function buildReply({
   paths,
   title,
   from,
+  group,
   links = "web",
   insideInstrument = false,
   cwd = process.cwd(),
@@ -168,6 +169,8 @@ export function buildReply({
   paths: readonly string[];
   title?: string;
   from?: string;
+  /** The word for the piece of work, which opens the outputs in the tab group open under it. */
+  group?: string;
   links?: Links;
   /** The person is already in the app, so only the paths are printed. */
   insideInstrument?: boolean;
@@ -207,13 +210,25 @@ export function buildReply({
   }
 
   const name = title?.trim();
+  const word = group?.trim() || undefined;
+  const agent = from?.trim();
   const [only] = outputs;
   if (outputs.length === 1 && only) {
     const heading = name || only.name || only.full;
-    const link =
-      links === "app"
-        ? `${APP_PROTOCOL}://file${only.appPath}`
-        : OPEN_URL + only.linkPath;
+    let link;
+    if (word === undefined) {
+      link =
+        links === "app"
+          ? `${APP_PROTOCOL}://file${only.appPath}`
+          : OPEN_URL + only.linkPath;
+    } else if (links === "app") {
+      link = `${APP_PROTOCOL}://files?path=${encode(only.appSlashPath)}&group=${encode(word)}`;
+    } else {
+      const params = name ? [`title=${encode(name)}`] : [];
+      if (agent) params.push(`from=${encode(agent)}`);
+      params.push(`group=${encode(word)}`, `f=${encode(only.slashPath)}`);
+      link = OPEN_URL + params.join("&");
+    }
     return {
       markdown: `**${escapeMarkdown(heading)}** · ${inlineCode(only.display)} · [${LABEL}](${link})`,
       warnings,
@@ -230,11 +245,12 @@ export function buildReply({
     const params = outputs.map(
       (output) => `path=${encode(output.appSlashPath)}`,
     );
+    if (word !== undefined) params.push(`group=${encode(word)}`);
     link = `${APP_PROTOCOL}://files?${params.join("&")}`;
   } else {
     const params = [`title=${encode(name)}`];
-    const agent = from?.trim();
     if (agent) params.push(`from=${encode(agent)}`);
+    if (word !== undefined) params.push(`group=${encode(word)}`);
     for (const output of outputs) {
       params.push(`f=${encode(output.slashPath)}`);
     }
@@ -389,8 +405,8 @@ export function resolveLinks({
 const USAGE = `open-in-instrument-link
 
 Usage:
-  $ node open-in-instrument-link.ts <path> [--title <title>]
-  $ node open-in-instrument-link.ts <path> <path>... --title <work> [--from <agent>]
+  $ node open-in-instrument-link.ts <path> [--title <title>] [--group <work>]
+  $ node open-in-instrument-link.ts <path> <path>... --title <work> [--from <agent>] [--group <work>]
 
 Prints the Markdown to paste into your reply. One path prints one line; several
 paths print one link that opens them together, then each path on its own line.
@@ -401,6 +417,8 @@ path, one per line, with no link: the person is already in the app.
 Options:
   --title <title>  Names the output, or for several the piece of work (default: the file name)
   --from <agent>   Names you as you would introduce yourself; used with several paths
+  --group <work>   A short name for the piece of work, the same on every link
+                   about it: Instrument opens them all in one tab group
   --links <where>  Where the link goes: app (instrument://) or web
                    (tryinstrument.com/open). Without it, app when Instrument is
                    installed on this machine, else web. Pass web only when the
@@ -419,6 +437,7 @@ if (
       options: {
         title: { type: "string" },
         from: { type: "string" },
+        group: { type: "string" },
         links: { type: "string" },
         help: { type: "boolean", short: "h" },
       },
@@ -449,6 +468,7 @@ if (
       paths: positionals,
       title: values.title,
       from: values.from,
+      group: values.group,
       links,
       insideInstrument,
     });

@@ -324,6 +324,40 @@ describe("app links", () => {
   });
 });
 
+describe("group", () => {
+  const stat = fakeFs({
+    "/Users/sam/wireframes/checkout-3.html": "file",
+    "/Users/sam/wireframes/checkout-3b.html": "file",
+  });
+
+  it("names the tab group on a lone output and a bundle, in the app and on the website", () => {
+    const one = ["/Users/sam/wireframes/checkout-3.html"];
+    const two = [...one, "/Users/sam/wireframes/checkout-3b.html"];
+    expect(
+      (["app", "web"] as const).flatMap((links) =>
+        [one, two].map(
+          (paths) =>
+            buildReply({
+              ...mac,
+              paths,
+              title: paths.length > 1 ? "Checkout round 3" : undefined,
+              group: " Checkout redesign ",
+              links,
+              stat,
+            }).markdown.split("\n")[0],
+        ),
+      ),
+    ).toMatchInlineSnapshot(`
+      [
+        "**checkout-3.html** · \`~/wireframes/checkout-3.html\` · [Open in Instrument](instrument://files?path=~%2Fwireframes%2Fcheckout-3.html&group=Checkout%20redesign)",
+        "**Checkout round 3** · 2 files · [Open in Instrument](instrument://files?path=~%2Fwireframes%2Fcheckout-3.html&path=~%2Fwireframes%2Fcheckout-3b.html&group=Checkout%20redesign)",
+        "**checkout-3.html** · \`~/wireframes/checkout-3.html\` · [Open in Instrument](https://tryinstrument.com/open#group=Checkout%20redesign&f=%2FUsers%2Fsam%2Fwireframes%2Fcheckout-3.html)",
+        "**Checkout round 3** · 2 files · [Open in Instrument](https://tryinstrument.com/open#title=Checkout%20round%203&group=Checkout%20redesign&f=%2FUsers%2Fsam%2Fwireframes%2Fcheckout-3.html&f=%2FUsers%2Fsam%2Fwireframes%2Fcheckout-3b.html)",
+      ]
+    `);
+  });
+});
+
 describe("the home folder shows as ~", () => {
   it("shortens what is shown and keeps the link absolute", () => {
     const stat = fakeFs({

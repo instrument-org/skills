@@ -34,14 +34,15 @@ Shown as a preview image only, not the document: Apple `.pages`, `.numbers`, `.k
 ## Build the line with the command
 
 ```bash
-node <skill>/scripts/open-in-instrument-link.ts <path> --title "<title>"
-node <skill>/scripts/open-in-instrument-link.ts <path> <path>... --title "<work>" --from "<you>"
+node <skill>/scripts/open-in-instrument-link.ts <path> --title "<title>" --group "<work>"
+node <skill>/scripts/open-in-instrument-link.ts <path> <path>... --title "<work>" --from "<you>" --group "<work>"
 ```
 
 Paste what it prints into your reply as it is. It resolves relative paths against the current folder and `~` to the home folder, writes Windows paths in the link's form, ends a folder with a slash, and shows a path under the home folder as `~/…`. A link into the app keeps that `~`, so it opens on each of the person's computers whatever their user name there; a website link keeps the path whole. On stderr it warns about a path that does not exist or sits in a temporary folder: fix the path or move the output, then run it again.
 
 - One output: one line. `--title` names it in a few words the person would recognize; without it, the file name.
 - Several outputs from one piece of work: one command, one link that opens them together. `--title` names the work and is required; `--from` names you as you would introduce yourself (`Claude Code`, `Codex`).
+- `--group` names the piece of work the output belongs to, in two to four words the person would recognize (`Checkout redesign`, `Pricing research`). Instrument opens every link with the same group as tabs of one tab group, and shows the words under the group's name, so each new version lands beside the last instead of in a group of its own. Pass it on every link, with the same words on every later link about that work in this conversation, and new words only when the work changes.
 - Unrelated outputs: run the command once per output.
 - Link the thing to look at, not its supporting files: the page, not the images it embeds or the folder of parts beside it.
 
@@ -73,7 +74,7 @@ The command links straight into Instrument, as `instrument://`, when the app is 
 The command needs Node 22.18 or later. Without it, build the same line yourself. Use the website form, which works whether or not the app is installed:
 
 - One output: `https://tryinstrument.com/open#` and then the absolute path with forward slashes, each segment encoded with `encodeURIComponent`, plus `(` `)` `'` `!` `*` as `%28` `%29` `%27` `%21` `%2A` so the Markdown link holds. A space is `%20`, `#` is `%23`, `+` is `%2B`, `%` is `%25`. On Windows the drive leads: `/C:/Users/Sam/report.pdf`. A folder ends with `/`.
-- Several: `https://tryinstrument.com/open#title=<work>&from=<you>&f=<path>&f=<path>`, each value encoded whole the same way (so `/` is `%2F`), the paths in the order you list them.
+- Several: `https://tryinstrument.com/open#title=<work>&from=<you>&group=<work>&f=<path>&f=<path>`, each value encoded whole the same way (so `/` is `%2F`), the paths in the order you list them. One output with a group takes this form too, with one `f`.
 
 Never put the website form's `open`, `title`, `from` or `f` on `instrument://`: the app has no `open` link and opens nothing from one.
 
