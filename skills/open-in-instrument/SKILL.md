@@ -34,15 +34,15 @@ Shown as a preview image only, not the document: Apple `.pages`, `.numbers`, `.k
 ## Build the line with the command
 
 ```bash
-node <skill>/scripts/open-in-instrument-link.ts <path> --title "<title>" --group "<work>"
-node <skill>/scripts/open-in-instrument-link.ts <path> <path>... --title "<work>" --from "<you>" --group "<work>"
+node <skill>/scripts/open-in-instrument-link.ts <path> --title "<title>" --group "<group name>"
+node <skill>/scripts/open-in-instrument-link.ts <path> <path>... --title "<work>" --from "<you>" --group "<group name>"
 ```
 
 Paste what it prints into your reply as it is. It resolves relative paths against the current folder and `~` to the home folder, writes Windows paths in the link's form, ends a folder with a slash, and shows a path under the home folder as `~/…`. A link into the app keeps that `~`, so it opens on each of the person's computers whatever their user name there; a website link keeps the path whole. On stderr it warns about a path that does not exist or sits in a temporary folder: fix the path or move the output, then run it again.
 
 - One output: one line. `--title` names it in a few words the person would recognize; without it, the file name.
 - Several outputs from one piece of work: one command, one link that opens them together. `--title` names the work and is required; `--from` names you as you would introduce yourself (`Claude Code`, `Codex`).
-- `--group` names the piece of work the output belongs to, in two to four words the person would recognize (`Checkout redesign`, `Pricing research`). Instrument opens every link with the same group as tabs of one tab group, and shows the words under the group's name, so each new version lands beside the last instead of in a group of its own. Pass it on every link, with the same words on every later link about that work in this conversation, and new words only when the work changes.
+- `--group` is the name of the tab group the output belongs in: what the work is for, in two to four words the person would recognize (`Checkout redesign`, `Best running shoes`), never what the output already shows, such as a site (`Amazon.com`) or a file's name. Instrument opens every link with the same group name as tabs of one tab group, the name shown under the group's title, so each new version lands beside the last instead of in a group of its own; a group the person named by hand catches links with its name too. Pass it on every link, with the same name on every later link about that work in this conversation, and a new name only when the work changes.
 - Unrelated outputs: run the command once per output.
 - Link the thing to look at, not its supporting files: the page, not the images it embeds or the folder of parts beside it.
 

@@ -27,8 +27,9 @@ path, one per line, with no link: the person is already in the app.
 Options:
   --title <title>  Names the output, or for several the piece of work (default: the file name)
   --from <agent>   Names you as you would introduce yourself; used with several paths
-  --group <work>   A short name for the piece of work, the same on every link
-                   about it: Instrument opens them all in one tab group
+  --group <name>   The tab group's name: what the work is for, never a site or
+                   file name, the same on every link about it; Instrument
+                   opens them all in the group with that name
   --links <where>  Where the link goes: app (instrument://) or web
                    (tryinstrument.com/open). Without it, app when Instrument is
                    installed on this machine, else web. Pass web only when the
